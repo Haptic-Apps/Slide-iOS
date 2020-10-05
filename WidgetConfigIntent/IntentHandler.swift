@@ -63,6 +63,8 @@ public struct TimelineSubredditProvider {
             for sub in shared?.stringArray(forKey: "subscriptions") ?? [] {
                 if !subs.contains(sub) && subs.count < 10 {
                     subs.append(sub)
+                } else if subs.count >= 10 {
+                    break
                 }
             }
             toReturn.append(TimelineSubredditDetails(name: "Default", subs: subs, colorful: true))

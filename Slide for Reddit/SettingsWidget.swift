@@ -51,13 +51,12 @@ class SettingsWidget: BubbleSettingTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
+        self.widgets = suite?.stringArray(forKey: "widgets") ?? []
+        self.tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        self.widgets = suite?.stringArray(forKey: "widgets") ?? []
-        self.tableView.reloadData()
     }
 
     override func loadView() {

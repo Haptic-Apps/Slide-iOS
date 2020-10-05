@@ -16,11 +16,21 @@ import SDCAlertView
 import StoreKit
 import UIKit
 import WatchConnectivity
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 class MainViewController: ColorMuxPagingViewController, UINavigationControllerDelegate, ReadLaterDelegate {
 
     //MARK: - Variables
-    
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     var isReload = false
     var readLaterBadge: BadgeSwift?
     public static var current: String = ""
@@ -101,6 +111,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     //MARK: - Shared functions
     
     func didUpdate() {
+        let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
+        suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
+        suite?.synchronize()
+        if #available(iOS 14, *) {
+            WidgetCenter.shared.reloadTimelines(ofKind: "Current_Account")
+        }
+        
         let count = ReadLater.readLaterIDs.count
         if count > 0 {
             let readLater = UIButton.init(type: .custom)
@@ -252,6 +269,14 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         }
                         DispatchQueue.main.async {
                             if diff > 0 {
+                                let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
+                                suite?.setValue(AccountController.current?.inboxCount ?? 0, forKey: "inbox")
+                                suite?.synchronize()
+                                
+                                if #available(iOS 14, *) {
+                                    WidgetCenter.shared.reloadTimelines(ofKind: "Current_Account")
+                                }
+                                
                                 BannerUtil.makeBanner(text: "\(diff) new message\(diff > 1 ? "s" : "")!", seconds: 5, context: self, top: true, callback: {
                                     () in
                                     let inbox = InboxViewController.init()
@@ -560,10 +585,23 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
         if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
-            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+            account.sd_setImage(with: imageUrl, for: .normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil, progress: nil) { (image, _, _, _) in
+                if #available(iOS 14.0, *) {
+                    let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
+                    suite?.setValue(AccountController.currentName, forKey: "current_account")
+                    suite?.setValue(AccountController.current?.inboxCount ?? 0, forKey: "inbox")
+                    suite?.setValue((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0), forKey: "karma")
+                                        
+                    if let data = image?.pngData() {
+                        suite?.setValue(data, forKey: "profile_icon")
+                    }
+                    suite?.synchronize()
+                }
+            }
         } else {
             account.setImage(accountImage, for: UIControl.State.normal)
         }
+        
         account.layer.cornerRadius = 5
         account.clipsToBounds = true
         account.contentMode = .scaleAspectFill

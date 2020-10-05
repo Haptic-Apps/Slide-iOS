@@ -16,9 +16,58 @@ import SwiftUI
 struct SwiftWidgetsBundle: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
+        Current_Account()
         Favorite_Subreddits()
         Hot_Posts_Tile()
         Hot_Posts()
+    }
+}
+
+struct AccountTimeline: TimelineProvider {
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
+    typealias Entry = AccountEntry
+
+    func placeholder(in context: Context) -> AccountEntry {
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+        let currentAccount = shared?.string(forKey: "current_account") ?? "Guest"
+        let karma = shared?.integer(forKey: "karma") ?? 0
+        let inbox = shared?.integer(forKey: "inbox") ?? 0
+        let image = shared?.data(forKey: "profile_icon") ?? Data()
+        let readLater = shared?.integer(forKey: "readlater") ?? 0
+
+        return AccountEntry(date: Date(), name: currentAccount, inbox: inbox, karma: karma, imageData: image, readLater: readLater)
+    }
+    
+    func getSnapshot(in context: Context, completion: @escaping (AccountEntry) -> Void) {
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+        let currentAccount = shared?.string(forKey: "current_account") ?? "Guest"
+        let karma = shared?.integer(forKey: "karma") ?? 0
+        let inbox = shared?.integer(forKey: "inbox") ?? 0
+        let image = shared?.data(forKey: "profile_icon") ?? Data()
+        let readLater = shared?.integer(forKey: "readlater") ?? 0
+
+        completion(AccountEntry(date: Date(), name: currentAccount, inbox: inbox, karma: karma, imageData: image, readLater: readLater))
+    }
+    
+    func getTimeline(in context: Context, completion: @escaping (Timeline<AccountEntry>) -> Void) {
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+
+        let currentAccount = shared?.string(forKey: "current_account") ?? "Guest"
+        let karma = shared?.integer(forKey: "karma") ?? 0
+        let inbox = shared?.integer(forKey: "inbox") ?? 0
+        let image = shared?.data(forKey: "profile_icon") ?? Data()
+        let readLater = shared?.integer(forKey: "readlater") ?? 0
+
+        let entry = AccountEntry(date: Date(), name: currentAccount, inbox: inbox, karma: karma, imageData: image, readLater: readLater)
+        let timeline = Timeline(entries: [entry], policy: .after(Calendar.current.date(byAdding: .hour, value: 1, to: Date())!))
+        completion(timeline)
     }
 }
 
@@ -102,6 +151,16 @@ struct SubredditEntry: TimelineEntry {
     let subreddits: [String]
     let imageData: [String: Data]
 }
+
+struct AccountEntry: TimelineEntry {
+    public let date: Date
+    public let name: String
+    public let inbox: Int
+    public let karma: Int
+    public let imageData: Data
+    public let readLater: Int
+}
+
 
 class ImageLoader: ObservableObject {
     /*

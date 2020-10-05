@@ -152,13 +152,14 @@ struct PostTileView: View {
                 }
                 .background(
                     Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .cornerRadius(CGFloat(5))
-                    .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.3)
-                    .background(
-                        Color(getSchemeColor())) //todo get subreddit color
-                            .opacity(0.8))
+                        .resizable()
+                        .opacity(0.6)
+                        .aspectRatio(contentMode: .fill)
+                        .cornerRadius(CGFloat(5))
+                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3)
+                        .background(
+                            Color(getSchemeColor())
+                                .opacity(0.4)))
             } else {
                 ZStack(alignment: .bottomLeading) {
                     Color.clear
@@ -171,13 +172,14 @@ struct PostTileView: View {
                 }
                 .background(
                     Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .cornerRadius(CGFloat(5))
-                    .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.3)
-                    .background(
-                        Color(getSchemeColor())) //todo get subreddit color
-                            .opacity(0.8))
+                        .resizable()
+                        .opacity(0.6)
+                        .aspectRatio(contentMode: .fill)
+                        .cornerRadius(CGFloat(5))
+                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3)
+                        .background(
+                            Color(getSchemeColor())
+                                .opacity(0.4)))
             }
         }
     }
