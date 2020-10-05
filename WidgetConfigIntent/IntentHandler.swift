@@ -59,7 +59,13 @@ public struct TimelineSubredditProvider {
             toReturn.append(TimelineSubredditDetails(name: widget, subs: shared?.stringArray(forKey: "widget+\(escaped)") ?? ["all", "frontpage", "popular", "slide_ios"], colorful: shared?.bool(forKey: widget + "_color") ?? true))
         }
         if toReturn.isEmpty {
-            toReturn.append(TimelineSubredditDetails(name: "Default", subs: ["all", "frontpage", "popular", "slide_ios"], colorful: true))
+            var subs = ["all", "frontpage", "popular", "slide_ios"]
+            for sub in shared?.stringArray(forKey: "subscriptions") ?? [] {
+                if !subs.contains(sub) && subs.count < 10 {
+                    subs.append(sub)
+                }
+            }
+            toReturn.append(TimelineSubredditDetails(name: "Default", subs: subs, colorful: true))
         }
         return toReturn
     }

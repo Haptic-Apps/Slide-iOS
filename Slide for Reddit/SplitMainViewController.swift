@@ -654,6 +654,8 @@ extension SplitMainViewController: NavigationHomeDelegate {
             navigation(homeViewController, didRequestSubreddit: "popular")
         case .RANDOM:
             random(homeViewController)
+        case .READ_LATER:
+            navigation(homeViewController, didRequestReadLater: ())
         case .SAVED:
             accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 4)
         case .UPVOTED:
@@ -772,6 +774,12 @@ extension SplitMainViewController: NavigationHomeDelegate {
         }
     }
     
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestReadLater: Void) {
+        let vc = ReadLaterViewController(subreddit: "all")
+        
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
+    }
+
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
         let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
         

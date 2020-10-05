@@ -17,6 +17,7 @@ struct SwiftWidgetsBundle: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
         Favorite_Subreddits()
+        Hot_Posts_Tile()
         Hot_Posts()
     }
 }
@@ -35,11 +36,13 @@ struct SubredditsProvider: IntentTimelineProvider {
     }
     
     func placeholder(in context: Context) -> SubredditEntry {
-        return SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"]))
+        let placeholder = TimelineSubredditProvider.all().first
+        return SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
     }
 
     func getSnapshot(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (SubredditEntry) -> Void) {
-        let entry = SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"]))
+        let placeholder = TimelineSubredditProvider.all().first
+        let entry = SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
         completion(entry)
     }
     
@@ -163,8 +166,35 @@ struct HotPostsProvider: IntentTimelineProvider {
     }
 
     func getSnapshot(for configuration: SingleSubredditIntent, in context: Context, completion: @escaping (SubredditWithPosts) -> Void) {
-        let entry = SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
-        completion(entry)
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+        var imageData: Data?
+        let subreddit = lookupWidgetDetails(for: configuration).name
+        if let data = shared?.data(forKey: "raw" + subreddit) {
+            imageData = data
+        } else if let url = URL(string: shared?.string(forKey: subreddit) ?? "") {
+            do {
+                imageData = try Data(contentsOf: url)
+            } catch {
+                if let data = shared?.data(forKey: "raw") {
+                    imageData = data
+                }
+            }
+        } else {
+            if let data = shared?.data(forKey: "raw") {
+                imageData = data
+            }
+        }
+
+        SubredditLoader.fetch(subreddit: subreddit) { result in
+            let subredditPosts: SubredditPosts
+            if case .success(let subreddit) = result {
+                subredditPosts = subreddit
+            } else {
+                subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
+            }
+            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: true, posts: subredditPosts, imageData: imageData ?? Data())
+            completion(entry)
+        }
     }
     
     func getBlankPosts() -> [Post] {
@@ -286,7 +316,7 @@ struct SubredditWithPosts: TimelineEntry {
     let imageData: Data
 }
 
-struct Post: Identifiable {
+struct Post: Identifiable, Hashable {
     let id: String
     let author: String
     let subreddit: String

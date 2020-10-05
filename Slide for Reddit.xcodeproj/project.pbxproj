@@ -86,6 +86,7 @@
 		BE0334CF25294C0700B8C6B6 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
 		BE03351225294CEE00B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
 		BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE03356625295AB500B8C6B6 /* SettingsWidget.swift */; };
+		BE0335AB252A7AF100B8C6B6 /* HotPostsTileWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0335AA252A7AF000B8C6B6 /* HotPostsTileWidget.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
 		BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */; };
 		BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */; };
@@ -548,6 +549,7 @@
 		BE0334B025294B8400B8C6B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE03355D2529594B00B8C6B6 /* WidgetConfigIntent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetConfigIntent.entitlements; sourceTree = "<group>"; };
 		BE03356625295AB500B8C6B6 /* SettingsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidget.swift; sourceTree = "<group>"; };
+		BE0335AA252A7AF000B8C6B6 /* HotPostsTileWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotPostsTileWidget.swift; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
 		BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_lightblue@2x.png"; sourceTree = "<group>"; };
 		BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_red@2x.png"; sourceTree = "<group>"; };
@@ -1052,6 +1054,7 @@
 			children = (
 				B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */,
 				B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */,
+				BE0335AA252A7AF000B8C6B6 /* HotPostsTileWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -2437,6 +2440,7 @@
 			files = (
 				BED90FF6250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */,
 				B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */,
+				BE0335AB252A7AF100B8C6B6 /* HotPostsTileWidget.swift in Sources */,
 				B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */,
 				BED90FE6250BF71600090DF5 /* SlideWidgets.swift in Sources */,
 				BE03351225294CEE00B8C6B6 /* IntentHandler.swift in Sources */,
