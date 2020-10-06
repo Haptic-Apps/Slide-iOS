@@ -150,7 +150,7 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading || reload {
+        if !loading {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()
@@ -255,7 +255,7 @@ class SubmissionsDataSource {
                         
                         self.content += values
                         self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                        self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
                         do {
                             let realm = try Realm()
                            // TODO: - insert

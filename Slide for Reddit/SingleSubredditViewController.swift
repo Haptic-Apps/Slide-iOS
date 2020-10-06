@@ -295,7 +295,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         loop?.stop()
 
         first = false
-        tableView.delegate = self
 
         if single && !(parent is SplitMainViewController) {
             setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
@@ -370,7 +369,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
     }
-    
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -1013,7 +1012,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             print(result.error!.description)
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
-                                    self.dataSource.getData(reload: true)
+                                    if !self.dataSource.loaded {
+                                        self.dataSource.getData(reload: true)
+                                    }
                                     self.loadBubbles()
                                 } else {
                                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
@@ -1058,7 +1059,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                             }
                                         }
                                     }
-                                    self.dataSource.getData(reload: true)
+                                    if !self.dataSource.loaded {
+                                        self.dataSource.getData(reload: true)
+                                    }
                                     self.loadBubbles()
                                 }
                                 

@@ -149,9 +149,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.font = UIFont.systemFont(ofSize: 15)
         aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
         about.textColor = ColorUtil.theme.fontColor
-        about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\n\nThis project wouldn't be possible without your support, and every purchase \n-Carlos"
+        about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\n\nThis project wouldn't be possible without your support, as being ad and tracker free is core to Slide's mission.\n-Carlos"
         about.numberOfLines = 0
-        about.textAlignment = .center
+        about.textAlignment = .left
         about.lineBreakMode = .byClipping
         about.sizeToFit()
         
