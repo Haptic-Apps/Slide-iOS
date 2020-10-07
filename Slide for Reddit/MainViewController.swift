@@ -722,7 +722,13 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
-        return viewControllers?.count ?? 0 == 0 ? nil : viewControllers?[0] as? SingleSubredditViewController
+        if finalSubs.count < currentIndex || finalSubs.isEmpty {
+            return (viewControllers?.count ?? 0) == 0 ? nil : viewControllers?.first as? SingleSubredditViewController
+        }
+        let currentSub = finalSubs[currentIndex]
+        return viewControllers?
+            .compactMap({ $0 as? SingleSubredditViewController })
+            .first(where: { $0.sub == currentSub })
     }
     func shadowbox() {
         getSubredditVC()?.shadowboxMode()
