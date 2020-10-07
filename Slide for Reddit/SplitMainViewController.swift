@@ -570,23 +570,28 @@ class SplitMainViewController: MainViewController {
                     if item.contains("m/") {
                         let image = SubredditCellView.defaultIconMulti
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item.replacingOccurrences(of: "/", with: ""))")
                     } else if item == "all" {
                         let image = SubredditCellView.allIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if item == "frontpage" {
                         let image = SubredditCellView.frontpageIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if item == "popular" {
                         let image = SubredditCellView.popularIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if let icon = Subscriptions.icon(for: item) {
                         suite?.setValue(icon.unescapeHTML, forKey: item)
                     }
-                    suite?.setValue(ColorUtil.getColorForSub(sub: item).hexString(), forKey: "color\(item)")
+                    let color = ColorUtil.getColorForSub(sub: raw)
+                    if color == ColorUtil.baseColor {
+                        suite?.removeObject(forKey: "color\(item)")
+                    } else {
+                        suite?.setValue(color.hexString(), forKey: "color\(item.replacingOccurrences(of: "/", with: ""))")
+                    }
                 }
                 
                 let image = SubredditCellView.defaultIcon

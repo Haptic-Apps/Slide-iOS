@@ -133,7 +133,7 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
         var toReturn = [String: UIColor]()
         for item in subs {
             var color: UIColor?
-            if let hex = shared?.string(forKey: "color" + item.lowercased()), !hex.isEmpty {
+            if let hex = shared?.string(forKey: "color\(item.lowercased().replacingOccurrences(of: "/", with: ""))"), !hex.isEmpty {
                 color = UIColor(hexString: hex)
             }
             toReturn[item] = color
