@@ -343,9 +343,9 @@ struct HotPostsProvider: IntentTimelineProvider {
 
 struct SubredditLoader {
     static func fetch(subreddit: String, completion: @escaping (Result<SubredditPosts, Error>) -> Void) {
-        var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=5&raw_json=1"
+        var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=7&raw_json=1"
         if subreddit == "frontpage" {
-            apiUrl = "https://reddit.com/.json?limit=5&raw_json=1"
+            apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
         }
         let branchContentsURL = URL(string: apiUrl)!
         let task = URLSession.shared.dataTask(with: branchContentsURL) { (data, response, error) in
@@ -375,7 +375,9 @@ struct SubredditLoader {
                         } catch {
                         }
                     }
-                    posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
+                    if data["stickied"] as? Bool ?? false == false {
+                        posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
+                    }
                 }
             }
         } catch {
