@@ -168,7 +168,7 @@ struct PostView: View {
                     if redacted {
                         Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder)
                     } else {
-                        Text(post.title).font(.footnote).bold().lineSpacing(1).lineLimit(2).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
+                        Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(3).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
                     }
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4))
             }
