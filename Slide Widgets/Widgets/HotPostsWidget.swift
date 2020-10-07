@@ -94,13 +94,15 @@ struct Hot_PostsEntryView: View {
                 )
             } else {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)")).padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
-                    if !entry.posts.posts.isEmpty {
-                        ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
-                            PostView(post: entry.posts.posts[post], redacted: false)
+                    VStack(alignment: .leading) {
+                        SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
+                        if !entry.posts.posts.isEmpty {
+                            ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
+                                PostView(post: entry.posts.posts[post], redacted: false)
+                            }
                         }
-                    }
-                    Spacer().padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+                        Spacer()
+                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
                 }.background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()).opacity(0.8)).frame(maxHeight: .infinity)
             }
         }
@@ -151,6 +153,7 @@ struct Hot_Posts_Previews: PreviewProvider {
 struct PostView: View {
     var post: Post
     var redacted: Bool
+    @Environment(\.widgetFamily) var widgetFamily
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
@@ -167,7 +170,7 @@ struct PostView: View {
                     if redacted {
                         Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder)
                     } else {
-                        Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(2).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
+                        Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(widgetFamily == .systemLarge ? 3 : 2).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
                     }
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4))
             }
@@ -176,7 +179,7 @@ struct PostView: View {
                 Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 50, height: 50, alignment: .center)
+                    .frame(width: 45, height: 45, alignment: .center)
                     .cornerRadius(CGFloat(10))
                     .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)).redacted(reason: .placeholder).alignmentGuide(.trailing) { d in d[.trailing] }
             } else {
@@ -184,7 +187,7 @@ struct PostView: View {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: 50, height: 50, alignment: .center)
+                        .frame(width: widgetFamily == .systemLarge ? 50 : 40, height: widgetFamily == .systemLarge ? 50 : 40, alignment: .center)
                         .cornerRadius(CGFloat(10))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).alignmentGuide(.trailing) { d in d[.trailing] }
                 } else {
@@ -218,7 +221,7 @@ struct SubredditViewHorizontal: View {
                 Image(uiImage: UIImage(data: imageData) ?? UIImage())
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 30, height: 30, alignment: .center)
+                    .frame(width: 20, height: 20, alignment: .center)
                     .clipShape(Circle())
                     .clipped().redacted(reason: .placeholder)
                 Text(self.title).font(.headline).bold().foregroundColor(fontColor).opacity(0.8).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
@@ -227,7 +230,7 @@ struct SubredditViewHorizontal: View {
                 Image(uiImage: UIImage(data: imageData) ?? UIImage())
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 30, height: 30, alignment: .center)
+                    .frame(width: 25, height: 25, alignment: .center)
                     .clipShape(Circle())
                     .clipped()
                 Text(self.title).font(.headline).bold().foregroundColor(fontColor).opacity(0.8).alignmentGuide(.leading) { d in d[.leading] }
