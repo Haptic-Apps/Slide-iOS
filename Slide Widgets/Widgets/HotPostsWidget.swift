@@ -65,8 +65,7 @@ struct Hot_PostsEntryView: View {
                         }
                     }
                     Spacer()
-                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor() )
-                                                            .opacity(0.8)).redacted(reason: .placeholder)
+                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()).opacity(0.8)).redacted(reason: .placeholder)
             }
         } else {
             if widgetFamily == .systemSmall {
@@ -95,13 +94,13 @@ struct Hot_PostsEntryView: View {
                 )
             } else {
                 VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0)).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
+                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)")).padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
                     if !entry.posts.posts.isEmpty {
                         ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
                             PostView(post: entry.posts.posts[post], redacted: false)
                         }
                     }
-                    Spacer()
+                    Spacer().padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                 }.background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()).opacity(0.8)).frame(maxHeight: .infinity)
             }
         }
@@ -168,7 +167,7 @@ struct PostView: View {
                     if redacted {
                         Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder)
                     } else {
-                        Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(3).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
+                        Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(2).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
                     }
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4))
             }
