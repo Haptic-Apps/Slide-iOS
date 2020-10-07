@@ -586,6 +586,7 @@ class SplitMainViewController: MainViewController {
                     } else if let icon = Subscriptions.icon(for: item) {
                         suite?.setValue(icon.unescapeHTML, forKey: item)
                     }
+                    suite?.setValue(ColorUtil.getColorForSub(sub: item).hexString(), forKey: "color\(item)")
                 }
                 
                 let image = SubredditCellView.defaultIcon

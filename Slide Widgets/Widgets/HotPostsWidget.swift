@@ -53,7 +53,7 @@ struct Hot_PostsEntryView: View {
                         .cornerRadius(CGFloat(5))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
                         .background(
-                            Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
+                            Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
                                 .opacity(0.8))
                 )
             } else {
@@ -65,7 +65,7 @@ struct Hot_PostsEntryView: View {
                         }
                     }
                     Spacer()
-                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()).opacity(0.8)).redacted(reason: .placeholder)
+                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()).opacity(0.8)).redacted(reason: .placeholder)
             }
         } else {
             if widgetFamily == .systemSmall {
@@ -89,7 +89,7 @@ struct Hot_PostsEntryView: View {
                         .cornerRadius(CGFloat(5))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
                         .background(
-                            Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
+                            Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
                                 .opacity(0.8))
                 )
             } else {
@@ -103,7 +103,7 @@ struct Hot_PostsEntryView: View {
                         }
                         Spacer()
                     }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                }.background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()).opacity(0.8)).frame(maxHeight: .infinity)
+                }.background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()).opacity(0.8)).frame(maxHeight: .infinity)
             }
         }
     }
@@ -121,7 +121,7 @@ struct Hot_PostsEntryView: View {
 
 struct Hot_Posts_Previews: PreviewProvider {
     static var previews: some View {
-        Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData()))
+        Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData(), color: nil))
             .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
 

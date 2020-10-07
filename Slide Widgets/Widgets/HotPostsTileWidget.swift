@@ -52,7 +52,7 @@ struct Hot_Posts_TileEntryView: View {
                         .cornerRadius(CGFloat(5))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
                         .background(
-                            Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
+                            Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
                                 .opacity(0.8))
                 )
             } else {
@@ -68,7 +68,7 @@ struct Hot_Posts_TileEntryView: View {
                             }
                         }
                     }.padding(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
-                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
 
             }
         } else {
@@ -93,7 +93,7 @@ struct Hot_Posts_TileEntryView: View {
                         .cornerRadius(CGFloat(5))
                         .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
                         .background(
-                            Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
+                            Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
                                 .opacity(0.8))
                 )
             } else {
@@ -109,7 +109,7 @@ struct Hot_Posts_TileEntryView: View {
                             }
                         }
                     }.padding(EdgeInsets(top: 0, leading: 8, bottom: 8, trailing: 8))
-                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()))
+                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
             }
         }
     }
@@ -197,7 +197,7 @@ struct PostTileView: View {
 
 struct Hot_Posts_Tile_Previews: PreviewProvider {
     static var previews: some View {
-        Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData()))
+        Hot_PostsEntryView(entry: SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData(), color: nil))
             .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
 

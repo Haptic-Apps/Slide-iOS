@@ -221,7 +221,7 @@ struct HotPostsProvider: IntentTimelineProvider {
 
     func placeholder(in context: Context) -> SubredditWithPosts {
         
-        SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
+        SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData(), color: nil)
     }
 
     func getSnapshot(for configuration: SingleSubredditIntent, in context: Context, completion: @escaping (SubredditWithPosts) -> Void) {
@@ -243,6 +243,11 @@ struct HotPostsProvider: IntentTimelineProvider {
                 imageData = data
             }
         }
+        
+        var color: UIColor? = nil
+        if let hex = shared?.string(forKey: "color" + subreddit), !hex.isEmpty {
+            color = UIColor(hexString: hex)
+        }
 
         SubredditLoader.fetch(subreddit: subreddit) { result in
             let subredditPosts: SubredditPosts
@@ -251,7 +256,7 @@ struct HotPostsProvider: IntentTimelineProvider {
             } else {
                 subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
             }
-            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: true, posts: subredditPosts, imageData: imageData ?? Data())
+            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: true, posts: subredditPosts, imageData: imageData ?? Data(), color: color)
             completion(entry)
         }
     }
@@ -267,9 +272,10 @@ struct HotPostsProvider: IntentTimelineProvider {
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         var imageData: Data?
         let subreddit = lookupWidgetDetails(for: configuration).name
+        
         if let data = shared?.data(forKey: "raw" + subreddit) {
             imageData = data
-        } else if let url = URL(string: shared?.string(forKey: subreddit) ?? "") {
+        } else if let url = URL(string: shared?.string(forKey: subreddit.lowercased()) ?? "") {
             do {
                 imageData = try Data(contentsOf: url)
             } catch {
@@ -282,6 +288,11 @@ struct HotPostsProvider: IntentTimelineProvider {
                 imageData = data
             }
         }
+        
+        var color: UIColor? = nil
+        if let hex = shared?.string(forKey: "color" + subreddit), !hex.isEmpty {
+            color = UIColor(hexString: hex)
+        }
 
         SubredditLoader.fetch(subreddit: subreddit) { result in
             let subredditPosts: SubredditPosts
@@ -290,7 +301,7 @@ struct HotPostsProvider: IntentTimelineProvider {
             } else {
                 subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
             }
-            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: configuration.colorful?.boolValue ?? true, posts: subredditPosts, imageData: imageData ?? Data())
+            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: configuration.colorful?.boolValue ?? true, posts: subredditPosts, imageData: imageData ?? Data(), color: color)
             let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
@@ -373,6 +384,7 @@ struct SubredditWithPosts: TimelineEntry {
     let colorful: Bool
     let posts: SubredditPosts
     let imageData: Data
+    let color: UIColor?
 }
 
 struct Post: Identifiable, Hashable {
@@ -383,4 +395,24 @@ struct Post: Identifiable, Hashable {
     let image: String
     let date: Double
     let imageData: Data
+}
+
+extension UIColor {
+    convenience init(hexString: String) {
+        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int = UInt32()
+        Scanner(string: hex).scanHexInt32(&int)
+        let a, r, g, b: UInt32
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (255, 0, 0, 0)
+        }
+        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
+    }
 }
