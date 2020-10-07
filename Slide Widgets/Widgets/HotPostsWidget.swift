@@ -169,7 +169,7 @@ struct PostView: View {
                     if redacted {
                         Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder)
                     } else {
-                        Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading)
+                        Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).lineSpacing(10.0)
                     }
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4))
             }
@@ -182,10 +182,10 @@ struct PostView: View {
                     .cornerRadius(CGFloat(10))
                     .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)).redacted(reason: .placeholder).alignmentGuide(.trailing) { d in d[.trailing] }
             } else {
-                Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
+                Image(uiImage: UIImage(data: post.imageData) ?? UIImage(systemName: "link")!)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40, alignment: .center)
+                    .frame(width: 50, height: 50, alignment: .center)
                     .cornerRadius(CGFloat(5))
                     .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).alignmentGuide(.trailing) { d in d[.trailing] }
             }
