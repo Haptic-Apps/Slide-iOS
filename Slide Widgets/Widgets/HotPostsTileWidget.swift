@@ -156,7 +156,7 @@ struct PostTileView: View {
                         .opacity(0.6)
                         .aspectRatio(contentMode: .fill)
                         .cornerRadius(CGFloat(5))
-                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3)
+                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)).blur(radius: 3)
                         .background(
                             Color(getSchemeColor())
                                 .opacity(0.4)))
@@ -176,7 +176,7 @@ struct PostTileView: View {
                         .opacity(0.6)
                         .aspectRatio(contentMode: .fill)
                         .cornerRadius(CGFloat(5))
-                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3)
+                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)).blur(radius: 3)
                         .background(
                             Color(getSchemeColor())
                                 .opacity(0.4)))
