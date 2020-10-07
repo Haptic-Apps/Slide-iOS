@@ -43,7 +43,7 @@ struct Hot_PostsEntryView: View {
                             HStack {
                                 Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(.white).opacity(0.6).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
                             }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).redacted(reason: .placeholder).foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor()))
+                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(2).lineSpacing(-15).redacted(reason: .placeholder).foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor()))
                         }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
                     }
                     .background(
@@ -102,8 +102,7 @@ struct Hot_PostsEntryView: View {
                         }
                     }
                     Spacer()
-                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor() )
-                                                            .opacity(0.8))
+                }.background(Color(entry.colorful ? UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor() : getSchemeColor()).opacity(0.8)).frame(maxHeight: .infinity)
             }
         }
     }
@@ -169,7 +168,7 @@ struct PostView: View {
                     if redacted {
                         Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder)
                     } else {
-                        Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).lineSpacing(10.0)
+                        Text(post.title).font(.footnote).bold().lineSpacing(1).lineLimit(2).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
                     }
                 }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4))
             }
@@ -182,12 +181,25 @@ struct PostView: View {
                     .cornerRadius(CGFloat(10))
                     .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)).redacted(reason: .placeholder).alignmentGuide(.trailing) { d in d[.trailing] }
             } else {
-                Image(uiImage: UIImage(data: post.imageData) ?? UIImage(systemName: "link")!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 50, height: 50, alignment: .center)
-                    .cornerRadius(CGFloat(5))
-                    .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).alignmentGuide(.trailing) { d in d[.trailing] }
+                if let image = UIImage(data: post.imageData) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50, alignment: .center)
+                        .cornerRadius(CGFloat(10))
+                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).alignmentGuide(.trailing) { d in d[.trailing] }
+                } else {
+                    ZStack(alignment: .center, content: {
+                        Color(colorScheme != .light ? .black : .white).opacity(0.3)
+                        Image(systemName: "link")
+                            .foregroundColor(colorScheme == .light ? .primary : .white)
+                            .aspectRatio(contentMode: .fit)
+                            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                    }).frame(width: 50, height: 50, alignment: .center)
+                        .cornerRadius(CGFloat(10))
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
+                        .alignmentGuide(.trailing) { d in d[.trailing] }
+                }
             }
         }
     }

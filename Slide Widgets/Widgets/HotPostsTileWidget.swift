@@ -168,7 +168,7 @@ struct PostTileView: View {
                             Text(post.subreddit).font(.caption).bold().foregroundColor(Color(getSchemeFontColor())).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
                         }
                         Text(post.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).foregroundColor(Color(getSchemeFontColor()))
-                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4))
+                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 10))
                 }
                 .background(
                     Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
