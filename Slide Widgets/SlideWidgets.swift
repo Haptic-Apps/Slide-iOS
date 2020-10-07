@@ -86,12 +86,12 @@ struct SubredditsProvider: IntentTimelineProvider {
     
     func placeholder(in context: Context) -> SubredditEntry {
         let placeholder = TimelineSubredditProvider.all().first
-        return SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
+        return SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]), colorData: getColorData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
     }
 
     func getSnapshot(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (SubredditEntry) -> Void) {
         let placeholder = TimelineSubredditProvider.all().first
-        let entry = SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
+        let entry = SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]), colorData: getColorData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
         completion(entry)
     }
     
@@ -122,6 +122,19 @@ struct SubredditsProvider: IntentTimelineProvider {
         return toReturn
     }
 
+    func getColorData(_ subs: [String]) -> [String: UIColor] {
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+        var toReturn = [String: UIColor]()
+        for item in subs {
+            var color: UIColor?
+            if let hex = shared?.string(forKey: "color" + item.lowercased()), !hex.isEmpty {
+                color = UIColor(hexString: hex)
+            }
+            toReturn[item] = color
+        }
+        return toReturn
+    }
+
     func getTimeline(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (Timeline<SubredditEntry>) -> Void) {
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
@@ -129,7 +142,7 @@ struct SubredditsProvider: IntentTimelineProvider {
         let entryDate = Calendar.current.date(byAdding: .hour, value: 0, to: currentDate)!
 
         let subreddits = lookupWidgetDetails(for: configuration).subs
-        let entry = SubredditEntry(date: entryDate, subreddits: subreddits, imageData: getPlaceholderData(subreddits))
+        let entry = SubredditEntry(date: entryDate, subreddits: subreddits, imageData: getPlaceholderData(subreddits), colorData: getColorData(subreddits))
         let timeline = Timeline(entries: [entry], policy: .atEnd)
         completion(timeline)
     }
@@ -150,6 +163,7 @@ struct SubredditEntry: TimelineEntry {
     let date: Date
     let subreddits: [String]
     let imageData: [String: Data]
+    let colorData: [String: UIColor?]
 }
 
 struct AccountEntry: TimelineEntry {
@@ -244,8 +258,8 @@ struct HotPostsProvider: IntentTimelineProvider {
             }
         }
         
-        var color: UIColor? = nil
-        if let hex = shared?.string(forKey: "color" + subreddit), !hex.isEmpty {
+        var color: UIColor?
+        if let hex = shared?.string(forKey: "color" + subreddit.lowercased()), !hex.isEmpty {
             color = UIColor(hexString: hex)
         }
 
@@ -289,8 +303,8 @@ struct HotPostsProvider: IntentTimelineProvider {
             }
         }
         
-        var color: UIColor? = nil
-        if let hex = shared?.string(forKey: "color" + subreddit), !hex.isEmpty {
+        var color: UIColor?
+        if let hex = shared?.string(forKey: "color" + subreddit.lowercased()), !hex.isEmpty {
             color = UIColor(hexString: hex)
         }
 
