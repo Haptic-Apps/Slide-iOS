@@ -364,6 +364,7 @@ class SplitMainViewController: MainViewController {
         self.viewWillAppearActions()
         self.handleToolbars()
         doReAppearToolbar()
+        setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
 
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {

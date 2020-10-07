@@ -32,82 +32,31 @@ struct Hot_PostsEntryView: View {
 
     var body: some View {
         if entry.subreddit == "redacted" {
-            if widgetFamily == .systemSmall {
-                VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true, fontColor: entry.colorful ? .white : Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                    Spacer()
-                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(
-                    ZStack(alignment: .bottomLeading) {
-                        Color.clear
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(.white).opacity(0.6).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
-                            }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(2).lineSpacing(-15).redacted(reason: .placeholder).foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor()))
-                        }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
+            VStack(alignment: .leading) {
+                SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true, fontColor: Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+                if !entry.posts.posts.isEmpty {
+                    ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
+                        PostView(post: entry.posts.posts[post], redacted: true)
                     }
-                    .background(
-                        Image(uiImage: UIImage(data: entry.posts.posts.first!.imageData) ?? UIImage())
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .cornerRadius(CGFloat(5))
-                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
-                        .background(
-                            Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
-                                .opacity(0.8))
-                )
-            } else {
-                VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: true, fontColor: Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                    if !entry.posts.posts.isEmpty {
-                        ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
-                            PostView(post: entry.posts.posts[post], redacted: true)
-                        }
-                    }
-                    Spacer()
-                }.frame(maxHeight: .infinity).background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()).opacity(0.8)).redacted(reason: .placeholder)
-            }
+                }
+                Spacer()
+            }.frame(maxHeight: .infinity).background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()).opacity(0.8)).redacted(reason: .placeholder)
         } else {
-            if widgetFamily == .systemSmall {
-                VStack(alignment: .leading) {
-                    SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: entry.colorful ? .white : Color(getSchemeFontColor())).padding(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
-                    Spacer()
-                }.frame(maxWidth: .infinity, maxHeight: .infinity).background(
-                    ZStack(alignment: .bottomLeading) {
-                        Color.clear
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(entry.posts.posts.first!.subreddit).font(.caption).bold().foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor())).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
-                            }
-                            Text(entry.posts.posts.first!.title).font(.system(.footnote)).bold().multilineTextAlignment(.leading).lineLimit(3).lineSpacing(-15).foregroundColor(entry.colorful ? Color.white : Color(getSchemeFontColor()))
-                        }.padding(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 4)).widgetURL(URL(string: "slide://redd.it/\(entry.posts.posts.first!.id)")!)
-                    }
-                    .background(
-                        Image(uiImage: UIImage(data: entry.posts.posts.first!.imageData) ?? UIImage())
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .cornerRadius(CGFloat(5))
-                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).blur(radius: 3).opacity(0.5)
-                        .background(
-                            Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()))
-                                .opacity(0.8))
-                )
-            } else {
-                VStack(alignment: .leading) {
-                    VStack(alignment: .leading) {
-                        SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
-                        if !entry.posts.posts.isEmpty {
-                            ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
-                                PostView(post: entry.posts.posts[post], redacted: false)
-                            }
-                        }
-                        Spacer()
-                    }.padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
-                }.background(Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()).opacity(0.8)).frame(maxHeight: .infinity)
+            VStack(alignment: .center) {
+                SubredditViewHorizontal(imageData: entry.imageData, title: entry.subreddit, redacted: false, fontColor: Color(getSchemeFontColor())).widgetURL(URL(string: "slide://www.reddit.com/r/\(entry.subreddit)"))
+                ForEach((0..<min(entry.posts.posts.count, (widgetFamily == .systemMedium ? 2 : 5)))) { post in
+                    PostView(post: entry.posts.posts[post], redacted: false)
+                }
             }
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0))
+            .background(getBackgroundColor())
         }
     }
 
+    func getBackgroundColor() -> Color {
+        return Color(entry.colorful ? (entry.color ?? (UIImage(data: entry.imageData)?.averageColor ?? getSchemeColor())) : getSchemeColor()).opacity(0.8)
+    }
+    
     func getSchemeColor() -> UIColor {
         return colorScheme == .light ? .white : .black
     }
@@ -157,50 +106,43 @@ struct PostView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
-        HStack(alignment: .top) {
+        GeometryReader { geom in
             Link(destination: URL(string: "slide://redd.it/\(post.id)")!) {
-                VStack(alignment: .leading) {
-                    HStack {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
                         if redacted {
-                            Text(post.subreddit).font(.caption2).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).redacted(reason: .placeholder).alignmentGuide(.leading) { d in d[.leading] }
+                            Text(post.subreddit).font(.caption2).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).redacted(reason: .placeholder).frame(maxWidth: .infinity, alignment: .leading).lineLimit(1) // Fit to width
+                            Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder).frame(maxWidth: .infinity, alignment: .leading) // Fit to width
                         } else {
-                            Text(post.subreddit).font(.caption2).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).alignmentGuide(.leading) { d in d[.leading] }
+                            Text(post.subreddit).font(.caption2).bold().foregroundColor(colorScheme == .light ? .primary : .white).opacity(0.6).frame(maxWidth: .infinity, alignment: .leading).lineLimit(1) // Fit to width
+                            Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(nil).frame(maxWidth: .infinity, alignment: .leading).multilineTextAlignment(.leading) // Fit to width
+                        }
+                    }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4)).frame(maxHeight: geom.size.height, alignment: .topLeading) // Fit to height
+                    if redacted {
+                        Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
+                            .resizable()
+                            .aspectRatio(1, contentMode: .fit)
+                            .cornerRadius(CGFloat(10))
+                            .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)).redacted(reason: .placeholder).alignmentGuide(.trailing) { d in d[.trailing] }
+                    } else {
+                        if let image = UIImage(data: post.imageData) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(1, contentMode: .fit)
+                                .cornerRadius(CGFloat(10))
+                                .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).alignmentGuide(.trailing) { d in d[.trailing] }
+                        } else {
+                            ZStack(alignment: .center, content: {
+                                Color(colorScheme != .light ? .black : .white).opacity(0.3)
+                                Image(systemName: "link")
+                                    .foregroundColor(colorScheme == .light ? .primary : .white)
+                                    .aspectRatio(contentMode: .fit)
+                                    .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+                            }).cornerRadius(CGFloat(10))
+                                .aspectRatio(1, contentMode: .fit)
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
                         }
                     }
-                    if redacted {
-                        Text(post.title).font(.footnote).bold().multilineTextAlignment(.leading).redacted(reason: .placeholder)
-                    } else {
-                        Text(post.title).font(.footnote).bold().lineSpacing(-5).lineLimit(2).frame(maxHeight: .infinity).fixedSize(horizontal: false, vertical: true)
-                    }
-                }.padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 4))
-            }
-            Spacer()
-            if redacted {
-                Image(uiImage: UIImage(data: post.imageData) ?? UIImage())
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 45, height: 45, alignment: .center)
-                    .cornerRadius(CGFloat(10))
-                    .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)).redacted(reason: .placeholder).alignmentGuide(.trailing) { d in d[.trailing] }
-            } else {
-                if let image = UIImage(data: post.imageData) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: widgetFamily == .systemLarge ? 50 : 40, height: widgetFamily == .systemLarge ? 50 : 40, alignment: .center)
-                        .cornerRadius(CGFloat(10))
-                        .clipped().padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8)).alignmentGuide(.trailing) { d in d[.trailing] }
-                } else {
-                    ZStack(alignment: .center, content: {
-                        Color(colorScheme != .light ? .black : .white).opacity(0.3)
-                        Image(systemName: "link")
-                            .foregroundColor(colorScheme == .light ? .primary : .white)
-                            .aspectRatio(contentMode: .fit)
-                            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-                    }).frame(width: 50, height: 50, alignment: .center)
-                        .cornerRadius(CGFloat(10))
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
-                        .alignmentGuide(.trailing) { d in d[.trailing] }
                 }
             }
         }

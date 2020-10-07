@@ -1123,8 +1123,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         label.addTapGestureRecognizer(action: {
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
+        
+        setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
     }
-    
+        
     var savedBack: UIBarButtonItem?
 
     func showSearchBar() {
