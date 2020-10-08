@@ -24,14 +24,6 @@ import WidgetKit
 #endif
 
 class SplitMainViewController: MainViewController {
-    
-    /*
-    Corresponds to USR_DOMAIN in info.plist, which derives its value
-    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
-    */
-    func USR_DOMAIN() -> String {
-       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
-    }
 
     static var isFirst = true
 
@@ -61,7 +53,21 @@ class SplitMainViewController: MainViewController {
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
         if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
-            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+            account.sd_setImage(with: imageUrl, for: .normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil, progress: nil) { (image, _, _, _) in
+                if #available(iOS 14.0, *) {
+                    let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
+                    suite?.setValue(AccountController.currentName, forKey: "current_account")
+                    suite?.setValue(AccountController.current?.inboxCount ?? 0, forKey: "inbox")
+                    suite?.setValue((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0), forKey: "karma")
+                    suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
+                    if let data = image?.pngData() {
+                        suite?.setValue(data, forKey: "profile_icon")
+                    }
+                    suite?.synchronize()
+                    
+                    WidgetCenter.shared.reloadTimelines(ofKind: "Current_Account")
+                }
+            }
         } else {
             account.setImage(accountImage, for: UIControl.State.normal)
         }
@@ -356,6 +362,7 @@ class SplitMainViewController: MainViewController {
         self.viewWillAppearActions()
         self.handleToolbars()
         doReAppearToolbar()
+        setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
 
         ReadLater.delegate = self
         if !NetworkMonitor.shared.online {
@@ -535,16 +542,22 @@ class SplitMainViewController: MainViewController {
         finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.containsIgnoringCase($0) }))
 
         var subs = [UIMutableApplicationShortcutItem]()
-        for subname in finalSubs {
-            if subs.count < 2 && !subname.contains("/") {
-                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
+        if !finalSubs.isEmpty {
+            for subname in finalSubs {
+                if subs.count < 2 && !subname.contains("/") {
+                    subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
+                } else if subs.count > 2 {
+                    break
+                }
             }
         }
         
         if #available(iOS 14, *) {
-            let faveSubs = Array(finalSubs[0..<4])
             let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-            suite?.setValue(faveSubs, forKey: "favorites")
+            
+            if !finalSubs.isEmpty {
+                suite?.setValue(finalSubs, forKey: "subscriptions")
+            }
             suite?.synchronize()
 
             DispatchQueue.global().async {
@@ -553,21 +566,27 @@ class SplitMainViewController: MainViewController {
                     if item.contains("m/") {
                         let image = SubredditCellView.defaultIconMulti
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item.replacingOccurrences(of: "/", with: ""))")
                     } else if item == "all" {
                         let image = SubredditCellView.allIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if item == "frontpage" {
                         let image = SubredditCellView.frontpageIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if item == "popular" {
                         let image = SubredditCellView.popularIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if let icon = Subscriptions.icon(for: item) {
                         suite?.setValue(icon.unescapeHTML, forKey: item)
+                    }
+                    let color = ColorUtil.getColorForSub(sub: raw)
+                    if color == ColorUtil.baseColor {
+                        suite?.removeObject(forKey: "color\(item)")
+                    } else {
+                        suite?.setValue(color.hexString(), forKey: "color\(item.replacingOccurrences(of: "/", with: ""))")
                     }
                 }
                 
@@ -643,6 +662,8 @@ extension SplitMainViewController: NavigationHomeDelegate {
             navigation(homeViewController, didRequestSubreddit: "popular")
         case .RANDOM:
             random(homeViewController)
+        case .READ_LATER:
+            navigation(homeViewController, didRequestReadLater: ())
         case .SAVED:
             accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 4)
         case .UPVOTED:
@@ -787,6 +808,12 @@ extension SplitMainViewController: NavigationHomeDelegate {
         }
     }
     
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestReadLater: Void) {
+        let vc = ReadLaterViewController(subreddit: "all")
+        
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
+    }
+
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
         let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
         

@@ -786,6 +786,7 @@ protocol NavigationHomeDelegate: AnyObject {
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSearch: String)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestAction: SettingValues.NavigationHeaderActions)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestInbox: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestReadLater: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSwitchAccountMenu: Void)
@@ -1053,7 +1054,7 @@ extension CurrentAccountHeaderView {
             )
         }()
         
-        accountNameLabel.addTapGestureRecognizer {
+        contentView.addTapGestureRecognizer {
             [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf.parent!, didRequestProfilePageAtIndex: 0)

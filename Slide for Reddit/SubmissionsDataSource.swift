@@ -214,6 +214,7 @@ class SubmissionsDataSource {
 
                         }
                     case .success(let listing):
+                        self.loading = false
                         self.tries = 0
                         if self.isReset {
                             self.content = []
@@ -254,7 +255,7 @@ class SubmissionsDataSource {
                         
                         self.content += values
                         self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                        self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
                         do {
                             let realm = try Realm()
                            // TODO: - insert
@@ -278,19 +279,17 @@ class SubmissionsDataSource {
                             guard let self = self else { return }
 
                             if self.content.isEmpty && !SettingValues.hideSeen {
-                                self.loading = false
                                 self.delegate?.emptyState(listing)
                             } else if self.content.isEmpty && newLinks.count != 0 && self.paginator.hasMore() {
-                                self.loading = false
                                 self.loadMore()
                             } else {
-                                self.loading = false
                                 self.delegate?.loadSuccess(before: before, count: self.content.count)
                             }
                         }
                     }
                 })
             } catch {
+                loading = false
                 print(error)
             }
         }

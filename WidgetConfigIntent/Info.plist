@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Slide Widgets</string>
+	<string>WidgetConfigIntent</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,13 +22,22 @@
 	<string>192</string>
 	<key>NSExtension</key>
 	<dict>
-		<key>IntentsSupported</key>
-		<array>
-			<string>TimelineSubreddit</string>
-			<string>SingleSubreddit</string>
-		</array>
+		<key>NSExtensionAttributes</key>
+		<dict>
+			<key>IntentsRestrictedWhileLocked</key>
+			<array/>
+			<key>IntentsRestrictedWhileProtectedDataUnavailable</key>
+			<array/>
+			<key>IntentsSupported</key>
+			<array>
+				<string>SingleSubredditIntent</string>
+				<string>TimelineSubredditIntent</string>
+			</array>
+		</dict>
 		<key>NSExtensionPointIdentifier</key>
-		<string>com.apple.widgetkit-extension</string>
+		<string>com.apple.intents-service</string>
+		<key>NSExtensionPrincipalClass</key>
+		<string>$(PRODUCT_MODULE_NAME).IntentHandler</string>
 	</dict>
 	<key>USR_DOMAIN</key>
 	<string>${USR_DOMAIN}</string>

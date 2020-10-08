@@ -97,16 +97,17 @@ public class AutoCache: NSObject {
 
                     if !comments.isEmpty {
                         do {
-                            let realm = try! Realm()
-                            realm.beginWrite()
-                            for comment in comments {
-                                realm.create(type(of: content[comment]!), value: content[comment]!, update: .all)
-                                if content[comment]! is RComment {
-                                    link.comments.append(content[comment] as! RComment)
+                            if let realm = try? Realm() {
+                                realm.beginWrite()
+                                for comment in comments {
+                                    realm.create(type(of: content[comment]!), value: content[comment]!, update: .all)
+                                    if content[comment]! is RComment {
+                                        link.comments.append(content[comment] as! RComment)
+                                    }
                                 }
+                                realm.create(type(of: link), value: link, update: .all)
+                                try realm.commitWrite()
                             }
-                            realm.create(type(of: link), value: link, update: .all)
-                            try realm.commitWrite()
                         } catch {
 
                         }

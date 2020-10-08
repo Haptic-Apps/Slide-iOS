@@ -42,6 +42,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     var cacheCell: UITableViewCell = InsetCell()
     var backupCell: UITableViewCell = InsetCell()
     var gestureCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "gestures")
+    var widgetsCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "widgets")
     var autoPlayCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "autoplay")
     var tagsCell: UITableViewCell = InsetCell()
     var audioSettings = InsetCell()
@@ -289,6 +290,16 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.gestureCell.detailTextLabel?.text = "Swipe and tap gestures for submissions and comments"
         self.gestureCell.detailTextLabel?.numberOfLines = 0
 
+        self.widgetsCell.textLabel?.text = "Widgets"
+        self.widgetsCell.accessoryType = .disclosureIndicator
+        self.widgetsCell.backgroundColor = ColorUtil.theme.foregroundColor
+        self.widgetsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.imageView?.image = UIImage(sfString: .squareGrid2x2, overrideString: "gestures")?.toolbarIcon()
+        self.widgetsCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.widgetsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.detailTextLabel?.text = "Create subreddit lists for Slide widgets"
+        self.widgetsCell.detailTextLabel?.numberOfLines = 0
+
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
         self.cacheCell.backgroundColor = ColorUtil.theme.foregroundColor
@@ -533,6 +544,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 3: cell = self.lockCell
             case 4: cell = self.subIconsCell
             case 5: cell = self.gestureCell
+            case 6: cell = self.widgetsCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -545,7 +557,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 4: cell = self.lockCell
             case 5: cell = self.subIconsCell
             case 6: cell = self.gestureCell
-                
+            case 7: cell = self.widgetsCell
+
             default: fatalError("Unknown row in section 0")
             }
         }
@@ -666,7 +679,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 6:
                 if !SettingValues.isPro {
                     ch = SettingsGestures()
+                } else {
+                    ch = SettingsWidget()
                 }
+            case 7:
+                ch = SettingsWidget()
             default:
                 break
             }
@@ -863,8 +880,12 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var iOS14 = false
+        if #available(iOS 14.0, *) {
+            iOS14 = true
+        }
         switch section {
-        case 0: return (SettingValues.isPro) ? 6 : 7
+        case 0: return ((SettingValues.isPro) ? 6 : 7) + (iOS14 ? 1 : 0)
         case 1: return 10
         case 2: return 9
         case 3: return 5

@@ -103,7 +103,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.icons.detailTextLabel?.numberOfLines = 0
         self.icons.backgroundColor = ColorUtil.theme.foregroundColor
         self.icons.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.icons.imageView?.image = UIImage(named: "ic_retroapple")
+        self.icons.imageView?.image = UIImage(named: "ic_retroapple")?.getCopy(withSize: CGSize(width: 25, height: 25))
         self.icons.imageView?.layer.cornerRadius = 10
         self.icons.imageView?.clipsToBounds = true
         self.icons.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -149,9 +149,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.font = UIFont.systemFont(ofSize: 15)
         aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
         about.textColor = ColorUtil.theme.fontColor
-        about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\nYour support keeps this project going, and helps feed my coffee addiction 😀\n-Carlos"
+        about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\n\nThis project wouldn't be possible without your support, as being ad and tracker free is core to Slide's mission.\n-Carlos"
         about.numberOfLines = 0
-        about.textAlignment = .center
+        about.textAlignment = .left
         about.lineBreakMode = .byClipping
         about.sizeToFit()
         
