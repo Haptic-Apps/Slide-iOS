@@ -130,5 +130,8 @@ final class NetworkMonitor {
 
 // Online Notification Name
 extension Notification.Name {
+    /// Main Network Manager Notification Name.
     static let online = Notification.Name("onlineNotification")
+    /// Fallback Network Manager Notification Name.
+    static let fallbackOnline = Notification.Name("fallbackOnlineNotification")
 }
