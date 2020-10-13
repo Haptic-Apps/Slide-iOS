@@ -239,6 +239,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         // Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(fallbackOnlineChanged(_:)), name: .fallbackOnline, object: nil)
     }
     
     func reTheme() {
@@ -891,8 +892,23 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
      */
     @objc private func onlineStatusChanged(_ notification: Notification) {
         if let online = notification.userInfo?["online"] as? Bool {
-            if online == true {
-            } else {
+            switch online {
+                case true:
+                    print("Online")
+                case false:
+                    print("Offline")
+            }
+        }
+    }
+    
+    //
+    @objc private func fallbackOnlineChanged(_ notification: Notification) {
+        if let fallbackOnline = notification.userInfo?["fallbackOnline"] as? Bool {
+            switch fallbackOnline {
+                case true:
+                    print("Fallback Online")
+                case false:
+                    print("Fallback Offline")
             }
         }
     }

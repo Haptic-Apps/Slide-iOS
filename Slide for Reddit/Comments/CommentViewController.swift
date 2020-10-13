@@ -341,6 +341,7 @@ class CommentViewController: MediaViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(fallbackOnlineStatusChanged(_:)), name: .fallbackOnline, object: nil)
 
         headerCell = FullLinkCellView()
         headerCell!.del = self
@@ -881,7 +882,7 @@ class CommentViewController: MediaViewController {
         return self
     }
     
-    // MARK: - Online Action
+    // MARK: - Network Monitor Actions
     /**
      Notification action called when online status changes.
      - Parameters:
@@ -898,6 +899,19 @@ class CommentViewController: MediaViewController {
                     }
                 case false:
                     loadOffline()
+            }
+        }
+    }
+    
+    //
+    @objc private func fallbackOnlineStatusChanged(_ notification: Notification) {
+        if let fallbackOnline = notification.userInfo?["fallbackOnline"] as? Bool {
+            switch fallbackOnline {
+                case true:
+                    print("Fallback Online.")
+                case false:
+                    print("Fallback Offline.")
+                    print("Or error.")
             }
         }
     }

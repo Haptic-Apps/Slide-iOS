@@ -96,7 +96,6 @@ final class NetworkMonitor {
         pathMonitor?.start(queue: networkQueue)
         // Handler which updates anytime changes happen with Network.
         pathMonitor?.pathUpdateHandler = { [weak self] path in
-            print("Online: \(path.status == .satisfied)")
             // Sets value to Online Property
             self?.online = (path.status == .satisfied)
             // Online Dictionary
