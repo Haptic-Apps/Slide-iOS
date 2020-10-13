@@ -2882,7 +2882,7 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide-debug";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -2922,7 +2922,7 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide-debug";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide 2020";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -3092,7 +3092,7 @@
 				MARKETING_VERSION = 6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.debug.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
