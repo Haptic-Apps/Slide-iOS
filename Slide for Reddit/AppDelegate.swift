@@ -447,7 +447,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func doHard(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                let splitViewController = UISplitViewController()
+                let splitViewController = NoHomebarSplitViewController()
                 splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
                 
@@ -461,7 +461,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 window.makeKeyAndVisible()
                 return main
             } else {
-                let splitViewController = UISplitViewController()
+                let splitViewController = NoHomebarSplitViewController()
                 splitViewController.preferredDisplayMode = .automatic
                 splitViewController.presentsWithGesture = true
                 
@@ -479,7 +479,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             }
         } else {
-            let splitViewController = UISplitViewController()
+            let splitViewController = NoHomebarSplitViewController()
             splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
 
@@ -507,7 +507,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else if let oldSplit = window.rootViewController as? UISplitViewController {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                    let splitViewController = UISplitViewController(style: .doubleColumn)
+                    let splitViewController = NoHomebarSplitViewController(style: .doubleColumn)
                     splitViewController.preferredDisplayMode = .secondaryOnly
                     splitViewController.presentsWithGesture = true
                     splitViewController.preferredSplitBehavior = .overlay
@@ -534,7 +534,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                     return main
                 } else {
-                    let splitViewController = UISplitViewController(style: .tripleColumn)
+                    let splitViewController = NoHomebarSplitViewController(style: .tripleColumn)
                     splitViewController.preferredDisplayMode = .automatic
                     splitViewController.presentsWithGesture = true
                     splitViewController.preferredSplitBehavior = .automatic
@@ -576,7 +576,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func doHard14(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
             if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                let splitViewController = UISplitViewController(style: .doubleColumn)
+                let splitViewController = NoHomebarSplitViewController(style: .doubleColumn)
                 splitViewController.preferredDisplayMode = .secondaryOnly
                 splitViewController.presentsWithGesture = true
                 splitViewController.preferredSplitBehavior = .overlay
@@ -590,7 +590,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 window.makeKeyAndVisible()
                 return main
             } else {
-                let splitViewController = UISplitViewController(style: .tripleColumn)
+                let splitViewController = NoHomebarSplitViewController(style: .tripleColumn)
                 splitViewController.preferredDisplayMode = .automatic
                 splitViewController.presentsWithGesture = true
                 splitViewController.preferredSplitBehavior = .automatic
@@ -612,7 +612,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             }
         } else {
-            let splitViewController = UISplitViewController()
+            let splitViewController = NoHomebarSplitViewController()
             splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
             
@@ -1390,5 +1390,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
             }
         }
+    }
+}
+
+class NoHomebarSplitViewController: UISplitViewController {
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
     }
 }

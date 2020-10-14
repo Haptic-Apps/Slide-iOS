@@ -102,6 +102,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
 
     var alertController: UIAlertController?
     var tempToken: OAuth2Token?
@@ -109,7 +113,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var currentTitle = "Slide"
 
     //MARK: - Shared functions
-    
     func didUpdate() {
         let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
         suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
@@ -693,7 +696,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             let settings = UserDefaults.standard
                             settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
                             settings.set(storedTitle, forKey: "vtitle")
-                            settings.set(submissions[0], forKey: "vlink")
+                            settings.set(storedLink, forKey: "vlink")
                             /* disable for now DispatchQueue.main.async {
                                 SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
                             }*/

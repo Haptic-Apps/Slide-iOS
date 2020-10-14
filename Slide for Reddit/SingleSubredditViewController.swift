@@ -36,6 +36,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         return tableView
     }
     
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
+
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
     }
@@ -1016,55 +1024,48 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         self.dataSource.getData(reload: true)
                                     }
                                     self.loadBubbles()
-                                } else {
-                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
-                                        let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
-                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { [weak self] (_) in
-                                            guard let self = self else { return }
-
-                                            self.navigationController?.popViewController(animated: true)
-                                            self.dismiss(animated: true, completion: nil)
-                                            
-                                        }))
-                                        self.present(alert, animated: true, completion: nil)
-                                    }
-                                    
                                 }
                             }
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
                                 //TODO: Hook into Shortcuts
-                                if !self.subInfo!.over18 {
+                                if self.subInfo != nil {
+                                    if !self.subInfo!.over18 {
 
-                                }
-                                if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
-                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                        let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
-                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
-                                            self.navigationController?.popViewController(animated: true)
-                                            self.dismiss(animated: true, completion: nil)
-                                        }))
-                                        self.present(alert, animated: true, completion: nil)
                                     }
-                                } else {
-                                    if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
-                                        //self.menuNav?.setSubredditObject(subreddit: r)
+                                    if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
+                                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                            let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
+                                            alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                                self.navigationController?.popViewController(animated: true)
+                                                self.dismiss(animated: true, completion: nil)
+                                            }))
+                                            self.present(alert, animated: true, completion: nil)
+                                        }
+                                    } else {
+                                        if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
+                                            //self.menuNav?.setSubredditObject(subreddit: r)
 
-                                        if SettingValues.saveHistory {
-                                            if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
-                                                Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
-                                            } else if !self.subInfo!.over18 {
-                                                Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                            if SettingValues.saveHistory {
+                                                if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
+                                                    Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                                } else if !self.subInfo!.over18 {
+                                                    Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                                }
                                             }
                                         }
+                                        if !self.dataSource.loaded {
+                                            self.dataSource.getData(reload: true)
+                                        }
+                                        self.loadBubbles()
                                     }
+                                } else {
                                     if !self.dataSource.loaded {
                                         self.dataSource.getData(reload: true)
                                     }
                                     self.loadBubbles()
                                 }
-                                
                             }
                         }
                     })

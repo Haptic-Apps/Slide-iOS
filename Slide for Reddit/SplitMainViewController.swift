@@ -30,6 +30,15 @@ class SplitMainViewController: MainViewController {
     override func handleToolbars() {
     }
     
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
+
+
     override func redoSubs() {
         setupTabBar(finalSubs)
     }

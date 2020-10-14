@@ -31,6 +31,14 @@ class NavigationHomeViewController: UIViewController {
     static var edgeGesture: UIPanGestureRecognizer?
 
     var subsSource = SubscribedSubredditsSectionProvider()
+    
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
 
     var headerView = UIView()
     

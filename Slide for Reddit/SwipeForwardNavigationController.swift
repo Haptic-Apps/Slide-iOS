@@ -21,6 +21,14 @@ class SwipeForwardNavigationController: UINavigationController {
     public var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
 
     var pushAnimatedTransitioningClass: SwipeForwardAnimatedTransitioning?
+    
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
 
     override init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
         super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
@@ -86,7 +94,12 @@ class SwipeForwardNavigationController: UINavigationController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
-        pushableViewControllers.removeAll()
+        if let first = pushableViewControllers.first as? SplitMainViewController {
+            pushableViewControllers.removeAll()
+            pushableViewControllers.append(first)
+        } else {
+            pushableViewControllers.removeAll()
+        }
     }
 
     @objc func handleRightSwipe(_ swipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?) {

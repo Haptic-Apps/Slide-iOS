@@ -256,23 +256,23 @@ class SubmissionsDataSource {
                         self.content += values
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
-                        do {
-                            let realm = try Realm()
-                           // TODO: - insert
-                            realm.beginWrite()
-                            for submission in self.content {
-                                if submission.author != "PAGE_SEPARATOR" {
-                                    realm.create(type(of: submission), value: submission, update: .all)
-                                    if let listing = self.realmListing {
-                                        listing.links.append(submission)
+                        if let realmListing = self.realmListing {
+                            do {
+                                let realm = try Realm()
+                               // TODO: - insert
+                                realm.beginWrite()
+                                for submission in self.content {
+                                    if submission.author != "PAGE_SEPARATOR" {
+                                        realm.create(type(of: submission), value: submission, update: .all)
+                                        realmListing.links.append(submission)
                                     }
                                 }
-                            }
-                            
-                            try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
-                            try realm.commitWrite()
-                        } catch {
+                                
+                                try realm.create(type(of: realmListing), value: realmListing, update: .all)
+                                try realm.commitWrite()
+                            } catch {
 
+                            }
                         }
                             
                         DispatchQueue.main.async { [weak self] in
