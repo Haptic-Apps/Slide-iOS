@@ -1768,13 +1768,11 @@
 					BE20851021588F3900D8F33C = {
 						CreatedOnToolsVersion = 10.0;
 						DevelopmentTeam = FTT89576VQ;
-						ProvisioningStyle = Automatic;
 					};
 					BE20851C21588F3A00D8F33C = {
 						CreatedOnToolsVersion = 10.0;
 						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
-						ProvisioningStyle = Automatic;
 					};
 					BE257A6A21F64AA30082A47E = {
 						CreatedOnToolsVersion = 10.1;
@@ -2537,7 +2535,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
@@ -2570,7 +2568,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
@@ -2604,7 +2602,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
@@ -2634,24 +2632,24 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
 				MARKETING_VERSION = 6;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwatchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwatchkitapp";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.bundledwatchkitapp";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
@@ -2665,7 +2663,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
@@ -2696,10 +2694,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				DEVELOPMENT_TEAM = FTT89576VQ;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 194;
+				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2709,14 +2707,14 @@
 				);
 				MARKETING_VERSION = 6;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwatchkitapp.watchkitextension;
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwatchkitapp.watchkitextension";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.bundledwatchkitapp";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
@@ -2732,7 +2730,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -2764,7 +2762,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -2903,7 +2901,7 @@
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = Slide;
 				USR_DOMAIN = ccrama.me;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.bundledwatchkitapp.watchkitextension";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide.watchkitapp.watchkitextension";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -2919,7 +2917,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
@@ -2957,7 +2955,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -3134,7 +3132,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3169,7 +3167,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
+				CURRENT_PROJECT_VERSION = 194;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
