@@ -132,7 +132,11 @@ public extension String {
     
     func initialsFirstAndLast() -> String {
         let words = self.components(separatedBy: " ")
-        return words.reduce("") { ($0 == "" ? "" : String($0[startIndex...startIndex])) + $1[startIndex...startIndex] }
+        return words.reduce("") { x, y in
+            let component1 = x == "" ? "" : String(x[startIndex...startIndex])
+            return component1 + y[startIndex...startIndex]
+
+        }
     }
     
     func isAlpha() -> Bool {

@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import reddift
 import SDWebImage
 import SwiftLinkPreview
 import UIKit
@@ -17,44 +18,28 @@ class AlertMenuAction: NSObject {
     var action: () -> Void
     var enabled = true
     var isInput = false
+    var primary = true
     
-    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true) {
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true, primary: Bool = true) {
         self.title = title
         self.icon = icon
         self.action = action
         self.enabled = enabled
+        self.primary = primary
     }
 }
 
 class AlertMenuInputAction: AlertMenuAction {
-    var inputField: UITextField
     var exitOnAction: Bool
     var textRequired: Bool
 
-    init(title: String, icon: UIImage?, action: @escaping () -> Void, inputField: UITextField, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, inputValue: String?, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool) {
-        self.inputField = inputField
+    init(title: String, icon: UIImage?, action: @escaping () -> Void, enabled: Bool = true, inputIcon: UIImage, inputPlaceholder: String, inputValue: String?, accentColor: UIColor, exitOnAction: Bool, textRequired: Bool) {
         self.exitOnAction = exitOnAction
         self.textRequired = textRequired
         super.init(title: title, icon: icon, action: action)
-        inputField.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: accentColor, placeholder: inputPlaceholder)
-        inputField.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
-        inputField.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
-        inputField.text = inputValue
+        
         self.isInput = true
-
         self.enabled = textRequired
-    }
-    
-    @objc func textChanged(_ textField: UITextField) {
-        self.enabled = !(textField.text?.isEmpty ?? true)
-    }
-    
-    @objc func done(_ textField: UITextField) {
-        if let text = textField.text {
-            if !text.isEmpty && exitOnAction {
-                action()
-            }
-        }
     }
 }
 
@@ -125,6 +110,10 @@ class BottomActionCell: UITableViewCell {
             self.background.alpha = 0.5
             self.title.alpha = 0.5
             self.icon.alpha = 0.5
+        } else if !action.primary {
+            self.background.alpha = 0.6
+            self.title.alpha = 0.6
+            self.icon.alpha = 0.6
         } else {
             self.isUserInteractionEnabled = true
             self.background.alpha = 1
@@ -191,6 +180,14 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var full = false
     var hasInput = false
     var extraView: UIView?
+    
+    var isSearch = false
+    var searchSubreddit = ""
+    var isSearchComplete = false
+    var results = [RSubmission]()
+    var timer: Timer?
+    var isSearching = false
+    var taskSearch: URLSessionDataTask?
 
     init(title: String, subtitle: String, icon: String?, extraView: UIView? = nil, themeColor: UIColor? = nil, full: Bool = false) {
         self.descriptor = title
@@ -223,39 +220,97 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         vc!.present(self, animated: true, completion: nil)
     }
     
+    func setSearch(_ subreddit: String) {
+        self.isSearch = true
+        self.searchSubreddit = subreddit
+    }
+    
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         self.headerView = view
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        timer?.invalidate()
+        taskSearch?.cancel()
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        actions = []
     }
     
     func stylize() {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.register(BottomActionCell.classForCoder(), forCellReuseIdentifier: "action")
+        self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "loading")
+        self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
         self.tableView.separatorStyle = .none
     }
     
-    func addAction(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void) {
-        actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled))
+    func addAction(title: String, icon: UIImage?, enabled: Bool = true, primary: Bool = true, action: @escaping () -> Void) {
+        actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled, primary: primary))
     }
     
     func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputValue: String? = nil, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {
         let input = InsetTextField()
         
-        actions.append(AlertMenuInputAction(title: title, icon: icon, action: {
-            self.dismiss(animated: true) {
-                action()
-            }
-        }, inputField: input, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
+        input.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: themeColor ?? ColorUtil.theme.fontColor, placeholder: inputPlaceholder)
+        input.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
+        input.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
+        input.text = inputValue
+
+        actions.append(AlertMenuInputAction(title: title, icon: icon, action: action, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
         
         textFields.append(input)
         hasInput = true
     }
     
+    @objc func textChanged(_ textField: UITextField) {
+        actions[0].enabled = !(textField.text?.isEmpty ?? true)
+        textFieldDidChange(textField: textField)
+    }
+    
+    @objc func done(_ textField: UITextField) {
+        guard let firstAction = actions[0] as? AlertMenuInputAction else { return }
+        if let text = textField.text {
+            if !text.isEmpty && firstAction.exitOnAction {
+                firstAction.action()
+            }
+        }
+    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = actions[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
-        cell.setAction(action: item, color: themeColor)
-        return cell
+        if indexPath.row < actions.count {
+            let item = actions[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
+            cell.setAction(action: item, color: themeColor)
+            if isSearch {
+                cell.backgroundColor = ColorUtil.theme.backgroundColor
+                cell.accessoryType = .disclosureIndicator
+            }
+            return cell
+        } else if isSearch {
+            var cell: SubredditCellView
+            if isSearchComplete {
+                let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
+                c.setResults(subreddit: "", nav: self, results: results, complete: isSearchComplete)
+                cell = c
+                if isSearchComplete && results.count > 0 {
+                    cell.loader?.removeFromSuperview()
+                    cell.loader = nil
+                }
+            } else {
+                let c = tableView.dequeueReusableCell(withIdentifier: "loading", for: indexPath) as! SubredditCellView
+                c.setResults(subreddit: "", nav: self, results: nil, complete: false)
+                cell = c
+            }
+            return cell
+        }
+        return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -284,7 +339,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return indexPath.row < actions.count ? 60 : (isSearchComplete ? 158 : 60)
     }
     
     var height = CGFloat.zero
@@ -309,10 +364,16 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         let maxHeight: CGFloat
         if full {
             maxHeight = UIScreen.main.bounds.height - 80
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60))
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60 + (extraView != nil ? 40 : 0)))
+            if isSearch {
+                height += 158
+            }
         } else {
             maxHeight = UIScreen.main.bounds.height * (2 / 3)
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60))
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60 + (extraView != nil ? 40 : 0)))
+            if isSearch {
+                height += 158
+            }
         }
         if height < maxHeight {
             tableView.isScrollEnabled = false
@@ -325,35 +386,25 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
 
         // Focus the title for accessibility users
         UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: descriptor)
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillShow),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillHide),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
+    var keyboardHeightFound = false
     @objc func keyboardWillShow(_ notification: Notification) {
+        if keyboardHeightFound {
+            return
+        }
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
-            self.view.frame.origin.y -= keyboardHeight
+            if keyboardHeight != 0 {
+                self.view.frame.origin.y -= keyboardHeight
+                keyboardHeightFound = true
+            }
         }
     }
     
     @objc func keyboardWillHide(_ notification: Notification) {
+        keyboardHeightFound = false
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             let keyboardHeight = keyboardRectangle.height
@@ -518,11 +569,80 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return actions.count
+        return actions.count + (isSearch && isSearching ? 1 : 0)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+}
+
+extension DragDownAlertMenu {
+    
+    @objc func textFieldDidChange(textField: UITextField) {
+        timer?.invalidate()
+        isSearchComplete = false
+        results = []
+        if (textField.text ?? "").length >= 3 {
+            isSearching = true
+        } else {
+            isSearching = false
+        }
+        
+        tableView.reloadData()
+        
+        if (textField.text ?? "").count >= 3 {
+            timer = Timer.scheduledTimer(timeInterval: 0.35,
+                                         target: self,
+                                         selector: #selector(self.getSuggestions(_:)),
+                                         userInfo: textField,
+                                         repeats: false)
+        }
+    }
+
+    @objc func getSuggestions(_ timer: Timer) {
+        guard let textView = timer.userInfo as? UITextField else { return }
+        
+        if taskSearch != nil {
+            taskSearch?.cancel()
+        }
+        isSearchComplete = false
+        do {
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+                switch result {
+                case .failure:
+                    print(result.error!)
+                    DispatchQueue.main.async {
+                        self.isSearchComplete = true
+                        self.tableView.reloadData()
+                    }
+                case .success(let listing):
+                    self.results = []
+                    for item in listing.children.compactMap({ $0 }) {
+                        if item is Comment {
+                        } else if self.results.count < 10 {
+                            self.results.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        self.isSearchComplete = true
+                        self.tableView.reloadData()
+                    }
+                }
+            })
+        }
     }
 }
 
@@ -769,5 +889,4 @@ class DragDownDismissInteraction: UIPercentDrivenInteractiveTransition, UIGestur
             break
         }
     }
-    
 }

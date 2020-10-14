@@ -99,7 +99,6 @@ class SubredditReorderViewController: UITableViewController {
         self.navigationItem.rightBarButtonItems = normalItems
 
         self.tableView.tableFooterView = UIView()
-
     }
 
     @objc func close(_ sender: AnyObject?) {
@@ -117,6 +116,13 @@ class SubredditReorderViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         save(nil)
+        enableDismissalRecognizers()
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
+        }
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        }
     }
 
     override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -127,7 +133,6 @@ class SubredditReorderViewController: UITableViewController {
         SubredditReorderViewController.changed = true
         Subscriptions.setPinned(name: AccountController.currentName, subs: pinned, completion: {
             Subscriptions.set(name: AccountController.currentName, subs: self.subs, completion: {
-                self.dismiss(animated: true, completion: nil)
             })
         })
     }
@@ -145,7 +150,7 @@ class SubredditReorderViewController: UITableViewController {
 
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
-                    let indexPath = IndexPath.init(row: self.subs.count - 1, section: self.pinned.isEmpty ? 0 : 1)
+                    let indexPath = IndexPath.init(row: self.subs.indexes(of: sub)[0], section: self.pinned.isEmpty ? 0 : 1)
                     self.tableView.scrollToRow(at: indexPath,
                                                at: UITableView.ScrollPosition.top, animated: true)
                 }
@@ -349,6 +354,17 @@ class SubredditReorderViewController: UITableViewController {
         self.tableView.separatorStyle = .none
         setupBaseBarColors()
         self.title = "Manage subscriptions"
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
+        disableDismissalRecognizers()
     }
     
     private func refreshListActionButtons() {

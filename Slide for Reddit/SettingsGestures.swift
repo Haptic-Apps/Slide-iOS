@@ -10,12 +10,6 @@ import Anchorage
 import UIKit
 
 class SettingsGestures: BubbleSettingTableViewController {
-    
-    var submissionGesturesCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "subs")
-    var submissionGestures = UISwitch().then {
-        $0.onTintColor = ColorUtil.baseAccent
-    }
-    
     var disableBannerCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "banner")
     var disableBanner = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -25,21 +19,11 @@ class SettingsGestures: BubbleSettingTableViewController {
 
     var commentGesturesCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "comments")
 
-    var rightLeftActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "left")
-
-    var rightRightActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "right")
-
-    var leftLeftActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "left")
-    
-    var leftRightActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "right")
+    var submissionGesturesCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "submission")
 
     var doubleTapActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "dtap")
 
     var doubleTapSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "dtaps")
-
-    var leftSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "leftsub")
-
-    var rightSubActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "rightsub")
     
     var forceTouchActionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dcomment")
 
@@ -55,10 +39,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     @objc func switchIsChanged(_ changed: UISwitch) {
-        if changed == submissionGestures {
-            SettingValues.submissionGesturesEnabled = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_submissionGesturesEnabled)
-        } else if changed == disableBanner {
+        if changed == disableBanner {
             SettingValues.disableBanner = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableBanner)
             SubredditReorderViewController.changed = true
@@ -69,7 +50,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func showCommentGesturesMenu() {
-        let alertController = DragDownAlertMenu(title: "Comment gesture mode", subtitle: "This setting changes the comment swipe gesture", icon: nil)
+        let alertController = DragDownAlertMenu(title: "Comment gesture mode", subtitle: "Full gestures mode will require two fingers to swipe between pages", icon: nil)
         
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
@@ -79,6 +60,23 @@ class SettingsGestures: BubbleSettingTableViewController {
                 SettingValues.commentGesturesMode = item
                 UserDefaults.standard.synchronize()
                 self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
+                self.updateCells()
+            }
+        }
+        alertController.show(self)
+    }
+
+    func showSubmissionGesturesMenu() {
+        let alertController = DragDownAlertMenu(title: "Submission gesture mode", subtitle: "Full gestures mode will require two fingers to swipe between pages", icon: nil)
+        
+        let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
+
+        for item in SettingValues.CommentGesturesMode.cases {
+            alertController.addAction(title: item.description(), icon: item == SettingValues.submissionGestureMode ? selected : UIImage()) {
+                UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_submissionGesturesMode)
+                SettingValues.submissionGestureMode = item
+                UserDefaults.standard.synchronize()
+                self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
                 self.updateCells()
             }
         }
@@ -107,22 +105,16 @@ class SettingsGestures: BubbleSettingTableViewController {
             showCommentGesturesMenu()
             return
         }
-        
-        if indexPath.section == 2 {
-            showShortcutActionsMenu()
+
+        if indexPath.row == 0 && indexPath.section == 0 {
+            showSubmissionGesturesMenu()
             return
         }
-        
-        if indexPath.row == 2 && indexPath.section == 0 {
+
+        if indexPath.row == 3 && indexPath.section == 0 {
             showActionSub(cell: doubleTapSubActionCell)
             return
-        } else if indexPath.row == 3 && indexPath.section == 0 {
-            showActionSub(cell: leftSubActionCell)
-            return
         } else if indexPath.row == 4 && indexPath.section == 0 {
-            showActionSub(cell: rightSubActionCell)
-            return
-        } else if indexPath.row == 5 && indexPath.section == 0 {
             showActionSub(cell: forceTouchSubmissionCell)
             return
         }
@@ -130,17 +122,10 @@ class SettingsGestures: BubbleSettingTableViewController {
         if indexPath.section != 1 {
             return
         }
-        if indexPath.row == 1 {
-            showAction(cell: rightRightActionCell)
-        } else if indexPath.row == 2 {
-            showAction(cell: rightLeftActionCell)
-        } else if indexPath.row == 3 {
-            showAction(cell: leftLeftActionCell)
-        } else if indexPath.row == 4 {
-            showAction(cell: leftRightActionCell)
-        } else if indexPath.row == 5 {
+        
+        if indexPath.row == 2 {
             showAction(cell: doubleTapActionCell)
-        } else if indexPath.row == 6 {
+        } else if indexPath.row == 3 {
             showAction(cell: forceTouchActionCell)
         }
     }
@@ -151,19 +136,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         let alertController = DragDownAlertMenu(title: "Select a comment gesture", subtitle: type, icon: nil)
         for action in cell == self.forceTouchActionCell ? SettingValues.CommentAction.cases3D : SettingValues.CommentAction.cases {
             alertController.addAction(title: action.getTitle(), icon: UIImage(named: action.getPhoto())!.menuIcon()) {
-                if cell == self.leftRightActionCell {
-                    SettingValues.commentActionLeftRight = action
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
-                } else if cell == self.rightRightActionCell {
-                    SettingValues.commentActionRightRight = action
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightRight)
-                } else if cell == self.leftLeftActionCell {
-                    SettingValues.commentActionLeftLeft = action
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftLeft)
-                } else if cell == self.rightLeftActionCell {
-                    SettingValues.commentActionRightLeft = action
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
-                } else if cell == self.forceTouchActionCell {
+                if cell == self.forceTouchActionCell {
                     SettingValues.commentActionForceTouch = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionForceTouch)
                 } else {
@@ -186,12 +159,6 @@ class SettingsGestures: BubbleSettingTableViewController {
                 if cell == self.doubleTapSubActionCell {
                     SettingValues.submissionActionDoubleTap = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionDoubleTap)
-                } else if cell == self.rightSubActionCell {
-                    SettingValues.submissionActionRight = action
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionRight)
-                } else if cell == self.leftSubActionCell {
-                    SettingValues.submissionActionLeft = action
-                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
                 } else if cell == self.forceTouchSubmissionCell {
                     SettingValues.submissionActionForceTouch = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionForceTouch)
@@ -226,13 +193,14 @@ class SettingsGestures: BubbleSettingTableViewController {
         // set the title
         self.title = "Gestures"
         self.headers = ["Submissions", "Comments", "Main view edge shortcut"]
-        createCell(submissionGesturesCell, submissionGestures, isOn: SettingValues.submissionGesturesEnabled, text: "Enable submission gestures")
+        createCell(submissionGesturesCell, nil, isOn: false, text: "Submission gestures mode")
         self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.submissionGesturesCell.detailTextLabel?.numberOfLines = 0
-        self.submissionGesturesCell.detailTextLabel?.text = "Enabling submission gestures will require two fingers to swipe between subreddits in the main view"
+        self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
         self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-        
+        self.submissionGesturesCell.accessoryType = .disclosureIndicator
+
         createCell(disableBannerCell, disableBanner, isOn: SettingValues.disableBanner, text: "Open comments from banner image")
         self.disableBannerCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.disableBannerCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -247,6 +215,9 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
         self.commentGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.commentGesturesCell.accessoryType = .disclosureIndicator
+        
+        self.tableView.register(GesturePreviewCell.classForCoder(), forCellReuseIdentifier: "submissiongesturepreview")
+        self.tableView.register(GesturePreviewCell.classForCoder(), forCellReuseIdentifier: "commentgesturepreview")
 
         updateCells()
         self.tableView.tableFooterView = UIView()
@@ -298,15 +269,9 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func updateCells() {
-        createCell(rightRightActionCell, nil, isOn: false, text: "First action swiping left to right")
-        createCell(rightLeftActionCell, nil, isOn: false, text: "Second action swiping left to right")
-        createCell(leftLeftActionCell, nil, isOn: false, text: "First action swiping right to left")
-        createCell(leftRightActionCell, nil, isOn: false, text: "Second action swiping right to left")
         createCell(doubleTapActionCell, nil, isOn: false, text: "Double tap comment action")
         createCell(forceTouchActionCell, nil, isOn: false, text: "3D-Touch comment action")
         createCell(doubleTapSubActionCell, nil, isOn: false, text: "Double tap submission action")
-        createCell(leftSubActionCell, nil, isOn: false, text: "Left submission swipe")
-        createCell(rightSubActionCell, nil, isOn: false, text: "Right submission swipe")
         createCell(forceTouchSubmissionCell, nil, isOn: false, text: "3D-Touch submission action")
         createCell(sideShortcutActionCell, nil, isOn: false, text: "Edge swipe shortcut")
 
@@ -316,34 +281,6 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.forceTouchSubmissionCell.detailTextLabel?.numberOfLines = 0
         self.forceTouchSubmissionCell.detailTextLabel?.text = SettingValues.submissionActionForceTouch == .NONE ? "Peek content" : SettingValues.submissionActionForceTouch.getTitle()
         self.forceTouchSubmissionCell.imageView?.layer.cornerRadius = 5
-
-        createLeftView(cell: rightRightActionCell, image: SettingValues.commentActionRightRight.getPhoto(), color: SettingValues.commentActionRightRight.getColor())
-        self.rightRightActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.rightRightActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.rightRightActionCell.detailTextLabel?.numberOfLines = 0
-        self.rightRightActionCell.detailTextLabel?.text = SettingValues.commentActionRightRight.getTitle()
-        self.rightRightActionCell.imageView?.layer.cornerRadius = 5
-
-        createLeftView(cell: rightLeftActionCell, image: SettingValues.commentActionRightLeft.getPhoto(), color: SettingValues.commentActionRightLeft.getColor())
-        self.rightLeftActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.rightLeftActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.rightLeftActionCell.detailTextLabel?.numberOfLines = 0
-        self.rightLeftActionCell.detailTextLabel?.text = SettingValues.commentActionRightLeft.getTitle()
-        self.rightLeftActionCell.imageView?.layer.cornerRadius = 5
-
-        createLeftView(cell: leftRightActionCell, image: SettingValues.commentActionLeftRight.getPhoto(), color: SettingValues.commentActionLeftRight.getColor())
-        self.leftRightActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.leftRightActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.leftRightActionCell.detailTextLabel?.numberOfLines = 0
-        self.leftRightActionCell.detailTextLabel?.text = SettingValues.commentActionLeftRight.getTitle()
-        self.leftRightActionCell.imageView?.layer.cornerRadius = 5
-
-        createLeftView(cell: leftLeftActionCell, image: SettingValues.commentActionLeftLeft.getPhoto(), color: SettingValues.commentActionLeftLeft.getColor())
-        self.leftLeftActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.leftLeftActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.leftLeftActionCell.detailTextLabel?.numberOfLines = 0
-        self.leftLeftActionCell.detailTextLabel?.text = SettingValues.commentActionLeftLeft.getTitle()
-        self.leftLeftActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: doubleTapActionCell, image: SettingValues.commentActionDoubleTap.getPhoto(), color: SettingValues.commentActionDoubleTap.getColor())
         self.doubleTapActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -359,65 +296,24 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.forceTouchActionCell.detailTextLabel?.text = SettingValues.commentActionForceTouch.getTitle()
         self.forceTouchActionCell.imageView?.layer.cornerRadius = 5
 
-        createLeftView(cell: leftSubActionCell, image: SettingValues.submissionActionLeft.getPhoto(), color: SettingValues.submissionActionLeft.getColor())
-        self.leftSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.leftSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.leftSubActionCell.detailTextLabel?.numberOfLines = 0
-        self.leftSubActionCell.detailTextLabel?.text = SettingValues.submissionActionLeft.getTitle()
-        self.leftSubActionCell.imageView?.layer.cornerRadius = 5
-
-        createLeftView(cell: rightSubActionCell, image: SettingValues.submissionActionRight.getPhoto(), color: SettingValues.submissionActionRight.getColor())
-        self.rightSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.rightSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
-        self.rightSubActionCell.detailTextLabel?.numberOfLines = 0
-        self.rightSubActionCell.detailTextLabel?.text = SettingValues.submissionActionRight.getTitle()
-        self.rightSubActionCell.imageView?.layer.cornerRadius = 5
-
         createLeftView(cell: sideShortcutActionCell, image: SettingValues.sideGesture.getPhoto(), color: SettingValues.sideGesture.getColor())
         self.sideShortcutActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.sideShortcutActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.sideShortcutActionCell.detailTextLabel?.numberOfLines = 0
         self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.sideGesture.description()
         self.sideShortcutActionCell.imageView?.layer.cornerRadius = 5
+        
 
-        if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
-            self.rightRightActionCell.isUserInteractionEnabled = false
-            self.rightRightActionCell.contentView.alpha = 0.5
-            self.rightLeftActionCell.isUserInteractionEnabled = false
-            self.rightLeftActionCell.contentView.alpha = 0.5
-            self.leftRightActionCell.isUserInteractionEnabled = false
-            self.leftRightActionCell.contentView.alpha = 0.5
-            self.leftLeftActionCell.isUserInteractionEnabled = false
-            self.leftLeftActionCell.contentView.alpha = 0.5
-        } else {
-            self.rightRightActionCell.isUserInteractionEnabled = true
-            self.rightRightActionCell.contentView.alpha = 1
-            self.rightLeftActionCell.isUserInteractionEnabled = true
-            self.rightLeftActionCell.contentView.alpha = 1
-            self.leftRightActionCell.isUserInteractionEnabled = true
-            self.leftRightActionCell.contentView.alpha = 1
-            self.leftLeftActionCell.isUserInteractionEnabled = true
-            self.leftLeftActionCell.contentView.alpha = 1
-        }
-        
-        if !SettingValues.submissionGesturesEnabled {
-            self.leftSubActionCell.isUserInteractionEnabled = false
-            self.leftSubActionCell.contentView.alpha = 0.5
-            self.rightSubActionCell.isUserInteractionEnabled = false
-            self.rightSubActionCell.contentView.alpha = 0.5
-        } else {
-            self.leftSubActionCell.isUserInteractionEnabled = true
-            self.leftSubActionCell.contentView.alpha = 1
-            self.rightSubActionCell.isUserInteractionEnabled = true
-            self.rightSubActionCell.contentView.alpha = 1
-        }
-        
         createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
         self.doubleTapSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.doubleTapSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleTapSubActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
         self.doubleTapSubActionCell.imageView?.layer.cornerRadius = 5
+        
+        UIView.transition(with: tableView, duration: 0.2, options: .transitionCrossDissolve, animations: {
+            self.tableView.reloadData()
+        }, completion: nil)
     }
     
     func createLeftView(cell: UITableViewCell, image: String, color: UIColor) {
@@ -433,7 +329,7 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return indexPath.row == 0 && indexPath.section == 0 ? 100 : 70
+        return ((indexPath.section == 1 && indexPath.row == 1) || (indexPath.section == 0 && indexPath.row == 2)) ? 108 : 70
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -442,22 +338,24 @@ class SettingsGestures: BubbleSettingTableViewController {
             switch indexPath.row {
             case 0: return self.commentGesturesCell
             //case 1: return self.commentCell
-            case 1: return self.rightRightActionCell
-            case 2: return self.rightLeftActionCell
-            case 3: return self.leftLeftActionCell
-            case 4: return self.leftRightActionCell
-            case 5: return self.doubleTapActionCell
-            case 6: return self.forceTouchActionCell
+            case 1:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "commentgesturepreview", for: indexPath) as! GesturePreviewCell
+                cell.setup(comment: true, parent: self)
+                return cell
+            case 2: return self.doubleTapActionCell
+            case 3: return self.forceTouchActionCell
             default: fatalError("Unknown row in section 0")
             }
         case 0:
             switch indexPath.row {
             case 0: return self.submissionGesturesCell
             case 1: return self.disableBannerCell
-            case 2: return self.doubleTapSubActionCell
-            case 3: return self.leftSubActionCell
-            case 4: return self.rightSubActionCell
-            case 5: return self.forceTouchSubmissionCell
+            case 3: return self.doubleTapSubActionCell
+            case 2:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "submissiongesturepreview", for: indexPath) as! GesturePreviewCell
+                cell.setup(comment: false, parent: self)
+                return cell
+            case 4: return self.forceTouchSubmissionCell
             default: fatalError("Unknown row in section 0")
             }
         case 2:
@@ -469,8 +367,8 @@ class SettingsGestures: BubbleSettingTableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 5 + (canForceTouch ? 1 : 0)
-        case 1: return 6 + (canForceTouch ? 1 : 0)
+        case 1: return 3 + (canForceTouch ? 1 : 0)
+        case 0: return 4 + (canForceTouch ? 1 : 0)
         case 2: return 1
         default: fatalError("Unknown number of sections")
         }
@@ -487,4 +385,211 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
 	return input.rawValue
+}
+
+public class GesturePreviewCell: InsetCell {
+    
+    var didSetup = false
+    var comment = false
+    
+    weak var parentController: SettingsGestures?
+    
+    func setup(comment: Bool, parent: SettingsGestures) {
+        self.parentController = parent
+        if !didSetup {
+            self.comment = comment
+            didSetup = true
+            configureViews()
+            configureLayout()
+        }
+        
+        for view in left.subviews {
+            view.removeFromSuperview()
+        }
+        for view in right.subviews {
+            view.removeFromSuperview()
+        }
+
+        if comment {
+            right.addArrangedSubview(createGestureView(comment: SettingValues.commentActionLeftRight, enabled: SettingValues.commentGesturesMode != .NONE, action: {
+                self.showAction { (action) in
+                    SettingValues.commentActionLeftRight = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
+                    UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
+                    self.parentController?.updateCells()
+                }
+            }))
+            
+            right.addArrangedSubview(createGestureView(comment: SettingValues.commentActionLeftLeft, enabled: SettingValues.commentGesturesMode != .NONE, action: {
+                self.showAction { (action) in
+                    SettingValues.commentActionLeftLeft = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftLeft)
+                    UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
+                    self.parentController?.updateCells()
+                }
+            }))
+            
+            left.addArrangedSubview(createGestureView(comment: SettingValues.commentActionRightLeft, enabled: SettingValues.commentGesturesMode == .FULL, action: {
+                self.showAction { (action) in
+                    SettingValues.commentActionRightLeft = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
+                    UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
+                    self.parentController?.updateCells()
+                }
+            }))
+            left.addArrangedSubview(createGestureView(comment: SettingValues.commentActionRightRight, enabled: SettingValues.commentGesturesMode == .FULL, action: {
+                self.showAction { (action) in
+                    SettingValues.commentActionRightRight = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightRight)
+                    UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
+                    self.parentController?.updateCells()
+                }
+            }))
+        } else {
+            right.addArrangedSubview(createGestureView(submission: SettingValues.submissionActionLeft, enabled: SettingValues.submissionGestureMode != .NONE, action: {
+                self.showActionSub { (action) in
+                    SettingValues.submissionActionLeft = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
+                    SubredditReorderViewController.changed = true
+                    UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
+                    self.parentController?.updateCells()
+                }
+            }))
+            
+            left.addArrangedSubview(createGestureView(submission: SettingValues.submissionActionRight, enabled: SettingValues.submissionGestureMode == .FULL, action: {
+                self.showActionSub { (action) in
+                    SettingValues.submissionActionRight = action
+                    UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionRight)
+                    SubredditReorderViewController.changed = true
+                    UserDefaults.standard.synchronize()
+                    MainViewController.needsReTheme = true
+                    self.parentController?.updateCells()
+                }
+            }))
+        }
+        
+        left.layer.cornerRadius = 10
+        left.clipsToBounds = true
+        right.layer.cornerRadius = 10
+        right.clipsToBounds = true
+        
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.backgroundColor = ColorUtil.theme.foregroundColor
+    }
+    
+    func showAction(_ callback: @escaping (_ action: SettingValues.CommentAction) -> Void) {
+        let type = ""
+
+        let alertController = DragDownAlertMenu(title: "Select a comment gesture", subtitle: type, icon: nil)
+        for action in SettingValues.CommentAction.cases {
+            alertController.addAction(title: action.getTitle(), icon: UIImage(named: action.getPhoto())!.menuIcon()) {
+                callback(action)
+            }
+        }
+        alertController.show(parentController)
+    }
+    
+    func showActionSub(_ callback: @escaping (_ action: SettingValues.SubmissionAction) -> Void) {
+        let alertController = DragDownAlertMenu(title: "Select a submission gesture", subtitle: "", icon: nil)
+        
+        for action in SettingValues.SubmissionAction.cases {
+            alertController.addAction(title: action.getTitle(), icon: UIImage(named: action.getPhoto())!.menuIcon()) {
+                callback(action)
+            }
+        }
+        if let parent = parentController {
+            VCPresenter.presentAlert(alertController, parentVC: parent)
+        }
+    }
+
+    func createGestureView(comment: SettingValues.CommentAction, enabled: Bool, action: @escaping () -> Void) -> UIView {
+        let view = UIImageView()
+        view.contentMode = .center
+        if enabled {
+            view.backgroundColor = comment.getColor()
+            view.image = UIImage(named: comment.getPhoto())?.getCopy(withSize: CGSize.square(size: 40), withColor: UIColor.white)
+            view.addTapGestureRecognizer {
+                action()
+            }
+        } else {
+            view.backgroundColor = ColorUtil.theme.fontColor
+            view.image = nil
+            view.alpha = 0.5
+        }
+        view.heightAnchor == 100
+        view.widthAnchor == 75
+        
+        return view
+    }
+    
+    func createGestureView(submission: SettingValues.SubmissionAction, enabled: Bool, action: @escaping () -> Void) -> UIView {
+        let view = UIImageView()
+        view.contentMode = .center
+        if enabled {
+            view.backgroundColor = submission.getColor()
+            view.image = UIImage(named: submission.getPhoto())?.getCopy(withSize: CGSize.square(size: 40), withColor: UIColor.white)
+            view.addTapGestureRecognizer {
+                action()
+            }
+        } else {
+            view.backgroundColor = ColorUtil.theme.fontColor
+            view.image = nil
+            view.alpha = 0.5
+        }
+        view.heightAnchor == 100
+        view.widthAnchor == 75
+        
+        return view
+    }
+
+    var left = UIStackView()
+    var right = UIStackView()
+    var body = UIView()
+            
+    func configureViews() {
+        self.clipsToBounds = true
+        
+        self.body = UIView().then {
+            $0.layer.cornerRadius = 6
+            $0.clipsToBounds = true
+            $0.backgroundColor = ColorUtil.theme.backgroundColor
+        }
+        
+        self.left = UIStackView().then {
+            $0.axis = .horizontal
+            $0.spacing = 0
+        }
+
+        self.right = UIStackView().then {
+            $0.axis = .horizontal
+            $0.spacing = 0
+        }
+
+        self.contentView.addSubviews(left, right, body)
+    }
+    
+    func configureLayout() {
+        batch {
+            left.leftAnchor == contentView.leftAnchor + 8
+            body.leftAnchor == left.rightAnchor + 4
+            body.rightAnchor == right.leftAnchor - 4
+            right.rightAnchor == contentView.rightAnchor - 8
+            
+            left.heightAnchor == 100
+            right.heightAnchor == 100
+            body.heightAnchor == 12
+            
+            body.centerYAnchor == contentView.centerYAnchor
+            left.topAnchor == contentView.topAnchor + 4
+            right.topAnchor == contentView.topAnchor + 4
+            
+            left.bottomAnchor == contentView.bottomAnchor - 4
+            right.bottomAnchor == contentView.bottomAnchor - 4
+        }
+    }
 }

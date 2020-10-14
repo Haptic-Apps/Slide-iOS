@@ -13,11 +13,7 @@ import UIKit
 
 class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
-    var baseSubmissions: [RSubmission] = []
-    var paginator: Paginator
-    var sort: LinkSortType
-    var time: TimeFilterWithin
-    var subreddit: String
+    var submissionDataSource: SubmissionsDataSource
     var index: Int
 
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
@@ -50,25 +46,12 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
     }
     
-    public init(submissions: [RSubmission], subreddit: String, index: Int, paginator: Paginator, sort: LinkSortType, time: TimeFilterWithin) {
-        self.subreddit = subreddit
-        self.sort = sort
-        self.time = time
+    public init(index: Int, submissionDataSource: SubmissionsDataSource) {
+        
+        self.submissionDataSource = submissionDataSource
         self.index = index
-        self.paginator = paginator
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         
-        self.baseSubmissions = submissions
-        
-        let s = baseSubmissions[index]
-        let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
-        currentVc = firstViewController
-        (currentVc as! ShadowboxLinkViewController).populateContent()
-        
-        self.setViewControllers([firstViewController],
-                                direction: .forward,
-                                animated: true,
-                                completion: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -80,11 +63,10 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         self.automaticallyAdjustsScrollViewInsets = false
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
-        
+        submissionDataSource.delegate = self
     }
     
     var navItem: UINavigationItem?
-    var navigationBar = UINavigationBar()
     
     @objc func exit() {
         self.dismiss(animated: true, completion: nil)
@@ -97,24 +79,28 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         view.backgroundColor = UIColor.black.withAlphaComponent(0.7)
         self.navigationController?.view.backgroundColor = UIColor.clear
         viewToMux = self.background
+        let s = submissionDataSource.content[index]
+        let firstViewController = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
+        currentVc = firstViewController
+        (currentVc as! ShadowboxLinkViewController).populateContent()
         
-        navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 56))
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationBar.shadowImage = UIImage()
-        navigationBar.isTranslucent = true
-
-        doButtons()
-        self.view.addSubview(navigationBar)
-        
-        navigationBar.topAnchor == self.view.safeTopAnchor
-        navigationBar.horizontalAnchors == self.view.horizontalAnchors
+        self.setViewControllers([firstViewController],
+                                direction: .forward,
+                                animated: true,
+                                completion: { [weak self](_) in
+                                    guard let self = self else { return }
+                                    if (self.currentVc as! ShadowboxLinkViewController).embeddedVC == nil {
+                                        self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).thumbImageContainer.superview
+                                    } else {
+                                        self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).embeddedVC.view
+                                    }
+                                })
     }
     
     @objc func color() {
         SettingValues.blackShadowbox = !SettingValues.blackShadowbox
         UserDefaults.standard.set(SettingValues.blackShadowbox, forKey: SettingValues.pref_blackShadowbox)
         UserDefaults.standard.synchronize()
-        doButtons()
         if SettingValues.blackShadowbox {
             UIView.animate(withDuration: 0.25) {
                 self.background?.backgroundColor = .black
@@ -123,80 +109,17 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             (currentVc as! ShadowboxLinkViewController).doBackground()
         }
     }
-    
-    func doButtons() {
-        navItem = UINavigationItem(title: "")
-        let close = UIButton.init(type: .custom)
-        close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
-        close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let closeB = UIBarButtonItem.init(customView: close)
-        navItem?.leftBarButtonItem = closeB
         
-        let shadowbox = UIButton.init(type: .custom)
-        shadowbox.setImage(UIImage(named: !SettingValues.blackShadowbox ? "colors" : "nocolors")?.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
-        shadowbox.addTarget(self, action: #selector(self.color), for: UIControl.Event.touchUpInside)
-        shadowbox.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let shadowboxB = UIBarButtonItem.init(customView: shadowbox)
-        navItem?.rightBarButtonItem = shadowboxB
-        
-        navigationBar.setItems([navItem!], animated: false)
-    }
-    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         guard didFinishAnimating else {
             return
         }
         
         currentVc = self.viewControllers!.first!
-    }
-    
-    var loading = false
-    var nomore = false
-    func loadMore() {
-        if !loading {
-            do {
-                loading = true
-                var path: SubredditURLPath = Subreddit.init(subreddit: self.subreddit)
-                
-                if subreddit.hasPrefix("/m/") {
-                    path = Multireddit.init(name: subreddit.substring(3, length: subreddit.length - 3), user: AccountController.currentName)
-                }
-                if subreddit.contains("/u/") {
-                    path = Multireddit.init(name: subreddit.split("/")[3], user: subreddit.split("/")[1])
-                }
-                
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: path, sort: sort, timeFilterWithin: time, completion: { (result) in
-                    switch result {
-                    case .failure:
-                        print(result.error!)
-                        //Loading failed, ignore
-                    case .success(let listing):
-                        let newLinks = listing.children.compactMap({ $0 as? Link })
-                        var converted: [RSubmission] = []
-                        for link in newLinks {
-                            let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
-                            converted.append(newRS)
-                        }
-                        
-                        let values = PostFilter.filter(converted, previous: self.baseSubmissions, baseSubreddit: self.subreddit).map { $0 as! RSubmission }
-                        
-                        self.baseSubmissions += values
-                        self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        
-                        DispatchQueue.main.async {
-                            self.setViewControllers([self.currentVc],
-                                                    direction: .forward,
-                                                    animated: false ,
-                                                    completion: nil)
-                        }
-                    }
-                })
-            } catch {
-                print(error)
-            }
-            
+        if (self.currentVc as! ShadowboxLinkViewController).embeddedVC == nil {
+            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).topBody
+        } else {
+            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).embeddedVC.view
         }
     }
     
@@ -205,28 +128,32 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         let id = (viewController as! ShadowboxLinkViewController).submission.getId()
         var viewControllerIndex = -1
         
-        for item in baseSubmissions {
+        for item in submissionDataSource.content {
             viewControllerIndex += 1
             if item.getId() == id {
                 break
             }
         }
         
-        if viewControllerIndex < 0 || viewControllerIndex > baseSubmissions.count {
+        if viewControllerIndex < 0 || viewControllerIndex > submissionDataSource.content.count {
             return nil
         }
         
-        let previousIndex = viewControllerIndex - 1
+        var previousIndex = viewControllerIndex - 1
         
         guard previousIndex >= 0 else {
             return nil
         }
         
-        guard baseSubmissions.count > previousIndex else {
+        guard submissionDataSource.content.count > previousIndex else {
             return nil
         }
         
-        let s = baseSubmissions[previousIndex]
+        if submissionDataSource.content[previousIndex].author == "PAGE_SEPARATOR" {
+            previousIndex -= 1
+        }
+
+        let s = submissionDataSource.content[previousIndex]
         let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         if !shadowbox.populated {
             shadowbox.populated = true
@@ -241,19 +168,19 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         let id = (viewController as! ShadowboxLinkViewController).submission.getId()
         var viewControllerIndex = -1
         
-        for item in baseSubmissions {
+        for item in submissionDataSource.content {
             viewControllerIndex += 1
             if item.getId() == id {
                 break
             }
         }
         
-        if viewControllerIndex < 0 || viewControllerIndex > baseSubmissions.count {
+        if viewControllerIndex < 0 || viewControllerIndex > submissionDataSource.content.count {
             return nil
         }
         
-        let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = baseSubmissions.count
+        var nextIndex = viewControllerIndex + 1
+        let orderedViewControllersCount = submissionDataSource.content.count
         
         guard orderedViewControllersCount != nextIndex else {
             return nil
@@ -263,11 +190,17 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
             return nil
         }
         
-        if nextIndex == baseSubmissions.count - 2 && !loading {
-            loadMore()
+        if submissionDataSource.content[nextIndex].author == "PAGE_SEPARATOR" {
+            nextIndex += 1
+        }
+
+        if nextIndex == submissionDataSource.content.count - 2 && !submissionDataSource.loading {
+            DispatchQueue.main.async {
+                self.submissionDataSource.getData(reload: false)
+            }
         }
         
-        let s = baseSubmissions[nextIndex]
+        let s = submissionDataSource.content[nextIndex]
         let shadowbox = ShadowboxLinkViewController(url: self.getURLToLoad(s), content: s, parent: self)
         if !shadowbox.populated {
             shadowbox.populated = true
@@ -287,6 +220,39 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         return true
     }
 
+}
+
+extension ShadowboxViewController: SubmissionDataSouceDelegate {
+    func showIndicator() {
+    }
+    
+    func generalError(title: String, message: String) {
+    }
+    
+    func loadSuccess(before: Int, count: Int) {
+        DispatchQueue.main.async {
+            self.setViewControllers([self.currentVc],
+                                    direction: .forward,
+                                    animated: false,
+                                    completion: nil)
+        }
+    }
+    
+    func preLoadItems() {
+    }
+    
+    func doPreloadImages(values: [RSubmission]) {
+    }
+    
+    func loadOffline() {
+    }
+    
+    func emptyState(_ listing: Listing) {
+    }
+    
+    func vcIsGallery() -> Bool {
+        return false
+    }
 }
 
 private var hasSwizzled = false

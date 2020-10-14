@@ -50,7 +50,7 @@ class Sidebar: NSObject {
         inner = SubSidebarViewController(sub: sub, parent: parent)
         
         if #available(iOS 13.0, *) {
-            VCPresenter.presentAlert(UINavigationController(rootViewController: inner!), parentVC: parent)
+            VCPresenter.presentAlert(SwipeForwardNavigationController(rootViewController: inner!), parentVC: parent)
         } else {
             VCPresenter.showVC(viewController: inner!, popupIfPossible: false, parentNavigationController: parent.navigationController, parentViewController: parent)
         }

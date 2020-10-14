@@ -43,39 +43,48 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     }
 
     func pickColor(sender: AnyObject) {
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-        let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
-        let MKColorPicker = ColorPickerView.init(frame: rect)
-        MKColorPicker.delegate = self
-        MKColorPicker.colors = GMPalette.allColor()
-        MKColorPicker.selectionStyle = .check
-        MKColorPicker.scrollDirection = .vertical
+        if #available(iOS 14, *) {
+            let picker = UIColorPickerViewController()
+            picker.title = "Profile color"
+            picker.supportsAlpha = false
+            picker.selectedColor = ColorUtil.getColorForUser(name: name)
+            picker.delegate = self
+            present(picker, animated: true)
+        } else {
+            let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+            let margin: CGFloat = 10.0
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let MKColorPicker = ColorPickerView.init(frame: rect)
+            MKColorPicker.delegate = self
+            MKColorPicker.colors = GMPalette.allColor()
+            MKColorPicker.selectionStyle = .check
+            MKColorPicker.scrollDirection = .vertical
 
-        MKColorPicker.style = .circle
+            MKColorPicker.style = .circle
 
-        alertController.view.addSubview(MKColorPicker)
-        
-        let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(_: UIAlertAction!) in
-            ColorUtil.setColorForUser(name: self.name, color: self.newColor)
-        })
-        
-        alertController.addAction(somethingAction)
-        alertController.addCancelButton()
-        
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
-            presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
+            alertController.view.addSubview(MKColorPicker)
+            
+            let somethingAction = UIAlertAction(title: "Save", style: .default, handler: {(_: UIAlertAction!) in
+                ColorUtil.setColorForUser(name: self.name, color: self.newColor)
+            })
+            
+            alertController.addAction(somethingAction)
+            alertController.addCancelButton()
+            
+            alertController.modalPresentationStyle = .popover
+            if let presenter = alertController.popoverPresentationController {
+                presenter.sourceView = (moreB!.value(forKey: "view") as! UIView)
+                presenter.sourceRect = (moreB!.value(forKey: "view") as! UIView).bounds
+            }
+
+            alertController.modalPresentationStyle = .popover
+            if let presenter = alertController.popoverPresentationController {
+                presenter.sourceView = sender as! UIButton
+                presenter.sourceRect = (sender as! UIButton).bounds
+            }
+
+            present(alertController, animated: true, completion: nil)
         }
-
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = sender as! UIButton
-            presenter.sourceRect = (sender as! UIButton).bounds
-        }
-
-        present(alertController, animated: true, completion: nil)
     }
 
     var tagText: String?
@@ -84,7 +93,10 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
         alert.addTextInput(title: "Set tag", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "save-1")?.menuIcon(), action: {
-            ColorUtil.setTagForUser(name: self.name, tag: alert.getText() ?? "")
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                ColorUtil.setTagForUser(name: self.name, tag: alert.getText() ?? "")
+            }
         }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
@@ -238,7 +250,8 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         if #available(iOS 13, *), self.presentingViewController != nil && (self.navigationController?.modalPresentationStyle == .formSheet || self.modalPresentationStyle == .formSheet || self.navigationController?.modalPresentationStyle == .pageSheet || self.modalPresentationStyle == .pageSheet) {
             isModal13 = true
         }
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
         tabBar.sizeToFit()
         
         self.dataSource = self
@@ -402,5 +415,12 @@ extension ProfileViewController: MDCTabBarDelegate {
 extension ProfileViewController {
     @objc func closeButtonPressed() {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+@available(iOS 14.0, *)
+extension ProfileViewController: UIColorPickerViewControllerDelegate {
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
+        newColor = viewController.selectedColor
     }
 }

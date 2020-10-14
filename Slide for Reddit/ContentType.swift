@@ -97,7 +97,7 @@ class ContentType {
     public static func isGfycat(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         
-        return hostContains(host: host, bases: ["gfycat.com"])
+        return hostContains(host: host, bases: ["gfycat.com", "redgifs.com"])
     }
     
     public static func isImage(uri: URL) -> Bool {
@@ -133,12 +133,19 @@ class ContentType {
             || path.contains(","))
         
     }
-    
+
+    public static func isGallery(uri: URL) -> Bool {
+        let host = uri.host?.lowercased()
+        let path = uri.path.lowercased()
+        
+        return hostContains(host: host, bases: ["reddit.com", "redd.it"]) && (path.hasPrefix("/gallery/"))
+    }
+
     public static func isVideo(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
         
-        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/")
+        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/") || uri.absoluteString.contains("youtu")
     }
     
     public static func isImgurLink(uri: URL) -> Bool {
@@ -217,6 +224,9 @@ class ContentType {
         if isAlbum(uri: url!) {
             return CType.ALBUM
         }
+        if isGallery(uri: url!) {
+            return CType.REDDIT_GALLERY
+        }
         if hostContains(host: host, bases: ["imgur.com", "bildgur.de"]) {
             return CType.IMGUR
         }
@@ -275,7 +285,7 @@ class ContentType {
     public static func displayImage(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.IMAGE, CType.XKCD, CType.TUMBLR, CType.IMGUR, CType.SELF:
+        case CType.ALBUM, CType.REDDIT_GALLERY, CType.DEVIANTART, CType.IMAGE, CType.XKCD, CType.TUMBLR, CType.IMGUR, CType.SELF:
             return true
         default:
             return false
@@ -298,7 +308,7 @@ class ContentType {
     public static func fullImage(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.VIDEO, CType.SELF, CType.VID_ME:
+        case CType.ALBUM, CType.REDDIT_GALLERY, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.VIDEO, CType.SELF, CType.VID_ME:
             return true
             
         case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER, CType.TABLE, CType.UNKNOWN:
@@ -309,7 +319,7 @@ class ContentType {
     public static func mediaType(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.TUMBLR, CType.XKCD, CType.IMGUR, CType.STREAMABLE, CType.VID_ME:
+        case CType.ALBUM, CType.REDDIT_GALLERY, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.TUMBLR, CType.XKCD, CType.IMGUR, CType.STREAMABLE, CType.VID_ME:
             return true
         default:
             return false
@@ -325,6 +335,7 @@ class ContentType {
     enum CType: String {
         case UNKNOWN = "Unknown"
         case ALBUM = "Album"
+        case REDDIT_GALLERY = "Gallery"
         case DEVIANTART = "DeviantArt"
         case EMBEDDED = "Embedded"
         case EXTERNAL = "External"
@@ -349,6 +360,8 @@ class ContentType {
                 return "Link"
             case .ALBUM:
                 return "Imgur Album"
+            case .REDDIT_GALLERY:
+                return "Gallery"
             case .DEVIANTART:
                 return "Deviantart"
             case .IMAGE:
@@ -383,7 +396,7 @@ class ContentType {
             switch self {
             case .UNKNOWN, .LINK, .NONE, .SPOILER, .TABLE, .EMBEDDED:
                 return "world"
-            case .ALBUM, .DEVIANTART, .IMAGE, .IMGUR, .TUMBLR, .XKCD:
+            case .ALBUM, .REDDIT_GALLERY, .DEVIANTART, .IMAGE, .IMGUR, .TUMBLR, .XKCD:
                 return "image"
             case .EXTERNAL:
                 return "crosspost"

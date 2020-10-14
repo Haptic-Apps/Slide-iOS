@@ -11,8 +11,6 @@ import UIKit
 extension UIImage {
 
     func getCopy(withSize size: CGSize) -> UIImage {
-        let hasAlpha = true
-        let scale: CGFloat = 0.0 // Use scale factor of main screen
         let maxWidth = size.width
         let maxHeight = size.height
         
@@ -29,13 +27,23 @@ extension UIImage {
             newHeight = imgHeight * bestRatio
 
         let biggerSize = CGSize(width: newWidth, height: newHeight)
+        var newImage: UIImage
 
-        UIGraphicsBeginImageContextWithOptions(biggerSize, !hasAlpha, scale)
-        self.draw(in: CGRect(origin: CGPoint(x: 0, y: 0), size: biggerSize))
-
-        let scaledImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return scaledImage!
+        if #available(iOS 10.0, *) {
+            let renderFormat = UIGraphicsImageRendererFormat.default()
+            renderFormat.opaque = false
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: biggerSize.width, height: biggerSize.height), format: renderFormat)
+            newImage = renderer.image { (_) in
+                self.draw(in: CGRect(x: 0, y: 0, width: biggerSize.width, height: biggerSize.height))
+            }
+        } else {
+            UIGraphicsBeginImageContextWithOptions(CGSize(width: biggerSize.width, height: biggerSize.height), false, 0)
+            self.draw(in: CGRect(x: 0, y: 0, width: biggerSize.width, height: biggerSize.height))
+            newImage = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+        }
+        
+        return newImage
     }
     func cropImageByAlpha() -> UIImage {
         let cgImage = self.cgImage
@@ -120,13 +128,22 @@ extension UIImage {
     }
 
     func getCopy(withColor color: UIColor) -> UIImage {
-        var image = withRenderingMode(.alwaysTemplate)
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        color.set()
-        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-        image = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return image
+        if #available(iOS 10, *) {
+            let renderer = UIGraphicsImageRenderer(size: size)
+            return renderer.image { context in
+                color.setFill()
+                self.draw(at: .zero)
+                context.fill(CGRect(x: 0, y: 0, width: size.width, height: size.height), blendMode: .sourceAtop)
+            }
+        } else {
+            var image = withRenderingMode(.alwaysTemplate)
+            UIGraphicsBeginImageContextWithOptions(size, false, scale)
+            color.set()
+            image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+            image = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+            return image
+        }
     }
 
     func getCopy(withSize size: CGSize, withColor color: UIColor) -> UIImage {
@@ -216,33 +233,33 @@ extension UIImage {
         // start with a CAGradientLayer
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = rect
-        
+
         // add colors as CGCologRef to a new array and calculate the distances
         var colorsRef = [CGColor]()
         var locations = [NSNumber]()
-        
+
         for i in 0 ..< colors.count {
             colorsRef.append(colors[i].cgColor as CGColor)
             locations.append(NSNumber(value: Float(i) / Float(colors.count - 1)))
         }
-        
+
         gradientLayer.colors = colorsRef
 
-        let x: Double! = 135 / 360.0
-        let a = pow(sinf(Float(2.0 * .pi * ((x + 0.75) / 2.0))), 2.0)
-        let b = pow(sinf(Float(2 * .pi * ((x + 0.0) / 2))), 2)
-        let c = pow(sinf(Float(2 * .pi * ((x + 0.25) / 2))), 2)
-        let d = pow(sinf(Float(2 * .pi * ((x + 0.5) / 2))), 2)
-        
-        gradientLayer.endPoint = CGPoint(x: CGFloat(c), y: CGFloat(d))
-        gradientLayer.startPoint = CGPoint(x: CGFloat(a), y: CGFloat(b))
+        let x: CGFloat = 135.0 / 360.0
+        let a: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.75) / 2.0)), 2.0)
+        let b: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.00) / 2.0)), 2.0)
+        let c: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.25) / 2.0)), 2.0)
+        let d: CGFloat = pow(sin(2.0 * CGFloat.pi * ((x + 0.50) / 2.0)), 2.0)
+
+        gradientLayer.endPoint = CGPoint(x: c, y: d)
+        gradientLayer.startPoint = CGPoint(x: a, y: b)
 
         // now build a UIImage from the gradient
         UIGraphicsBeginImageContext(gradientLayer.bounds.size)
         gradientLayer.render(in: UIGraphicsGetCurrentContext()!)
         let gradientImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
+
         // return the gradient image
         return gradientImage!
     }
@@ -277,4 +294,24 @@ extension UIImage {
         return result
     }
     
+    /**
+     https://stackoverflow.com/a/62862742/3697225
+     Rounds corners of UIImage
+     - Parameter proportion: Proportion to minimum paramter (width or height)
+                             in order to have the same look of corner radius independetly
+                             from aspect ratio and actual size
+     */
+    func roundCorners(proportion: CGFloat) -> UIImage {
+        let minValue = min(self.size.width, self.size.height)
+        let radius = minValue/proportion
+        
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: self.size)
+        UIGraphicsBeginImageContextWithOptions(self.size, false, 1)
+        UIBezierPath(roundedRect: rect, cornerRadius: radius).addClip()
+        self.draw(in: rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext() ?? self
+        UIGraphicsEndImageContext()
+        return image
+    }
+
 }

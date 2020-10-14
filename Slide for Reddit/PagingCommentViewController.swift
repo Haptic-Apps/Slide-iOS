@@ -7,13 +7,12 @@
 //
 
 import Foundation
-import SloppySwiper
+import reddift
 
 class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
-    var submissions: [RSubmission] = []
     static weak var savedComment: CommentViewController?
-    var vCs: [RSubmission] = []
-    var swiper: SloppySwiper?
+    var submissionDataSource: SubmissionsDataSource
+    var startIndex: Int
 
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
@@ -22,13 +21,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var offline = false
     var reloadCallback: (() -> Void)?
 
-    public init(submissions: [RSubmission], offline: Bool, reloadCallback: @escaping () -> Void) {
-        self.submissions = submissions
-        self.offline = offline
+    public init(submissionDataSource: SubmissionsDataSource, currentIndex: Int, reloadCallback: @escaping () -> Void) {
+        self.submissionDataSource = submissionDataSource
+        self.startIndex = currentIndex
         self.reloadCallback = reloadCallback
-        for sub in submissions {
-            self.vCs.append(sub)
-        }
+
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
@@ -37,9 +34,9 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     }
     
     func next() {
-        if currentIndex + 1 < vCs.count {
+        if currentIndex + 1 < submissionDataSource.content.count {
             currentIndex += 1
-            let vc = CommentViewController(submission: vCs[currentIndex], single: false)
+            let vc = CommentViewController(submission: submissionDataSource.content[currentIndex + startIndex], single: false)
             setViewControllers([vc],
                                    direction: .forward,
                                    animated: true,
@@ -77,23 +74,22 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
         setNeedsStatusBarAppearanceUpdate()
         
-        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        submissionDataSource.delegate = self
         
-        if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-            swiper = SloppySwiper.init(navigationController: self.navigationController!)
-            self.navigationController!.delegate = swiper!
-        }
+        self.splitViewController?.presentsWithGesture = false
     }
     
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dataSource = self
+        if SettingValues.commentGesturesMode != .FULL {
+            self.dataSource = self
+        }
         self.delegate = self
         self.navigationController?.view.backgroundColor = UIColor.clear
         
-        let firstViewController: UIViewController
-        let sub = self.vCs[0]
+        let firstViewController: CommentViewController
+        let sub = self.submissionDataSource.content[startIndex]
         if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
             firstViewController = PagingCommentViewController.savedComment!
         } else {
@@ -103,42 +99,33 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
         first = false
         
-        for view in view.subviews {
-            if view is UIScrollView {
-                let scrollView = view as! UIScrollView
-                scrollView.delegate = self
-                if scrollView.isPagingEnabled && SettingValues.commentGesturesMode != .NONE {
-                    scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-                }
-                scrollView.panGestureRecognizer.require(toFail: navigationController!.interactivePopGestureRecognizer!)
-            }
-        }
-        
-        if !(firstViewController as! CommentViewController).loaded {
-            PagingCommentViewController.savedComment = firstViewController as? CommentViewController
-            (firstViewController as! CommentViewController).forceLoad = true
+        if !firstViewController.loaded {
+            PagingCommentViewController.savedComment = firstViewController
+            firstViewController.forceLoad = true
         }
 
         setViewControllers([firstViewController],
                            direction: .forward,
                            animated: false,
-                           completion: nil)
+                           completion: {(_) in
+                            firstViewController.setupSwipeGesture()
+                           })
     }
     
     //From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
-        } else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+        } else if currentIndex + startIndex == submissionDataSource.content.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
     
     //From https://stackoverflow.com/a/25167681/3697225
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
-        } else if currentIndex == submissions.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+        } else if currentIndex + startIndex == submissionDataSource.content.count - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
@@ -157,11 +144,18 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
         currentIndex = -1
         let id = PagingCommentViewController.savedComment!.submission!.getId()
-        for item in vCs {
+        for item in startIndex..<submissionDataSource.content.count {
             currentIndex += 1
-            if item.getId() == id {
+            if submissionDataSource.content[item].getId() == id {
                 break
             }
+        }
+        if currentIndex == 0 {
+            (self.viewControllers?.first as? CommentViewController)?.setupSwipeGesture()
+        }
+        
+        if currentIndex + startIndex == submissionDataSource.content.count - 2 {
+            submissionDataSource.getData(reload: false)
         }
     }
 
@@ -169,42 +163,48 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
         let id = (viewController as! CommentViewController).submission!.getId()
         var viewControllerIndex = -1
-        for item in vCs {
+        for item in startIndex..<submissionDataSource.content.count {
             viewControllerIndex += 1
-            if item.getId() == id {
+            if submissionDataSource.content[item].getId() == id {
                 break
             }
         }
 
-        if viewControllerIndex < 0 || viewControllerIndex > vCs.count {
+        if viewControllerIndex < 0 || viewControllerIndex + startIndex > submissionDataSource.content.count {
             return nil
         }
         
-        let previousIndex = viewControllerIndex - 1
+        var previousIndex = viewControllerIndex - 1
         
         guard previousIndex >= 0 else {
             return nil
         }
         
-        guard vCs.count > previousIndex else {
+        guard submissionDataSource.content.count - startIndex > previousIndex else {
             return nil
         }
         
-        return CommentViewController(submission: vCs[previousIndex], single: false)
+        if submissionDataSource.content[previousIndex + startIndex].author == "PAGE_SEPARATOR" {
+            previousIndex -= 1
+        }
+
+        let comment = CommentViewController(submission: submissionDataSource.content[ startIndex + previousIndex], single: false)
+        return comment
     }
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
         let id = (viewController as! CommentViewController).submission!.getId()
+
         var viewControllerIndex = -1
-        for item in vCs {
+        for item in startIndex..<submissionDataSource.content.count {
             viewControllerIndex += 1
-            if item.getId() == id {
+            if submissionDataSource.content[item].getId() == id {
                 break
             }
         }
-        
-        if viewControllerIndex < 0 || viewControllerIndex > vCs.count {
+
+        if viewControllerIndex < 0 || viewControllerIndex + startIndex > submissionDataSource.content.count {
             return nil
         }
 
@@ -212,18 +212,26 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             (viewController as! CommentViewController).refresh(viewController)
         }
         
-        let nextIndex = viewControllerIndex + 1
-        let orderedViewControllersCount = vCs.count
+        var nextIndex = viewControllerIndex + 1
+        let orderedViewControllersCount = submissionDataSource.content.count
         
-        guard orderedViewControllersCount != nextIndex else {
+        guard orderedViewControllersCount != startIndex + nextIndex else {
             return nil
         }
         
-        guard orderedViewControllersCount > nextIndex else {
+        guard orderedViewControllersCount > startIndex + nextIndex else {
             return nil
         }
         
-        return CommentViewController(submission: vCs[nextIndex], single: false)
+        if submissionDataSource.content[nextIndex + startIndex].author == "PAGE_SEPARATOR" {
+            nextIndex += 1
+        }
+
+        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex], single: false)
+        if nextIndex == 0 {
+            comment.setupSwipeGesture()
+        }
+        return comment
     }
     
 }
@@ -235,4 +243,37 @@ class ClearVC: UIViewController {
         self.navigationController?.navigationBar.backgroundColor = UIColor.clear
     }
     
+}
+
+extension PagingCommentViewController: SubmissionDataSouceDelegate {
+    func showIndicator() {
+    }
+    
+    func generalError(title: String, message: String) {
+    }
+    
+    func loadSuccess(before: Int, count: Int) {
+        DispatchQueue.main.async {
+            self.setViewControllers([self.viewControllers?[0] ?? UIViewController()],
+                                    direction: .forward,
+                                    animated: false,
+                                    completion: nil)
+        }
+    }
+    
+    func preLoadItems() {
+    }
+    
+    func doPreloadImages(values: [RSubmission]) {
+    }
+    
+    func loadOffline() {
+    }
+    
+    func emptyState(_ listing: Listing) {
+    }
+    
+    func vcIsGallery() -> Bool {
+        return false
+    }
 }

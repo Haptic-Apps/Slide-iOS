@@ -23,6 +23,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     var viewInHDButton = UIButton()
     var goToCommentsButton = UIButton()
     var showTitleButton = UIButton()
+    
+    var overrideSize: CGSize?
 
     var forceHD = false
 
@@ -57,7 +59,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         let height = view.bounds.size.height
         let width = view.bounds.size.width
         let size = CGSize(width: width, height: height - bottomButtons.bounds.size.height)
-        updateMinZoomScaleForSize(size)
+        updateMinZoomScaleForSize(size, overrideSize: overrideSize)
     }
 
 //    override func didReceiveMemoryWarning() {
@@ -74,7 +76,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         self.view.addSubview(scrollView)
 
         imageView = UIImageView().then {
-            $0.contentMode = .scaleAspectFit
+            $0.contentMode = .scaleAspectFill
         }
         scrollView.addSubview(imageView)
         
@@ -94,7 +96,8 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             $0.alignment = .center
             $0.spacing = 8
         }
-        view.addSubview(bottomButtons)
+        gradientView.addSubview(bottomButtons)
+        view.addSubview(gradientView)
 
         if data.buttons {
             menuButton = UIButton().then {
@@ -151,16 +154,18 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
     func configureLayout() {
         scrollView.edgeAnchors == view.edgeAnchors
-
-        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
+        bottomButtons.horizontalAnchors == gradientView.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.topAnchor == gradientView.topAnchor + 20
+        bottomButtons.bottomAnchor == gradientView.safeBottomAnchor - 8
+        gradientView.horizontalAnchors == view.horizontalAnchors
+        gradientView.bottomAnchor == view.bottomAnchor
     }
     
     @objc func fullscreen(_ sender: AnyObject) {
         if let strongParent = parent as? ModalMediaViewController, strongParent.fullscreen {
             strongParent.unFullscreen(self)
         } else if let strongParent = parent as? ModalMediaViewController {
-            strongParent.fullscreen(self)
+            strongParent.fullscreen(self, true)
         }
     }
 
@@ -204,13 +209,43 @@ class ImageMediaViewController: EmbeddableMediaViewController {
 
         setProgressViewVisible(true)
 
-        loadImage(imageURL: imageURL) { [weak self] (image) in
+        loadImage(imageURL: imageURL) { [weak self] (image, isPreview, finalSize) in
             if let strongSelf = self {
-                strongSelf.imageView.image = image
-                strongSelf.imageView.sizeToFit()
-                strongSelf.scrollView.contentSize = image.size
-                strongSelf.view.setNeedsLayout()
+                if strongSelf.imageView.image != nil, !isPreview {
+                    // If replacing a preview with a full-quality image,
+                    // only replace the image (don't redo layout).
+                    // This lets us invisibly swap in-place.
+                    strongSelf.imageView.image = image
+                } else if !(isPreview && finalSize == .zero) {
+                    if let size = finalSize, finalSize != CGSize.zero {
+                        strongSelf.imageView.image = image
+                        let maxFrame = strongSelf.view.frame.size
+                        var newSize = maxFrame
 
+                        let minWidth = maxFrame.width / size.width
+                        let minHeight = maxFrame.height / size.height
+                        
+                        if minHeight < minWidth {
+                            newSize.width = newSize.height / size.height * size.width
+                        } else if minWidth < minHeight {
+                            newSize.height = newSize.width / size.width * size.height
+                        }
+
+                        var newFrame = strongSelf.imageView.frame
+                        newFrame.size = size
+                        strongSelf.imageView.frame = newFrame
+                        strongSelf.scrollView.contentSize = size
+                        strongSelf.overrideSize = size
+                    } else {
+                        strongSelf.imageView.contentMode = .scaleAspectFit
+                        strongSelf.imageView.image = image
+                        strongSelf.imageView.sizeToFit()
+                        strongSelf.scrollView.contentSize = image.size
+                        strongSelf.view.setNeedsLayout()
+                    }
+                    
+                    strongSelf.imageView.setNeedsLayout()
+                }
                 // Update UI
                 strongSelf.setProgressViewVisible(false)
                 strongSelf.downloadButton.isHidden = false
@@ -219,66 +254,61 @@ class ImageMediaViewController: EmbeddableMediaViewController {
         }
     }
 
-    func loadImage(imageURL: URL, completion: @escaping ((UIImage) -> Void) ) {
+    func loadImage(imageURL: URL, completion: @escaping ((UIImage, Bool, CGSize?) -> Void) ) {
 
+        // If the full-size image is already in the cache, just use that.
         if let image = SDImageCache.shared.imageFromDiskCache(forKey: imageURL.absoluteString) {
             DispatchQueue.main.async {
-                completion(image)
+                completion(image, false, nil)
             }
         } else {
-            if let image = (parent as? ModalMediaViewController)?.previewImage, let size = (parent as? ModalMediaViewController)?.finalSize {
-                self.imageView.image = image
-                
-                var newSize = UIScreen.main.bounds.size
-                let minWidth = UIScreen.main.bounds.width / size.width
-                let minHeight = UIScreen.main.bounds.height / size.height
-
-                if minHeight < minWidth {
-                    newSize.width = newSize.height / size.height * size.width
-                } else if minWidth < minHeight {
-                    newSize.height = newSize.width / size.width * size.height
-                }
-
-                var newFrame = self.imageView.frame
-                newFrame.size = newSize
-                self.imageView.frame = newFrame
-                self.imageView.setNeedsLayout()
-                self.scrollView.contentSize = newSize
+            // If the image isn't cached, call the completion with the preview
+            // image, then load the full-resolution image and call the completion
+            // with it when done.
+            if let parent = parent as? ModalMediaViewController,
+                let previewImage = parent.previewImage {
+                self.setProgressViewVisible(true)
+                self.downloadButton.isHidden = true
+                self.size.isHidden = false
+                completion(previewImage, true, parent.finalSize)
             }
-            SDWebImageDownloader.shared.downloadImage(with: imageURL, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (current: NSInteger, total: NSInteger, _) in
+            SDWebImageDownloader.shared.downloadImage(
+                with: imageURL,
+                options: [.allowInvalidSSLCertificates, .scaleDownLargeImages],
+                progress: { (current: NSInteger, total: NSInteger, _) in
 
-                var average: Float = 0
-                average = (Float(current) / Float(total))
-                let countBytes = ByteCountFormatter()
-                countBytes.allowedUnits = [.useMB]
-                countBytes.countStyle = .file
-                let fileSize = countBytes.string(fromByteCount: Int64(total))
-                if average > 0 {
-                    DispatchQueue.main.async {
-                        self.size.text = fileSize
-                        if total == 0 {
-                            self.parent?.dismiss(animated: true, completion: {
-                                self.failureCallback?(imageURL)
-                            })
+                    var average: Float = 0
+                    average = (Float(current) / Float(total))
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(total))
+                    if average > 0 {
+                        DispatchQueue.main.async {
+                            self.size.text = fileSize
+                            if total == 0 {
+                                self.parent?.dismiss(animated: true, completion: {
+                                    self.failureCallback?(imageURL)
+                                })
+                            }
                         }
                     }
-                }
-                
-                DispatchQueue.main.async {
-                    self.updateProgress(CGFloat(average), "")
-                }
 
-                }, completed: { (image, data, _, _) in
+                    DispatchQueue.main.async {
+                        self.updateProgress(CGFloat(average), "")
+                    }
+
+                },
+                completed: { (image, data, _, _) in
+                    // Cache the full-size image.
                     SDImageCache.shared.store(image, imageData: data, forKey: imageURL.absoluteString, toDisk: true, completion: nil)
                     DispatchQueue.main.async {
                         if let image = image {
-                            completion(image)
+                            completion(image, false, nil)
                         }
                     }
-            })
-
+                })
         }
-
     }
 
 }
@@ -401,9 +431,9 @@ extension ImageMediaViewController: UIScrollViewDelegate {
         return imageView
     }
 
-    func updateMinZoomScaleForSize(_ size: CGSize) {
-        let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width))
-        let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height))
+    func updateMinZoomScaleForSize(_ size: CGSize, overrideSize: CGSize?) {
+        let widthScale = (size.width / (overrideSize?.width ?? imageView.image?.size.width ?? imageView.bounds.width))
+        let heightScale = (size.height / (overrideSize?.height ?? imageView.image?.size.height ?? imageView.bounds.height))
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale

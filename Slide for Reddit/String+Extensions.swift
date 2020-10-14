@@ -10,6 +10,10 @@ import Foundation
 
 extension String {
     
+    func indexInt(of char: Character) -> Int? {
+        return firstIndex(of: char)?.utf16Offset(in: self)
+    }
+
     func toAttributedString() -> NSAttributedString? {
         guard let data = self.data(using: String.Encoding.utf8, allowLossyConversion: false) else {
             return nil

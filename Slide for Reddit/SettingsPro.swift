@@ -27,6 +27,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     var autocache: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "auto")
     var night: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "night")
     var username: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "username")
+    var icons: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "icons")
     var custom: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "custom")
     var themes: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "themes")
     var backup: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "backup")
@@ -76,7 +77,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     func doCells(_ reset: Bool = true) {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Support Slide for Reddit!"
+        self.title = "Support Slide!"
         self.tableView.separatorStyle = .none
 
         self.night.textLabel?.text = "Auto night mode"
@@ -96,7 +97,17 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.username.imageView?.image = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")?.toolbarIcon()
         self.username.imageView?.tintColor = ColorUtil.theme.fontColor
         self.username.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        
+
+        self.icons.textLabel?.text = "Premium Icons"
+        self.icons.detailTextLabel?.text = "Freshen up your homescreen with a new icon"
+        self.icons.detailTextLabel?.numberOfLines = 0
+        self.icons.backgroundColor = ColorUtil.theme.foregroundColor
+        self.icons.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.icons.imageView?.image = UIImage(named: "ic_retroapple")?.getCopy(withSize: CGSize(width: 25, height: 25))
+        self.icons.imageView?.layer.cornerRadius = 10
+        self.icons.imageView?.clipsToBounds = true
+        self.icons.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+
         self.backup.textLabel?.text = "Backup and Restore"
         self.backup.detailTextLabel?.text = "Sync your Slide settings between devices"
         self.backup.detailTextLabel?.numberOfLines = 0
@@ -138,9 +149,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.font = UIFont.systemFont(ofSize: 15)
         aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
         about.textColor = ColorUtil.theme.fontColor
-        about.text = "Upgrade to Slide Pro to enjoy some awesome new features while supporting ad-free and open source software!\n\nSlide is my side project while attending university full-time, and every donation helps keep Slide going 😊"
+        about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\n\nThis project wouldn't be possible without your support, as being ad and tracker free is core to Slide's mission.\n-Carlos"
         about.numberOfLines = 0
-        about.textAlignment = .center
+        about.textAlignment = .left
         about.lineBreakMode = .byClipping
         about.sizeToFit()
         
@@ -180,7 +191,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.gallery.detailTextLabel?.numberOfLines = 0
         self.gallery.backgroundColor = ColorUtil.theme.foregroundColor
         self.gallery.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.gallery.imageView?.image = UIImage(sfString: SFSymbol.photoOnRectangleFill, overrideString: "image")?.toolbarIcon()
+        self.gallery.imageView?.image = UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")?.toolbarIcon()
         self.gallery.imageView?.tintColor = ColorUtil.theme.fontColor
         self.gallery.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
@@ -457,12 +468,13 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             case 0: return self.multicolumn
             case 1: return self.shadowbox
             case 2: return self.backup
+            case 3: return self.icons
             //case 3: return self.night
             case 4: return self.biometric
-            case 3: return self.themes
+            case 5: return self.themes
             //            case 7: return self.gallery
-            case 5: return self.autocache
-            case 6: return self.username
+            case 6: return self.autocache
+            case 7: return self.username
                 
             default: fatalError("Unknown row in section 0")
             }
@@ -500,7 +512,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 7
+        case 1: return 8
         default: fatalError("Unknown number of sections")
         }
     }

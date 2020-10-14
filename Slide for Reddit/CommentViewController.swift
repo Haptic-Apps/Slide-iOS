@@ -13,12 +13,19 @@ import RealmSwift
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
-import SloppySwiper
 import UIKit
 import YYText
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
-    
+
+    var version = 0
+    var swipeBackAdded = false
+    var shouldSetupSwipe = false
+    var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
+    var cellGestureRecognizer: UIPanGestureRecognizer!
+    var liveView: UILabel?
+    var liveNewCount = 0
+
     func hide(index: Int) {
         if index >= 0 {
             self.navigationController?.popViewController(animated: true)
@@ -54,6 +61,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return SettingValues.fullyHideNavbar
     }
 
+    func textChanged(_ string: String) {
+        self.savedText = string
+    }
+    
     override var keyCommands: [UIKeyCommand]? {
         if isReply {
             return []
@@ -71,10 +82,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var menuCell: CommentDepthCell?
     var menuId: String?
+    var savedText: String?
     public var inHeadView = UIView()
     
     var commentDepthColors = [UIColor]()
-    var pan: UIPanGestureRecognizer!
 
     var panGesture: UIPanGestureRecognizer!
     var translatingCell: CommentDepthCell?
@@ -83,6 +94,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var liveTimer = Timer()
     var refreshControl: UIRefreshControl!
     var tableView: UITableView!
+    
+    var sortButton = UIButton()
 
     var jump: UIView!
 
@@ -94,12 +107,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return menuId
     }
     
-    func createJumpButton() {
+    func createJumpButton(_ forced: Bool = false) {
         if SettingValues.commentJumpButton == .DISABLED {
             return
         }
         if self.navigationController?.view != nil {
             let view = self.navigationController!.view!
+            if jump != nil && forced {
+                jump.removeFromSuperview()
+                jump = nil
+            }
             if jump == nil {
                 jump = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
                     $0.clipsToBounds = true
@@ -240,7 +257,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             name = name.replacingOccurrences(of: "t3_", with: "")
         }
         do {
-            try session?.getArticles(name, sort: .new, completion: { (result) in
+            try session?.getArticles(name, sort: .new, limit: SettingValues.commentLimit, completion: { (result) in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -281,6 +298,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             self.doArrays()
                             var paths: [IndexPath] = []
                             for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
+                                self.liveNewCount += 1
                                 paths.append(IndexPath.init(row: i, section: 0))
                             }
                             let contentHeight = self.tableView.contentSize.height
@@ -289,10 +307,41 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             if #available(iOS 11.0, *) {
                                 CATransaction.begin()
                                 CATransaction.setDisableActions(true)
+                                self.isHiding = true
                                 self.tableView.performBatchUpdates({
                                     self.tableView.insertRows(at: paths, with: .fade)
                                 }, completion: { (_) in
-                                    self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    self.lastY = self.tableView.contentOffset.y
+                                    self.olderY = self.tableView.contentOffset.y
+                                    self.isHiding = false
+                                    if self.tableView.contentOffset.y > (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64 + 10 {
+                                        if self.liveView == nil {
+                                            self.liveView = UILabel().then {
+                                                $0.textColor = .white
+                                                $0.font = UIFont.boldSystemFont(ofSize: 10)
+                                                $0.backgroundColor = ColorUtil.getColorForSub(sub: self.subreddit)
+                                                $0.layer.cornerRadius = 20
+                                                $0.clipsToBounds = true
+                                                $0.textAlignment = .center
+                                                $0.addTapGestureRecognizer {
+                                                    UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                                        self.tableView.contentOffset.y = (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64
+                                                    }, completion: { (_) in
+                                                        self.lastY = self.tableView.contentOffset.y
+                                                        self.olderY = self.tableView.contentOffset.y
+                                                    })
+                                                }
+                                            }
+                                            self.view.addSubview(self.liveView!)
+                                            self.liveView!.topAnchor == self.view.safeTopAnchor + 20
+                                            self.liveView!.centerXAnchor == self.view.centerXAnchor
+                                            self.liveView!.heightAnchor == 40
+                                            self.liveView!.widthAnchor == 130
+                                        }
+                                        self.liveView!.text = "\(self.liveNewCount) NEW COMMENT\((self.liveNewCount > 1) ? "S" : "")"
+                                        self.liveView!.setNeedsLayout()
+                                    }
+                                    //self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
                                     CATransaction.commit()
                                 })
                             } else {
@@ -371,7 +420,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var offline = false
     var np = false
     var modLink = ""
-    var swiper: SloppySwiper?
 
     var authorColor: UIColor = ColorUtil.theme.fontColor
 
@@ -661,7 +709,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func more(_ cell: LinkCellView) {
         if !offline {
-            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: 0)
+            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: 0)
         }
     }
 
@@ -742,7 +790,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.updateStringsSingle(temp)
                         self.doArrays()
                         if !self.offline {
-                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.link) : Double(0))
+                            self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
                         }
                     }
                     
@@ -894,6 +942,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     }
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+
                                     if let tableHeaderView = self.headerCell {
                                         var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
                                         // Add safe area insets to left and right if available
@@ -906,6 +955,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             let view = UIView(frame: tableHeaderView.frame)
                                             view.addSubview(tableHeaderView)
                                             self.tableView.tableHeaderView = view
+                                            self.setupFullSwipeView(self.tableView.tableHeaderView)
                                         }
                                     }
                                     
@@ -931,6 +981,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     let view = UIView(frame: self.headerCell!.contentView.frame)
                                     view.addSubview(self.headerCell!.contentView)
                                     self.tableView.tableHeaderView = view
+                                    self.setupFullSwipeView(self.tableView.tableHeaderView)
                                 }
                                 self.refreshControl?.endRefreshing()
                                 self.activityIndicator.stopAnimating()
@@ -1021,44 +1072,61 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func setupTitleView(_ sub: String, icon: String) {
-        let titleView = UILabel()
-        titleView.text = sub
-        titleView.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
-        titleView.font = UIFont.boldSystemFont(ofSize: 17)
-        let width = titleView.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)).width
-        titleView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: 500))
-        titleView.accessibilityTraits = UIAccessibilityTraits(rawValue: UIAccessibilityTraits.header.rawValue | UIAccessibilityTraits.link.rawValue)
-        titleView.accessibilityHint = "Opens the sub red it r \(sub)"
-        titleView.accessibilityLabel = "Sub red it: r \(sub)"
-        self.navigationItem.titleView = titleView
+        let label = UILabel()
+        label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
+        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.adjustsFontSizeToFitWidth = true
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         
-        titleView.addTapGestureRecognizer(action: {
+        if SettingValues.reduceColor {
+            let sideView = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+            let subreddit = sub
+            sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
+            
+            if let icon = Subscriptions.icon(for: subreddit) {
+                sideView.contentMode = .scaleAspectFill
+                sideView.image = UIImage()
+                sideView.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+            } else {
+                sideView.contentMode = .center
+                if subreddit.contains("m/") {
+                    sideView.image = SubredditCellView.defaultIconMulti
+                } else if subreddit.lowercased() == "all" {
+                    sideView.image = SubredditCellView.allIcon
+                    sideView.backgroundColor = GMColor.blue500Color()
+                } else if subreddit.lowercased() == "frontpage" {
+                    sideView.image = SubredditCellView.frontpageIcon
+                    sideView.backgroundColor = GMColor.green500Color()
+                } else if subreddit.lowercased() == "popular" {
+                    sideView.image = SubredditCellView.popularIcon
+                    sideView.backgroundColor = GMColor.purple500Color()
+                } else {
+                    sideView.image = SubredditCellView.defaultIcon
+                }
+            }
+            
+            label.addSubview(sideView)
+            sideView.sizeAnchors == CGSize.square(size: 30)
+            sideView.centerYAnchor == label.centerYAnchor
+            sideView.leftAnchor == label.leftAnchor
+
+            sideView.layer.cornerRadius = 15
+            sideView.clipsToBounds = true
+        }
+        
+        label.sizeToFit()
+        self.navigationItem.titleView = label
+
+        label.accessibilityHint = "Opens the sub red it r \(sub)"
+        label.accessibilityLabel = "Sub red it: r \(sub)"
+
+        label.addTapGestureRecognizer(action: {
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
         
-        if SettingValues.reduceColor {
-            var sideView = UIImageView()
-            sideView = UIImageView(frame: CGRect(x: -20, y: 15, width: 15, height: 15))
-            sideView.backgroundColor = ColorUtil.getColorForSub(sub: sub)
-            sideView.translatesAutoresizingMaskIntoConstraints = false
-            titleView.addSubview(sideView)
-            sideView.layer.cornerRadius = 7.5
-            sideView.clipsToBounds = true
-            /* Maybe enable this later if icon != "" && SettingValues.subredditIcons {
-                sideView.layer.borderColor = ColorUtil.getColorForSub(sub: sub).cgColor
-                sideView.layer.borderWidth = 2
-                sideView.heightAnchor == 25
-                sideView.widthAnchor == 25
-                sideView.layer.cornerRadius = 12.5
-                sideView.topAnchor == titleView.topAnchor - 5
-                sideView.leftAnchor == titleView.leftAnchor - 30
-                
-                sideView.sd_setImage(with: URL(string: icon), completed: nil)
-                titleView.layoutIfNeeded()
-            }*/
-        }
+        setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
     }
-    
+        
     var savedBack: UIBarButtonItem?
 
     func showSearchBar() {
@@ -1096,17 +1164,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var modB = UIBarButtonItem()
 
     func hideSearchBar() {
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        tableView.tableHeaderView = savedHeaderView!
+        if let header = savedHeaderView {
+            navigationController?.setNavigationBarHidden(false, animated: true)
+            tableView.tableHeaderView = header
+        }
         isSearch = false
         
         searchBar.tintColor = ColorUtil.theme.fontColor
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-        sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let sortB = UIBarButtonItem.init(customView: sort)
+        sortButton = UIButton.init(type: .custom)
+        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sortB = UIBarButtonItem.init(customView: sortButton)
 
+        doSortImage(sortButton)
+        
         let search = UIButton.init(type: .custom)
         search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
@@ -1143,13 +1214,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             defaultLabel.rightAnchor == group.rightAnchor
 
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
-
-            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
-            let defaulted = UIImage(sfString: SFSymbol.textBadgeCheckmark, overrideString: "selected")!.menuIcon().getCopy(withColor: .green)
-            let defaultSort = SettingValues.getCommentSorting(forSubreddit: self.sub)
             
             for c in CommentSort.cases {
-                actionSheetController.addAction(title: c.description, icon: sort == c ? (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : selected) : (c == defaultSort && defaultSort != SettingValues.defaultCommentSorting ? defaulted : nil)) {
+                if c == .suggested {
+                    continue
+                }
+                var sortIcon = UIImage()
+                
+                if c == .controversial {
+                    actionSheetController.addAction(title: "Sort by Live", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
+                        self.setLive()
+                    }
+                }
+                
+                switch c {
+                case .suggested, .confidence:
+                    sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .hot:
+                    sortIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .controversial:
+                    sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .new:
+                    sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .old:
+                    sortIcon = UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                case .top:
+                    sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                default:
+                    sortIcon = UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                }
+                
+                actionSheetController.addAction(title: c.description, icon: sortIcon, primary: sort == c) {
                     self.sort = c
                     self.reset = true
                     self.live = false
@@ -1161,12 +1256,27 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     self.navigationItem.rightBarButtonItems = [barButton]
                     self.activityIndicator.startAnimating()
                     
+                    self.doSortImage(self.sortButton)
+
                     self.refresh(self)
                 }
             }
 
-            actionSheetController.addAction(title: "Live (beta)", icon: live ? selected : nil) {
-                self.setLive()
+            actionSheetController.addAction(title: "Q&A", icon: UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: sort == .qa) {
+                self.sort = .qa
+                self.reset = true
+                self.live = false
+                if isDefault.isOn {
+                    SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: .qa)
+                }
+                self.activityIndicator.removeFromSuperview()
+                let barButton = UIBarButtonItem(customView: self.activityIndicator)
+                self.navigationItem.rightBarButtonItems = [barButton]
+                self.activityIndicator.startAnimating()
+                
+                self.doSortImage(self.sortButton)
+
+                self.refresh(self)
             }
             
             actionSheetController.show(self)
@@ -1197,7 +1307,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         //self.tableView.layer.speed = 1.5
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
         refreshControl = UIRefreshControl()
         refreshControl?.tintColor = ColorUtil.theme.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
@@ -1219,15 +1329,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if !ColorUtil.theme.isLight {
             searchBar.keyboardAppearance = .dark
         }
-        
 
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor = UIColor.white
 
         tableView.estimatedRowHeight = 200
         tableView.rowHeight = UITableView.automaticDimension
 
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell")
-        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
 
         tableView.separatorStyle = .none
         NotificationCenter.default.addObserver(
@@ -1247,22 +1356,101 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         headerCell!.parentViewController = self
         headerCell!.aspectWidth = self.tableView.bounds.size.width
 
-        panGesture = UIPanGestureRecognizer(target: self, action: #selector(self.panCell))
-        panGesture.direction = .horizontal
-        panGesture.delegate = self
-        self.presentationController?.delegate  = self
-//        pan = UIPanGestureRecognizer(target: self, action: #selector(self.handlePop(_:)))
-//        pan.direction = .horizontal
+        if SettingValues.commentGesturesMode != .NONE {
+            setupGestures()
+        }
+        
+        self.presentationController?.delegate = self
+
         if !loaded && (single || forceLoad) {
             refresh(self)
         }
         
-        self.tableView.addGestureRecognizer(panGesture)
-        if navigationController != nil && !(navigationController!.delegate is CommentViewController) {
-            panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+    }
+
+    @objc func onThemeChanged() {
+        version += 1
+        
+        self.headerCell = FullLinkCellView()
+        self.headerCell?.del = self
+        self.headerCell?.parentViewController = self
+        self.hasDone = true
+        self.headerCell?.aspectWidth = self.tableView.bounds.size.width
+        self.headerCell?.configure(submission: self.submission!, parent: self, nav: self.navigationController, baseSub: self.submission!.subreddit, parentWidth: self.view.frame.size.width, np: self.np)
+        if self.submission!.isSelf {
+            self.headerCell?.showBody(width: self.view.frame.size.width - 24)
+        }
+        self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
+        if let tableHeaderView = self.headerCell {
+            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
+            // Add safe area insets to left and right if available
+            if #available(iOS 11.0, *) {
+                frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
+            }
+            if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
+                tableHeaderView.frame = frame
+                tableHeaderView.layoutIfNeeded()
+                let view = UIView(frame: tableHeaderView.frame)
+                view.addSubview(tableHeaderView)
+                self.tableView.tableHeaderView = view
+            }
+        }
+        
+        self.setupTitleView(self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+        
+        self.navigationItem.backBarButtonItem?.title = ""
+        self.setBarColors(color: ColorUtil.getColorForSub(sub: self.submission!.subreddit))
+        
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
+        self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
+        updateStringsTheme(self.content.map { (k, v) in v} )
+
+        self.tableView.reloadData()
+        
+        sortButton = UIButton.init(type: .custom)
+        sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let sortB = UIBarButtonItem.init(customView: sortButton)
+
+        doSortImage(sortButton)
+        
+        let search = UIButton.init(type: .custom)
+        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+        search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+        search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let searchB = UIBarButtonItem.init(customView: search)
+
+        navigationItem.rightBarButtonItems = [sortB, searchB]
+        doHeadView(self.view.frame.size)
+        
+        self.createJumpButton(true)
+        if let submission = self.submission {
+            self.setupTitleView(submission.subreddit, icon: submission.subreddit_icon)
+        }
+        self.updateToolbar()
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if #available(iOS 13.0, *) {
+            if #available(iOS 14.0, *) {
+                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+                    ColorUtil.matchTraitCollection()
+                }
+            } else {
+                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
+                    if themeChanged {
+                        ColorUtil.matchTraitCollection()
+                    }
+                }
+            }
         }
     }
-    
+
     @objc func cancelTapped() {
         hideSearchBar()
     }
@@ -1412,13 +1600,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.isHiding = true
         
         if navigationController != nil {
-            let sort = UIButton.init(type: .custom)
-            sort.accessibilityLabel = "Change sort type"
-            sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
-            sort.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-            sortB = UIBarButtonItem.init(customView: sort)
+            sortButton = UIButton.init(type: .custom)
+            sortButton.accessibilityLabel = "Change sort type"
+            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            sortB = UIBarButtonItem.init(customView: sortButton)
             
+            doSortImage(sortButton)
+
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
             search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
@@ -1487,6 +1676,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        refreshControl.setValue(100, forKey: "_snappingHeight")
+
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
@@ -1494,29 +1685,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if !isModal && !(parent is PagingCommentViewController) && self.navigationController != nil && !(self.navigationController!.delegate is SloppySwiper) {
-            if (SettingValues.commentGesturesMode == .SWIPE_ANYWHERE || SettingValues.commentGesturesMode == .GESTURES) && !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
-            if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-                self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-            }
-        } else {
-            if isModal {
-                self.navigationController?.delegate = self
-                if self.navigationController is TapBehindModalViewController {
-                    (self.navigationController as! TapBehindModalViewController).del = self
-                }
-            }
+        if isModal && self.navigationController is TapBehindModalViewController {
+            self.navigationController?.delegate = self
+            (self.navigationController as! TapBehindModalViewController).del = self
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
-        if self.shouldAnimateLoad {
-            self.reloadTableViewAnimated()
-            self.shouldAnimateLoad = false
-        }
         self.finishedPush = true
     }
  
@@ -1681,6 +1856,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            }
+        }
+    }
+    
+    func updateStringsTheme(_ comments: [AnyObject]) {
+        var color = UIColor.black
+        var first = true
+        for thing in comments {
+            if let comment = thing as? RComment, first {
+                color = ColorUtil.accentColorForSub(sub: comment.subreddit)
+                first = false
+            }
+            if let comment = thing as? RComment {
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.htmlText, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            } else if let more = thing as? RMore {
+                let attr = NSMutableAttributedString(string: "more")
+                self.text[more.getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
             }
         }
     }
@@ -1861,7 +2053,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             lastMoved = 0
         } else {
             var contents = content[dataArray[topCell]]
-            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell {
+            while (contents is RMore || (contents as! RComment).depth > 1) && dataArray.count > topCell + 1 {
                 topCell += 1
                 contents = content[dataArray[topCell]]
             }
@@ -1952,7 +2144,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             more.accessibilityLabel = "Post options"
             more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             moreB = UIBarButtonItem(customView: more)
             
             let mod = UIButton(type: .custom)
@@ -2018,8 +2210,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let alert = DragDownAlertMenu(title: AccountController.formatUsername(input: name, small: true), subtitle: "Tag profile", icon: nil, full: true)
         
         alert.addTextInput(title: "Set tag", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "save-1")?.menuIcon(), action: {
-            ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
-            self.tableView.reloadData()
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                ColorUtil.setTagForUser(name: name, tag: alert.getText() ?? "")
+                self.tableView.reloadData()
+            }
         }, inputPlaceholder: "Enter a tag...", inputValue: ColorUtil.getTagForUser(name: name), inputIcon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), textRequired: true, exitOnAction: true)
 
         if !(ColorUtil.getTagForUser(name: name) ?? "").isEmpty {
@@ -2131,6 +2326,25 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.isCurrentlyChanging = false
                 }
             }
+        }
+    }
+
+    func doSortImage(_ sortButton: UIButton) {
+        switch sort {
+        case .suggested, .confidence:
+            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDown, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .hot:
+            sortButton.setImage(UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .controversial:
+            sortButton.setImage(UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .new:
+            sortButton.setImage(UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .old:
+            sortButton.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        case .top:
+            sortButton.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        default:
+            sortButton.setImage(UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         }
     }
 
@@ -2374,27 +2588,37 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }, completion: nil)
     }
     
-    var lastYUsed = CGFloat(0)
     var isToolbarHidden = false
     var isHiding = false
     var lastY = CGFloat(0)
-    var oldY = CGFloat(0)
+    var olderY = CGFloat(0)
     
     var isSearch = false
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-
+        var currentY = scrollView.contentOffset.y
+        
+        //Sometimes the ScrollView will jump one time in the wrong direction. Unsure why this is happening, but this
+        //will check for that case and ignore it
+        if currentY > lastY && lastY < olderY {
+            currentY = lastY
+        }
+        
         if !SettingValues.pinToolbar && !isReply && !isSearch {
-            if currentY > lastYUsed && currentY > 60 {
+            if currentY <= (tableView.tableHeaderView?.frame.size.height ?? 20) + 64 + 10 {
+                liveView?.removeFromSuperview()
+                liveView = nil
+                liveNewCount = 0
+            }
+            if currentY > lastY && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
                     hideUI(inHeader: true)
                 }
-            } else if (currentY < lastYUsed - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
+            } else if (currentY < lastY - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
                 showUI()
             }
         }
-        lastYUsed = currentY
+        olderY = lastY
         lastY = currentY
     }
 
@@ -2452,7 +2676,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         let datasetPosition = (indexPath as NSIndexPath).row
 
-        cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as UITableViewCell
+        cell = tableView.dequeueReusableCell(withIdentifier: "Cell\(version)", for: indexPath) as UITableViewCell
         if content.isEmpty || text.isEmpty || cDepth.isEmpty || dataArray.isEmpty {
             self.refresh(self)
             return cell
@@ -2602,7 +2826,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             
             if !skipTop {
                 self.tableView.scrollToRow(at: indexPath,
-                                           at: UITableView.ScrollPosition.none, animated: false)
+                                           at: UITableView.ScrollPosition.top, animated: false)
             }
             
             id = (contents as! RComment).getIdentifier()
@@ -2871,7 +3095,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                                    at: UITableView.ScrollPosition.none, animated: false)
                                     }*/
                                 }
-                                hideAll(comment: comment.getIdentifier(), i: row! + 1)
+                                if row != nil {
+                                    hideAll(comment: comment.getIdentifier(), i: row! + 1)
+                                }
                                 if !hiddenPersons.contains(id) {
                                     hiddenPersons.insert(id)
                                 }
@@ -2980,46 +3206,111 @@ extension Thing {
 
 extension CommentViewController: UIGestureRecognizerDelegate {
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
-                return false
+    func setupGestures() {
+        cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
+        cellGestureRecognizer.delegate = self
+        cellGestureRecognizer.maximumNumberOfTouches = 1
+        tableView.addGestureRecognizer(cellGestureRecognizer)
+        if UIDevice.current.userInterfaceIdiom != .pad {
+           // cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        }
+        if let parent = parent as? ColorMuxPagingViewController {
+            parent.requireFailureOf(cellGestureRecognizer)
+        }
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            if let interactivePop = nav.interactivePopGestureRecognizer {
+                cellGestureRecognizer.require(toFail: interactivePop)
             }
         }
-        return true
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer.numberOfTouches == 2 {
-            return true
+    func setupSwipeGesture() {
+        shouldSetupSwipe = true
+        if swipeBackAdded {
+            return
         }
-        return false
+
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SINGLE {
+            if #available(iOS 14, *) {
+                return
+            }
+        }
+        if SettingValues.commentGesturesMode == .FULL {
+            //setupFullSwipeView(self.tableView.tableHeaderView)
+            return
+        }
+        
+        setupFullSwipeView(self.tableView)
+        shouldSetupSwipe = false
+        swipeBackAdded = true
+    }
+    
+    func setupFullSwipeView(_ view: UIView?) {
+        if shouldSetupSwipe == false {
+            return
+        }
+        if let full = fullWidthBackGestureRecognizer {
+            full.view?.removeGestureRecognizer(full)
+        }
+
+        fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
+        if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
+            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            }
+            fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
+            for view in parent?.view.subviews ?? [] {
+                if view is UIScrollView {
+                    (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
+                }
+            }
+
+            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+            fullWidthBackGestureRecognizer.delegate = self
+            //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+            view?.addGestureRecognizer(fullWidthBackGestureRecognizer)
+            if #available(iOS 13.4, *) {
+                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+            }
+        }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Limit angle of pan gesture recognizer to avoid interfering with scrolling
-        if gestureRecognizer == panGesture {
-            if SettingValues.commentGesturesMode == .NONE || SettingValues.commentGesturesMode == .SWIPE_ANYWHERE {
+        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = panGestureRecognizer.translation(in: tableView)
+            if panGestureRecognizer == cellGestureRecognizer {
+                if abs(translation.y) >= abs(translation.x) {
+                    return false
+                }
+                if translation.x < 0 {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.commentGesturesMode == .FULL {
+                        return true
+                    }
+                } else if SettingValues.commentGesturesMode == .FULL && abs(translation.x) > abs(translation.y) {
+                    return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
+                }
                 return false
             }
+            if panGestureRecognizer == fullWidthBackGestureRecognizer && translation.x >= 0 {
+                return true
+            }
+            return false
         }
-        
-        if let recognizer = gestureRecognizer as? UIPanGestureRecognizer, recognizer == panGesture {
-            return recognizer.shouldRecognizeForAxis(.horizontal, withAngleToleranceInDegrees: 45)
-        }
-        
-        return true
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE && translatingCell == nil
+        return false
     }
     
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {
-            let velocity = recognizer.velocity(in: recognizer.view!).x
-            if (velocity < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity > 0 && (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE) && translatingCell == nil) {
+            let velocity = recognizer.velocity(in: recognizer.view!)
+
+            if (velocity.x < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity.x > 0 && (SettingValues.commentGesturesMode == .HALF ||  (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
                 return
             }
         }
@@ -3028,23 +3319,27 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             let point = recognizer.location(in: self.tableView)
             let indexpath = self.tableView.indexPathForRow(at: point)
             if indexpath == nil {
+                recognizer.cancel()
                 return
             }
 
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            for view in cell.commentBody.subviews {
+            for view in cell.commentBody.recursiveSubviews {
                 let cellPoint = recognizer.location(in: view)
                 if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
                     recognizer.cancel()
                     return
                 }
             }
+            tableView.panGestureRecognizer.cancel()
+            disableDismissalRecognizers()
             translatingCell = cell
         }
         
         translatingCell?.handlePan(recognizer)
-        if recognizer.state == .ended {
+        if recognizer.state == .ended || recognizer.state == .cancelled {
             translatingCell = nil
+            enableDismissalRecognizers()
         }
     }
 }

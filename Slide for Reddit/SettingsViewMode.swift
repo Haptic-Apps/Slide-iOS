@@ -25,7 +25,16 @@ class SettingsViewMode: BubbleSettingTableViewController {
     var subredditBarSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    
+
+    var disablePopup = InsetCell()
+    var disablePopupSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var disableMulticolumn = InsetCell()
+    var disableMulticolumnSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var thireenPopup = InsetCell()
     var thireenPopupSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -34,11 +43,17 @@ class SettingsViewMode: BubbleSettingTableViewController {
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
-            SettingValues.subredditBar = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subBar)
+            SettingValues.fullWidthHeaderCells = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_fullWidthHeaderCells)
         } else if changed == thireenPopupSwitch {
             SettingValues.disable13Popup = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disable13Popup)
+        } else if changed == disableMulticolumnSwitch {
+            SettingValues.disableMulticolumnCollections = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_disableMulticolumnCollections)
+        } else if changed == disablePopupSwitch {
+            SettingValues.disablePopupIpad = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disablePopupIpad)
         }
         UserDefaults.standard.synchronize()
     }
@@ -65,8 +80,10 @@ class SettingsViewMode: BubbleSettingTableViewController {
         // set the title
         self.title = "App Behavior"
         
-        createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
+        createCell(subredditBar, subredditBarSwitch, isOn: !SettingValues.fullWidthHeaderCells, text: "Swipable subreddit bar on homepage")
         createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")
+        createCell(disablePopup, disablePopupSwitch, isOn: SettingValues.disablePopupIpad, text: "Show comments full screen")
+        createCell(disableMulticolumn, disableMulticolumnSwitch, isOn: !SettingValues.disableMulticolumnCollections, text: "Multi-column in profile and inbox")
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
@@ -185,7 +202,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
             case 0: return self.multicolumnCount
             case 1: return self.galleryCount
             case 2: return self.subredditBar
-            case 3: return self.thireenPopup
+            case 3: return self.disablePopup
+            case 4: return self.disableMulticolumn
+                
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -208,6 +227,26 @@ class SettingsViewMode: BubbleSettingTableViewController {
                 UserDefaults.standard.set(SettingValues.AppMode.MULTI_COLUMN.rawValue, forKey: SettingValues.pref_appMode)
             default:
                 break
+            }
+            var keyWindow = UIApplication.shared.keyWindow
+            if keyWindow == nil {
+                if #available(iOS 13.0, *) {
+                    keyWindow = UIApplication.shared.connectedScenes
+                        .filter({ $0.activationState == .foregroundActive })
+                        .map({ $0 as? UIWindowScene })
+                        .compactMap({$0})
+                        .first?.windows
+                        .filter({ $0.isKeyWindow }).first
+                }
+            }
+            guard keyWindow != nil else {
+                fatalError("Window must exist when resetting the stack!")
+            }
+
+            if #available(iOS 14, *) {
+                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
+            } else {
+                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
             }
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
@@ -287,13 +326,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var thirteenOffset = 0
-        if #available(iOS 13, *) {
-            thirteenOffset = 1
+        var ipadOffset = 0
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            ipadOffset = 2
         }
         switch section {
         case 0: return 3
-        case 1: return 3 + thirteenOffset
+        case 1: return 3 + ipadOffset
         default: fatalError("Unknown number of sections")
         }
     }

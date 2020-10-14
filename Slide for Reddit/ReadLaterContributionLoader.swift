@@ -42,7 +42,7 @@ class ReadLaterContributionLoader: ContributionLoader {
                 if reload {
                     self.content = []
                 }
-                try delegate?.session?.getLinksById(Array(ids[self.content.count..<ids.count]), completion: {(result) in
+                try delegate?.session?.getLinksById(Array(ids[self.content.count..<min(self.content.count + 20, ids.count)]), completion: {(result) in
                     switch result {
                     case .failure:
                         self.delegate?.failed(error: result.error!)
@@ -55,7 +55,7 @@ class ReadLaterContributionLoader: ContributionLoader {
                                 self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
                             }
                         }
-                        self.canGetMore = listing.paginator.hasMore()
+                        self.canGetMore = self.content.count < self.ids.count
                         self.paginator = listing.paginator
                         DispatchQueue.main.async {
                             self.delegate?.doneLoading(before: before, filter: false)

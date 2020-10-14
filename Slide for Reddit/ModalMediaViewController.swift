@@ -11,6 +11,7 @@ import AVKit
 import SDCAlertView
 import Then
 import UIKit
+import YYText
 
 class ModalMediaViewController: UIViewController {
 
@@ -34,17 +35,18 @@ class ModalMediaViewController: UIViewController {
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
     var spinnerIndicator = UIActivityIndicatorView()
-
+    var titleView = YYLabel()
+    
     var didStartPan : (_ panStart: Bool) -> Void = { result in }
-    private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
     var failureCallback: ((_ url: URL) -> Void)?
     var upvoteCallback: (() -> Void)?
     var isUpvoted = false
+    var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: RSubmission?) {
         super.init(nibName: nil, bundle: nil)
 
         self.failureCallback = failureCallback
@@ -53,6 +55,24 @@ class ModalMediaViewController: UIViewController {
         self.isUpvoted = isUpvoted
         
         let type = ContentType.getContentType(baseUrl: url)
+        if link != nil && link?.subreddit != "" {
+            let title = CachedTitle.getTitleForMedia(submission: link!)
+            let finalTitle = NSMutableAttributedString(attributedString: title.infoLine!)
+            finalTitle.append(NSAttributedString(string: "\n"))
+            finalTitle.append(title.mainTitle!)
+            
+            titleView.attributedText = finalTitle
+            titleView.numberOfLines = 0
+            
+            if commentCallback != nil {
+                titleView.addTapGestureRecognizer { [weak self] in
+                    guard let strongSelf = self else { return }
+                    strongSelf.dismiss(animated: false) {
+                        strongSelf.commentCallback?()
+                    }
+                }
+            }
+        }
         if ContentType.isImgurLink(uri: url) || type == .DEVIANTART || type == .XKCD {
             spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = self.view.center
@@ -238,6 +258,9 @@ class ModalMediaViewController: UIViewController {
             panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
             panGestureRecognizer!.delegate = self
             panGestureRecognizer!.direction = .vertical
+            if #available(iOS 13.4, *) {
+                panGestureRecognizer!.allowedScrollTypesMask = .continuous
+            }
             panGestureRecognizer!.cancelsTouchesInView = false
             
             view.addGestureRecognizer(panGestureRecognizer!)
@@ -246,14 +269,8 @@ class ModalMediaViewController: UIViewController {
             background!.frame = self.view.frame
             background!.autoresizingMask = [.flexibleHeight, .flexibleWidth]
             background!.backgroundColor = .black
-            
-            background!.alpha = 0.6
-            
+                                    
             self.view.insertSubview(background!, at: 0)
-            blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
-            blurEffect.setValue(5, forKeyPath: "blurRadius")
-            blurView!.effect = blurEffect
-            view.insertSubview(blurView!, at: 0)
         }
         
         if embeddedVC != nil {
@@ -270,6 +287,10 @@ class ModalMediaViewController: UIViewController {
         UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         
+        titleView.lineBreakMode = .byWordWrapping
+        titleView.sizeToFit()
+        titleView.layoutIfNeeded()
+
         if parent is AlbumViewController || parent is ShadowboxLinkViewController {
             self.closeButton.isHidden = true
         }
@@ -330,7 +351,10 @@ class ModalMediaViewController: UIViewController {
 
         closeButton.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: .normal)
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
-        self.view.addSubview(closeButton)
+        
+        self.view.addSubview(gradientView)
+        gradientView.addSubview(closeButton)
+        gradientView.addSubview(titleView)
     }
     
     @objc func exit() {
@@ -355,9 +379,24 @@ class ModalMediaViewController: UIViewController {
     func configureLayout() {
         embeddedVC.view.edgeAnchors == self.view.edgeAnchors
 
-        closeButton.sizeAnchors == .square(size: 26)
-        closeButton.topAnchor == self.view.safeTopAnchor + 8
-        closeButton.leftAnchor == self.view.safeLeftAnchor + 12
+        gradientView.horizontalAnchors == self.view.horizontalAnchors
+        gradientView.topAnchor == self.view.topAnchor
+
+        closeButton.sizeAnchors == .square(size: 38)
+        closeButton.topAnchor == gradientView.safeTopAnchor + 8
+        closeButton.leftAnchor == gradientView.safeLeftAnchor + 12
+        closeButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        closeButton.layer.masksToBounds = true
+        closeButton.layer.cornerRadius = 18
+        
+        titleView.leftAnchor == closeButton.rightAnchor + 8
+        titleView.topAnchor == gradientView.safeTopAnchor + 8
+        titleView.rightAnchor == gradientView.safeRightAnchor - 8
+        titleView.bottomAnchor == gradientView.bottomAnchor - 8
+            
+        gradientView.layoutIfNeeded()
+        titleView.preferredMaxLayoutWidth = self.titleView.frame.size.width
+        titleView.sizeToFit()
     }
 
     func connectGestures() {
@@ -385,7 +424,7 @@ class ModalMediaViewController: UIViewController {
 
 // MARK: - Actions
 extension ModalMediaViewController {
-    @objc func fullscreen(_ sender: AnyObject) {
+    @objc func fullscreen(_ sender: AnyObject, _ hideTitle: Bool) {
         // Don't allow fullscreen if the user is a voiceover user.
         if UIAccessibility.isVoiceOverRunning {
             return
@@ -397,23 +436,25 @@ extension ModalMediaViewController {
             statusBar.isHidden = true
 
             self.background?.alpha = 1
-            self.closeButton.alpha = 0
-            self.embeddedVC.bottomButtons.alpha = 0
+            if hideTitle {
+                self.gradientView.alpha = 0
+            }
+            self.embeddedVC.gradientView.alpha = 0
         }, completion: {_ in
-            self.embeddedVC.bottomButtons.isHidden = true
+            self.embeddedVC.gradientView.isHidden = true
         })
     }
 
     @objc func unFullscreen(_ sender: AnyObject) {
         fullscreen = false
-        self.embeddedVC.bottomButtons.isHidden = false
+        self.embeddedVC.gradientView.isHidden = false
         UIView.animate(withDuration: 0.5, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
             let statusBar: UIView = UIApplication.shared.statusBarUIView ?? UIView()
             statusBar.isHidden = false
-            self.closeButton.alpha = 1
+            self.gradientView.alpha = 1
 
-            self.background?.alpha = 0.6
-            self.embeddedVC.bottomButtons.alpha = 1
+            self.background?.alpha = 1
+            self.embeddedVC.gradientView.alpha = 1
             self.embeddedVC.progressView.alpha = 0.7
 
         }, completion: {_ in
@@ -505,5 +546,34 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
 extension UINavigationController {
     open override var preferredStatusBarStyle: UIStatusBarStyle {
         return (presentedViewController is AlertController) ? .lightContent : (presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight ? .default : .lightContent))
+    }
+}
+
+class GradientView: UIView {
+
+    private let gradient: CAGradientLayer = CAGradientLayer()
+    private let gradientStartColor: UIColor
+    private let gradientEndColor: UIColor
+
+    init(gradientStartColor: UIColor, gradientEndColor: UIColor) {
+        self.gradientStartColor = gradientStartColor
+        self.gradientEndColor = gradientEndColor
+        super.init(frame: .zero)
+    }
+
+    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+
+    override func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
+        gradient.frame = self.bounds
+    }
+
+    override public func draw(_ rect: CGRect) {
+        gradient.frame = self.bounds
+        gradient.colors = [gradientStartColor.cgColor, gradientEndColor.cgColor]
+        gradient.locations = [0, 1]
+        if gradient.superlayer == nil {
+            layer.insertSublayer(gradient, at: 0)
+        }
     }
 }

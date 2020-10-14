@@ -47,7 +47,7 @@ class PostActions: NSObject {
         alertController.show(parent)
     }
     
-    public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
+    public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         switch action {
         case .PROFILE:
@@ -142,7 +142,7 @@ class PostActions: NSObject {
         }
     }
     
-    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
+    public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         
         let alertController: DragDownAlertMenu = DragDownAlertMenu(title: "Submission", subtitle: link.title, icon: link.thumbnailUrl)
@@ -572,12 +572,12 @@ class PostActions: NSObject {
         
         if !AccountController.isLoggedIn {
             alert.addAction(AlertAction(title: "Log in to report this content", style: .normal, handler: { (_) in
-                MainViewController.doAddAccount(register: false)
+                //TODO how to do this now MainViewController.doAddAccount(register: false)
             }))
             alert.addAction(AlertAction(title: "Create a Reddit account", style: .normal, handler: { (_) in
                 let alert = UIAlertController(title: "Create a new Reddit account", message: "After finishing the process on the next screen, click the 'back' arrow to finish setting up your account!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
-                    MainViewController.doAddAccount(register: true)
+                    //TODO how to do this now MainViewController.doAddAccount(register: true)
                 }))
                 alert.addCancelButton()
                 VCPresenter.presentAlert(alert, parentVC: parent)
