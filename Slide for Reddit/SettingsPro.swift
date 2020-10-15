@@ -355,6 +355,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     SettingValues.isPro = true
                     UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                     UserDefaults.standard.synchronize()
+                    (strongSelf.presentingViewController as? SettingsViewController)?.doPro()
                     SettingsPro.changed = true
                 }
             } else if type == .restored {
@@ -369,6 +370,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     SettingValues.isPro = true
                     UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                     UserDefaults.standard.synchronize()
+                    (strongSelf.presentingViewController as? SettingsViewController)?.doPro()
                     SettingsPro.changed = true
                 }
             }

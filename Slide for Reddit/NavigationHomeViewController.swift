@@ -279,10 +279,18 @@ class NavigationHomeViewController: UIViewController {
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
-
+        
         view.addSubview(tableView)
 
         setColors(MainViewController.current)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return section == numberOfSections(in: tableView) - 1 ? UIView() : nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == numberOfSections(in: tableView) - 1 ? 300 : 0
     }
 
     func configureLayout() {

@@ -397,6 +397,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             
         }
+        
+        self.window?.frame = UIScreen.main.bounds
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {

@@ -408,7 +408,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     @objc func overview(_ sender: UIBarButtonItem) {
         let alert = AlertController(title: nil, message: nil, preferredStyle: .alert)
 
-        alert.setupTheme()
+        //alert.setupTheme()
         alert.addAsyncImagePicker(
             flow: .vertical,
             paging: false,
