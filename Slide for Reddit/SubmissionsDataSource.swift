@@ -36,6 +36,8 @@ class SubmissionsDataSource {
     var isReset = false
     var realmListing: RListing?
     var updated = NSDate()
+    
+    weak var currentSession: URLSessionDataTask?
 
     init(subreddit: String, sorting: LinkSortType, time: TimeFilterWithin) {
         self.subreddit = subreddit
@@ -134,7 +136,7 @@ class SubmissionsDataSource {
         }
     }
 
-    func getData(reload: Bool) {
+    func getData(reload: Bool, force: Bool = false) {
         
         self.isReset = reload
         if let delegate = delegate {
@@ -151,12 +153,15 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading {
+        if !loading || force {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()
                 }
             }
+            
+            currentSession?.cancel()
+            currentSession = nil
 
             do {
                 loading = true
@@ -177,7 +182,7 @@ class SubmissionsDataSource {
                     subItem = Multireddit.init(name: subreddit.split("/")[3], user: subreddit.split("/")[1])
                 }
                 
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: subItem, sort: sorting, timeFilterWithin: time, limit: SettingValues.submissionLimit, completion: { (result) in
+                try currentSession = (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: subItem, sort: sorting, timeFilterWithin: time, limit: SettingValues.submissionLimit, completion: { (result) in
                     self.loaded = true
                     self.isReset = false
                     switch result {

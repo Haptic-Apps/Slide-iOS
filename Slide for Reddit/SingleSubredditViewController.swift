@@ -952,7 +952,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if (SingleSubredditViewController.firstPresented && !single && !dataSource.hasContent()) || (!dataSource.hasContent() && !single && !SettingValues.subredditBar) {
             dataSource.delegate = self
-            dataSource.getData(reload: true)
+            dataSource.getData(reload: true, force: true)
             SingleSubredditViewController.firstPresented = false
         }
         
@@ -1031,7 +1031,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
                                     if !self.dataSource.loading && !self.dataSource.loaded {
-                                        self.dataSource.getData(reload: true)
+                                        self.dataSource.getData(reload: true, force: true)
                                     }
                                     self.loadBubbles()
                                 }
@@ -1066,13 +1066,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                             }
                                         }
                                         if !self.dataSource.loading && !self.dataSource.loaded {
-                                            self.dataSource.getData(reload: true)
+                                            self.dataSource.getData(reload: true, force: true)
                                         }
                                         self.loadBubbles()
                                     }
                                 } else {
                                     if !self.dataSource.loading && !self.dataSource.loaded {
-                                        self.dataSource.getData(reload: true)
+                                        self.dataSource.getData(reload: true, force: true)
                                     }
                                     self.loadBubbles()
                                 }
@@ -1085,7 +1085,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else if offline && single && !self.dataSource.loading && !self.dataSource.loaded {
             title = sub
             //hideMenuNav()
-            dataSource.getData(reload: true)
+            dataSource.getData(reload: true, force: true)
         } else if !dataSource.loaded {
             self.loadBubbles()
         }
@@ -1300,7 +1300,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         filterView.heightAnchor == CGFloat(50 * settings.tableView(settings.tableView, numberOfRowsInSection: 0))
         alert.addAction(AlertAction(title: "Apply", style: .preferred, handler: { (_) in
             if reload {
-                self.dataSource.getData(reload: true)
+                self.dataSource.getData(reload: true, force: true)
             } else {
                 self.applyFilters()
             }
@@ -1443,7 +1443,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.tableView.reloadData()
         }, completion: nil)
         
-        dataSource.getData(reload: true)
+        dataSource.getData(reload: true, force: true)
     }
 
     func deleteSelf(_ cell: LinkCellView) {
