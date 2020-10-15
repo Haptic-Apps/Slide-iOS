@@ -11,6 +11,7 @@ import Foundation
 class Constants {
     // Shared property
     public static let shared = Constants()
+    // MARK: - Network
     // Returns network status for any iOS Version.
     public var isNetworkOnline: Bool {
         if #available(iOS 12.0, *) {
@@ -18,7 +19,7 @@ class Constants {
             return NetworkMonitor.shared.online
         } else {
             print("-12.0")
-            return FallbackNetworkMonitor.shared.isReachable
+            return FallbackNetworkMonitor.shared.isReachabilityOnline
         }
     }
     
