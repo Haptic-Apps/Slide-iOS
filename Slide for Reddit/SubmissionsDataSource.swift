@@ -150,7 +150,7 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading {
+        if !loading || reload {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()

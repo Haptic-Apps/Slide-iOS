@@ -1025,7 +1025,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             print(result.error!.description)
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
-                                    if !self.dataSource.loaded {
+                                    if !self.dataSource.loading && !self.dataSource.loaded {
                                         self.dataSource.getData(reload: true)
                                     }
                                     self.loadBubbles()
@@ -1060,13 +1060,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                                 }
                                             }
                                         }
-                                        if !self.dataSource.loaded {
+                                        if !self.dataSource.loading && !self.dataSource.loaded {
                                             self.dataSource.getData(reload: true)
                                         }
                                         self.loadBubbles()
                                     }
                                 } else {
-                                    if !self.dataSource.loaded {
+                                    if !self.dataSource.loading && !self.dataSource.loaded {
                                         self.dataSource.getData(reload: true)
                                     }
                                     self.loadBubbles()
@@ -1077,7 +1077,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-        } else if offline && single && !dataSource.loaded {
+        } else if offline && single && !self.dataSource.loading && !self.dataSource.loaded {
             title = sub
             //hideMenuNav()
             dataSource.getData(reload: true)

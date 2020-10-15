@@ -357,6 +357,20 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     UserDefaults.standard.synchronize()
                     SettingsPro.changed = true
                 }
+            } else if type == .restored {
+                DispatchQueue.main.async {
+                    strongSelf.alertController?.dismiss(animated: true, completion: nil)
+                    let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                        self?.dismiss(animated: true, completion: nil)
+                    })
+                    alertView.addAction(action)
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                    SettingValues.isPro = true
+                    UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+                    UserDefaults.standard.synchronize()
+                    SettingsPro.changed = true
+                }
             }
         }
         
