@@ -9,29 +9,37 @@
 import Foundation
 import SystemConfiguration
 
+// MARK: - Reachability Status
+enum ReachabilityStatus {
+    case transientConnection
+    case connectionRequired
+    case connectionOnTraffic
+    case interventionRequired
+    case connectionOnDemand
+    case isLocalAddress
+    case isDirect
+    case isWWAN
+    case connectionAutomatic
+}
+
 final class FallbackNetworkMonitor {
     // MARK: - References / Properties
     /// FallbackNetworkMonitor Singleton
     public static let shared = FallbackNetworkMonitor()
-    /// Initializes the monitor with a host.
-    /// - Parameter host: url as string used as a reference point.
-    init(host: String = "www.reddit.com") {
-        guard let reachability = SCNetworkReachabilityCreateWithName(nil, host) else { fatalError("Failed to activate SCNetworkReachability.") }
-        self.reachability = reachability
-        self.callUpdate()
-    }
     /// Stops network monitoring
     deinit {
         stopFallbackNetworkMonitor()
     }
     /// Instantiating a SCNetworkReachability Object using hostname.
-    private var reachability: SCNetworkReachability
+    private var reachability: SCNetworkReachability = SCNetworkReachabilityCreateWithName(nil, "www.reddit.com")!
     /// Creates the flags which get status of network.
     private var reachabilityFlags = SCNetworkReachabilityFlags()
     /// Queue for Reachability to run.
     private let reachabilityQueue = DispatchQueue.global(qos: .background)
+    /// Fallback Online notification
+    private var fallbackOnlineNotification = NotificationCenter.default
     /// Assigns the current flag options for network.
-    private var currentReachabilityFlags: SCNetworkReachabilityFlags?
+    public  private(set) var currentReachabilityFlags: SCNetworkReachabilityFlags = []
     /// Checks if reachability is actively listening.
     public var isListening: Bool = false {
         didSet {
@@ -40,28 +48,50 @@ final class FallbackNetworkMonitor {
             isListening ? startFallbackNetworkMonitoring() : stopFallbackNetworkMonitor()
         }
     }
-    /// Fallback Online notification
-    private var fallbackOnlineNotification = NotificationCenter.default
     /// Returns current network status.
     public var isReachabilityOnline: Bool {
         get {
-            guard let currentReachabilityFlags = currentReachabilityFlags else { return false }
             // Used for testing on device if network changes.
             print("Fallback Online: \(currentReachabilityFlags.contains(.reachable))")
+            // Returns if current network status.
             return currentReachabilityFlags.contains(.reachable)
         }
         set {
         }
     }
+    /// Can check and return reachability status's.
+    public var currentReachabilityStatus: ReachabilityStatus {
+        if currentReachabilityFlags.contains(.transientConnection) == true {
+            return .transientConnection
+        } else if currentReachabilityFlags.contains(.connectionRequired) == true {
+            return .connectionRequired
+        } else if currentReachabilityFlags.contains(.connectionOnTraffic) == true {
+            return .connectionOnTraffic
+        } else if currentReachabilityFlags.contains(.interventionRequired) == true {
+            return .interventionRequired
+        } else if currentReachabilityFlags.contains(.connectionOnDemand) == true {
+            return .connectionOnDemand
+        } else if currentReachabilityFlags.contains(.isLocalAddress) == true {
+            return .isLocalAddress
+        } else if currentReachabilityFlags.contains(.isDirect) == true {
+            return .isDirect
+        } else if currentReachabilityFlags.contains(.isWWAN) == true {
+            return .isWWAN
+        } else {
+            return .connectionAutomatic
+        }
+    }
     // MARK: - Methods
     /// Used to start monitoring Network changes.
     public func startFallbackNetworkMonitoring() {
-        // Makes sure there are no nil objects and isListening is active.
-        guard let reachability = SCNetworkReachabilityCreateWithName(nil, "www.reddit.com"), !isListening else { print("SCNetworkReachabilityCreateWithName error!"); return }
+        // Checks if SCNetworkReachability is already active.
+        guard !isListening else { return }
+        //
+        let selfReference = UnsafeMutableRawPointer(Unmanaged<FallbackNetworkMonitor>.passUnretained(self).toOpaque())
         // Creates a context for SCNetworkReachability.
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
         // Provides info to FallbackNetworkMonitor.
-        context.info = UnsafeMutableRawPointer(Unmanaged.passUnretained(self).toOpaque())
+        context.info = selfReference
         // Closure used to get back info on Network.
         let callbackClosure: SCNetworkReachabilityCallBack? = { (_, flags, info) in
             guard let info = info else { return }
@@ -83,12 +113,14 @@ final class FallbackNetworkMonitor {
     /// Used to update flags that Network has experienced changes.
     /// - Parameter flags: SCNetworkReachabilityFlags
     public func reachabilityDidChange(flags: SCNetworkReachabilityFlags) {
+        print("Current Flag: \(currentReachabilityFlags)")
         // Checks that current flag isn't the same as before, otherwise return.
         guard currentReachabilityFlags != flags else { return }
+        print("New Flag: \(flags)")
         // Assigns current flag info to current.
         currentReachabilityFlags = flags
         // Checks if current flag info is Online.
-        guard let fallbackOnline = currentReachabilityFlags?.contains(.reachable) else { return }
+        let fallbackOnline = currentReachabilityFlags.contains(.reachable)
         print("Raw fallback Online: \(fallbackOnline)")
         // Assigns info to a dictionary for Notification.
         let fallbackOnlineDictionary = ["fallbackOnline": fallbackOnline]

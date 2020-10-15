@@ -1104,7 +1104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 12.0, *) {
             NetworkMonitor.shared.stopNetworkMonitoring()
         } else {
-            print("Not 12.0")
+            FallbackNetworkMonitor.shared.stopFallbackNetworkMonitor()
         }
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
