@@ -135,6 +135,7 @@ class SubmissionsDataSource {
     }
 
     func getData(reload: Bool) {
+        
         self.isReset = reload
         if let delegate = delegate {
             delegate.preLoadItems()
@@ -150,7 +151,7 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading || reload {
+        if !loading {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()

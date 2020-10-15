@@ -555,7 +555,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.isHiding = false
         })
         
-        if single || parent is SingleSubredditViewController {
+        if single || parent is SplitMainViewController {
             self.navigationController?.setToolbarHidden(true, animated: true)
             //hideMenuNav()
         //} else {
@@ -605,7 +605,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
-        if (single || parent is SingleSubredditViewController) && !MainViewController.isOffline {
+        if (single || parent is SplitMainViewController) && !MainViewController.isOffline {
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
             /*UIView.animate(withDuration: 0.25) {
@@ -951,6 +951,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         if (SingleSubredditViewController.firstPresented && !single && !dataSource.hasContent()) || (!dataSource.hasContent() && !single && !SettingValues.subredditBar) {
+            dataSource.delegate = self
             dataSource.getData(reload: true)
             SingleSubredditViewController.firstPresented = false
         }
@@ -1085,7 +1086,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             title = sub
             //hideMenuNav()
             dataSource.getData(reload: true)
-        } else {
+        } else if !dataSource.loaded {
             self.loadBubbles()
         }
     }
