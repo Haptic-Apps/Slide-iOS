@@ -885,6 +885,32 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     var lastVersion = 0
     
+    func doToolbar() {
+        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
+            doSortImage(mainVC.sortButton)
+        }
+        
+        more = UIButton.init(type: .custom)
+        more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
+        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let moreB = UIBarButtonItem.init(customView: more)
+        
+        searchbutton = UIButton.init(type: .custom)
+        searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
+        searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
+        searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let searchB = UIBarButtonItem.init(customView: searchbutton)
+
+        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+        
+        if parent is SplitMainViewController {
+            parent!.toolbarItems = [searchB, flexButton, moreB]
+        } else {
+            toolbarItems = [searchB, flexButton, moreB]
+        }
+    }
+    
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
         inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
@@ -934,31 +960,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let offline = MainViewController.isOffline
 
-        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
-            doSortImage(mainVC.sortButton)
-        }
-        
-        more = UIButton.init(type: .custom)
-        more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
-        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let moreB = UIBarButtonItem.init(customView: more)
-        
-        searchbutton = UIButton.init(type: .custom)
-        searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
-        searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
-        searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let searchB = UIBarButtonItem.init(customView: searchbutton)
-
-        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        
-        if parent is SplitMainViewController {
-            parent!.toolbarItems = [searchB, flexButton, moreB]
-        } else {
-            toolbarItems = [searchB, flexButton, moreB]
-        }
-
         if single && !offline {
+            doToolbar()
+            
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)

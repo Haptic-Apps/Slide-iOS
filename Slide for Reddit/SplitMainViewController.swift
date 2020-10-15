@@ -312,6 +312,8 @@ class SplitMainViewController: MainViewController {
         self.navigationController?.navigationBar.layoutIfNeeded()
         
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
+        
+        vc.doToolbar()
     }
 
     override func doRetheme() {
