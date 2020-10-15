@@ -376,7 +376,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                             mail.mailComposeDelegate = strongSelf
                             mail.setToRecipients(["hapticappsdev@gmail.com"])
                             mail.setSubject("Slide Pro Purchase")
-                            mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                            mail.setMessageBody("<p>Apple ID: \nError:" + (error ?? "" ) + "\n\n</p>", isHTML: true)
                             
                             strongSelf.present(mail, animated: true)
                         }

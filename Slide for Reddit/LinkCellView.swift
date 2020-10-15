@@ -1001,7 +1001,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         circleShape.lineWidth = 1.5
         // add sublayer
         for layer in progressDot.layer.sublayers ?? [CALayer]() {
-            layer.removeFromSuperlayer()
+            if layer.superlayer != nil {
+                layer.removeFromSuperlayer()
+            }
         }
 
         if !buffering {

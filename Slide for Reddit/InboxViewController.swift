@@ -147,7 +147,11 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             isModal13 = true
         }
         let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
-        tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
+        if #available(iOS 13, *) {
+            tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
+        } else {
+            tabBar.topAnchor == self.view.topAnchor
+        }
 
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.sizeToFit()

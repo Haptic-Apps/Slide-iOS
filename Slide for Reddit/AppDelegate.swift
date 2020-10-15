@@ -1248,7 +1248,7 @@ private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIden
 class CustomSplitController: UISplitViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
-                        if #available(iOS 13, *) {
+            if #available(iOS 13, *) {
                 return .darkContent
             } else {
                 return .default
@@ -1353,7 +1353,7 @@ extension AppDelegate: UIWindowSceneDelegate {
                     VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
                 } else {
                     VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
-                }
+                }restore
             }*/
         }
         

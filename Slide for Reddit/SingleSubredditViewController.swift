@@ -233,7 +233,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         reloadNeedingColor()
         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
-        self.automaticallyAdjustsScrollViewInsets = false
         
         self.view.addSubview(emptyStateView)
         emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit")
@@ -306,6 +305,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if single && !(parent is SplitMainViewController) {
             setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
+        } else if #available(iOS 13, *) {} else {
+            setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
         }
         
         if !dataSource.loaded {
@@ -314,10 +315,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = false
+        var isBelow13 = true
+        if #available(iOS 13, *) {
+            isBelow13 = false
+        }
+        navigationController?.navigationBar.isTranslucent = isBelow13 ? true : false
         
         if !single {
-            splitViewController?.navigationController?.navigationBar.isTranslucent = false
+            splitViewController?.navigationController?.navigationBar.isTranslucent = isBelow13 ? true : false
             splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
         }
         if let bar = splitViewController?.navigationController?.navigationBar {

@@ -193,7 +193,6 @@ class SplitMainViewController: MainViewController {
     override func viewDidLoad() {
         SplitMainViewController.isFirst = true
         
-        self.navToMux = self.navigationController?.navigationBar
         self.color1 = ColorUtil.theme.foregroundColor
         self.color2 = ColorUtil.theme.foregroundColor
         
@@ -333,7 +332,7 @@ class SplitMainViewController: MainViewController {
     
     var isReappear = false
     override func viewWillAppearActions(override: Bool = false) {
-        self.edgesForExtendedLayout = UIRectEdge.all
+        self.edgesForExtendedLayout = .all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.presentsWithGesture = true
         //self.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -369,11 +368,13 @@ class SplitMainViewController: MainViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        if navToMux == nil {
+            self.navToMux = self.navigationController?.navigationBar
+        }
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.handleToolbars()
         doReAppearToolbar()
-        setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
 
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
@@ -398,6 +399,8 @@ class SplitMainViewController: MainViewController {
             doRetheme()
         }
         didUpdate()
+        
+        setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
     }
 
     override func hardReset(soft: Bool = false) {
@@ -428,6 +431,7 @@ class SplitMainViewController: MainViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
         }

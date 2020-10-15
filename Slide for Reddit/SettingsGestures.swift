@@ -61,6 +61,8 @@ class SettingsGestures: BubbleSettingTableViewController {
                 UserDefaults.standard.synchronize()
                 self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
                 self.updateCells()
+                SplitMainViewController.needsReTheme = true
+                MainViewController.needsReTheme = true
             }
         }
         alertController.show(self)
@@ -78,6 +80,8 @@ class SettingsGestures: BubbleSettingTableViewController {
                 UserDefaults.standard.synchronize()
                 self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
                 self.updateCells()
+                SplitMainViewController.needsReTheme = true
+                MainViewController.needsReTheme = true
             }
         }
         alertController.show(self)
