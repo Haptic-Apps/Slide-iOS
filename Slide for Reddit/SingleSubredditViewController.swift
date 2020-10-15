@@ -152,7 +152,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         sub = subName
         self.parentController = parent
         
-        single = parent is SplitMainViewController
+        single = !(parent is SplitMainViewController)
         dataSource = SubmissionsDataSource(subreddit: subName, sorting: SettingValues.getLinkSorting(forSubreddit: subName), time: SettingValues.getTimePeriod(forSubreddit: subName))
 
         super.init(nibName: nil, bundle: nil)
@@ -555,7 +555,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.isHiding = false
         })
         
-        if single {
+        if single || parent is SingleSubredditViewController {
             self.navigationController?.setToolbarHidden(true, animated: true)
             //hideMenuNav()
         //} else {
@@ -605,7 +605,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
-        if single && !MainViewController.isOffline {
+        if (single || parent is SingleSubredditViewController) && !MainViewController.isOffline {
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
             /*UIView.animate(withDuration: 0.25) {
@@ -1085,6 +1085,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             title = sub
             //hideMenuNav()
             dataSource.getData(reload: true)
+        } else {
+            self.loadBubbles()
         }
     }
     
