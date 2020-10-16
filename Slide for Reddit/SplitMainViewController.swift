@@ -423,11 +423,7 @@ class SplitMainViewController: MainViewController {
 
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
-            } else {
-                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
-            }
+            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
     }
 
@@ -467,12 +463,7 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        let main: MainViewController!
-        if #available(iOS 14, *) {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
-        } else {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
-        }
+        let main: MainViewController = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         (UIApplication.shared.delegate as! AppDelegate).login = main
         AccountController.addAccount(context: main, register: register)
     }
@@ -703,105 +694,25 @@ extension SplitMainViewController: NavigationHomeDelegate {
             //TODO trending page
         }
     }
-    
-    func doOpen(_ state: OpenState, _ homeViewController: NavigationHomeViewController, toExecute: ( () -> Void)?, toPresent: UIViewController? = nil) {
-        switch state {
-        case .POPOVER_ANY:
-            if let present = toPresent {
-                homeViewController.present(present, animated: true)
-            } else {
-                toExecute?()
-            }
-        case .POPOVER_ANY_NAV:
-            if let present = toPresent {
-                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: nil, parentViewController: homeViewController)
-            } else {
-                toExecute?()
-            }
-        case .POPOVER_AFTER_NAVIGATION:
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
-                nav.pushNextViewControllerFromRight() {
-                    if let present = toPresent {
-                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-                    } else {
-                        toExecute?()
-                    }
-                }
-            } else {
-                var is14Column = false
-                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                    is14Column = true
-                }
 
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
-                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
-                    if let present = toPresent {
-                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-                    } else {
-                        toExecute?()
-                    }
-                } else {
-                    UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
-                                self.splitViewController?.preferredDisplayMode = .primaryHidden
-                            }, completion: { (_) in
-                            })
-                        }
-                    }, completion: { _ in
-                        if let present = toPresent {
-                            VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-                        } else {
-                            toExecute?()
-                        }
-                    })
-                }
-            }
-        case .POPOVER_SIMULTANEOUSLY:
-            if let present = toPresent {
-                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-            } else {
-                toExecute?()
-            }
+    /**
+     Navigate to the home VC and display the specified subreddit.
+     */
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit subredditName: String) {
+        let currentState: OpenState
 
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
-                nav.pushNextViewControllerFromRight() {
-                }
-            } else {
-                var is14Column = false
-                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                    is14Column = true
-                }
-
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
-                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
-                } else {
-                    UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
-                                self.splitViewController?.preferredDisplayMode = .primaryHidden
-                            }, completion: { (_) in
-                            })
-                        }
-                    }, completion: { _ in
-                    })
-                }
-            }
-        }
-        
-    }
-        
-    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        var currentState = OpenState.POPOVER_AFTER_NAVIGATION
-        if self.finalSubs.contains(didRequestSubreddit) {
+        // If subscriptions contains the subreddit, do a popover?
+        if self.finalSubs.contains(subredditName) {
             currentState = .POPOVER_SIMULTANEOUSLY
+        } else {
+            currentState = .POPOVER_AFTER_NAVIGATION
         }
         
         doOpen(currentState, homeViewController) {
-            self.goToSubreddit(subreddit: didRequestSubreddit)
+            self.goToSubreddit(subreddit: subredditName)
         }
     }
-    
+
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestReadLater: Void) {
         let vc = ReadLaterViewController(subreddit: "all")
         
@@ -1037,6 +948,96 @@ extension SplitMainViewController: NavigationHomeDelegate {
         self.doAddAccount(register: false)
     }
 
+    /**
+     Open the given ViewController using the given OpenState.
+     */
+    private func doOpen(_ state: OpenState, _ homeViewController: NavigationHomeViewController, toExecute: ( () -> Void)?, toPresent: UIViewController? = nil) {
+        switch state {
+        case .POPOVER_ANY:
+            if let present = toPresent {
+                homeViewController.present(present, animated: true)
+            } else {
+                toExecute?()
+            }
+        case .POPOVER_ANY_NAV:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: nil, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+        case .POPOVER_AFTER_NAVIGATION:
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
+                nav.pushNextViewControllerFromRight() {
+                    if let present = toPresent {
+                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                    } else {
+                        toExecute?()
+                    }
+                }
+            } else {
+                var is14Column = false
+                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                    if let present = toPresent {
+                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                    } else {
+                        toExecute?()
+                    }
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
+                        }
+                    }, completion: { _ in
+                        if let present = toPresent {
+                            VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                        } else {
+                            toExecute?()
+                        }
+                    })
+                }
+            }
+        case .POPOVER_SIMULTANEOUSLY:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
+                nav.pushNextViewControllerFromRight() {
+                }
+            } else {
+                var is14Column = false
+                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
+                        }
+                    }, completion: { _ in
+                    })
+                }
+            }
+        }
+
+    }
+
     func displayMenu(_ homeViewController: NavigationHomeViewController, _ menu: DragDownAlertMenu) {
         homeViewController.present(menu, animated: true, completion: nil)
     }
@@ -1048,13 +1049,13 @@ extension SplitMainViewController: NavigationHomeDelegate {
         doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
     
-    override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
-        if let secondaryAsNav = secondaryViewController as? UINavigationController, let current = self.navigationController {
-            current.viewControllers += secondaryAsNav.viewControllers
-        } else {
-            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
-        }
-    }
+//    override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
+//        if let secondaryAsNav = secondaryViewController as? UINavigationController, let current = self.navigationController {
+//            current.viewControllers += secondaryAsNav.viewControllers
+//        } else {
+//            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
+//        }
+//    }
 
 }
 
@@ -1067,40 +1068,5 @@ extension MainViewController: PagingTitleDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.doToolbarOffset()
         }
-    }
-}
-
-extension UIImage {
-  func withBackground(color: UIColor, opaque: Bool = true) -> UIImage {
-    UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-        
-    guard let ctx = UIGraphicsGetCurrentContext(), let image = cgImage else { return self }
-    defer { UIGraphicsEndImageContext() }
-        
-    let rect = CGRect(origin: .zero, size: size)
-    ctx.setFillColor(color.cgColor)
-    ctx.fill(rect)
-    ctx.concatenate(CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height))
-    ctx.draw(image, in: rect)
-        
-    return UIGraphicsGetImageFromCurrentImageContext() ?? self
-  }
-}
-extension UIImage {
-    func withPadding(_ padding: CGFloat) -> UIImage? {
-        return withPadding(x: padding, y: padding)
-    }
-
-    func withPadding(x: CGFloat, y: CGFloat) -> UIImage? {
-        let newWidth = size.width + 2 * x
-        let newHeight = size.height + 2 * y
-        let newSize = CGSize(width: newWidth, height: newHeight)
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
-        let origin = CGPoint(x: (newWidth - size.width) / 2, y: (newHeight - size.height) / 2)
-        draw(at: origin)
-        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return imageWithPadding
     }
 }
