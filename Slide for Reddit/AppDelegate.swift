@@ -14,6 +14,7 @@ import DTCoreText
 import RealmSwift
 import reddift
 import SDWebImage
+import Then
 import UIKit
 import UserNotifications
 import WatchConnectivity
@@ -418,9 +419,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func doHard(_ window: UIWindow) -> MainViewController {
-        let splitViewController = NoHomebarSplitViewController()
-        splitViewController.presentsWithGesture = true
-        splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+        let splitViewController = NoHomebarSplitViewController().then {
+            $0.presentsWithGesture = true
+            $0.preferredPrimaryColumnWidthFraction = 0.4
+        }
         let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
         switch UIDevice.current.userInterfaceIdiom {
@@ -428,22 +430,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             switch SettingValues.appMode {
             case .SINGLE, .MULTI_COLUMN:
                 splitViewController.preferredDisplayMode = .secondaryOnly
+
                 splitViewController.viewControllers = [
                     SwipeForwardNavigationController(
                         rootViewController: NavigationHomeViewController(controller: main)),
                     SwipeForwardNavigationController(
-                        rootViewController: main)
+                        rootViewController: main),
                 ]
             case .SPLIT:
                 splitViewController.preferredDisplayMode = .automatic
+
                 let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
                 swipeNav.pushViewController(main, animated: false)
                 splitViewController.viewControllers = [
-                    swipeNav, PlaceholderViewController()
+                    swipeNav,
+                    PlaceholderViewController(),
                 ]
             }
         default:
             splitViewController.preferredDisplayMode = .oneOverSecondary
+
             let navHome = NavigationHomeViewController(controller: main)
             splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
         }
@@ -457,15 +463,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
-        let splitViewController: NoHomebarSplitViewController
+        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn
+        let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style).then {
+            $0.presentsWithGesture = true
+            $0.preferredSupplementaryColumnWidthFraction = 0.33
+            $0.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            $0.preferredPrimaryColumnWidthFraction = 0.33
+            $0.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+        }
+
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+        
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
             switch SettingValues.appMode {
             case .SINGLE, .MULTI_COLUMN:
-                splitViewController = NoHomebarSplitViewController(style: .doubleColumn)
                 splitViewController.preferredDisplayMode = .secondaryOnly
-                splitViewController.presentsWithGesture = true
                 splitViewController.preferredSplitBehavior = .overlay
 
                 splitViewController.setViewController(
@@ -475,16 +488,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     SwipeForwardNavigationController(rootViewController: main),
                     for: .secondary)
             case .SPLIT:
-                splitViewController = NoHomebarSplitViewController(style: .tripleColumn)
-                splitViewController.preferredDisplayMode = .automatic
-                splitViewController.preferredSplitBehavior = .automatic
-                splitViewController.presentsWithGesture = true
-                
-                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
-                
-                splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-                splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                splitViewController.preferredDisplayMode = .oneBesideSecondary
+                splitViewController.preferredSplitBehavior = .tile
 
                 splitViewController.setViewController(
                     SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
@@ -497,12 +502,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     for: .secondary)
             }
         default:
-            splitViewController = NoHomebarSplitViewController()
             splitViewController.preferredDisplayMode = .oneOverSecondary
-            splitViewController.presentsWithGesture = true
 
             let navHome = NavigationHomeViewController(controller: main)
-
             splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
         }
 
