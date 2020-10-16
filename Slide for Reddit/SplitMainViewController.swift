@@ -244,6 +244,29 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
+
+        if let splitViewController = splitViewController {
+            switch UIDevice.current.userInterfaceIdiom {
+            case .pad:
+                switch SettingValues.appMode {
+                case .SINGLE, .MULTI_COLUMN:
+                    splitViewController.preferredDisplayMode = .secondaryOnly
+                    if #available(iOS 14.0, *) {
+                        splitViewController.preferredSplitBehavior = .overlay
+                    }
+                case .SPLIT:
+                    if #available(iOS 14.0, *) {
+                        splitViewController.preferredDisplayMode = .oneBesideSecondary
+                        splitViewController.preferredSplitBehavior = .tile
+                    } else {
+                        splitViewController.preferredDisplayMode = .automatic
+                    }
+                }
+            default:
+                splitViewController.preferredDisplayMode = .oneOverSecondary
+            }
+
+        }
     }
         
     @objc func onThemeChanged() {

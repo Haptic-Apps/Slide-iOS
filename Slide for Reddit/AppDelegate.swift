@@ -429,8 +429,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case .pad:
             switch SettingValues.appMode {
             case .SINGLE, .MULTI_COLUMN:
-                splitViewController.preferredDisplayMode = .secondaryOnly
-
                 splitViewController.viewControllers = [
                     SwipeForwardNavigationController(
                         rootViewController: NavigationHomeViewController(controller: main)),
@@ -438,8 +436,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         rootViewController: main),
                 ]
             case .SPLIT:
-                splitViewController.preferredDisplayMode = .automatic
-
                 let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
                 swipeNav.pushViewController(main, animated: false)
                 splitViewController.viewControllers = [
@@ -448,8 +444,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 ]
             }
         default:
-            splitViewController.preferredDisplayMode = .oneOverSecondary
-
             let navHome = NavigationHomeViewController(controller: main)
             splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
         }
@@ -473,14 +467,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        
+
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
             switch SettingValues.appMode {
             case .SINGLE, .MULTI_COLUMN:
-                splitViewController.preferredDisplayMode = .secondaryOnly
-                splitViewController.preferredSplitBehavior = .overlay
-
                 splitViewController.setViewController(
                     SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
                     for: .primary)
@@ -488,9 +479,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     SwipeForwardNavigationController(rootViewController: main),
                     for: .secondary)
             case .SPLIT:
-                splitViewController.preferredDisplayMode = .oneBesideSecondary
-                splitViewController.preferredSplitBehavior = .tile
-
                 splitViewController.setViewController(
                     SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
                     for: .primary)
@@ -502,8 +490,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     for: .secondary)
             }
         default:
-            splitViewController.preferredDisplayMode = .oneOverSecondary
-
             let navHome = NavigationHomeViewController(controller: main)
             splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
         }
