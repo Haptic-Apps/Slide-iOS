@@ -246,6 +246,19 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
 
         if let splitViewController = splitViewController {
+            // Set column widths
+            if #available(iOS 14.0, *) {
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.33
+                splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                if splitViewController.style == .tripleColumn {
+                    splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
+                    splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                }
+            } else {
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+            }
+
+            // Set display mode and split behavior
             switch UIDevice.current.userInterfaceIdiom {
             case .pad:
                 switch SettingValues.appMode {

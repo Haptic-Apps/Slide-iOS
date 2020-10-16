@@ -419,10 +419,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func doHard(_ window: UIWindow) -> MainViewController {
-        let splitViewController = NoHomebarSplitViewController().then {
-            $0.presentsWithGesture = true
-            $0.preferredPrimaryColumnWidthFraction = 0.4
-        }
+        let splitViewController = NoHomebarSplitViewController()
         let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
         switch UIDevice.current.userInterfaceIdiom {
@@ -458,15 +455,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
         let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn
-        let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style).then {
-            $0.presentsWithGesture = true
-            $0.preferredPrimaryColumnWidthFraction = 0.33
-            $0.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            if style == .tripleColumn {
-                $0.preferredSupplementaryColumnWidthFraction = 0.33
-                $0.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            }
-        }
+        let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
