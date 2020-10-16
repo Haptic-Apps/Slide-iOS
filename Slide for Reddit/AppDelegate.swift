@@ -460,10 +460,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn
         let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style).then {
             $0.presentsWithGesture = true
-            $0.preferredSupplementaryColumnWidthFraction = 0.33
-            $0.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
             $0.preferredPrimaryColumnWidthFraction = 0.33
             $0.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            if style == .tripleColumn {
+                $0.preferredSupplementaryColumnWidthFraction = 0.33
+                $0.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            }
         }
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
