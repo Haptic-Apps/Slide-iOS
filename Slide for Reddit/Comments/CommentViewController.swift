@@ -886,7 +886,7 @@ class CommentViewController: MediaViewController {
     /**
      Notification action called when online status changes.
      - Parameters:
-        - notification: Notification
+        - notification: Passed Notification.
      */
     // TODO: Leak here. And in it's usage area.
     @objc private func onlineStatusChanged(_ notification: Notification) {
@@ -902,16 +902,21 @@ class CommentViewController: MediaViewController {
             }
         }
     }
-    
-    //
+    /// Notification action called when network changes occur pre iOS 12.
+    /// - Parameter notification: Passed Notification.
     @objc private func fallbackOnlineStatusChanged(_ notification: Notification) {
+        print("Notification Called!")
         if let fallbackOnline = notification.userInfo?["fallbackOnline"] as? Bool {
             switch fallbackOnline {
                 case true:
                     print("Fallback Online.")
+                    DispatchQueue.main.async {
+                        self.refreshComments(self)
+                        self.updateToolbar()
+                    }
                 case false:
                     print("Fallback Offline.")
-                    print("Or error.")
+                    loadOffline()
             }
         }
     }
