@@ -417,7 +417,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return doHard(window)
         } else if let splitViewController = window.rootViewController as? UISplitViewController {
             if UIDevice.current.userInterfaceIdiom == .pad {
-                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.preferredDisplayMode = .allVisible
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
@@ -464,7 +464,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             } else {
                 let splitViewController = NoHomebarSplitViewController()
-                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.preferredDisplayMode = .allVisible
                 splitViewController.presentsWithGesture = true
                 
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.4
@@ -512,6 +512,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let splitViewController = NoHomebarSplitViewController(style: .doubleColumn)
                     splitViewController.preferredDisplayMode = .secondaryOnly
                     splitViewController.presentsWithGesture = true
+                    
                     splitViewController.preferredSplitBehavior = .overlay
                                  
                     let main = (oldSplit.viewController(for: .supplementary) as! SplitMainViewController)
@@ -537,7 +538,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return main
                 } else {
                     let splitViewController = NoHomebarSplitViewController(style: .tripleColumn)
-                    splitViewController.preferredDisplayMode = .automatic
+                    splitViewController.preferredDisplayMode = .allVisible
                     splitViewController.presentsWithGesture = true
                     splitViewController.preferredSplitBehavior = .automatic
                     
@@ -593,9 +594,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return main
             } else {
                 let splitViewController = NoHomebarSplitViewController(style: .tripleColumn)
-                splitViewController.preferredDisplayMode = .automatic
+                splitViewController.preferredDisplayMode = .oneBesideSecondary
                 splitViewController.presentsWithGesture = true
-                splitViewController.preferredSplitBehavior = .automatic
+                splitViewController.preferredSplitBehavior = .displace
                 
                 splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
                 splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
