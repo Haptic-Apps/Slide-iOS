@@ -136,14 +136,9 @@ class PostFilter {
         return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
     }
 
-    public static func filter(_ input: [Object], previous: [RSubmission]?, baseSubreddit: String, gallery: Bool = false) -> [Object] {
-        var ids: [String] = []
+    public static func filter(_ input: [Object], previous: [String]?, baseSubreddit: String, gallery: Bool = false) -> [Object] {
+        var ids = previous ?? []
         var toReturn: [Object] = []
-        if previous != nil {
-            for p in previous! {
-                ids.append(p.getId())
-            }
-        }
 
         for link in input {
             if link is RSubmission {
@@ -220,3 +215,18 @@ public extension NSString {
         return base!.range(of: String(self), options: .caseInsensitive) != nil
     }
 }
+
+extension Thread {
+
+    var threadName: String {
+        if let currentOperationQueue = OperationQueue.current?.name {
+            return "OperationQueue: \(currentOperationQueue)"
+        } else if let underlyingDispatchQueue = OperationQueue.current?.underlyingQueue?.label {
+            return "DispatchQueue: \(underlyingDispatchQueue)"
+        } else {
+            let name = __dispatch_queue_get_label(nil)
+            return String(cString: name, encoding: .utf8) ?? Thread.current.description
+        }
+    }
+}
+
