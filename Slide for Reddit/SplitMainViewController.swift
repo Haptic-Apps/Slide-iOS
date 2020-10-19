@@ -315,6 +315,7 @@ class SplitMainViewController: MainViewController {
         }
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SPLIT {
             if size.width < oldSize.width || size.width > oldSize.width {
+                oldSize = size
                 var keyWindow = UIApplication.shared.keyWindow
                 if keyWindow == nil {
                     if #available(iOS 13.0, *) {
@@ -365,8 +366,6 @@ class SplitMainViewController: MainViewController {
                             splitViewController.preferredDisplayMode = .allVisible
                         }
                     }
-                    
-                    oldSize = size
                 }
             }
         }
@@ -639,9 +638,7 @@ class SplitMainViewController: MainViewController {
     @objc override func restartVC() {
         let saved = getSubredditVC()
         let savedPage = saved?.sub ?? ""
-        
-        self.doButtons()
-        
+                
         if SettingValues.subredditBar {
             self.dataSource = self
         } else {

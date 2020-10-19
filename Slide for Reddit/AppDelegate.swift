@@ -454,8 +454,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || split ? .tripleColumn : .doubleColumn
         let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
 
-        let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-
         if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
             splitViewController.setViewController(
                 SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
