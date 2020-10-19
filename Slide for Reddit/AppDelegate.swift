@@ -447,6 +447,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         window.makeKeyAndVisible()
         
+        setupSplitLayout(splitViewController)
+
         //Check if in split mode, if so reset to triple column mode
         let oldSize = window.frame.size
         if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
@@ -604,6 +606,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         window.makeKeyAndVisible()
         
+        setupSplitLayout(splitViewController)
+        
         //Check if in split mode, if so reset to triple column mode
         let oldSize = window.frame.size
         if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
@@ -613,6 +617,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return main
+    }
+    
+    func setupSplitLayout(_ splitViewController: UISplitViewController) {
+        // Set column widths
+        if #available(iOS 14.0, *) {
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.33
+            splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            if splitViewController.style == .tripleColumn {
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            }
+        } else {
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.4
+        }
+        
+        splitViewController.presentsWithGesture = true
+
+        // Set display mode and split behavior
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            switch SettingValues.appMode {
+            case .SINGLE, .MULTI_COLUMN:
+                splitViewController.preferredDisplayMode = .secondaryOnly
+                if #available(iOS 14.0, *) {
+                    splitViewController.preferredSplitBehavior = .overlay
+                }
+            case .SPLIT:
+                if #available(iOS 14.0, *) {
+                    splitViewController.preferredDisplayMode = .oneBesideSecondary
+                    splitViewController.preferredSplitBehavior = .displace
+                } else {
+                    splitViewController.preferredDisplayMode = .allVisible
+                }
+            }
+        default:
+            splitViewController.preferredDisplayMode = .oneOverSecondary
+        }
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
