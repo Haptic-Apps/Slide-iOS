@@ -51,7 +51,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var autoplayHandler: AutoplayScrollViewHandler!
 
     override var keyCommands: [UIKeyCommand]? {
-        return [
+        return UIResponder.isFirstResponderTextField ? nil : [
             UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),

@@ -66,8 +66,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     override var keyCommands: [UIKeyCommand]? {
-        if isReply {
-            return []
+        if isReply || UIResponder.isFirstResponderTextField {
+            return nil
         } else {
             return [
                 UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
