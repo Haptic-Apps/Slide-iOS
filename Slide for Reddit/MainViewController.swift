@@ -515,12 +515,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     override var keyCommands: [UIKeyCommand]? {
-        return [
+        return UIResponder.isFirstResponderTextField ? nil : [
             UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
             UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
-            UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
+            UIKeyCommand(input: "p", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
             UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh), discoverabilityTitle: "Reload"),
         ]
     }

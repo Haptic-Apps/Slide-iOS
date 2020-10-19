@@ -26,6 +26,7 @@ protocol SubmissionDataSouceDelegate: class {
 class SubmissionsDataSource {
     func reset() {
         content = []
+        contentIDs = []
     }
     
     var subreddit: String
@@ -36,6 +37,7 @@ class SubmissionsDataSource {
     var isReset = false
     var realmListing: RListing?
     var updated = NSDate()
+    var contentIDs = [String]()
     
     weak var currentSession: URLSessionDataTask?
 
@@ -44,6 +46,7 @@ class SubmissionsDataSource {
         color = ColorUtil.getColorForSub(sub: subreddit)
         paginator = Paginator()
         content = []
+        contentIDs = []
         self.sorting = sorting
         self.time = time
     }
@@ -88,6 +91,7 @@ class SubmissionsDataSource {
 
     func removeData() {
         self.content = []
+        self.contentIDs = []
     }
     func hideReadPostsPermanently(callback: @escaping (_ indexPaths: [IndexPath]) -> Void) {
         var indexPaths: [IndexPath] = []
@@ -197,6 +201,7 @@ class SubmissionsDataSource {
                                     return item.subreddit == self.subreddit
                                 }).first {
                                     self.content = []
+                                    self.contentIDs = []
                                     for i in listing.links {
                                         self.content.append(i)
                                     }
@@ -224,6 +229,7 @@ class SubmissionsDataSource {
                         self.tries = 0
                         if self.isReset {
                             self.content = []
+                            self.contentIDs = []
                             self.page = 0
                             self.numberFiltered = 0
                         }
@@ -241,14 +247,16 @@ class SubmissionsDataSource {
 
                         let newLinks = listing.children.compactMap({ $0 as? Link })
                         var converted: [RSubmission] = []
+                        var ids = [String]()
                         for link in newLinks {
+                            ids.append(link.id)
                             let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
                         
                         self.delegate?.doPreloadImages(values: converted)
-                        var values = PostFilter.filter(converted, previous: self.content, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
+                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
                             let pageItem = RSubmission()
@@ -260,6 +268,8 @@ class SubmissionsDataSource {
                         self.page += 1
                         
                         self.content += values
+                        self.contentIDs += ids
+                        
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
                         if let realmListing = self.realmListing {
@@ -268,10 +278,8 @@ class SubmissionsDataSource {
                                // TODO: - insert
                                 realm.beginWrite()
                                 for submission in self.content {
-                                    if submission.author != "PAGE_SEPARATOR" {
-                                        realm.create(type(of: submission), value: submission, update: .all)
-                                        realmListing.links.append(submission)
-                                    }
+                                    realm.create(type(of: submission), value: submission, update: .all)
+                                    realmListing.links.append(submission)
                                 }
                                 
                                 try realm.create(type(of: realmListing), value: realmListing, update: .all)
