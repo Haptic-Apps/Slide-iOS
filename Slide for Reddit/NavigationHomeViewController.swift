@@ -142,6 +142,7 @@ class NavigationHomeViewController: UIViewController {
     }
 
     func doViews() {
+        tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
         tableView.separatorColor = ColorUtil.theme.foregroundColor
         

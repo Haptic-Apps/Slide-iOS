@@ -284,6 +284,17 @@ class SplitMainViewController: MainViewController {
         }
         
         self.oldSize = self.view.frame.size
+        if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
+            if #available(iOS 14.0, *) {
+                if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
+                    resetForSplit(oldSize)
+                }
+            } else {
+                if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                    resetForSplit(oldSize)
+                }
+            }
+        }
     }
     
     var oldSize = CGSize.zero
@@ -314,62 +325,37 @@ class SplitMainViewController: MainViewController {
             return
         }
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SPLIT {
-            if size.width < oldSize.width || size.width > oldSize.width {
-                oldSize = size
-                var keyWindow = UIApplication.shared.keyWindow
-                if keyWindow == nil {
-                    if #available(iOS 13.0, *) {
-                        keyWindow = UIApplication.shared.connectedScenes
-                            .filter({ $0.activationState == .foregroundActive })
-                            .map({ $0 as? UIWindowScene })
-                            .compactMap({$0})
-                            .first?.windows
-                            .filter({ $0.isKeyWindow }).first
-                    }
-                }
-                guard keyWindow != nil else {
-                    return
-                }
-                
-                if #available(iOS 14, *) {
-                    (UIApplication.shared.delegate as? AppDelegate)?.resetSplit14(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
-                } else {
-                    (UIApplication.shared.delegate as? AppDelegate)?.resetSplit(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
-                }
-                if let splitViewController = splitViewController {
-                    // Set column widths
-                    if #available(iOS 14.0, *) {
-                        splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-                        splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
-                        if splitViewController.style == .tripleColumn {
-                            splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-                            splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
-                        }
-                    } else {
-                        splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-                        splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.4
-                    }
-                    
-                    splitViewController.presentsWithGesture = true
-
-                    // Set display mode and split behavior
-                    if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && size.width > oldSize.width {
-                        splitViewController.preferredDisplayMode = .secondaryOnly
-                        if #available(iOS 14.0, *) {
-                            splitViewController.preferredSplitBehavior = .overlay
-                        }
-                    } else {
-                        if #available(iOS 14.0, *) {
-                            splitViewController.preferredDisplayMode = .oneBesideSecondary
-                            splitViewController.preferredSplitBehavior = .displace
-                        } else {
-                            splitViewController.preferredDisplayMode = .allVisible
-                        }
-                    }
-                }
+            if abs(size.width - oldSize.width) > 10 && abs(size.width - oldSize.height) > 10 { //Size changed, but not orientation
+                resetForSplit(size)
             }
         }
-
+    }
+    
+    func resetForSplit(_ size: CGSize) {
+        if oldSize.width == size.width {
+            return
+        }
+        oldSize = size
+        var keyWindow = UIApplication.shared.keyWindow
+        if keyWindow == nil {
+            if #available(iOS 13.0, *) {
+                keyWindow = UIApplication.shared.connectedScenes
+                    .filter({ $0.activationState == .foregroundActive })
+                    .map({ $0 as? UIWindowScene })
+                    .compactMap({$0})
+                    .first?.windows
+                    .filter({ $0.isKeyWindow }).first
+            }
+        }
+        guard keyWindow != nil else {
+            return
+        }
+        
+        if #available(iOS 14, *) {
+            (UIApplication.shared.delegate as? AppDelegate)?.resetSplit14(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
+        } else {
+            (UIApplication.shared.delegate as? AppDelegate)?.resetSplit(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
+        }
     }
 
     override func doCurrentPage(_ page: Int) {
