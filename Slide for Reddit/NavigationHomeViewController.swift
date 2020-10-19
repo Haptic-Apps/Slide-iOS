@@ -1181,6 +1181,10 @@ extension CurrentAccountHeaderView {
             if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
                 is14Column = true
             }
+            if #available(iOS 14, *), self.parent?.splitViewController?.style == .doubleColumn {
+                is14Column = true
+            }
+            
             if let barButtonItem = self.parent?.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                 UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
             } else {

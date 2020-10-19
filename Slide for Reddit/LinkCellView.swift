@@ -2643,7 +2643,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         var leftmargin = 0
         var rightmargin = 0
         
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView){
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
             topmargin = 5
             bottommargin = 5
             leftmargin = 5

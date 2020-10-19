@@ -394,8 +394,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             
         }
-        
-        self.window?.frame = UIScreen.main.bounds
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -449,7 +447,61 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         window.makeKeyAndVisible()
         return main
+    }
+    
+    @available(iOS 14.0, *)
+    func resetSplit14(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
+        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || split ? .tripleColumn : .doubleColumn
+        let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
 
+        let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+
+        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
+            splitViewController.setViewController(
+                SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                for: .primary)
+            splitViewController.setViewController(
+                SwipeForwardNavigationController(rootViewController: main),
+                for: .secondary)
+        } else {
+            splitViewController.setViewController(
+                SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                for: .primary)
+            splitViewController.setViewController(
+                SwipeForwardNavigationController(rootViewController: main),
+                for: .supplementary)
+            splitViewController.setViewController(
+                PlaceholderViewController(),
+                for: .secondary)
+        }
+
+        window.rootViewController = splitViewController
+        self.window = window
+        window.makeKeyAndVisible()
+    }
+    
+    func resetSplit(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
+        let splitViewController = NoHomebarSplitViewController()
+
+        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
+            splitViewController.viewControllers = [
+                SwipeForwardNavigationController(
+                    rootViewController: NavigationHomeViewController(controller: main)),
+                SwipeForwardNavigationController(
+                    rootViewController: main),
+            ]
+        } else {
+            let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
+            swipeNav.pushViewController(main, animated: false)
+            splitViewController.viewControllers = [
+                swipeNav,
+                PlaceholderViewController(),
+            ]
+        }
+
+        window.rootViewController = splitViewController
+        self.window = window
+        window.makeKeyAndVisible()
     }
     
     @available(iOS 14.0, *)
@@ -490,7 +542,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         return main
     }
-    
+
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
@@ -1262,5 +1314,22 @@ class NoHomebarSplitViewController: UISplitViewController {
     }
     override var childForHomeIndicatorAutoHidden: UIViewController? {
         return nil
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+            if #available(iOS 13, *) {
+                return .darkContent
+            } else {
+                return .default
+            }
+
+        } else {
+            return .lightContent
+        }
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
     }
 }

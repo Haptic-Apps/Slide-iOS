@@ -188,7 +188,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !UIApplication.shared.isSplitOrSlideOver && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(PlaceholderViewController(), sender: self)
         }
         
@@ -527,7 +527,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
             if dataSource.loaded && dataSource.content.count > oldCount {
