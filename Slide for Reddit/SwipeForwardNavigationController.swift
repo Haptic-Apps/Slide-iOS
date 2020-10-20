@@ -86,9 +86,7 @@ class SwipeForwardNavigationController: UINavigationController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            self.splitViewController?.delegate = self
-        }
+        self.splitViewController?.delegate = self
     }
     
     override func didReceiveMemoryWarning() {
@@ -216,16 +214,14 @@ extension SwipeForwardNavigationController {
     func push(_ viewController: UIViewController?, animated: Bool, completion: @escaping SWNavigationControllerPushCompletion) {
         pushedViewController = viewController
         pushCompletion = completion
-        if let viewController = viewController, !(viewController is UINavigationController) {
+        if let viewController = viewController {
             super.pushViewController(viewController, animated: animated)
         }
     }
     
     override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
-        if let secondaryAsNav = secondaryViewController as? UINavigationController, UIDevice.current.userInterfaceIdiom == .phone {
+        if let secondaryAsNav = secondaryViewController as? UINavigationController, (UIDevice.current.userInterfaceIdiom == .phone) {
             viewControllers += secondaryAsNav.viewControllers
-        } else {
-            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
         }
     }
 
@@ -233,7 +229,7 @@ extension SwipeForwardNavigationController {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
-            push(pushedViewController, animated: true) {
+            push(pushedViewController, animated: UIApplication.shared.isSplitOrSlideOver ? false : true) {
                 if !self.pushableViewControllers.isEmpty {
                     self.pushableViewControllers.removeLast()
                     callback?()
@@ -243,7 +239,38 @@ extension SwipeForwardNavigationController {
     }
 }
 
-extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
+extension SwipeForwardNavigationController: UISplitViewControllerDelegate {    
+    func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+        var main: UIViewController?
+        var menu: UIViewController?
+        for viewController in viewControllers {
+            if viewController is MainViewController {
+                main = viewController
+            } else if viewController is NavigationHomeViewController {
+                menu = viewController
+            }
+        }
+        for viewController in pushableViewControllers {
+            if viewController is MainViewController {
+                main = viewController
+            } else if viewController is NavigationHomeViewController {
+                menu = viewController
+            }
+        }
+
+        if let main = main, let menu = menu, SettingValues.appMode != .SPLIT {
+            if #available(iOS 14, *) {
+                splitViewController?.setViewController(
+                    SwipeForwardNavigationController(rootViewController: menu),
+                    for: .primary)
+                splitViewController?.setViewController(
+                    SwipeForwardNavigationController(rootViewController: main),
+                    for: .secondary)
+
+            }
+        }
+    }
+
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
         if UIDevice.current.userInterfaceIdiom == .phone {
             var main: UIViewController?

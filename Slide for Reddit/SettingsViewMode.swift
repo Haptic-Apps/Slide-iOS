@@ -243,11 +243,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
                 fatalError("Window must exist when resetting the stack!")
             }
 
-            if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
-            } else {
-                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
-            }
+            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
         } else if indexPath.section == 1 && indexPath.row == 1 {
