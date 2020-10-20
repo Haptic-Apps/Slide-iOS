@@ -1990,6 +1990,16 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             
             setOffset = paddingOffset + navOffset + topOffset + headerHeight
             
+            let newNavOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
+            var newTopOffset = statusBarHeight
+            if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
+                newTopOffset = 0
+            }
+
+            if newNavOffset + newTopOffset + 8 > self.tableView.contentInset.top {
+                self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(newNavOffset + newTopOffset + 8), left: 0, bottom: 65, right: 0)
+            }
+
             self.tableView.contentOffset = CGPoint.init(x: 0, y: setOffset)
         } else {
             self.flowLayout.invalidateLayout()
