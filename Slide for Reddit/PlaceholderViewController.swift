@@ -43,6 +43,11 @@ class PlaceholderViewController: UIViewController {
         label.centerXAnchor == view.centerXAnchor
         label.topAnchor == imageView.bottomAnchor + 12
     }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        self.splitViewController?.preferredDisplayMode = .allVisible
+    }
 }
 extension UIImage {
     func convertToGrayScale() -> UIImage {

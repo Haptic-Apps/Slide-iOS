@@ -459,7 +459,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return main
     }
-    
+        
     @available(iOS 14.0, *)
     func resetSplit14(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
         let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || split ? .tripleColumn : .doubleColumn
@@ -495,10 +495,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set display mode and split behavior
         if splitViewController.style != .tripleColumn {
-            splitViewController.preferredDisplayMode = .secondaryOnly
+            splitViewController.preferredDisplayMode = .primaryOverlay
             splitViewController.preferredSplitBehavior = .overlay
         } else {
-            splitViewController.preferredDisplayMode = .secondaryOnly
+            splitViewController.preferredDisplayMode = .primaryOverlay
             splitViewController.preferredSplitBehavior = .displace
         }
 

@@ -283,7 +283,7 @@ class SplitMainViewController: MainViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
         inHeadView.removeFromSuperview()
-        
+
         doButtons()
         super.viewWillTransition(to: size, with: coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
@@ -296,7 +296,7 @@ class SplitMainViewController: MainViewController {
             return
         }
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SPLIT {
-            if abs(size.width - oldSize.width) > 10 && abs(size.width - oldSize.height) > 10 { //Size changed, but not orientation
+            if abs(size.width - oldSize.width) > 40 && abs(size.width - oldSize.height) > 40 { //Size changed, but not orientation
                 resetForSplit(size)
             }
         }
@@ -550,7 +550,7 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
-                if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.disableSubredditPopupIpad {
+                if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
                     if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
                         self.navigationController?.popToRootViewController(animated: false)
                     }
@@ -596,7 +596,7 @@ class SplitMainViewController: MainViewController {
                 self.navigationController?.popToRootViewController(animated: false)
             }
 
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
                 VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             } else {
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -1097,7 +1097,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 toExecute?()
             }
 
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0, nav.pushableViewControllers.first is SplitMainViewController {
                 nav.pushNextViewControllerFromRight() {
                 }
             } else {
