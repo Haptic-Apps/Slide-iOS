@@ -205,7 +205,12 @@ class SplitMainViewController: MainViewController {
         self.automaticallyAdjustsScrollViewInsets = false
         
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         if SettingValues.subredditBar {
@@ -298,6 +303,9 @@ class SplitMainViewController: MainViewController {
     }
     
     func resetForSplit(_ size: CGSize) {
+        if UIDevice.current.userInterfaceIdiom == .phone { //Only run this on iPad
+            return
+        }
         if oldSize.width == size.width {
             return
         }

@@ -575,7 +575,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     func doHeadView(_ size: CGSize) {
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         if submission != nil {
             self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
         }

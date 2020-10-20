@@ -275,10 +275,15 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
             inHeadView!.topAnchor == view.topAnchor
             inHeadView!.horizontalAnchors == view.horizontalAnchors
-            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
+            var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+            if statusBarHeight == 0 {
+                statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+            }
+
+            inHeadView!.heightAnchor == statusBarHeight
             
             let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-            var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
+            var topOffset = statusBarHeight
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
@@ -940,7 +945,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         lastVersion = SingleSubredditViewController.cellVersion
 
         let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-        var topOffset = self.inHeadView?.frame.size.height ?? 20
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        var topOffset = statusBarHeight
         if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
             topOffset = 0
         }
@@ -1966,7 +1976,12 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             })
 
             let navOffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-            var topOffset = (-1 * ( (self.inHeadView?.frame.size.height ?? 20)))
+            var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+            if statusBarHeight == 0 {
+                statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+            }
+
+            var topOffset = (-1 * statusBarHeight)
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
@@ -2010,7 +2025,12 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.indicator?.isHidden = true
         
         let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-        var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        var topOffset = statusBarHeight
         if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
             topOffset = 0
         }
