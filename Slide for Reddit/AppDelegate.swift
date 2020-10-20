@@ -382,7 +382,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if DEBUG
-        SettingValues.isPro = false
+        SettingValues.isPro = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         UIApplication.shared.isIdleTimerDisabled = true
@@ -561,7 +561,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
         let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn
-        let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
+        var splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
@@ -587,8 +587,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     for: .secondary)
             }
         default:
+            splitViewController = NoHomebarSplitViewController()
             let navHome = NavigationHomeViewController(controller: main)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
         }
 
         window.rootViewController = splitViewController

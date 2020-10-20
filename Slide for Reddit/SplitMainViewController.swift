@@ -542,7 +542,7 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
-                if UIDevice.current.userInterfaceIdiom == .pad { //}&& !SettingValues.disableSubredditPopup {
+                if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.disableSubredditPopupIpad {
                     if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
                         self.navigationController?.popToRootViewController(animated: false)
                     }

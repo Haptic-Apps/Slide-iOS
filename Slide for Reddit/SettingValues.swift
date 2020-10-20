@@ -140,6 +140,8 @@ class SettingValues {
     public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
     public static let pref_disablePopupIpad = "DISABLE_POPUP_IPAD"
     public static let pref_disableMulticolumnCollections = "DISABLE_MULTICOLUMN_COLLECTIONS"
+    public static let pref_disableSubredditPopupIpad = "DISABLE_SUB_POPUP_IPAD"
+    public static let pref_portraitMultiColumnCount = "MULTICOLUMN_COUNT_PORTRAIT"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -191,6 +193,7 @@ class SettingValues {
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
     public static var multiColumnCount = 2
+    public static var portraitMultiColumnCount = 2
     public static var galleryCount = 2
     public static var nameScrubbing = true
     public static var muteYouTube = true
@@ -276,6 +279,7 @@ class SettingValues {
     public static var fullWidthHeaderCells = false
     public static var disablePopupIpad = false
     public static var disableMulticolumnCollections = false
+    public static var disableSubredditPopupIpad = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -472,6 +476,7 @@ class SettingValues {
         
         let columns = 2 // TODO - Maybe calculate per device?
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
+        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
         SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
@@ -555,6 +560,7 @@ class SettingValues {
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
         SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)
+        SettingValues.disableSubredditPopupIpad = settings.bool(forKey: SettingValues.pref_disableSubredditPopupIpad)
         SettingValues.disableMulticolumnCollections = settings.bool(forKey: SettingValues.pref_disableMulticolumnCollections)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
@@ -1231,7 +1237,7 @@ class SettingValues {
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
-                return "Multiple column display of submissions \(UIDevice.current.userInterfaceIdiom == .phone ? " (landscape orientation)" : "")"
+                return "Multiple column display of submissions"
             }
         }
     }

@@ -240,37 +240,6 @@ extension SwipeForwardNavigationController {
 }
 
 extension SwipeForwardNavigationController: UISplitViewControllerDelegate {    
-    func splitViewControllerDidExpand(_ svc: UISplitViewController) {
-        var main: UIViewController?
-        var menu: UIViewController?
-        for viewController in viewControllers {
-            if viewController is MainViewController {
-                main = viewController
-            } else if viewController is NavigationHomeViewController {
-                menu = viewController
-            }
-        }
-        for viewController in pushableViewControllers {
-            if viewController is MainViewController {
-                main = viewController
-            } else if viewController is NavigationHomeViewController {
-                menu = viewController
-            }
-        }
-
-        if let main = main, let menu = menu, SettingValues.appMode != .SPLIT {
-            if #available(iOS 14, *) {
-                splitViewController?.setViewController(
-                    SwipeForwardNavigationController(rootViewController: menu),
-                    for: .primary)
-                splitViewController?.setViewController(
-                    SwipeForwardNavigationController(rootViewController: main),
-                    for: .secondary)
-
-            }
-        }
-    }
-
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
         if UIDevice.current.userInterfaceIdiom == .phone {
             var main: UIViewController?
