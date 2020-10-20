@@ -755,7 +755,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     try! realm.write {
                         realm.deleteAll()
                     }
-                    if let path = realm.configuration.fileURL?.absoluteString {
+                    if let path = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
                         do {
                             try FileManager().removeItem(atPath: path)
                         } catch {
