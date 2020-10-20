@@ -2489,7 +2489,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
                     numberOfColumns = 1
                 } else {
-                    numberOfColumns = portraitCount
+                    numberOfColumns = CGFloat(portraitCount)
                 }
             } else {
                 numberOfColumns = CGFloat(SettingValues.multiColumnCount)
