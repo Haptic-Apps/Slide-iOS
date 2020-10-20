@@ -193,7 +193,7 @@ class SettingValues {
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
     public static var multiColumnCount = 2
-    public static var portraitMultiColumnCount = 2
+    public static var portraitMultiColumnCount = 1
     public static var galleryCount = 2
     public static var nameScrubbing = true
     public static var muteYouTube = true

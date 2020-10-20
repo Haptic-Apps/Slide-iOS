@@ -47,6 +47,7 @@ class NavigationHomeViewController: UIViewController {
     var isSearching = false
 
     var task: DataRequest?
+    var task2: URLSessionDataTask?
 
     var accessibilityCloseButton = UIButton().then {
         $0.accessibilityIdentifier = "Close button"
@@ -635,8 +636,15 @@ extension NavigationHomeViewController: UISearchBarDelegate {
         if task != nil {
             task?.cancel()
         }
+        if task2 != nil {
+            task?.cancel()
+        }
+        let searchTerm = searchBar.text?.addPercentEncoding ?? ""
+        if searchTerm == "" {
+            return
+        }
         do {
-            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchBar.text?.addPercentEncoding ?? "")&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
+            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchTerm)&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
             print("Requesting \(requestString)")
             task = Alamofire.request(requestString, method: .get).responseString { response in
                 do {
@@ -651,12 +659,17 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                                     Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
                                     Subscriptions.subColors[subName.lowercased()] = keyColor
                                 }
+                                if self.suggestions.contains(subName) {
+                                    continue
+                                }
+
                                 self.suggestions.append(subName)
                             } else if sub["kind"].string == "t2", let userName = sub["data"]["name"].string {
                                 self.users.append(userName)
                             }
                         }
                         DispatchQueue.main.async {
+                            self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                             self.tableView.reloadData()
                         }
                     }
@@ -664,6 +677,31 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                 }
             }
         }
+        do {
+            task2 = try? (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchTerm, paginator: Paginator(), completion: { (result) in
+                switch result {
+                case .success(let subs):
+                    for sub in subs.children {
+                        let s = sub as! Subreddit
+                        // Ignore nsfw subreddits if nsfw is disabled
+                        if s.over18 && !SettingValues.nsfwEnabled {
+                            continue
+                        }
+                        if self.suggestions.contains(s.displayName) {
+                            continue
+                        }
+                        self.suggestions.append(s.displayName)
+                    }
+                    DispatchQueue.main.async {
+                        self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
+                        self.tableView.reloadData()
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            })
+        }
+
     }
 
     func searchTableList() {
