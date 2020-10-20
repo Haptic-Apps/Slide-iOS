@@ -229,7 +229,7 @@ extension SwipeForwardNavigationController {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
-            push(pushedViewController, animated: true) {
+            push(pushedViewController, animated: UIApplication.shared.isSplitOrSlideOver ? false : true) {
                 if !self.pushableViewControllers.isEmpty {
                     self.pushableViewControllers.removeLast()
                     callback?()
@@ -239,13 +239,7 @@ extension SwipeForwardNavigationController {
     }
 }
 
-extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
-    
-    @available(iOS 14.0, *)
-    func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
-        return .secondary
-    }
-    
+extension SwipeForwardNavigationController: UISplitViewControllerDelegate {    
     func splitViewControllerDidExpand(_ svc: UISplitViewController) {
         var main: UIViewController?
         var menu: UIViewController?

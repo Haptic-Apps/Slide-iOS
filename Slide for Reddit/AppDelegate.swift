@@ -440,7 +440,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         default:
             let navHome = NavigationHomeViewController(controller: main)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
         }
 
         window.rootViewController = splitViewController
@@ -483,16 +483,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 PlaceholderViewController(),
                 for: .secondary)
         }
-        if #available(iOS 14.0, *) {
-            splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-            splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            if splitViewController.style == .tripleColumn {
-                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            }
-        } else {
-            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.4
+        
+        splitViewController.preferredPrimaryColumnWidthFraction = 0.33
+        splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+        if splitViewController.style == .tripleColumn {
+            splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
+            splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
         }
         
         splitViewController.presentsWithGesture = true
@@ -500,16 +496,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Set display mode and split behavior
         if splitViewController.style != .tripleColumn {
             splitViewController.preferredDisplayMode = .secondaryOnly
-            if #available(iOS 14.0, *) {
-                splitViewController.preferredSplitBehavior = .overlay
-            }
+            splitViewController.preferredSplitBehavior = .overlay
         } else {
-            if #available(iOS 14.0, *) {
-                splitViewController.preferredDisplayMode = .oneBesideSecondary
-                splitViewController.preferredSplitBehavior = .displace
-            } else {
-                splitViewController.preferredDisplayMode = .allVisible
-            }
+            splitViewController.preferredDisplayMode = .secondaryOnly
+            splitViewController.preferredSplitBehavior = .displace
         }
 
         window.rootViewController = splitViewController
@@ -531,8 +521,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
             swipeNav.pushViewController(main, animated: false)
             splitViewController.viewControllers = [
-                swipeNav,
-                PlaceholderViewController(),
+                swipeNav
             ]
         }
         if #available(iOS 14.0, *) {

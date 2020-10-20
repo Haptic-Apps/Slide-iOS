@@ -542,12 +542,19 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
-                if UIDevice.current.userInterfaceIdiom == .pad {
+                if UIDevice.current.userInterfaceIdiom == .pad { //}&& !SettingValues.disableSubredditPopup {
+                    if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
+                        self.navigationController?.popToRootViewController(animated: false)
+                    }
                     VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
                 } else {
                     VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
                 }
                 return
+            } else {
+                if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
+                    self.navigationController?.popToRootViewController(animated: false)
+                }
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
@@ -577,6 +584,10 @@ class SplitMainViewController: MainViewController {
                                     completion: nil)
             
         } else {
+            if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
+                self.navigationController?.popToRootViewController(animated: false)
+            }
+
             if UIDevice.current.userInterfaceIdiom == .pad {
                 VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             } else {
@@ -1043,7 +1054,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
                     is14Column = true
                 }
 
@@ -1083,7 +1094,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
                     is14Column = true
                 }
 

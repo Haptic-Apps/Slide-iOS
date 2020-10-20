@@ -278,8 +278,8 @@ class SubmissionsDataSource {
                                // TODO: - insert
                                 realm.beginWrite()
                                 for submission in self.content {
-                                    realm.create(type(of: submission), value: submission, update: .all)
-                                    realmListing.links.append(submission)
+                                    try realm.create(type(of: submission), value: submission, update: .all)
+                                    try realmListing.links.append(submission)
                                 }
                                 
                                 try realm.create(type(of: realmListing), value: realmListing, update: .all)

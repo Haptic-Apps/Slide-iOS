@@ -1745,13 +1745,19 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
                 
-        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))!
-        let textSize = layout.textBoundingSize
+        var size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))
+        if let layout = layout {
+            let textSize = layout.textBoundingSize
 
-        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
+            return CGSize(width: itemWidth, height: totalHeight)
+        } else { //If layout is nil, just return a size that won't crash the app...
+            let textSize = CGSize(width: 100, height: 100)
 
-        return CGSize(width: itemWidth, height: totalHeight)
+            let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
+            return CGSize(width: itemWidth, height: totalHeight)
+        }
     }
     
     // TODO: - This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
