@@ -76,7 +76,9 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
         submissionDataSource.delegate = self
         
-        self.splitViewController?.presentsWithGesture = false
+        if #available(iOS 14, *) { } else {
+            self.splitViewController?.presentsWithGesture = false
+        }
     }
     
     var first = true

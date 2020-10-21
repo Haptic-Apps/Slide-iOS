@@ -189,7 +189,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         CachedTitle.titles.removeAll()
 
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !UIApplication.shared.isSplitOrSlideOver && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
-            splitViewController?.showDetailViewController(PlaceholderViewController(), sender: self)
+            splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
         flowLayout.delegate = self
