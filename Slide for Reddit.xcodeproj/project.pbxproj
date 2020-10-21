@@ -2549,7 +2549,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).WidgetConfigIntent";
@@ -2582,7 +2582,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgetconfigintent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2611,7 +2611,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
@@ -2644,7 +2644,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2676,7 +2676,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
@@ -2709,7 +2709,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
@@ -2744,7 +2744,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
@@ -2776,7 +2776,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.bundledOpen-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2930,7 +2930,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -2969,7 +2969,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3146,7 +3146,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).widgets";
@@ -3181,7 +3181,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.6;
+				MARKETING_VERSION = 6.0.7;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";

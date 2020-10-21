@@ -19,6 +19,7 @@ import YYText
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
 
     var version = 0
+    var first = true
     var swipeBackAdded = false
     var shouldSetupSwipe = false
     var fullWidthBackGestureRecognizer: UIPanGestureRecognizer!
@@ -1697,6 +1698,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
+        if loaded && finishedPush == false && first {
+            self.reloadTableViewAnimated()
+        }
         self.finishedPush = true
     }
  
@@ -1705,6 +1709,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func reloadTableViewAnimated() {
         self.tableView.reloadData()
+        first = false
 
         let cells = self.tableView.visibleCells
         for cell in cells {

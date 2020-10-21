@@ -2632,7 +2632,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         refreshAccessibility(submission: link)
     }
-    
+        
     override func layoutSubviews() {
         if typeImage != nil {
             return
@@ -2655,6 +2655,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let f = self.contentView.frame
         let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        if fr.equalTo(self.contentView.frame) {
+            return
+        }
         self.contentView.frame = fr
     }
     
