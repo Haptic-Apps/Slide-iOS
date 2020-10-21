@@ -137,7 +137,7 @@ class PostFilter {
     }
 
     public static func filter(_ input: [Object], previous: [String]?, baseSubreddit: String, gallery: Bool = false) -> [Object] {
-        var ids = previous ?? []
+        let ids = previous ?? []
         var toReturn: [Object] = []
 
         for link in input {

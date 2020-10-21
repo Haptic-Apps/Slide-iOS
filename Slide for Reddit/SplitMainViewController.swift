@@ -1097,7 +1097,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 toExecute?()
             }
 
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0, nav.pushableViewControllers.first is SplitMainViewController {
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0, nav.pushableViewControllers.last is SplitMainViewController {
                 nav.pushNextViewControllerFromRight() {
                 }
             } else {

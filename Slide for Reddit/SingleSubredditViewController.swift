@@ -246,6 +246,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if #available(iOS 11.0, *) {
             self.tableView.contentInsetAdjustmentBehavior = .never
         }
+        
+        dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
     }
     
     func reTheme() {
@@ -560,7 +563,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         })
         
         if single || parent is SplitMainViewController {
-            self.navigationController?.setToolbarHidden(true, animated: true)
+            if SettingValues.totallyCollapse {
+                self.navigationController?.setToolbarHidden(true, animated: true)
+            }
+
             //hideMenuNav()
         //} else {
             /*if let topView = self.menuNav?.topView {
@@ -964,10 +970,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             dataSource.getData(reload: true, force: true)
             SingleSubredditViewController.firstPresented = false
         }
-        
-        dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
-        dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
-        
+                
         let offline = MainViewController.isOffline
 
         if single && !offline {
@@ -1961,6 +1964,11 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
     func loadSuccess(before: Int, count: Int) {
         self.oldPosition = CGPoint.zero
         var paths = [IndexPath]()
+        if count < before {
+            self.flowLayout.invalidateLayout()
+            self.tableView.reloadData()
+            return
+        }
         for i in before..<count {
             paths.append(IndexPath.init(item: i + self.headerOffset(), section: 0))
         }

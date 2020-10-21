@@ -2637,7 +2637,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if !isGoingDown {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
-            (self.navigationController)?.setToolbarHidden(true, animated: true)
+            if SettingValues.totallyCollapse {
+                (self.navigationController)?.setToolbarHidden(true, animated: true)
+            }
         }
         self.isToolbarHidden = true
         
@@ -3242,6 +3244,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
         }
         if SettingValues.commentGesturesMode == .FULL {
+            if let full = fullWidthBackGestureRecognizer {
+                full.view?.removeGestureRecognizer(full)
+            }
             //setupFullSwipeView(self.tableView.tableHeaderView)
             return
         }
@@ -3252,7 +3257,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func setupFullSwipeView(_ view: UIView?) {
-        if shouldSetupSwipe == false {
+        if shouldSetupSwipe == false || SettingValues.commentGesturesMode == .FULL {
             return
         }
         if let full = fullWidthBackGestureRecognizer {

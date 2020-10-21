@@ -236,20 +236,12 @@ class SubmissionsDataSource {
                         
                         self.offline = false
                         let before = self.content.count
-                        if self.realmListing == nil {
-                            self.realmListing = RListing()
-                            self.realmListing!.subreddit = self.subreddit
-                            self.realmListing!.updated = NSDate()
-                        }
-                        if self.isReset && self.realmListing!.links.count > 0 {
-                            self.realmListing!.links.removeAll()
-                        }
 
                         let newLinks = listing.children.compactMap({ $0 as? Link })
                         var converted: [RSubmission] = []
                         var ids = [String]()
                         for link in newLinks {
-                            ids.append(link.id)
+                            ids.append(link.getId())
                             let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
@@ -272,23 +264,6 @@ class SubmissionsDataSource {
                         
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
-                        if let realmListing = self.realmListing {
-                            do {
-                                let realm = try Realm()
-                               // TODO: - insert
-                                realm.beginWrite()
-                                for submission in self.content {
-                                    try realm.create(type(of: submission), value: submission, update: .all)
-                                    try realmListing.links.append(submission)
-                                }
-                                
-                                try realm.create(type(of: realmListing), value: realmListing, update: .all)
-                                try realm.commitWrite()
-                            } catch {
-
-                            }
-                        }
-                            
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
 
