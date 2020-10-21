@@ -661,7 +661,7 @@ class SettingValues {
 
     public static func doneVersion() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil
+        return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil || settings.object(forKey: Bundle.main.releaseVersionNumber ?? "0") != nil
     }
 
     public static func firstEnter() -> Bool {

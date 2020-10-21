@@ -255,14 +255,30 @@ class SplitMainViewController: MainViewController {
         }
         
         self.oldSize = self.view.frame.size
-        if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
-            if #available(iOS 14.0, *) {
-                if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
-                    resetForSplit(oldSize)
+        let landscape = oldSize.width > oldSize.height
+        let currentLandscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        if (landscape && !currentLandscape) || (!landscape && currentLandscape) {
+            if abs(UIScreen.main.bounds.width - oldSize.height) > 40 { //Size changed, but not orientation
+                if #available(iOS 14.0, *) {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
+                        resetForSplit(oldSize)
+                    }
+                } else {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                        resetForSplit(oldSize)
+                    }
                 }
-            } else {
-                if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                    resetForSplit(oldSize)
+            }
+        } else if (landscape && currentLandscape) || (!landscape && !currentLandscape) {
+            if abs(UIScreen.main.bounds.width - oldSize.width) > 40 { //Size changed, but not orientation
+                if #available(iOS 14.0, *) {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
+                        resetForSplit(oldSize)
+                    }
+                } else {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                        resetForSplit(oldSize)
+                    }
                 }
             }
         }
@@ -296,8 +312,16 @@ class SplitMainViewController: MainViewController {
             return
         }
         if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SPLIT {
-            if abs(size.width - oldSize.width) > 40 && abs(size.width - oldSize.height) > 40 { //Size changed, but not orientation
-                resetForSplit(size)
+            let landscape = oldSize.width > oldSize.height
+            let currentLandscape = size.width > size.height
+            if (landscape && !currentLandscape) || (!landscape && currentLandscape) {
+                if abs(size.width - oldSize.height) > 40 { //Size changed, but not orientation
+                    resetForSplit(size)
+                }
+            } else if (landscape && currentLandscape) || (!landscape && !currentLandscape) {
+                if abs(size.width - oldSize.width) > 40 { //Size changed, but not orientation
+                    resetForSplit(size)
+                }
             }
         }
     }
@@ -306,7 +330,7 @@ class SplitMainViewController: MainViewController {
         if UIDevice.current.userInterfaceIdiom == .phone { //Only run this on iPad
             return
         }
-        if oldSize.width == size.width {
+        if oldSize.width == size.width || (size.height == oldSize.width && size.width == oldSize.height) {
             return
         }
         oldSize = size
@@ -326,7 +350,7 @@ class SplitMainViewController: MainViewController {
         }
         
         if #available(iOS 14, *) {
-            (UIApplication.shared.delegate as? AppDelegate)?.resetSplit14(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
+            //Don't do anything on iOS 14
         } else {
             (UIApplication.shared.delegate as? AppDelegate)?.resetSplit(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
         }

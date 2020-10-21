@@ -459,54 +459,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return main
     }
-        
-    @available(iOS 14.0, *)
-    func resetSplit14(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
-        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || split ? .tripleColumn : .doubleColumn
-        let splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
-
-        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
-            splitViewController.setViewController(
-                SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
-                for: .primary)
-            splitViewController.setViewController(
-                SwipeForwardNavigationController(rootViewController: main),
-                for: .secondary)
-        } else {
-            splitViewController.setViewController(
-                SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
-                for: .primary)
-            splitViewController.setViewController(
-                SwipeForwardNavigationController(rootViewController: main),
-                for: .supplementary)
-            splitViewController.setViewController(
-                PlaceholderViewController(),
-                for: .secondary)
-        }
-        
-        splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-        splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
-        if splitViewController.style == .tripleColumn {
-            splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-            splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
-        }
-        
-        splitViewController.presentsWithGesture = true
-
-        // Set display mode and split behavior
-        if splitViewController.style != .tripleColumn {
-            splitViewController.preferredDisplayMode = .primaryOverlay
-            splitViewController.preferredSplitBehavior = .overlay
-        } else {
-            splitViewController.preferredDisplayMode = .primaryOverlay
-            splitViewController.preferredSplitBehavior = .displace
-        }
-
-        window.rootViewController = splitViewController
-        self.window = window
-        window.makeKeyAndVisible()
-    }
-    
+            
     func resetSplit(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
         let splitViewController = NoHomebarSplitViewController()
 
@@ -575,6 +528,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.setViewController(
                     SwipeForwardNavigationController(rootViewController: main),
                     for: .secondary)
+                
+                let main2: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                let compact = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main2))
+                
+                compact.pushViewController(main2, animated: false)
+                splitViewController.setViewController(compact, for: .compact)
+
+                splitViewController.setViewController(
+                    SwipeForwardNavigationController(rootViewController: main),
+                    for: .secondary)
             case .SPLIT:
                 splitViewController.setViewController(
                     SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
@@ -598,14 +561,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupSplitLayout(splitViewController)
         
-        //Check if in split mode, if so reset to triple column mode
-        let oldSize = window.frame.size
-        if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
-            if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController.style != .tripleColumn {
-                self.resetSplit14(main, window: window, true)
-            }
-        }
-
         return main
     }
     
@@ -630,20 +585,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case .pad:
             switch SettingValues.appMode {
             case .SINGLE, .MULTI_COLUMN:
-                splitViewController.preferredDisplayMode = .secondaryOnly
-                if #available(iOS 14.0, *) {
-                    splitViewController.preferredSplitBehavior = .overlay
+                if UIApplication.shared.isSplitOrSlideOver {
+                    setupSplitPaneLayout(splitViewController)
+                } else {
+                    splitViewController.preferredDisplayMode = .secondaryOnly
+                    if #available(iOS 14.0, *) {
+                        splitViewController.preferredSplitBehavior = .overlay
+                    }
                 }
             case .SPLIT:
-                if #available(iOS 14.0, *) {
-                    splitViewController.preferredDisplayMode = .oneBesideSecondary
-                    splitViewController.preferredSplitBehavior = .displace
-                } else {
-                    splitViewController.preferredDisplayMode = .allVisible
-                }
+                setupSplitPaneLayout(splitViewController)
             }
         default:
             splitViewController.preferredDisplayMode = .oneOverSecondary
+        }
+    }
+    
+    func setupSplitPaneLayout(_ splitViewController: UISplitViewController) {
+        if #available(iOS 14.0, *) {
+            splitViewController.preferredDisplayMode = .oneBesideSecondary
+            splitViewController.preferredSplitBehavior = .displace
+        } else {
+            splitViewController.preferredDisplayMode = .allVisible
         }
     }
 
