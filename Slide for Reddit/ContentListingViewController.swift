@@ -9,7 +9,6 @@
 import Anchorage
 import reddift
 import SDWebImage
-import SloppySwiper
 import UIKit
 
 class ContentListingViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource, SubmissionMoreDelegate, UIScrollViewDelegate, UINavigationControllerDelegate, AutoplayScrollViewDelegate {
@@ -56,8 +55,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         alrController.modalPresentationStyle = .fullScreen
         self.present(alrController, animated: true, completion: {})
     }
-    
-    var swiper: SloppySwiper?
     
     func hide(index: Int) {
         baseData.content.remove(at: index)
@@ -169,13 +166,6 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         super.viewDidAppear(animated)
         if !loading && !loaded {
             refresh()
-        }
-        
-        if self.navigationController != nil && !((self.baseData is FriendsContributionLoader || baseData is ProfileContributionLoader || baseData is InboxContributionLoader || baseData is CollectionsContributionLoader || baseData is ModQueueContributionLoader || baseData is ModMailContributionLoader)) {
-            if !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
         }
         
         setupBaseBarColors()
@@ -438,7 +428,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func doHeadView() {
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
         
         if !(navigationController is TapBehindModalViewController) {
@@ -555,7 +550,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
     
     func more(_ cell: LinkCellView) {
-        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController!, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
     
     func upvote(_ cell: LinkCellView) {

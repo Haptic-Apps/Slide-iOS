@@ -79,6 +79,11 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 topVideoView.edgeAnchors == videoView.edgeAnchors
             }
             
+            subicon.topAnchor == title.topAnchor
+            subicon.leftAnchor == title.leftAnchor
+            subicon.widthAnchor == 24
+            subicon.heightAnchor == 24
+            
             infoContainer.heightAnchor == CGFloat(45)
             if !SettingValues.smallerTag {
                 infoContainer.leftAnchor == bannerImage.leftAnchor

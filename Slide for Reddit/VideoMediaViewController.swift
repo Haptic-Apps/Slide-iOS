@@ -23,7 +23,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var youtubeMute = false {
         didSet(fromValue) {
-            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true)
+            let changeImage = youtubeMute ? UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()) : UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(true)
             
             UIView.animate(withDuration: 0.5, animations: {
                 self.muteButton.setImage(changeImage, for: UIControl.State.normal)
@@ -55,6 +55,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var size = UILabel()
     var videoType: VideoType!
+    
+    var lastTime = Float(0)
     
     var menuButton = UIButton()
     var muteButton = UIButton()
@@ -95,7 +97,12 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         configureLayout()
         connectActions()
 
-        handleHideUI()
+        handleHideUI(hideTitle: false)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.handleHideUI(hideTitle: true)
+        })
         
         volume.barTintColor = .white
         volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
@@ -238,7 +245,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             $0.alignment = .center
             $0.spacing = 8
         }
-        view.addSubview(bottomButtons)
+        gradientView.addSubview(bottomButtons)
+        view.addSubview(gradientView)
         
         if data.buttons {
             menuButton = UIButton().then {
@@ -263,7 +271,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
             muteButton = UIButton().then {
                 $0.accessibilityIdentifier = "Un-mute video"
-                $0.setImage(UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
+                $0.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.navIcon(true).getCopy(withColor: GMColor.red500Color()), for: [])
                 $0.isHidden = true // The button will be unhidden once the content has loaded.
                 $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             }
@@ -379,12 +387,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func configureLayout() {
-        bottomButtons.horizontalAnchors == view.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.bottomAnchor == view.safeBottomAnchor - CGFloat(8)
+        
+        bottomButtons.horizontalAnchors == gradientView.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.topAnchor == gradientView.topAnchor + 20
+        bottomButtons.bottomAnchor == gradientView.safeBottomAnchor - 8
+        gradientView.horizontalAnchors == view.horizontalAnchors
+        gradientView.bottomAnchor == view.bottomAnchor
 
         scrubber.horizontalAnchors == view.safeHorizontalAnchors + 8
         scrubber.topAnchor == view.safeTopAnchor + 8
-        scrubber.bottomAnchor == bottomButtons.topAnchor - 4
+        scrubber.bottomAnchor == gradientView.topAnchor - 4
         
         scrubber.playButton.centerAnchors == self.videoView.centerAnchors
 
@@ -400,7 +412,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 self.handleShowUI()
                 self.startTimerToHide()
             } else {
-                self.handleHideUI()
+                self.handleHideUI(hideTitle: true)
             }
         }
     }
@@ -430,10 +442,10 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                                      repeats: false)
     }
     
-    @objc func handleHideUI() {
-        if !self.scrubber.isHidden {
+    @objc func handleHideUI(hideTitle: Bool) {
+        if !self.scrubber.isHidden || hideTitle {
             if let parent = parent as? ModalMediaViewController {
-                parent.fullscreen(self)
+                parent.fullscreen(self, hideTitle)
             }
 
             UIView.animate(withDuration: 0.2, animations: {
@@ -510,7 +522,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
 
         // Otherwise load AVPlayer
-        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.shouldAutoPlay())
+        let url = formatUrl(sS: data.baseURL!.absoluteString, SettingValues.streamVideos)
         videoType = VideoType.fromPath(url)
         
         if videoType != .DIRECT && videoType != .REDDIT && videoType != .IMGUR {
@@ -561,14 +573,20 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
         Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
-            completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
+            if response.response?.statusCode == 200 {
+                completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
+            } else {
+                Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
+                    completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"))
+                }
+            }
         }
     }
 
     func getVideo(_ toLoad: String) {
         self.hideSpinner()
 
-        if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.shouldAutoPlay() {
+        if FileManager.default.fileExists(atPath: getKeyFromURL()) || SettingValues.streamVideos {
             playVideo(toLoad)
         } else {
             print(toLoad)
@@ -626,7 +644,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         let key = getKeyFromURL()
         var toLoadAudio = self.data.baseURL!.absoluteString
         toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/") ?? toLoadAudio.length)
-        toLoadAudio += "/audio"
+        toLoadAudio += "/DASH_audio.mp4"
         let finalUrl = URL.init(fileURLWithPath: key)
         let localUrlV = URL.init(fileURLWithPath: videoLocation)
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
@@ -681,7 +699,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
         print("Wanting to play " +  getKeyFromURL())
-        if let videoUrl = SettingValues.shouldAutoPlay() ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
+        if let videoUrl = SettingValues.streamVideos ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
             let playerItem = AVPlayerItem(url: videoUrl)
             videoView.player = AVPlayer(playerItem: playerItem)
             videoView.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
@@ -757,13 +775,12 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func formatUrl(sS: String, _ vreddit: Bool = false) -> String {
-        return VideoMediaViewController.format(sS: sS, SettingValues.shouldAutoPlay())
+        return VideoMediaViewController.format(sS: sS, SettingValues.streamVideos)
     }
 
     public enum VideoType {
         case DIRECT
         case IMGUR
-        case VID_ME
         case STREAMABLE
         case GFYCAT
         case REDDIT
@@ -776,14 +793,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             if url.contains("gfycat") && !url.contains("mp4") {
                 return VideoType.GFYCAT
             }
+            if url.contains("redgifs") && !url.contains("mp4") {
+                return VideoType.GFYCAT
+            }
             if url.contains("v.redd.it") {
                 return VideoType.REDDIT
             }
             if url.contains("imgur.com") {
                 return VideoType.IMGUR
-            }
-            if url.contains("vid.me") {
-                return VideoType.VID_ME
             }
             if url.contains("streamable.com") {
                 return VideoType.STREAMABLE
@@ -801,8 +818,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 return DirectVideoSource()
             case .STREAMABLE:
                 return StreamableVideoSource()
-            case .VID_ME:
-                return VidMeVideoSource()
             case .OTHER:
                 return DirectVideoSource()
             }
@@ -1044,14 +1059,14 @@ extension VideoMediaViewController {
             if let pDuration = player.currentItem?.duration {
                 let duration = Float(CMTimeGetSeconds(pDuration))
                 let time = Float(CMTimeGetSeconds(player.currentTime()))
-                if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }
+                lastTime = time
             }
         }
     }
-
 }
 
 extension VideoMediaViewController: WKYTPlayerViewDelegate {

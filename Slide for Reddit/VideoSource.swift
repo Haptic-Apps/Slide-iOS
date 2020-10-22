@@ -34,7 +34,7 @@ class GfycatVideoSource: VideoSource {
             name = name.split("-")[0]
         }
         name = name.split(".")[0]
-        let finalURL = URL(string: "https://api.gfycat.com/v1/gfycats\(name)")!
+        let finalURL = URL(string: "https://api.\(url.contains("redgifs") ? "redgifs" : "gfycat").com/v1/gfycats\(name)")!
         let dataTask = URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
@@ -113,35 +113,6 @@ class StreamableVideoSource: VideoSource {
                     print(error)
                 }
             }
-        }
-        dataTask.resume()
-        return dataTask
-    }
-}
-
-class VidMeVideoSource: VideoSource {
-    func load(url: String, completion: @escaping (String) -> Void, failure: (() -> Void)? = nil) -> URLSessionDataTask? {
-        let finalURL = URL(string: "https://api.vid.me/videoByUrl?url=" + url)!
-        let dataTask = URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
-            if error != nil {
-                print(error ?? "Error loading gif...")
-                failure?()
-            } else {
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data!, options: []) as? NSDictionary else {
-                        return
-                    }
-
-                    let gif = VidMeJSONBase.init(dictionary: json)
-
-                    DispatchQueue.main.async {
-                        completion((gif?.video?.complete_url)!)
-                    }
-                } catch let error as NSError {
-                    print(error)
-                }
-            }
-
         }
         dataTask.resume()
         return dataTask

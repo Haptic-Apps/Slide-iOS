@@ -114,7 +114,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                 case .restored:
                     print("Already Purchased")
-                    purchaseStatusBlock?(.purchased)
+                    purchaseStatusBlock?(.restored)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
                 default:
                     break

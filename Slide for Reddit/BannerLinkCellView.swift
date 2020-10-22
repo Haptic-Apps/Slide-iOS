@@ -22,7 +22,7 @@ final class BannerLinkCellView: LinkCellView {
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
-                title.topAnchor == contentView.topAnchor + ctwelve - 5
+                title.topAnchor == contentView.topAnchor + (ctwelve - 5)
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.topAnchor == contentView.topAnchor + ctwelve
                     sideButtons.bottomAnchor <= bannerImage.topAnchor - ceight
@@ -72,6 +72,11 @@ final class BannerLinkCellView: LinkCellView {
                     sideButtons.bottomAnchor <= contentView.bottomAnchor - ceight
                 }
             }
+
+            subicon.topAnchor == title.topAnchor
+            subicon.leftAnchor == title.leftAnchor
+            subicon.widthAnchor == 24
+            subicon.heightAnchor == 24
 
             infoContainer.heightAnchor == CGFloat(45)
             if !SettingValues.smallerTag {

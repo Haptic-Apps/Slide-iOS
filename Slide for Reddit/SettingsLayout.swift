@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Anchorage
 import reddift
 import UIKit
 
@@ -241,19 +242,20 @@ class SettingsLayout: BubbleSettingTableViewController {
 
         link.contentView.removeFromSuperview()
         if SettingValues.postImageMode == .THUMBNAIL {
-            link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+            link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         } else {
-            link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 500))
+            link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         }
         
-        link.aspectWidth = self.tableView.frame.size.width
+        link.aspectWidth = min(self.tableView.frame.size.width, 350)
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true, np: false)
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
-        link.contentView.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
+        link.contentView.heightAnchor == link.estimateHeight(false, true, np: false)
+        link.contentView.widthAnchor == min(self.tableView.frame.size.width, 350)
         linkCell.contentView.addSubview(link.contentView)
-        linkCell.frame = CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: link.estimateHeight(false, true, np: false))
+        link.contentView.centerAnchors == linkCell.contentView.centerAnchors
         
         switch SettingValues.postViewMode {
         case .CARD:
@@ -383,7 +385,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if indexPath.section == 1 && indexPath.row == 2 {
             let alertController = DragDownAlertMenu(title: "Button bar mode", subtitle: "Sets the layout for the submission buttons", icon: nil)
             
-            alertController.addAction(title: "Full-sized button bar", icon: UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")!.menuIcon()) {
+            alertController.addAction(title: "Right aligned button bar", icon: UIImage(sfString: SFSymbol.handPointRightFill, overrideString: "code")!.menuIcon()) {
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL
                 UserDefaults.standard.synchronize()
@@ -395,7 +397,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Left-aligned full-sized button bar", icon: UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")!.menuIcon()) {
+            alertController.addAction(title: "Left aligned button bar", icon: UIImage(sfString: SFSymbol.handPointLeftFill, overrideString: "code")!.menuIcon()) {
                 UserDefaults.standard.set("left", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL_LEFT
                 UserDefaults.standard.synchronize()
@@ -407,7 +409,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Left-side vote buttons", icon: UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()) {
+            alertController.addAction(title: "Vote buttons on left side", icon: UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()) {
                 UserDefaults.standard.set("side", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE
                 UserDefaults.standard.synchronize()
@@ -419,7 +421,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Right-side vote buttons", icon: UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
+            alertController.addAction(title: "Vote buttons on right side", icon: UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
                 UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE_RIGHT
                 UserDefaults.standard.synchronize()
@@ -432,7 +434,7 @@ class SettingsLayout: BubbleSettingTableViewController {
 
             }
 
-            alertController.addAction(title: "Hide button bar", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Disable buttons", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()
@@ -464,23 +466,22 @@ class SettingsLayout: BubbleSettingTableViewController {
     
     override func loadView() {
         super.loadView()
-        doLink()
         
-        headers = ["Preview", "Display", "Information line", "Thumbnails", "Advanced"]
+        headers = ["", "Display", "Information line", "Thumbnails", "Advanced"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Submission layout"
+        self.title = "Card layout"
         
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
         createCell(thumbInfoCell, thumbInfo, isOn: SettingValues.thumbTag, text: "Show link type on thumbnail")
 
-        createCell(cardModeCell, isOn: false, text: "Card type")
+        createCell(cardModeCell, isOn: false, text: "View type")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(imageCell, isOn: false, text: "Image mode")
+        createCell(imageCell, isOn: false, text: "Image size")
         imageCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
@@ -492,7 +493,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text-post images")
+        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text post preview images")
         hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show image previews on text-only posts"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
@@ -505,7 +506,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Post score in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
-        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title above submission information")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title post details")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Domain in title")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")
@@ -521,6 +522,11 @@ class SettingsLayout: BubbleSettingTableViewController {
 
         doDisables()
         self.tableView.tableFooterView = UIView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        doLink()
     }
     
     func doDisables() {
@@ -545,8 +551,8 @@ class SettingsLayout: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if section == 0 {
-            return 0
+        if section == 0 || section == 1 {
+            return 40
         }
         return super.tableView(tableView, heightForHeaderInSection: section)
     }

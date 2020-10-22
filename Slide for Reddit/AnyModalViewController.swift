@@ -33,6 +33,8 @@ class AnyModalViewController: UIViewController {
 
     var embeddedPlayer: AVPlayer?
     var videoView: VideoView!
+    var lastTime = Float(0)
+    
     weak var toReturnTo: LinkCellView?
     var fullscreen = false
     var panGestureRecognizer: UIPanGestureRecognizer?
@@ -141,6 +143,9 @@ class AnyModalViewController: UIViewController {
         
         panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGestureRecognizer!.delegate = self
+        if #available(iOS 13.4, *) {
+            panGestureRecognizer!.allowedScrollTypesMask = .continuous
+        }
         panGestureRecognizer!.direction = .vertical
         panGestureRecognizer!.cancelsTouchesInView = false
         
@@ -301,9 +306,9 @@ class AnyModalViewController: UIViewController {
     func setMuteButtonImage(muted: Bool) {
         let image: UIImage?
         if muted {
-            image = UIImage(sfString: SFSymbol.volumeSlashFill, overrideString: "mute")?.navIcon(true)
+            image = UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.navIcon(true)
         } else {
-            image = UIImage(sfString: SFSymbol.volume2Fill, overrideString: "audio")?.navIcon(true)
+            image = UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(true)
         }
         muteButton.setImage(image, for: [])
     }
@@ -911,10 +916,11 @@ extension AnyModalViewController {
                 let duration = Float(CMTimeGetSeconds(embeddedPlayer.currentItem!.duration))
                 let time = Float(CMTimeGetSeconds(elapsedTime))
                 
-                if !handlingPlayerItemDidreachEnd && (time / duration) >= 0.99 {
+                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }
+                lastTime = time
             }
         }
     }

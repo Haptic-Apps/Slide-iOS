@@ -53,32 +53,31 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
 
     var subChanged = false
 
-    var link: RSubmission!
     var commentCallback: (() -> Void)?
     var upvoteCallback: (() -> Void)?
     var isUpvoted = false
     var failureCallback: ((_ url: URL) -> Void)?
 
-    public func setLink(lnk: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil) { //lq is should load lq and did load lq
+    public func setLink(link: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil) { //lq is should load lq and did load lq
         if saveHistory {
-            History.addSeen(s: lnk, skipDuplicates: true)
+            History.addSeen(s: link, skipDuplicates: true)
         }
-        self.link = lnk
+        
         let url = link.url!
         let type = ContentType.getContentType(submission: link)
 
         commentCallback = { () in
-            let comment = CommentViewController.init(submission: self.link, single: true)
+            let comment = CommentViewController.init(submission: link, single: true)
             VCPresenter.showVC(viewController: comment, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
         }
-        isUpvoted = ActionStates.getVoteDirection(s: lnk) == VoteDirection.up
+        isUpvoted = ActionStates.getVoteDirection(s: link) == VoteDirection.up
         upvoteCallback = { () in
             do {
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up, name: (lnk.getId()), completion: { (_) in
+                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: link) == .up ? .none : .up, name: (link.getId()), completion: { (_) in
                     
                 })
-                ActionStates.setVoteDirection(s: lnk, direction: ActionStates.getVoteDirection(s: lnk) == .up ? .none : .up)
-                History.addSeen(s: lnk)
+                ActionStates.setVoteDirection(s: link, direction: ActionStates.getVoteDirection(s: link) == .up ? .none : .up)
+                History.addSeen(s: link)
             } catch {
                 
             }
@@ -95,7 +94,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     vc = safariVC
                 } else {
@@ -111,30 +110,30 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(lnk.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
             } else {
-                UIApplication.shared.openURL(lnk.url!)
+                UIApplication.shared.openURL(link.url!)
             }
         } else {
             if ContentType.isGif(uri: url) {
-                if !link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
-                    doShow(url: URL.init(string: link!.videoPreview)!, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
+                if !link.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
+                    doShow(url: URL.init(string: link.videoPreview)!, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 } else {
-                    doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
+                    doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 }
             } else {
                 if lq && shownURL != nil && !ContentType.isImgurLink(uri: url) {
-                    doShow(url: url, lq: shownURL, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
+                    doShow(url: url, lq: shownURL, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 } else if shownURL != nil && ContentType.imageType(t: type) && !ContentType.isImgurLink(uri: url) {
-                    doShow(url: shownURL!, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
+                    doShow(url: shownURL!, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 } else {
-                    doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC)
+                    doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 }
             }
         }
     }
     
-    func getControllerForUrl(baseUrl: URL, lq: URL? = nil) -> UIViewController? {
+    func getControllerForUrl(baseUrl: URL, lq: URL? = nil, link: RSubmission) -> UIViewController? {
         contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
 
         if shouldTruncate(url: contentUrl!) {
@@ -145,16 +144,17 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         let type = ContentType.getContentType(baseUrl: contentUrl)
         
         if type == ContentType.CType.ALBUM && SettingValues.internalAlbumView {
-            print("Showing album")
-            return AlbumViewController.init(urlB: contentUrl!)
+            return AlbumViewController(urlB: contentUrl!)
+        } else if type == ContentType.CType.REDDIT_GALLERY {
+            return AlbumViewController(galleryItems: link.gallery)
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                     let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                     if #available(iOS 10.0, *) {
-                        safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                        safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                         safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     } else {
                         // Fallback on earlier versions
@@ -163,12 +163,12 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 }
                 return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
             }
-            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback)
+            return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                 } else {
                     // Fallback on earlier versions
@@ -183,7 +183,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
             let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
             if #available(iOS 10.0, *) {
-                safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                 safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
             } else {
                 // Fallback on earlier versions
@@ -211,14 +211,14 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         controller.parentController!.dismiss(animated: true)
     }
 
-    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?) {
+    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: RSubmission) {
         failureCallback = {[weak self] (url: URL) in
             guard let strongSelf = self else { return }
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
+                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
                     vc = safariVC
                 } else {
@@ -257,7 +257,12 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             // If it's a youtube video, always use safari so the app will open
             let type = ContentType.getContentType(baseUrl: url)
             if type == ContentType.CType.VIDEO && !SettingValues.internalYouTube {
-                newUrl = oldUrl
+                let youtubeURL = URL(string: oldUrl.absoluteString.replacingOccurrences(of: "https://", with: "youtube://").replacingOccurrences(of: "http://", with: "youtube://"))!
+                if UIApplication.shared.canOpenURL(youtubeURL) {
+                    newUrl = youtubeURL
+                } else {
+                    newUrl = oldUrl
+                }
             }
 
             if #available(iOS 10.0, *) {
@@ -279,7 +284,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 controller.addAction(UIAlertAction.init(title: "Close", style: .cancel, handler: nil))
                 present(controller, animated: true, completion: nil)
             } else {
-                let controller = getControllerForUrl(baseUrl: contentUrl!, lq: lq)!
+                let controller = getControllerForUrl(baseUrl: contentUrl!, lq: lq, link: link)!
                 if controller is AlbumViewController {
                     controller.modalPresentationStyle = .overFullScreen
                     present(controller, animated: true, completion: nil)
@@ -298,7 +303,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     func setBarColors(color: UIColor) {
         self.color = color
         if SettingValues.reduceColor {
-            self.color = self is CommentViewController ? ColorUtil.theme.foregroundColor : ColorUtil.theme.backgroundColor
+            self.color = self is CommentViewController ? ColorUtil.theme.foregroundColor : ColorUtil.theme.foregroundColor
         }
         setNavColors()
     }

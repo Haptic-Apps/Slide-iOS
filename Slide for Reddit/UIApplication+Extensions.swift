@@ -17,6 +17,13 @@ extension UIApplication {
 }
 extension UIApplication {
     public var isSplitOrSlideOver: Bool {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return false
+        }
+        if #available(iOS 13, *) {
+            guard let window = self.windows.filter({ $0.isKeyWindow }).first else { return false }
+            return !(window.frame.width == window.screen.bounds.width)
+        }
         guard let w = self.delegate?.window, let window = w else {
             return false
         }

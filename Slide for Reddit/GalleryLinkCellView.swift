@@ -30,6 +30,11 @@ final class GalleryLinkCellView: LinkCellView {
             bannerImage.bottomAnchor == title.topAnchor - ceight
             bannerImage.horizontalAnchors == contentView.horizontalAnchors + bannerPadding
             
+            subicon.topAnchor == title.topAnchor
+            subicon.leftAnchor == title.leftAnchor
+            subicon.widthAnchor == 24
+            subicon.heightAnchor == 24
+
             videoView.edgeAnchors == bannerImage.edgeAnchors
             topVideoView.edgeAnchors == videoView.edgeAnchors
             infoContainer.heightAnchor == CGFloat(45)
@@ -61,16 +66,16 @@ final class GalleryLinkCellView: LinkCellView {
                 return
             }
 
-        let attText = CachedTitle.getTitle(submission: link, full: full, force, false, gallery: true)
-            let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
-            if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
-                oldBounds = bounds.textBoundingSize
-                title.textLayout = bounds
-                title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-                title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
-            }
-            title.attributedText = attText
-            title.textVerticalAlignment = .top
+        let attText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: full)
+        let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
+        if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
+            oldBounds = bounds.textBoundingSize
+            title.textLayout = bounds
+            title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
+            title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
+        }
+        title.attributedText = attText
+        title.textVerticalAlignment = .top
     }
     
     override func refresh(np: Bool = false) {

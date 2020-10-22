@@ -59,6 +59,8 @@ class LinkParser {
                             switch type {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
+                            case .REDDIT_GALLERY:
+                                typeString.mutableString.setString("(Gallery)")
                             case .TABLE:
                                 typeString.mutableString.setString("(Table)")
                             case .EXTERNAL:

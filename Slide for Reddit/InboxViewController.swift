@@ -12,6 +12,8 @@ import reddift
 import UIKit
 
 class InboxViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate {
+    public static let inboxIntent = "me.ccrama.redditslide.OpenInbox"
+    
     var content: [MessageWhere] = []
     var isReload = false
     var session: Session?
@@ -144,7 +146,12 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         if #available(iOS 13, *), (self.navigationController?.viewControllers[0] == self) {
             isModal13 = true
         }
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        if #available(iOS 13, *) {
+            tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
+        } else {
+            tabBar.topAnchor == self.view.topAnchor
+        }
 
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.sizeToFit()

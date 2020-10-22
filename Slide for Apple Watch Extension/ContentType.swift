@@ -119,7 +119,14 @@ class ContentType {
             || path.contains(","))
         
     }
-    
+
+    public static func isGallery(uri: URL) -> Bool {
+        let host = uri.host?.lowercased()
+        let path = uri.path.lowercased()
+        
+        return hostContains(host: host, bases: ["reddit.com"]) && (path.hasPrefix("/gallery/"))
+    }
+
     public static func isVideo(uri: URL) -> Bool {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
@@ -189,6 +196,9 @@ class ContentType {
         if isAlbum(uri: url!) {
             return CType.ALBUM
         }
+        if isGallery(uri: url!) {
+            return CType.REDDIT_GALLERY
+        }
         if hostContains(host: host, bases: ["imgur.com", "bildgur.de"]) {
             return CType.IMGUR
         }
@@ -243,7 +253,7 @@ class ContentType {
     public static func displayImage(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.IMAGE, CType.XKCD, CType.TUMBLR, CType.IMGUR, CType.SELF:
+        case CType.ALBUM, CType.REDDIT_GALLERY, CType.DEVIANTART, CType.IMAGE, CType.XKCD, CType.TUMBLR, CType.IMGUR, CType.SELF:
             return true
         default:
             return false
@@ -266,7 +276,7 @@ class ContentType {
     public static func fullImage(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.YOUTUBE, CType.SELF, CType.VID_ME:
+        case CType.ALBUM, CType.REDDIT_GALLERY, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.IMGUR, CType.STREAMABLE, CType.TUMBLR, CType.XKCD, CType.YOUTUBE, CType.SELF, CType.VID_ME:
             return true
             
         case CType.EMBEDDED, CType.EXTERNAL, CType.LINK, CType.NONE, CType.REDDIT, CType.SPOILER, CType.TABLE, CType.UNKNOWN:
@@ -277,7 +287,7 @@ class ContentType {
     public static func mediaType(t: CType) -> Bool {
         switch t {
             
-        case CType.ALBUM, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.TUMBLR, CType.XKCD, CType.IMGUR, CType.STREAMABLE, CType.VID_ME:
+        case CType.ALBUM, CType.REDDIT_GALLERY, CType.DEVIANTART, CType.GIF, CType.IMAGE, CType.TUMBLR, CType.XKCD, CType.IMGUR, CType.STREAMABLE, CType.VID_ME:
             return true
         default:
             return false
@@ -302,6 +312,7 @@ class ContentType {
         case LINK
         case NONE
         case SPOILER
+        case REDDIT_GALLERY
         case REDDIT
         case SELF
         case STREAMABLE

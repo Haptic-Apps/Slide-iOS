@@ -94,7 +94,8 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
 
         self.view.addSubview(tabBar)
         tabBar.heightAnchor == 48
-        
+        setupBaseBarColors()
+
         self.edgesForExtendedLayout = UIRectEdge.all
     
         self.extendedLayoutIncludesOpaqueBars = true
@@ -104,7 +105,12 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
         if #available(iOS 13, *), (self.navigationController?.viewControllers[0] == self) {
             isModal13 = true
         }
-        tabBar.topAnchor == self.view.topAnchor + (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
+        if #available(iOS 13, *) {
+            tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
+        } else {
+            tabBar.topAnchor == self.view.topAnchor
+        }
 
         tabBar.horizontalAnchors == self.view.horizontalAnchors
         tabBar.sizeToFit()
