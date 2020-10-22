@@ -33,7 +33,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
     private var contentHeight: CGFloat = 0.0
     private var contentWidth: CGFloat {
         let insets = collectionView!.contentInset
-        return collectionView!.bounds.width - (insets.left + insets.right)
+        var cvWidth = collectionView!.bounds.width
+        if cvWidth <= 0 {
+            cvWidth = UIScreen.main.bounds.size.width
+        }
+        return cvWidth - (insets.left + insets.right)
     }
     override var collectionViewContentSize: CGSize {
         return CGSize(width: contentWidth, height: contentHeight)
@@ -41,22 +45,19 @@ class WrappingFlowLayout: UICollectionViewLayout {
     func reset(modal: Bool, vc: UIViewController, isGallery: Bool) {
         cache = []
         contentHeight = 0
-        var portraitCount = SettingValues.multiColumnCount / 2
-        if portraitCount == 0 {
-            portraitCount = 1
-        }
-                
+        var portraitCount = SettingValues.portraitMultiColumnCount
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        if portraitCount == 1 && pad {
-            portraitCount = 2
-        }
         
         if SettingValues.appMode == .MULTI_COLUMN {
             if UIApplication.shared.statusBarOrientation.isPortrait || (vc.presentingViewController != nil && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
-                    numberOfColumns = 1
+                    numberOfColumns = SettingValues.portraitMultiColumnCount
                 } else {
-                    numberOfColumns = portraitCount
+                    if SettingValues.disableMulticolumnCollections {
+                        numberOfColumns = 1
+                    } else {
+                        numberOfColumns = portraitCount
+                    }
                 }
             } else {
                 numberOfColumns = SettingValues.multiColumnCount

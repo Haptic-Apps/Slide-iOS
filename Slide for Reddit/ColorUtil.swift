@@ -95,6 +95,7 @@ public class ColorUtil {
         if accent != nil {
             baseAccent = accent!
         }
+        NotificationCenter.default.post(name: .onThemeChanged, object: nil)
         return toReturn
     }
     
@@ -113,12 +114,43 @@ public class ColorUtil {
 
     public static func getColorForSub(sub: String, _ header: Bool = false) -> UIColor {
         if header && SettingValues.reduceColor {
-            return ColorUtil.theme.backgroundColor
+            return ColorUtil.theme.foregroundColor
         }
-        if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
+        if let color = Subscriptions.color(for: sub) {
+            return color
+        } else if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
             return color
         } else {
+            if sub.lowercased() == "all" {
+                return GMColor.blue500Color()
+            } else if sub.lowercased() == "frontpage" {
+                return GMColor.green500Color()
+            } else if sub.lowercased() == "popular" {
+                return GMColor.purple500Color()
+            }
             return baseColor
+        }
+    }
+    
+    public static func getNavColorForSub(sub: String, _ header: Bool = false) -> UIColor? {
+        if header && SettingValues.reduceColor {
+            return nil
+        }
+        if let color = Subscriptions.color(for: sub) {
+            return color
+        } else if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
+            return color
+        } else {
+            return nil
+        }
+    }
+
+    public static func matchTraitCollection() {
+        print("Switching match trait")
+        if shouldBeNight() && theme.displayName != SettingValues.nightTheme {
+            _ = doInit()
+        } else if !shouldBeNight() && theme.displayName != UserDefaults.standard.string(forKey: "theme") ?? "light" {
+            _ = doInit()
         }
     }
 
@@ -215,11 +247,10 @@ public class ColorUtil {
     }
 
     public static func accentColorForSub(sub: String) -> UIColor {
-        let color = UserDefaults.standard.colorForKey(key: "accent+" + sub)
-        if color == nil {
-            return baseAccent
+        if let color = UserDefaults.standard.colorForKey(key: "accent+" + sub) {
+            return color
         } else {
-            return color!
+            return baseAccent
         }
     }
     

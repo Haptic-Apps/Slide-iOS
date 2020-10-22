@@ -88,6 +88,9 @@ class CacheSettings: BubbleSettingTableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         save(nil)
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
+        }
     }
 
     func save(_ selector: AnyObject?) {
@@ -238,6 +241,9 @@ class CacheSettings: BubbleSettingTableViewController {
         super.viewWillAppear(animated)
         setupBaseBarColors()
         self.title = "Manage offline caching"
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
     }
 
 }

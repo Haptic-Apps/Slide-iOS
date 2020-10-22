@@ -598,8 +598,3 @@ class ProfileHeaderView: UIView {
         }
     }
 }
-
-// MARK: - Actions
-extension AccountHeaderView {
-    
-}

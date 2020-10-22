@@ -78,7 +78,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         all.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
         let allB = UIBarButtonItem.init(customView: all)
 
-        regularButtons = [allB, syncB]
+        regularButtons = [allB]
         chosenButtons = [deleteB, addB]
         
         self.navigationItem.rightBarButtonItems = regularButtons
@@ -292,49 +292,54 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     func edit(_ sub: [String], sender: UIButton) {
         editSubs = sub
+        
+        if #available(iOS 14, *) {
+            let vc = SubredditThemeEditViewController(subreddit: editSubs.count == 1 ? editSubs.first! : "Multiple subreddits", delegate: self)
+            VCPresenter.presentModally(viewController: vc, self, CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: 300))
+        } else {
+            let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
-        let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+            isAccent = false
+            let margin: CGFloat = 10.0
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let MKColorPicker = ColorPickerView.init(frame: rect)
+            MKColorPicker.delegate = self
+            MKColorPicker.colors = GMPalette.allColor()
+            MKColorPicker.selectionStyle = .check
+            MKColorPicker.scrollDirection = .vertical
 
-        isAccent = false
-        let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
-        let MKColorPicker = ColorPickerView.init(frame: rect)
-        MKColorPicker.delegate = self
-        MKColorPicker.colors = GMPalette.allColor()
-        MKColorPicker.selectionStyle = .check
-        MKColorPicker.scrollDirection = .vertical
+            MKColorPicker.style = .circle
 
-        MKColorPicker.style = .circle
+            alertController.view.addSubview(MKColorPicker)
 
-        alertController.view.addSubview(MKColorPicker)
-
-        alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.baseAccent, style: .default) { _ in
-            if self.colorChosen != nil {
-                for sub in self.editSubs {
-                    ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+            alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.baseAccent, style: .default) { _ in
+                if self.colorChosen != nil {
+                    for sub in self.editSubs {
+                        ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+                    }
                 }
+                self.pickAccent(sub, sender: sender)
             }
-            self.pickAccent(sub, sender: sender)
-        }
 
-        alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { _ in
-            if self.colorChosen != nil {
-                for sub in self.editSubs {
-                    ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+            alertController.addAction(image: nil, title: "Save", color: ColorUtil.baseAccent, style: .default) { _ in
+                if self.colorChosen != nil {
+                    for sub in self.editSubs {
+                        ColorUtil.setColorForSub(sub: sub, color: self.colorChosen!)
+                    }
                 }
+                self.tableView.reloadData()
+                self.navigationItem.rightBarButtonItems = self.regularButtons
             }
-            self.tableView.reloadData()
-            self.navigationItem.rightBarButtonItems = self.regularButtons
-        }
 
-        alertController.addCancelButton()
-        alertController.modalPresentationStyle = .popover
-        if let presenter = alertController.popoverPresentationController {
-            presenter.sourceView = savedView
-            presenter.sourceRect = savedView.bounds
-        }
+            alertController.addCancelButton()
+            alertController.modalPresentationStyle = .popover
+            if let presenter = alertController.popoverPresentationController {
+                presenter.sourceView = savedView
+                presenter.sourceRect = savedView.bounds
+            }
 
-        present(alertController, animated: true, completion: nil)
+            present(alertController, animated: true, completion: nil)
+        }
     }
 
     var isAccent = false
@@ -402,6 +407,30 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         }
     }
 
+}
+
+extension SubredditThemeViewController: SubredditThemeEditViewControllerDelegate {
+    func didClear() -> Bool {
+        for sub in self.editSubs {
+            UserDefaults.standard.removeObject(forKey: "color+" + sub)
+            UserDefaults.standard.removeObject(forKey: "accent+" + sub)
+            UserDefaults.standard.synchronize()
+        }
+        return true
+    }
+    
+    func didChangeColors(_ isAccent: Bool, color: UIColor) {
+        if isAccent {
+            for sub in self.editSubs {
+                ColorUtil.setAccentColorForSub(sub: sub, color: color)
+            }
+        } else {
+            for sub in self.editSubs {
+                ColorUtil.setColorForSub(sub: sub, color: color)
+            }
+        }
+        self.tableView.reloadData()
+    }
 }
 
 public enum ToastPosition {

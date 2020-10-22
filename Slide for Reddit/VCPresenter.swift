@@ -18,6 +18,15 @@ public class VCPresenter {
             parentViewController?.present(viewController, animated: true)
             return
         }
+        
+        if viewController is InboxViewController {
+            //Siri Shortcuts integration
+            if #available(iOS 12.0, *) {
+                let activity = InboxViewController.openInboxActivity()
+                viewController.userActivity = activity
+                activity.becomeCurrent()
+            }
+        }
         var override13 = false
         if #available(iOS 13, *) {
             override13 = true
@@ -25,7 +34,7 @@ public class VCPresenter {
         var parentIs13 = false
         if parentNavigationController != nil {
             if #available(iOS 13.0, *) {
-                if parentNavigationController!.modalPresentationStyle == .pageSheet && parentNavigationController!.viewControllers.count == 1 && !(parentNavigationController!.viewControllers[0] is MainViewController) {
+                if parentNavigationController!.modalPresentationStyle == .pageSheet && parentNavigationController!.viewControllers.count == 1 && !(parentNavigationController!.viewControllers[0] is MainViewController || parentNavigationController!.viewControllers[0] is NavigationHomeViewController) {
                     parentIs13 = true
                 }
             }
@@ -33,10 +42,15 @@ public class VCPresenter {
         if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
             override13 = false
         }
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && parentViewController?.splitViewController != nil && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
-            (parentViewController!.splitViewController)?.showDetailViewController(UINavigationController(rootViewController: viewController), sender: nil)
+        
+        var respectedOverride13 = override13
+
+        override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
+        
+        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+            (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if (parentViewController?.splitViewController != nil) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && (UIApplication.shared.statusBarOrientation.isLandscape || override13)) || parentNavigationController == nil {
+        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && popupIfPossible) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && override13) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true
@@ -59,9 +73,9 @@ public class VCPresenter {
             //Let's figure out how to present it
             let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
-            if small || override13 {
+            if small || override13 || respectedOverride13 {
                 newParent.modalPresentationStyle = .pageSheet
-                if !override13 {
+                if !override13 && !respectedOverride13 {
                     newParent.modalTransitionStyle = .crossDissolve
                 }
             } else {
@@ -84,7 +98,7 @@ public class VCPresenter {
             button.accessibilityTraits = UIAccessibilityTraits.button
             button.parentController = parentNavigationController!
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(sfString: SFSymbol.arrowLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
+            button.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
             button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
@@ -94,8 +108,10 @@ public class VCPresenter {
 
             viewController.navigationItem.leftBarButtonItem = barButton
 
-            viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
-            viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+            if !(parentViewController is SplitMainViewController) && !(parentViewController?.parent is SplitMainViewController) {
+                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
+                viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+            }
         }
 
     }
@@ -112,6 +128,9 @@ public class VCPresenter {
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
         button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withSize: CGSize.square(size: 20)), for: UIControl.State.normal)
         button.frame = CGRect.init(x: -10, y: 0, width: 35, height: 35)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 35/2
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         let barButton = UIBarButtonItem.init(customView: button)
         
@@ -137,14 +156,36 @@ public class VCPresenter {
         }
         //TODO deallocate that delegate....
         
-        viewController.navigationItem.leftBarButtonItems = [barButton]
+        viewController.navigationItem.rightBarButtonItems = [barButton]
         parentViewController.present(newParent, animated: true, completion: nil)
     }
 
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            presentModally(viewController: viewController, parentViewController, nil)
+            viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+            newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+
+            newParent.navigationBar.shadowImage = UIImage()
+            newParent.navigationBar.isTranslucent = false
+
+            let button = UIButtonWithContext.init(type: .custom)
+            button.parentController = newParent
+            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
+            button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+            button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+
+            let barButton = UIBarButtonItem.init(customView: button)
+            barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+            newParent.modalPresentationStyle = .pageSheet
+
+            viewController.navigationItem.rightBarButtonItems = [barButton]
+
+            parentViewController.present(newParent, animated: true, completion: nil)
             return true
         }
         return false
@@ -212,8 +253,33 @@ public class VCPresenter {
 
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
         let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: link)!)
-        showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
-
+        if vc is SingleSubredditViewController {
+            //Siri Shortcuts integration
+            if #available(iOS 12.0, *) {
+                let activity = SingleSubredditViewController.openSubredditActivity(subreddit: (vc as! SingleSubredditViewController).sub)
+                vc.userActivity = activity
+                activity.becomeCurrent()
+            }
+        }
+        if let presented = recursivePresented(parentVC) {
+            showVC(viewController: vc, popupIfPossible: true, parentNavigationController: presented.navigationController, parentViewController: presented)
+        } else {
+            showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
+        }
+    }
+    
+    static func recursivePresented(_ viewController: UIViewController?) -> UIViewController? {
+        var currentParent = viewController
+        
+        while currentParent != nil {
+            if currentParent?.presentedViewController != nil {
+                currentParent = currentParent?.presentedViewController
+            } else {
+                return currentParent
+            }
+        }
+        
+        return currentParent
     }
 }
 
@@ -224,8 +290,8 @@ public class DefaultGestureDelegate: NSObject, UIGestureRecognizerDelegate {
 }
 
 public class UIButtonWithContext: UIButton {
-    public var parentController: UINavigationController?
-    public var contextController: UIViewController?
+    weak var parentController: UINavigationController?
+    weak var contextController: UIViewController?
 }
 
 extension URL {

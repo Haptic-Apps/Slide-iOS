@@ -10,7 +10,6 @@ import Anchorage
 import DTCoreText
 import reddift
 import SDWebImage
-import SwiftSpreadsheet
 import Then
 import UIKit
 import YYText
@@ -21,7 +20,6 @@ class TableDisplayView: UIScrollView {
 
     var baseData = [[NSAttributedString]]()
     var scrollView: UIScrollView!
-    var widths = [[CGFloat]]()
     var baseColor: UIColor
     var tColor: UIColor
     var action: YYTextAction?
@@ -47,7 +45,7 @@ class TableDisplayView: UIScrollView {
             $0.axis = .vertical
         })
         self.isScrollEnabled = true
-        doList()
+        makeViews()
     }
 
     //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
@@ -129,90 +127,78 @@ class TableDisplayView: UIScrollView {
         backupData = baseData*/
     }
 
-    func doData() {
-
-        widths.removeAll()
-        var currentWidths = [CGFloat]()
-        for row in baseData {
-            currentWidths = []
-            for cell in row {
-                let framesetter = CTFramesetterCreateWithAttributedString(cell)
-                let textSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat(40)), nil)
-                let length = textSize.width + 16
-                currentWidths.append(length)
-            }
-            widths.append(currentWidths)
+    var maxCellWidth: CGFloat {
+        if traitCollection.userInterfaceIdiom == .phone {
+            return UIScreen.main.bounds.width - 50
+        } else {
+            return 400
         }
-        addSubviews()
     }
-    
-    func addSubviews() {
-        var odd = false
+    let verticalPadding: CGFloat = 4
+    let horizontalPadding: CGFloat = 4
+
+    var globalWidth: CGFloat = 0
+    var globalHeight: CGFloat = 0
+
+    func makeViews() {
+        var columnWidths = [CGFloat](repeating: 0, count: baseData[safeIndex: 0]?.count ?? 0)
+        // Determine width of each column
         for row in baseData {
+            for (x, text) in row.enumerated() {
+                let framesetter = CTFramesetterCreateWithAttributedString(text)
+                let singleLineTextWidth = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), nil).width
+                let width = min(singleLineTextWidth, maxCellWidth) + (horizontalPadding * 2)
+                columnWidths[x] = max(columnWidths[x], width)
+            }
+        }
+        globalWidth = columnWidths.reduce(0, +)
+
+        // Determine heights of rows now that we know column widths
+        var rowHeights = [CGFloat](repeating: 0, count: baseData.count)
+        for (y, row) in baseData.enumerated() {
+            for (x, text) in row.enumerated() {
+                let framesetter = CTFramesetterCreateWithAttributedString(text)
+                let height = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(), nil, CGSize.init(width: columnWidths[x], height: CGFloat.greatestFiniteMagnitude), nil).height + (verticalPadding * 2)
+                rowHeights[y] = max(rowHeights[y], height)
+            }
+        }
+        globalHeight = rowHeights.reduce(0, +)
+
+        // Create each row
+        for (y, row) in baseData.enumerated() {
             let rowStack = UIStackView().then({
                 $0.axis = .horizontal
-                $0.spacing = 4
+                $0.spacing = 0
+                $0.alignment = .top
+                $0.distribution = .fill
             })
-            var column = 0
-            globalHeight += 30
-            globalWidth = 0
-            for string in row {
-                let text = YYLabel.init(frame: CGRect.zero).then({
-                    $0.heightAnchor == CGFloat(30)
-                })
-                text.highlightLongPressAction = longAction
-                text.highlightTapAction = action
-                text.attributedText = string
-                if odd {
-                    text.backgroundColor = ColorUtil.theme.foregroundColor
+            for (x, text) in row.enumerated() {
+                let label = YYLabel()
+                label.numberOfLines = 0
+                label.textVerticalAlignment = .top
+                label.highlightLongPressAction = longAction
+                label.highlightTapAction = action
+                label.attributedText = text
+                label.textContainerInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: -verticalPadding, right: -horizontalPadding)
+                label.lineBreakMode = .byTruncatingTail
+                if y % 2 != 0 {
+                    label.backgroundColor = ColorUtil.theme.foregroundColor
                 }
-                let width = getWidestCell(column: column)
-                globalWidth += width
-                globalWidth += 4
-                text.widthAnchor == width
-                rowStack.addArrangedSubview(text)
-                column += 1
+                label.widthAnchor == columnWidths[x]// + 100
+                label.heightAnchor == rowHeights[y]
+                rowStack.addArrangedSubview(label)
             }
-            globalWidth -= 4
             baseStackView.addArrangedSubview(rowStack)
-            odd = !odd
         }
-        
+
         addSubview(baseStackView)
         contentInset = UIEdgeInsets.init(top: 0, left: 8, bottom: 0, right: 8)
-        baseStackView.widthAnchor == globalWidth
-        baseStackView.heightAnchor == globalHeight
-        baseStackView.leftAnchor == leftAnchor
-        baseStackView.verticalAnchors == verticalAnchors
-        baseStackView.leadingAnchor == leadingAnchor
-        baseStackView.trailingAnchor == trailingAnchor
-        baseStackView.topAnchor == topAnchor
-        baseStackView.bottomAnchor == bottomAnchor
+        baseStackView.edgeAnchors == edgeAnchors
         contentSize = CGSize.init(width: globalWidth, height: globalHeight)
-    }
-    
-    var globalHeight = CGFloat(0)
-    var globalWidth = CGFloat(0)
-
-    func getWidestCell(column: Int) -> CGFloat {
-        var widest = CGFloat(0)
-        for row in widths {
-            if column < row.count && row[column] > widest {
-                widest = row[column]
-            }
-        }
-        return widest
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    var list = true
-
-    func doList() {
-        list = !list
-        doData()
     }
     
     public static func getEstimatedHeight(baseHtml: String) -> CGFloat {
@@ -275,5 +261,15 @@ class TableDisplayView: UIScrollView {
             }
         }
         return estHeight
+    }
+}
+
+private extension Array {
+    subscript(safeIndex index: Int) -> Element? {
+        guard index >= 0, index < endIndex else {
+            return nil
+        }
+
+        return self[index]
     }
 }

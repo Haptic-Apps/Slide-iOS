@@ -314,6 +314,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     
     var crosspostHeight = CGFloat(0)
 
+    var lastLength = 0
     /* This is probably broken*/
     @objc func textViewDidChange(_ textView: UITextView) {
         textView.sizeToFitHeight()
@@ -321,14 +322,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         if split.first != nil && split.first!.startsWith("* ") && textView.text.endsWith("\n") {
             if split.first == "* " {
                 textView.text = textView.text.substring(0, length: textView.text.length - 3) + "\n"
-            } else {
+            } else if lastLength < textView.text.length {
                 textView.text += "* "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
         } else if split.first != nil && split.first!.startsWith("- ") && textView.text.endsWith("\n") {
             if split.first == "- " {
                 textView.text = textView.text.substring(0, length: textView.text.length - 3) + "\n"
-            } else {
+            } else if lastLength < textView.text.length {
                 textView.text += "- "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
@@ -336,7 +337,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             let num = (Int(split.first!.substring(0, length: 1)) ?? 0) + 1
             if split.first?.length ?? 0 < 4 {
                 textView.text = textView.text.substring(0, length: textView.text.length - 4) + "\n"
-            } else {
+            } else if lastLength < textView.text.length {
                 textView.text += "\(num). "
                 textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
             }
@@ -364,6 +365,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
         
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
+        lastLength = textView.text.length
     }
 
         //Create a new post
@@ -649,7 +651,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
                                     return
                                 }
                             }
@@ -941,7 +943,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
                                     return
                                 }
                             }

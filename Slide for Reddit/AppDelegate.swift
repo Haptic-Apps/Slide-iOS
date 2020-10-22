@@ -14,6 +14,7 @@ import DTCoreText
 import RealmSwift
 import reddift
 import SDWebImage
+import Then
 import UIKit
 import UserNotifications
 import WatchConnectivity
@@ -41,12 +42,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var commentsFile: String?
     var readLaterFile: String?
     var collectionsFile: String?
+    var iconsFile: String?
+    var colorsFile: String?
     var totalBackground = true
     var isPro = false
     var transitionDelegateModal: InsetTransitioningDelegate?
     var tempWindow: UIWindow?
 
     var orientationLock = UIInterfaceOrientationMask.allButUpsideDown
+
+    /**
+     Corresponds to USR_DOMAIN in info.plist, which derives its value
+     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+     */
+    lazy var USR_DOMAIN: String = {
+        return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }()
 
     let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
         if oldSchemaVersion < 13 {
@@ -117,13 +128,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         }
     }
-    
+        
     static var removeDict = NSMutableDictionary()
     
+    var launchedURL: URL?
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //let settings = UIUserNotificationSettings(types: UIUserNotificationType.alert, categories: nil)
-        //UIApplication.shared.registerUserNotificationSettings(settings)
-
+        if #available(iOS 13.0, *) { return true } else {
+            let window = UIWindow(frame: UIScreen.main.bounds)
+            self.window = window
+            didFinishLaunching(window: window)
+            launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
+            let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
+            
+            if remoteNotif != nil {
+                if let url = remoteNotif!.userInfo?["permalink"] as? String {
+                    VCPresenter.openRedditLink(url, window.rootViewController as? UINavigationController, window.rootViewController)
+                } else {
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window.rootViewController as? UINavigationController, parentViewController: window.rootViewController)
+                }
+            }
+            return true
+        }
+    }
+    
+    func didFinishLaunching(window: UIWindow) {
         UIPanGestureRecognizer.swizzle()
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
         let documentDirectory = paths[0] as! String
@@ -131,9 +160,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         commentsFile = documentDirectory.appending("/comments.plist")
         readLaterFile = documentDirectory.appending("/readlater.plist")
         collectionsFile = documentDirectory.appending("/collections.plist")
+        iconsFile = documentDirectory.appending("/icons.plist")
+        colorsFile = documentDirectory.appending("/subcolors.plist")
 
         let config = Realm.Configuration(
-                schemaVersion: 26,
+                schemaVersion: 30,
                 migrationBlock: migrationBlock,
                 deleteRealmIfMigrationNeeded: true)
 
@@ -183,6 +214,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("file myData.plist already exits at path.")
         }
+        
+        if !fileManager.fileExists(atPath: iconsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "icons", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: iconsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
+
+        if !fileManager.fileExists(atPath: colorsFile!) {
+            if let bundlePath = Bundle.main.path(forResource: "subcolors", ofType: "plist") {
+                _ = NSMutableDictionary(contentsOfFile: bundlePath)
+                do {
+                    try fileManager.copyItem(atPath: bundlePath, toPath: colorsFile!)
+                } catch {
+                    print("copy failure.")
+                }
+            } else {
+                print("file myData.plist not found.")
+            }
+        } else {
+            print("file myData.plist already exits at path.")
+        }
 
         if !fileManager.fileExists(atPath: commentsFile!) {
             if let bundlePath = Bundle.main.path(forResource: "comments", ofType: "plist") {
@@ -204,39 +265,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
         ReadLater.readLaterIDs = NSMutableDictionary.init(contentsOfFile: readLaterFile!)!
         Collections.collectionIDs = NSMutableDictionary.init(contentsOfFile: collectionsFile!)!
+        Subscriptions.subIcons = NSMutableDictionary.init(contentsOfFile: iconsFile!)!
+        Subscriptions.subColors = NSMutableDictionary.init(contentsOfFile: colorsFile!)!
 
         SettingValues.initialize()
         
         SDImageCache.shared.config.maxDiskAge = 1209600 //2 weeks
         SDImageCache.shared.config.maxDiskSize = 250 * 1024 * 1024
+        SDImageCache.shared.config.diskCacheReadingOptions = .mappedIfSafe // Use mmap for disk cache query
+       /* SDWebImageManager.shared.optionsProcessor = SDWebImageOptionsProcessor() { url, options, context in
+            // Disable Force Decoding in global, may reduce the frame rate
+            var mutableOptions = options
+            mutableOptions.insert(.avoidDecodeImage)
+            return SDWebImageOptionsResult(options: mutableOptions, context: context)
+        }*/
 
         let dictionary = Bundle.main.infoDictionary!
         let build = dictionary["CFBundleVersion"] as! String
         
         let lastVersion = UserDefaults.standard.string(forKey: "LAST_BUILD") ?? ""
-        let lastVersionInt = Int(lastVersion) ?? 0
-        let currentVersionInt = Int(build) ?? 0
+        let lastVersionInt: Int = Int(lastVersion) ?? 0
+        let currentVersionInt: Int = Int(build) ?? 0
         
         if lastVersionInt < currentVersionInt {
             //Clean up broken videos
             do {
                 var dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
                 var directoryContents: NSArray = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
-                print(dirPath)
                 for path in directoryContents {
                     let fullPath = dirPath + "/" + (path as! String)
                     if fullPath.contains(".mp4") {
-                        print(fullPath)
                         try FileManager.default.removeItem(atPath: fullPath)
                     }
                 }
                 dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0].substring(0, length: dirPath.length - 7)
                 directoryContents = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
-                print(dirPath)
                 for path in directoryContents {
                     let fullPath = dirPath + "/" + (path as! String)
                     if fullPath.contains(".mp4") {
-                        print(fullPath)
                         try FileManager.default.removeItem(atPath: fullPath)
                     }
                 }
@@ -300,20 +366,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UIApplication.shared.applicationIconBadgeNumber = 0
 
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        resetStack()
-        window?.makeKeyAndVisible()
+        _ = resetStack(window: window)
         
-        let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
+        window.makeKeyAndVisible()
         
-        if remoteNotif != nil {
-            if let url = remoteNotif!.userInfo?["permalink"] as? String {
-                VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
-            } else {
-                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
-            }
-        }
-
         WatchSessionManager.sharedManager.doInit()
 
         if SettingValues.notifications {
@@ -338,8 +394,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } catch {
             
         }
-        
-        return true
     }
     
     public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -348,24 +402,212 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var statusBar = UIView()
     var splitVC = CustomSplitController()
-
-    /**
-     Rebuilds the nav stack for the currently selected App Mode (split, multi column, etc.)
-     */
-    func resetStack() {
-        guard let window = self.window else {
+    
+    func resetStack(_ soft: Bool = false, window: UIWindow?) -> MainViewController {
+        guard let window = window else {
             fatalError("Window must exist when resetting the stack!")
         }
-        let rootController: UIViewController!
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT {
-            rootController = splitVC
-            splitVC.preferredDisplayMode = .allVisible
-            (rootController as! UISplitViewController).viewControllers = [UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))]
+
+        if #available(iOS 14.0, *) {
+            return doHard14(window)
         } else {
-            rootController = UINavigationController(rootViewController: MainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil))
+            // Fallback on earlier versions
+            return doHard(window)
+        }
+    }
+    
+    func doHard(_ window: UIWindow) -> MainViewController {
+        let splitViewController = NoHomebarSplitViewController()
+        let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            switch SettingValues.appMode {
+            case .SINGLE, .MULTI_COLUMN:
+                splitViewController.viewControllers = [
+                    SwipeForwardNavigationController(
+                        rootViewController: NavigationHomeViewController(controller: main)),
+                    SwipeForwardNavigationController(
+                        rootViewController: main),
+                ]
+            case .SPLIT:
+                let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
+                swipeNav.pushViewController(main, animated: false)
+                splitViewController.viewControllers = [
+                    swipeNav,
+                    PlaceholderViewController(),
+                ]
+            }
+        default:
+            let navHome = NavigationHomeViewController(controller: main)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
         }
 
-        window.setRootViewController(rootController, animated: false)
+        window.rootViewController = splitViewController
+        self.window = window
+        window.makeKeyAndVisible()
+        
+        setupSplitLayout(splitViewController)
+
+        //Check if in split mode, if so reset to triple column mode
+        let oldSize = window.frame.size
+        if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
+            if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                self.resetSplit(main, window: window, true)
+            }
+        }
+
+        return main
+    }
+            
+    func resetSplit(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
+        let splitViewController = NoHomebarSplitViewController()
+
+        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
+            splitViewController.viewControllers = [
+                SwipeForwardNavigationController(
+                    rootViewController: NavigationHomeViewController(controller: main)),
+                SwipeForwardNavigationController(
+                    rootViewController: main),
+            ]
+        } else {
+            let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
+            swipeNav.pushViewController(main, animated: false)
+            splitViewController.viewControllers = [
+                swipeNav
+            ]
+        }
+        if #available(iOS 14.0, *) {
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.33
+            splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            if splitViewController.style == .tripleColumn {
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            }
+        } else {
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.4
+        }
+        
+        splitViewController.presentsWithGesture = true
+
+        // Set display mode and split behavior
+        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
+            splitViewController.preferredDisplayMode = .secondaryOnly
+            if #available(iOS 14.0, *) {
+                splitViewController.preferredSplitBehavior = .overlay
+            }
+        } else {
+            if #available(iOS 14.0, *) {
+                splitViewController.preferredDisplayMode = .oneBesideSecondary
+                splitViewController.preferredSplitBehavior = .displace
+            } else {
+                splitViewController.preferredDisplayMode = .allVisible
+            }
+        }
+
+        window.rootViewController = splitViewController
+        self.window = window
+        window.makeKeyAndVisible()
+    }
+    
+    @available(iOS 14.0, *)
+    func doHard14(_ window: UIWindow) -> MainViewController {
+        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn
+        var splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
+
+        let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            switch SettingValues.appMode {
+            case .SINGLE, .MULTI_COLUMN:
+                splitViewController.setViewController(
+                    SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                    for: .primary)
+                splitViewController.setViewController(
+                    SwipeForwardNavigationController(rootViewController: main),
+                    for: .secondary)
+                
+                let main2: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                let compact = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main2))
+                
+                compact.pushViewController(main2, animated: false)
+                splitViewController.setViewController(compact, for: .compact)
+
+                splitViewController.setViewController(
+                    SwipeForwardNavigationController(rootViewController: main),
+                    for: .secondary)
+            case .SPLIT:
+                splitViewController.setViewController(
+                    SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                    for: .primary)
+                splitViewController.setViewController(
+                    SwipeForwardNavigationController(rootViewController: main),
+                    for: .supplementary)
+                splitViewController.setViewController(
+                    PlaceholderViewController(),
+                    for: .secondary)
+            }
+        default:
+            splitViewController = NoHomebarSplitViewController()
+            let navHome = NavigationHomeViewController(controller: main)
+            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
+        }
+
+        window.rootViewController = splitViewController
+        self.window = window
+        window.makeKeyAndVisible()
+        
+        setupSplitLayout(splitViewController)
+        
+        return main
+    }
+    
+    func setupSplitLayout(_ splitViewController: UISplitViewController) {
+        // Set column widths
+        if #available(iOS 14.0, *) {
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.33
+            splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            if splitViewController.style == .tripleColumn {
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            }
+        } else {
+            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
+            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.4
+        }
+        
+        splitViewController.presentsWithGesture = true
+
+        // Set display mode and split behavior
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            switch SettingValues.appMode {
+            case .SINGLE, .MULTI_COLUMN:
+                if UIApplication.shared.isSplitOrSlideOver {
+                    setupSplitPaneLayout(splitViewController)
+                } else {
+                    splitViewController.preferredDisplayMode = .secondaryOnly
+                    if #available(iOS 14.0, *) {
+                        splitViewController.preferredSplitBehavior = .overlay
+                    }
+                }
+            case .SPLIT:
+                setupSplitPaneLayout(splitViewController)
+            }
+        default:
+            splitViewController.preferredDisplayMode = .oneOverSecondary
+        }
+    }
+    
+    func setupSplitPaneLayout(_ splitViewController: UISplitViewController) {
+        if #available(iOS 14.0, *) {
+            splitViewController.preferredDisplayMode = .oneBesideSecondary
+            splitViewController.preferredSplitBehavior = .displace
+        } else {
+            splitViewController.preferredDisplayMode = .allVisible
+        }
     }
 
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
@@ -413,7 +655,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
         }
 
-        print("getData running...")
+        NSLog("getData running...")
         guard let session = session,
             let request = try? session.getMessageRequest(.unread) else {
             completionHandler(.failed)
@@ -464,17 +706,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastMessageUpdate")
 
-                print("Unread count: \(newCount)")
+                NSLog("Unread count: \(newCount)")
 
                 DispatchQueue.main.sync {
                     UIApplication.shared.applicationIconBadgeNumber = newCount
                 }
 
                 if newCount > 0 {
-                    print("getData completed with new data.")
+                    NSLog("getData completed with new data.")
                     completionHandler(.newData)
                 } else {
-                    print("getData completed with no new data.")
+                    NSLog("getData completed with no new data.")
                     completionHandler(.noData)
                 }
                 cleanup()
@@ -489,11 +731,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         }
 
+        if self.fetcher != nil && self.backgroundTaskId != nil {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
+            fetcher = nil
+        }
         if self.fetcher == nil {
             self.fetcher = BackgroundFetch(current: session,
                                            request: request,
                                            taskHandler: handler)
         }
+        
         self.fetcher?.resume()
 
     }
@@ -501,6 +748,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func postLocalNotification(_ message: String, _ author: String = "", _ permalink: String? = nil, _ id: String) {
         if #available(iOS 10.0, *) {
             let center = UNUserNotificationCenter.current()
+            center.delegate = self
 
             let content = UNMutableNotificationContent()
             content.categoryIdentifier = "SlideMail"
@@ -545,14 +793,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         self.paginator = listing.paginator
                         for sub in self.subreddits {
                             toReturn.append(sub.displayName)
+                            Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                            Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
+
+                            /* Not needed, we pull from the key color now
                             if sub.keyColor.hexString() != "#FFFFFF" {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
-                            }
+                            }*/
                         }
-
                     }
                     if subredditController != nil {
                         DispatchQueue.main.async(execute: { () -> Void in
@@ -573,17 +824,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                         for sub in subs {
                             toReturn.append(sub.displayName)
-                            if sub.keyColor.hexString() != "#FFFFFF" {
+                            /*if sub.keyColor.hexString() != "#FFFFFF" {
                                 let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
                                 if defaults.object(forKey: "color" + sub.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + sub.displayName)
                                 }
-                            }
+                            }*/
                         }
                         for m in multis {
                             toReturn.append("/m/" + m.displayName)
                             if !m.keyColor.isEmpty {
-                                
                                 let color = (UIColor.init(hexString: m.keyColor))
                                 if defaults.object(forKey: "color" + m.displayName) == nil {
                                     defaults.setColor(color: color, forKey: "color+" + m.displayName)
@@ -614,14 +864,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
     }
-
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        
+        return handleURL(url)
+    }
+    
+    func handleURL(_ url: URL) -> Bool {
+        print("Handling URL \(url)")
         let bUrl = url.absoluteString
         if bUrl.startsWith("googlechrome://") || bUrl.startsWith("firefox://") || bUrl.startsWith("opera-http://") {
             return false
         }
-        
+                
         if url.absoluteString.contains("/r/") {
             VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)
             return true
@@ -686,9 +940,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        if #available(iOS 13.0, *) { return } else {
+            didBecomeActive()
+        }
+    }
+    
+    func didBecomeActive() {
         if AccountController.current == nil && UserDefaults.standard.string(forKey: "name") != "GUEST" {
             AccountController.initialize()
         }
+        
+        if let url = launchedURL {
+            handleURL(url)
+            launchedURL = nil
+        }
+        
         UIView.animate(withDuration: 0.25, animations: {
             self.backView?.alpha = 0
         }, completion: { (_) in
@@ -719,6 +985,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
+        if #available(iOS 13.0, *) { return } else {
+            willResignActive()
+        }
+    }
+    
+    func willResignActive() {
         if SettingValues.biometrics {
             if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
@@ -732,8 +1004,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.backView?.isHidden = false
         }
         totalBackground = false
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
     }
     
     var readLaterRecord: CKRecord?
@@ -750,14 +1020,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
             let data: NSData = try PropertyListSerialization.data(fromPropertyList: dictionary, format: PropertyListSerialization.PropertyListFormat.xml, options: 0) as NSData
             if let datastring = NSString(data: data as Data, encoding: String.Encoding.utf8.rawValue) {
-                print(datastring)
                collectionsRecord.setValue(datastring, forKey: "data_xml")
             } else {
                 print("Could not turn nsdata to string")
             }
             
             print("Saving to iCloud \(key)")
-            CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
+            CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase.save(collectionsRecord) { (_, error) in
                 if error != nil {
                     print("iCloud error")
                     print(error.debugDescription)
@@ -769,7 +1038,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func fetchFromiCloud(_ key: String, dictionaryToAppend: NSMutableDictionary, completion: ((_ record: CKRecord) -> Void)? = nil) {
-        let privateDatabase = CKContainer(identifier: "iCloud.ccrama.me.redditslide").privateCloudDatabase
+        let privateDatabase = CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase
         
         let query = CKQuery(recordType: CKRecord.RecordType(stringLiteral: key), predicate: NSPredicate(value: true))
         print("Reading from iCloud")
@@ -784,8 +1053,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             do {
                                 let dict = try PropertyListSerialization.propertyList(from: data, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? NSMutableDictionary
                                 for item in dict ?? [:] {
-                                    print(item.key)
-                                    print(item.value)
                                     dictionaryToAppend[item.key] = item.value
                                 }
                                 completion?(unwrappedRecord)
@@ -803,12 +1070,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        if #available(iOS 13.0, *) { return } else {
+            didEnterBackground()
+        }
+    }
+        
+    func didEnterBackground() {
         totalBackground = true
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
         Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
-        
+        Subscriptions.subIcons.write(toFile: iconsFile!, atomically: true)
+        Subscriptions.subColors.write(toFile: colorsFile!, atomically: true)
+
         saveToiCloud(Collections.collectionIDs, "collections", self.collectionRecord)
         saveToiCloud(ReadLater.readLaterIDs, "readlater", self.readLaterRecord)
         saveToiCloud(AppDelegate.removeDict, "removed", self.deletedRecord)
@@ -818,14 +1093,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         self.refreshSession()
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        History.seenTimes.write(toFile: seenFile!, atomically: true)
-        History.commentCounts.write(toFile: commentsFile!, atomically: true)
-        ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)
-        Collections.collectionIDs.write(toFile: collectionsFile!, atomically: true)
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
     
     func refreshSession() {
@@ -957,13 +1224,13 @@ extension Session {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
-	return input.rawValue
+    return input.rawValue
 }
 
 class CustomSplitController: UISplitViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
-                        if #available(iOS 13, *) {
+            if #available(iOS 13, *) {
                 return .darkContent
             } else {
                 return .default
@@ -972,5 +1239,164 @@ class CustomSplitController: UISplitViewController {
         } else {
             return .lightContent
         }
+    }
+}
+
+@available(iOS 13.0, *)
+extension AppDelegate: UIWindowSceneDelegate {
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            handleURL(url)
+        }
+    }
+        
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        didBecomeActive()
+    }
+    
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        self.refreshSession()
+    }
+    
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        didEnterBackground()
+    }
+    
+    func sceneWillResignActive(_ scene: UIScene) {
+        willResignActive()
+    }
+    
+    func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        if let url = shortcutItem.userInfo?["sub"] {
+            VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
+        } else if shortcutItem.userInfo?["clipboard"] != nil {
+            var clipUrl: URL?
+            if let url = UIPasteboard.general.url {
+                if ContentType.getContentType(baseUrl: url) == .REDDIT {
+                    clipUrl = url
+                }
+            }
+            if clipUrl == nil {
+                if let urlS = UIPasteboard.general.string {
+                    if let url = URL.init(string: urlS) {
+                        if ContentType.getContentType(baseUrl: url) == .REDDIT {
+                            clipUrl = url
+                        }
+                    }
+                }
+            }
+            
+            if clipUrl != nil {
+                VCPresenter.openRedditLink(clipUrl!.absoluteString, window?.rootViewController as? UINavigationController, window?.rootViewController)
+            }
+
+        }
+    }
+    
+    //Siri shortcuts and deep links
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        print(userActivity.userInfo)
+        if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
+            VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
+        } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
+            VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+        } else if let url = userActivity.webpageURL {
+            handleURL(url)
+        } else if let permalink = userActivity.userInfo?["permalink"] as? String {
+            VCPresenter.openRedditLink(permalink, window?.rootViewController as? UINavigationController, window?.rootViewController)
+        }
+
+    }
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let _ = (scene as? UIWindowScene) else { return }
+
+        if let url = connectionOptions.urlContexts.first?.url {
+            launchedURL = url
+        }
+        
+        if let notification = connectionOptions.notificationResponse {
+            let userInfo = notification.notification.request.content.userInfo as? NSDictionary
+            if let url = userInfo?["permalink"] as? String {
+                launchedURL = URL(string: url)
+            }
+        }
+        
+        if let windowScene = scene as? UIWindowScene {
+            let window = UIWindow(windowScene: windowScene)
+            self.window = window
+
+            didFinishLaunching(window: window)
+            /* TODO This launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
+            let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
+            
+            if remoteNotif != nil {
+                if let url = remoteNotif!.userInfo?["permalink"] as? String {
+                    VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+                } else {
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+                }restore
+            }*/
+        }
+        
+        if let userActivity = connectionOptions.userActivities.first {
+            if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
+                VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
+            } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+            } else if let url = userActivity.webpageURL {
+                handleURL(url)
+            }
+
+        }
+    }
+}
+
+@available(iOS 10.0, *)
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let userInfo = response.notification.request.content.userInfo as? NSDictionary
+
+        if let url = userInfo?["permalink"] as? String {
+            if #available(iOS 13, *) {
+                guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
+                VCPresenter.openRedditLink(url, rootViewController as? UINavigationController, rootViewController)
+            } else {
+                VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
+            }
+        } else {
+            if #available(iOS 13, *) {
+                guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: rootViewController as? UINavigationController, parentViewController: rootViewController)
+            } else {
+                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+            }
+        }
+    }
+}
+
+class NoHomebarSplitViewController: UISplitViewController {
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+            if #available(iOS 13, *) {
+                return .darkContent
+            } else {
+                return .default
+            }
+
+        } else {
+            return .lightContent
+        }
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return SettingValues.fullyHideNavbar
     }
 }

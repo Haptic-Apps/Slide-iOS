@@ -19,7 +19,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil)
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
         }
     }
 
@@ -51,7 +51,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
             alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
             }
         }
         
@@ -161,8 +161,8 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     }
     
     var comment: RComment?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
+    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
+    public weak var navViewController: UIViewController?
     
     @objc func openComment(sender: UITapGestureRecognizer? = nil) {
         VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)

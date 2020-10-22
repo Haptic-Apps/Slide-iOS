@@ -17,6 +17,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     var splitMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "split")
     var multicolumnMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multi")
     var multicolumnCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multicount")
+    var multicolumnPortraitCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "portrait")
     var galleryCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "gallerycount")
 
     var numberColumns: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "number")
@@ -25,7 +26,20 @@ class SettingsViewMode: BubbleSettingTableViewController {
     var subredditBarSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    
+
+    var disablePopup = InsetCell()
+    var disablePopupSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var disablePopupSubreddit = InsetCell()
+    var disablePopupSubredditSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var disableMulticolumn = InsetCell()
+    var disableMulticolumnSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var thireenPopup = InsetCell()
     var thireenPopupSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -34,11 +48,20 @@ class SettingsViewMode: BubbleSettingTableViewController {
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
             MainViewController.needsRestart = true
-            SettingValues.subredditBar = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subBar)
+            SettingValues.fullWidthHeaderCells = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_fullWidthHeaderCells)
         } else if changed == thireenPopupSwitch {
             SettingValues.disable13Popup = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disable13Popup)
+        } else if changed == disableMulticolumnSwitch {
+            SettingValues.disableMulticolumnCollections = !changed.isOn
+            UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_disableMulticolumnCollections)
+        } else if changed == disablePopupSwitch {
+            SettingValues.disablePopupIpad = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disablePopupIpad)
+        } else if changed == disablePopupSubredditSwitch {
+            SettingValues.disableSubredditPopupIpad = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableSubredditPopupIpad)
         }
         UserDefaults.standard.synchronize()
     }
@@ -65,12 +88,16 @@ class SettingsViewMode: BubbleSettingTableViewController {
         // set the title
         self.title = "App Behavior"
         
-        createCell(subredditBar, subredditBarSwitch, isOn: SettingValues.subredditBar, text: "Swipable subreddit bar")
+        createCell(subredditBar, subredditBarSwitch, isOn: !SettingValues.fullWidthHeaderCells, text: "Swipable subreddit bar on homepage")
         createCell(thireenPopup, thireenPopupSwitch, isOn: SettingValues.disable13Popup, text: "Disable iOS 13 popup behavior")
+        createCell(disablePopupSubreddit, disablePopupSubredditSwitch, isOn: SettingValues.disableSubredditPopupIpad, text: "Show subreddits full screen")
+        createCell(disablePopup, disablePopupSwitch, isOn: SettingValues.disablePopupIpad, text: "Show comments full screen")
+        createCell(disableMulticolumn, disableMulticolumnSwitch, isOn: !SettingValues.disableMulticolumnCollections, text: "Multi-column in profile and inbox")
         createCell(singleMode, isOn: false, text: "Single-column posts")
         createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
         createCell(splitMode, isOn: false, text: "Split-content")
-        createCell(multicolumnCount, isOn: false, text: "Multi-column count (customize with Pro)")
+        createCell(multicolumnCount, isOn: false, text: "Multi-column count (Pro)")
+        createCell(multicolumnPortraitCount, isOn: false, text: "Portrait Multi-column count (Pro)")
         createCell(galleryCount, isOn: false, text: "Gallery-mode column count (Pro)")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
@@ -96,6 +123,12 @@ class SettingsViewMode: BubbleSettingTableViewController {
         self.multicolumnCount.backgroundColor = ColorUtil.theme.foregroundColor
         self.multicolumnCount.textLabel?.textColor = ColorUtil.theme.fontColor
         self.multicolumnCount.detailTextLabel?.numberOfLines = 0
+
+        self.multicolumnPortraitCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
+        self.multicolumnPortraitCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnPortraitCount.backgroundColor = ColorUtil.theme.foregroundColor
+        self.multicolumnPortraitCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnPortraitCount.detailTextLabel?.numberOfLines = 0
 
         self.galleryCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.galleryCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -135,6 +168,10 @@ class SettingsViewMode: BubbleSettingTableViewController {
             galleryCount.textLabel!.isEnabled = false
             galleryCount.detailTextLabel!.isEnabled = false
             galleryCount.contentView.alpha = 0.8
+            multicolumnPortraitCount.isUserInteractionEnabled = false
+            multicolumnPortraitCount.textLabel!.isEnabled = false
+            multicolumnPortraitCount.detailTextLabel!.isEnabled = false
+            multicolumnPortraitCount.contentView.alpha = 0.8
         }
 
         if UIDevice.current.userInterfaceIdiom != .pad {
@@ -147,23 +184,20 @@ class SettingsViewMode: BubbleSettingTableViewController {
             self.multicolumnCount.isUserInteractionEnabled = false
             self.multicolumnCount.textLabel!.isEnabled = false
             self.multicolumnCount.detailTextLabel!.isEnabled = false
+            self.multicolumnPortraitCount.isUserInteractionEnabled = false
+            self.multicolumnPortraitCount.textLabel!.isEnabled = false
+            self.multicolumnPortraitCount.detailTextLabel!.isEnabled = false
         } else {
             self.multicolumnCount.isUserInteractionEnabled = true
             self.multicolumnCount.textLabel!.isEnabled = true
             self.multicolumnCount.detailTextLabel!.isEnabled = true
-        }
-        
-        var portraitCount = SettingValues.multiColumnCount / 2
-        if portraitCount == 0 {
-            portraitCount = 1
-        }
-        
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        if portraitCount == 1 && pad {
-            portraitCount = 2
+            self.multicolumnPortraitCount.isUserInteractionEnabled = true
+            self.multicolumnPortraitCount.textLabel!.isEnabled = true
+            self.multicolumnPortraitCount.detailTextLabel!.isEnabled = true
         }
 
-        self.multicolumnCount.detailTextLabel?.text = "\(SettingValues.multiColumnCount) landscape, \(portraitCount) portrait"
+        self.multicolumnCount.detailTextLabel?.text = "\(SettingValues.multiColumnCount) across"
+        self.multicolumnPortraitCount.detailTextLabel?.text = "\(SettingValues.portraitMultiColumnCount) across"
         self.galleryCount.detailTextLabel?.text = "\(SettingValues.galleryCount) across"
     }
     
@@ -184,8 +218,12 @@ class SettingsViewMode: BubbleSettingTableViewController {
             switch indexPath.row {
             case 0: return self.multicolumnCount
             case 1: return self.galleryCount
-            case 2: return self.subredditBar
-            case 3: return self.thireenPopup
+            case 2: return self.multicolumnPortraitCount
+            case 3: return self.subredditBar
+            case 4: return self.disablePopup
+            case 5: return self.disablePopupSubreddit
+            case 6: return self.disableMulticolumn
+                
             default: fatalError("Unknown row in section 0")
             }
         default: fatalError("Unknown section")
@@ -209,10 +247,28 @@ class SettingsViewMode: BubbleSettingTableViewController {
             default:
                 break
             }
+            var keyWindow = UIApplication.shared.keyWindow
+            if keyWindow == nil {
+                if #available(iOS 13.0, *) {
+                    keyWindow = UIApplication.shared.connectedScenes
+                        .filter({ $0.activationState == .foregroundActive })
+                        .map({ $0 as? UIWindowScene })
+                        .compactMap({$0})
+                        .first?.windows
+                        .filter({ $0.isKeyWindow }).first
+                }
+            }
+            guard keyWindow != nil else {
+                fatalError("Window must exist when resetting the stack!")
+            }
+
+            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
         } else if indexPath.section == 1 && indexPath.row == 1 {
             showGalleryColumn()
+        } else if indexPath.section == 1 && indexPath.row == 2 {
+            showPortraitMultiColumn()
         }
         
         SubredditReorderViewController.changed = true
@@ -238,6 +294,39 @@ class SettingsViewMode: BubbleSettingTableViewController {
         actionSheetController.setupTheme()
         
         actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        
+        actionSheetController.addChild(pickerView)
+        
+        let pv = pickerView.view!
+        actionSheetController.contentView.addSubview(pv)
+        
+        pv.edgeAnchors == actionSheetController.contentView.edgeAnchors - 14
+        pv.heightAnchor == CGFloat(216)
+        pickerView.didMove(toParent: actionSheetController)
+        
+        actionSheetController.addBlurView()
+
+        self.present(actionSheetController, animated: true, completion: nil)
+    }
+
+    func showPortraitMultiColumn() {
+        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let actionSheetController = AlertController(title: "Column count", message: nil, preferredStyle: .alert)
+
+        actionSheetController.addCloseButton()
+
+        let values = pad ? [["1", "2", "3"]] : [["1", "2"]]
+        let pickerView = PickerViewViewControllerColored(values: values, initialSelection: [(0, SettingValues.portraitMultiColumnCount - 1)], action: { (_, _, chosen, _) in
+            SettingValues.portraitMultiColumnCount = chosen.row + 1
+            UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_portraitMultiColumnCount)
+            UserDefaults.standard.synchronize()
+            SubredditReorderViewController.changed = true
+            self.setSelected()
+        })
+
+        actionSheetController.setupTheme()
+        
+        actionSheetController.attributedTitle = NSAttributedString(string: "Portrait column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         actionSheetController.addChild(pickerView)
         
@@ -287,13 +376,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        var thirteenOffset = 0
-        if #available(iOS 13, *) {
-            thirteenOffset = 1
+        var ipadOffset = 0
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            ipadOffset = 3
         }
         switch section {
         case 0: return 3
-        case 1: return 3 + thirteenOffset
+        case 1: return 4 + ipadOffset
         default: fatalError("Unknown number of sections")
         }
     }

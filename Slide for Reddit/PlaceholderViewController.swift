@@ -13,18 +13,23 @@ import UIKit
 class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
 
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
 
-        let image = UIImage(named: "roundicon")!.convertToGrayScale()
-
+        let image = UIImage(named: "slideoverlay")!
+        
         let imageView = UIImageView().then {
             $0.image = image
+            $0.alpha = 0.6
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.layer.cornerRadius = (25)
+            $0.clipsToBounds = true
             $0.contentMode = .scaleAspectFit
         }
 
         let label = UILabel().then {
-            $0.text = "SELECT A POST"
             $0.textColor = ColorUtil.theme.fontColor
             $0.font = UIFont.boldSystemFont(ofSize: 12)
             $0.textAlignment = .center
@@ -39,6 +44,7 @@ class PlaceholderViewController: UIViewController {
         label.topAnchor == imageView.bottomAnchor + 12
     }
 }
+
 extension UIImage {
     func convertToGrayScale() -> UIImage {
         let filter: CIFilter = CIFilter(name: "CIPhotoEffectMono")!

@@ -13,3 +13,27 @@ extension UITableView {
         reloadSections(IndexSet(integersIn: 0..<numberOfSections), with: animation)
     }
 }
+
+public extension UITableViewCell {
+    func configure(text: String, imageName: String, sfSymbolName: SFSymbol, imageColor: UIColor) {
+        textLabel?.text = text
+        imageView?.image = UIImage(sfString: sfSymbolName, overrideString: imageName)?.menuIcon()
+        imageView?.tintColor = imageColor
+        
+        accessoryType = .none
+        backgroundColor = ColorUtil.theme.foregroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        layer.cornerRadius = 5
+        clipsToBounds = true
+    }
+    func configure(text: String, image: UIImage) {
+        textLabel?.text = text
+        imageView?.image = image
+        
+        accessoryType = .none
+        backgroundColor = ColorUtil.theme.foregroundColor
+        textLabel?.textColor = ColorUtil.theme.fontColor
+        contentView.layer.cornerRadius = 5
+        contentView.clipsToBounds = true
+    }
+}

@@ -13,44 +13,44 @@ import MessageUI
 import RealmSwift
 import RLBAlertsPickers
 import SDWebImage
-import SloppySwiper
 import UIKit
 
 class SettingsViewController: MediaTableViewController, MFMailComposeViewControllerDelegate {
-    var swiper: SloppySwiper?
-    var goPro: UITableViewCell = UITableViewCell()
+    var goPro: UITableViewCell = InsetCell()
 
-    var general: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "general")
-    var manageSubs: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "managesubs")
-    var mainTheme: UITableViewCell = UITableViewCell()
-    var postLayout: UITableViewCell = UITableViewCell()
-    var icon: UITableViewCell = UITableViewCell()
-    var subThemes: UITableViewCell = UITableViewCell()
-    var font: UITableViewCell = UITableViewCell()
-    var comments: UITableViewCell = UITableViewCell()
-    var linkHandling: UITableViewCell = UITableViewCell()
-    var history: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "history")
-    var dataSaving: UITableViewCell = UITableViewCell()
-    var filters: UITableViewCell = UITableViewCell()
-    var content: UITableViewCell = UITableViewCell()
-    var lockCell: UITableViewCell = UITableViewCell()
-    var subIconsCell: UITableViewCell = UITableViewCell()
-    var subCell: UITableViewCell = UITableViewCell()
-    var licenseCell: UITableViewCell = UITableViewCell()
-    var contributorsCell: UITableViewCell = UITableViewCell()
-    var aboutCell: UITableViewCell = UITableViewCell()
-    var githubCell: UITableViewCell = UITableViewCell()
-    var clearCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "cache")
-    var cacheCell: UITableViewCell = UITableViewCell()
-    var backupCell: UITableViewCell = UITableViewCell()
-    var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
-    var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
-    var tagsCell: UITableViewCell = UITableViewCell()
-    var audioSettings = UITableViewCell()
-    var postActionCell: UITableViewCell = UITableViewCell()
-    var coffeeCell: UITableViewCell = UITableViewCell()
+    var general: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "general")
+    var manageSubs: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "managesubs")
+    var mainTheme: UITableViewCell = InsetCell()
+    var postLayout: UITableViewCell = InsetCell()
+    var icon: UITableViewCell = InsetCell()
+    var subThemes: UITableViewCell = InsetCell()
+    var font: UITableViewCell = InsetCell()
+    var comments: UITableViewCell = InsetCell()
+    var linkHandling: UITableViewCell = InsetCell()
+    var history: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "history")
+    var dataSaving: UITableViewCell = InsetCell()
+    var filters: UITableViewCell = InsetCell()
+    var content: UITableViewCell = InsetCell()
+    var lockCell: UITableViewCell = InsetCell()
+    var subIconsCell: UITableViewCell = InsetCell()
+    var subCell: UITableViewCell = InsetCell()
+    var licenseCell: UITableViewCell = InsetCell()
+    var contributorsCell: UITableViewCell = InsetCell()
+    var aboutCell: UITableViewCell = InsetCell()
+    var githubCell: UITableViewCell = InsetCell()
+    var clearCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "cache")
+    var cacheCell: UITableViewCell = InsetCell()
+    var backupCell: UITableViewCell = InsetCell()
+    var gestureCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "gestures")
+    var widgetsCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "widgets")
+    var autoPlayCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "autoplay")
+    var tagsCell: UITableViewCell = InsetCell()
+    var audioSettings = InsetCell()
+    var postActionCell: UITableViewCell = InsetCell()
+    var shortcutCell: UITableViewCell = InsetCell()
+    var coffeeCell: UITableViewCell = InsetCell()
 
-    var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
+    var viewModeCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
@@ -75,30 +75,23 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         super.viewDidAppear(animated)
         lock.onTintColor = ColorUtil.baseAccent
         if SettingsPro.changed {
-            self.tableView.reloadData()
-            let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
-            navigationItem.rightBarButtonItem = menuB
+            doPro()
         }
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(named: (self.navigationController?.viewControllers.count ?? 0) == 1 ? "close" : "back")!.navIcon(), for: UIControl.State.normal)
+        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
         button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
-        
-        if self.navigationController != nil {
-            if !(self.navigationController?.delegate is SloppySwiper) {
-                swiper = SloppySwiper.init(navigationController: self.navigationController!)
-                self.navigationController!.delegate = swiper!
-            }
-        }
-        
-        if let interactiveGesture = self.navigationController?.interactivePopGestureRecognizer {
-            self.tableView.panGestureRecognizer.require(toFail: interactiveGesture)
-        }
+    }
+    
+    func doPro() {
+        self.tableView.reloadData()
+        let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+        navigationItem.rightBarButtonItem = menuB
     }
     
     @objc public func handleBackButton() {
@@ -142,7 +135,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     
     var oldAppMode = SettingValues.appMode
     
-
     override func loadView() {
         super.loadView()
         if SettingValues.isPro {
@@ -194,6 +186,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         // set the title
         self.title = "Settings"
         self.tableView.separatorStyle = .none
+        
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = 200
 
         self.general.textLabel?.text = "General"
         self.general.accessoryType = .disclosureIndicator
@@ -201,13 +196,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.general.textLabel?.textColor = ColorUtil.theme.fontColor
         self.general.imageView?.image = UIImage(sfString: SFSymbol.gear, overrideString: "settings")?.toolbarIcon()
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
-        if false && !UserDefaults.standard.bool(forKey: "2notifs") { //Disabled now
-            self.general.detailTextLabel?.textColor = ColorUtil.baseAccent
-            self.general.detailTextLabel?.text = "New in 2.0: set up notifications here!"
-        } else {
-            self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-            self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
-        }
+        self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
+        
         self.general.detailTextLabel?.numberOfLines = 0
         self.general.detailTextLabel?.lineBreakMode = .byWordWrapping
 
@@ -218,7 +209,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.manageSubs.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.theme.fontColor
         self.manageSubs.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange your subreddits"
+        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange the sidebar"
         self.manageSubs.detailTextLabel?.numberOfLines = 0
 
         self.postActionCell.textLabel?.text = "Reorder post actions"
@@ -227,6 +218,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.postActionCell.textLabel?.textColor = ColorUtil.theme.fontColor
         self.postActionCell.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircleFill, overrideString: "compact")?.toolbarIcon()
         self.postActionCell.imageView?.tintColor = ColorUtil.theme.fontColor
+
+        self.shortcutCell.textLabel?.text = "Reorder homepage shortcuts"
+        self.shortcutCell.accessoryType = .disclosureIndicator
+        self.shortcutCell.backgroundColor = ColorUtil.theme.foregroundColor
+        self.shortcutCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.shortcutCell.imageView?.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "compact")?.toolbarIcon()
+        self.shortcutCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
         self.mainTheme.textLabel?.text = "App theme"
         self.mainTheme.accessoryType = .disclosureIndicator
@@ -296,6 +294,16 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.gestureCell.detailTextLabel?.text = "Swipe and tap gestures for submissions and comments"
         self.gestureCell.detailTextLabel?.numberOfLines = 0
 
+        self.widgetsCell.textLabel?.text = "Widgets"
+        self.widgetsCell.accessoryType = .disclosureIndicator
+        self.widgetsCell.backgroundColor = ColorUtil.theme.foregroundColor
+        self.widgetsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.imageView?.image = UIImage(sfString: .squareGrid2x2, overrideString: "gestures")?.toolbarIcon()
+        self.widgetsCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.widgetsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.detailTextLabel?.text = "Create subreddit lists for Slide widgets"
+        self.widgetsCell.detailTextLabel?.numberOfLines = 0
+
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
         self.cacheCell.backgroundColor = ColorUtil.theme.foregroundColor
@@ -303,7 +311,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.cacheCell.imageView?.image = UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.postLayout.textLabel?.text = "Submission layout"
+        self.postLayout.textLabel?.text = "Card layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -459,7 +467,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         audioSettings.accessoryType = .disclosureIndicator
         audioSettings.backgroundColor = ColorUtil.theme.foregroundColor
         audioSettings.textLabel?.textColor = ColorUtil.theme.fontColor
-        audioSettings.imageView?.image = UIImage(sfString: SFSymbol.volume3Fill, overrideString: "audio")?.toolbarIcon()
+        audioSettings.imageView?.image = UIImage(sfString: SFSymbol.speaker3Fill, overrideString: "audio")?.toolbarIcon()
         audioSettings.imageView?.tintColor = ColorUtil.theme.fontColor
 
         if reset {
@@ -518,18 +526,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 74
-        } else {
-            // Hide content row if not logged in
-            if indexPath == IndexPath(row: 3, section: 2) &&
-                !AccountController.canShowNSFW {
-                return 0
-            }
-            return 64
-        }
+        return UITableView.automaticDimension
     }
-
+    
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
@@ -538,73 +537,92 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell: UITableViewCell
         switch indexPath.section {
         case 0:
         if SettingValues.isPro {
             switch indexPath.row {
-            case 0: return self.general
-            case 1: return self.manageSubs
-            case 2: return self.viewModeCell
-            case 3: return self.lockCell
-            case 4: return self.subIconsCell
-            case 5: return self.gestureCell
+            case 0: cell = self.general
+            case 1: cell = self.manageSubs
+            case 2: cell = self.viewModeCell
+            case 3: cell = self.lockCell
+            case 4: cell = self.subIconsCell
+            case 5: cell = self.gestureCell
+            case 6: cell = self.widgetsCell
 
             default: fatalError("Unknown row in section 0")
             }
         } else {
             switch indexPath.row {
-            case 0: return self.general
-            case 1: return self.manageSubs
-            case 2: return self.goPro
-            case 3: return self.viewModeCell
-            case 4: return self.lockCell
-            case 5: return self.subIconsCell
-            case 6: return self.gestureCell
-                
+            case 0: cell = self.general
+            case 1: cell = self.manageSubs
+            case 2: cell = self.goPro
+            case 3: cell = self.viewModeCell
+            case 4: cell = self.lockCell
+            case 5: cell = self.subIconsCell
+            case 6: cell = self.gestureCell
+            case 7: cell = self.widgetsCell
+
             default: fatalError("Unknown row in section 0")
             }
         }
         case 1:
             switch indexPath.row {
-            case 0: return self.mainTheme
-            case 1: return self.icon
-            case 2: return self.postLayout
-            case 3: return self.autoPlayCell
-            case 4: return self.audioSettings
-            case 5: return self.subThemes
-            case 6: return self.font
-            case 7: return self.comments
-            case 8: return self.postActionCell
+            case 0: cell = self.mainTheme
+            case 1: cell = self.icon
+            case 2: cell = self.postLayout
+            case 3: cell = self.autoPlayCell
+            case 4: cell = self.audioSettings
+            case 5: cell = self.subThemes
+            case 6: cell = self.font
+            case 7: cell = self.comments
+            case 8: cell = self.postActionCell
+            case 9: cell = self.shortcutCell
             default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
-            case 0: return self.linkHandling
-            case 1: return self.history
-            case 2: return self.dataSaving
-            case 3: return self.content
-            case 4: return self.filters
-            case 5: return self.cacheCell
-            case 6: return self.clearCell
-            case 7: return self.backupCell
-            case 8: return self.tagsCell
+            case 0: cell = self.linkHandling
+            case 1: cell = self.history
+            case 2: cell = self.dataSaving
+            case 3: cell = self.content
+            case 4: cell = self.filters
+            case 5: cell = self.cacheCell
+            case 6: cell = self.clearCell
+            case 7: cell = self.backupCell
+            case 8: cell = self.tagsCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
             switch indexPath.row {
-            case 0: return self.aboutCell
-            case 1: return self.subCell
-            case 2: return self.contributorsCell
+            case 0: cell = self.aboutCell
+            case 1: cell = self.subCell
+            case 2: cell = self.contributorsCell
             //case 4: return self.coffeeCell
-            case 3: return self.githubCell
-            case 4: return self.licenseCell
+            case 3: cell = self.githubCell
+            case 4: cell = self.licenseCell
             default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
         }
-
+        return cell
     }
     
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let cell = cell as? InsetCell {
+            if indexPath.row == 0 {
+                cell.top = true
+            } else {
+                cell.top = false
+            }
+            if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+                cell.bottom = true
+            } else {
+                cell.bottom = false
+            }
+        }
+    }
+
 //    func showMultiColumn() {
 //        if !VCPresenter.proDialogShown(feature: true, self) {
 //            let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
@@ -650,7 +668,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SubredditReorderViewController()
             case 2:
                 if !SettingValues.isPro {
-                    ch = SettingsPro()
+                    VCPresenter.proDialogShown(feature: true, self)
                 } else {
                     ch = SettingsViewMode()
                 }
@@ -665,7 +683,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 6:
                 if !SettingValues.isPro {
                     ch = SettingsGestures()
+                } else {
+                    ch = SettingsWidget()
                 }
+            case 7:
+                ch = SettingsWidget()
             default:
                 break
             }
@@ -707,6 +729,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SettingsComments()
             case 8:
                 ch = SettingsPostMenu()
+            case 9:
+                ch = SettingsShortcutMenu()
             default:
                 break
             }
@@ -731,7 +755,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     try! realm.write {
                         realm.deleteAll()
                     }
-                    if let path = realm.configuration.fileURL?.absoluteString {
+                    if let path = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
                         do {
                             try FileManager().removeItem(atPath: path)
                         } catch {
@@ -743,41 +767,54 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 } catch let error as NSError {
                     print("error - \(error.localizedDescription)")
                 }
-
-                SDImageCache.shared.clearMemory()
-                SDImageCache.shared.clearDisk()
                 
-                do {
-                    var cache_path = SDImageCache.shared.diskCachePath
-                    cache_path += cache_path.endsWith("/") ? "" : "/"
-                    let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
-                    for file in files {
-                        if file.endsWith(".mp4") {
-                            try FileManager.default.removeItem(atPath: cache_path + file)
+                let activity = UIActivityIndicatorView()
+                activity.color = ColorUtil.theme.navIconColor
+                activity.hidesWhenStopped = true
+                activity.backgroundColor = ColorUtil.theme.foregroundColor
+
+                clearCell.addSubview(activity)
+                activity.startAnimating()
+                
+                activity.rightAnchor == clearCell.rightAnchor - 16
+                activity.centerYAnchor == clearCell.centerYAnchor
+
+                DispatchQueue.global(qos: .background).async { [weak self] in
+                    guard let self = self else { return }
+                    
+                    SDImageCache.shared.clearMemory()
+                    SDImageCache.shared.clearDisk()
+                    
+                    do {
+                        var cache_path = SDImageCache.shared.diskCachePath
+                        cache_path += cache_path.endsWith("/") ? "" : "/"
+                        let files = try FileManager.default.contentsOfDirectory(atPath: cache_path)
+                        for file in files {
+                            if file.endsWith(".mp4") {
+                                try FileManager.default.removeItem(atPath: cache_path + file)
+                            }
                         }
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
+                    
+                    let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
+                    let defaultParentURL = defaultURL.deletingLastPathComponent()
+                    let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
+
+                    let countBytes = ByteCountFormatter()
+                    countBytes.allowedUnits = [.useMB]
+                    countBytes.countStyle = .file
+                    let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(self.checkRealmFileSize())))
+                    
+                    DispatchQueue.main.async {
+                        self.clearCell.accessoryType = .disclosureIndicator
+                        BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
+                        self.clearCell.detailTextLabel?.text = fileSize
+                        activity.stopAnimating()
+                    }
                 }
-                
-                let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
-                let defaultParentURL = defaultURL.deletingLastPathComponent()
-                let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
 
-                autoreleasepool {
-                    let realm = try! Realm()
-                    try! realm.writeCopy(toFile: compactedURL)
-                    try! FileManager.default.removeItem(at: defaultURL)
-                    try! FileManager.default.moveItem(at: compactedURL, to: defaultURL)
-                }
-
-                let countBytes = ByteCountFormatter()
-                countBytes.allowedUnits = [.useMB]
-                countBytes.countStyle = .file
-                let fileSize = countBytes.string(fromByteCount: Int64(SDImageCache.shared.totalDiskSize() + UInt(checkRealmFileSize())))
-                self.clearCell.detailTextLabel?.text = fileSize
-
-                BannerUtil.makeBanner(text: "All caches cleared!", color: GMColor.green500Color(), seconds: 3, context: self)
             case 7:
                 if !SettingValues.isPro {
                     ch = SettingsPro()
@@ -847,9 +884,13 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var iOS14 = false
+        if #available(iOS 14.0, *) {
+            iOS14 = true
+        }
         switch section {
-        case 0: return (SettingValues.isPro) ? 6 : 7
-        case 1: return 9
+        case 0: return ((SettingValues.isPro) ? 6 : 7) + (iOS14 ? 1 : 0)
+        case 1: return 10
         case 2: return 9
         case 3: return 5
         default: fatalError("Unknown number of sections")
