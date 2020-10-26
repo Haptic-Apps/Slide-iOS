@@ -2130,16 +2130,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+        strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
         strongSelf.setOnce = false
-        if #available(iOS 10.0, *) {
-            strongSelf.videoView?.player?.playImmediately(atRate: 1.0)
-        } else {
-            strongSelf.videoView?.player?.play()
-        }
         strongSelf.videoID = strongSelf.link?.getId() ?? ""
         if SettingValues.muteInlineVideos {
             strongSelf.videoView?.player?.isMuted = true
@@ -2215,6 +2211,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         guard let player = videoView.player else {
             return
+        }
+        
+        if player.status == .readyToPlay && player.rate == 0 {
+            print("Ready to play \(self.link?.title)")
+            player.playImmediately(atRate: 1.0)
         }
 
         let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
