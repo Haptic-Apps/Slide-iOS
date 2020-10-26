@@ -1173,10 +1173,7 @@ extension CurrentAccountHeaderView {
             
             self.accountNameLabel.alpha = isOn ? 0 : 1
             self.accountAgeLabel.alpha = isOn ? 0 : 1
-            
-            self.shortcutsView.alpha = isOn ? 0 : 1
-            self.shortcutsView.isUserInteractionEnabled = !isOn
-            
+                        
             self.emptyStateLabel.alpha = isOn ? 1 : 0
             self.emptyStateLabel.isUserInteractionEnabled = isOn
         }
@@ -1323,8 +1320,8 @@ class AccountShortcutsView: UIView {
         
         addSubviews(cellStack)
         //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        if AccountController.isLoggedIn {
-            for action in actions {
+        for action in actions {
+            if !action.needsAccount() || AccountController.isLoggedIn {
                 cellStack.addArrangedSubview(UITableViewCell().then {
                     $0.configure(text: action.getTitle(), image: action.getImage())
                     $0.addTapGestureRecognizer {
@@ -1338,24 +1335,26 @@ class AccountShortcutsView: UIView {
                     $0.accessoryType = .disclosureIndicator
                 })
             }
-            
-            cellStack.addArrangedSubview(UITableViewCell().then {
-                $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
-                $0.addTapGestureRecognizer {
-                    let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
-                    for action in SettingValues.NavigationHeaderActions.cases {
+        }
+        
+        cellStack.addArrangedSubview(UITableViewCell().then {
+            $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
+            $0.addTapGestureRecognizer {
+                let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
+                for action in SettingValues.NavigationHeaderActions.cases {
+                    if !action.needsAccount() || AccountController.isLoggedIn {
                         optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
                             if let delegate = self.delegate, let parent = self.parent {
                                 delegate.navigation(parent, didRequestAction: action)
                             }
                         }
                     }
-                    self.delegate?.displayMenu(self.parent!, optionMenu)
                 }
-                $0.heightAnchor >= 50
-                $0.accessoryType = .disclosureIndicator
-            })
-        }
+                self.delegate?.displayMenu(self.parent!, optionMenu)
+            }
+            $0.heightAnchor >= 50
+            $0.accessoryType = .disclosureIndicator
+        })
 
         self.clipsToBounds = true
         
@@ -1368,7 +1367,7 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return (!AccountController.isLoggedIn ? 75 : CGFloat((actions.count + 1) * 50)) + 10 + CGFloat((actions.count + 1) * 2)
+        return ((!AccountController.isLoggedIn ? 75 : 0) + CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2))
     }
         
     required init?(coder aDecoder: NSCoder) {

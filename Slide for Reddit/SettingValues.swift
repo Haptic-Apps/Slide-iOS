@@ -1079,9 +1079,21 @@ class SettingValues {
             let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "readlater", "saved", "collections"]
             var toReturn = [NavigationHeaderActions]()
             for item in menu {
-                toReturn.append(NavigationHeaderActions(rawValue: item)!)
+                let action = NavigationHeaderActions(rawValue: item) ?? .HOME
+                if !action.needsAccount() || AccountController.isLoggedIn {
+                    toReturn.append(action)
+                }
             }
             return toReturn
+        }
+        
+        public func needsAccount() -> Bool {
+            switch self {
+            case .HOME, .POPULAR, .READ_LATER, .RANDOM, .AUTO_CACHE, .COLLECTIONS, .TRENDING:
+                return false
+            default:
+                return true
+            }
         }
 
         public func getTitle() -> String {
