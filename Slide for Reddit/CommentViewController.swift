@@ -3248,7 +3248,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return
             }
         }
-        if SettingValues.commentGesturesMode == .FULL {
+        if SettingValues.commentGesturesMode != .FULL {
             if let full = fullWidthBackGestureRecognizer {
                 full.view?.removeGestureRecognizer(full)
             }
@@ -3304,10 +3304,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.commentGesturesMode == .FULL {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.commentGesturesMode.shouldPage() {
                         return true
                     }
-                } else if SettingValues.commentGesturesMode == .FULL && abs(translation.x) > abs(translation.y) {
+                } else if !SettingValues.commentGesturesMode.shouldPage() && abs(translation.x) > abs(translation.y) {
                     return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
                 }
                 return false
@@ -3325,7 +3325,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!)
 
-            if (velocity.x < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity.x > 0 && (SettingValues.commentGesturesMode == .HALF ||  (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
+            if (velocity.x < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity.x > 0 && (SettingValues.commentGesturesMode == .HALF || SettingValues.commentGesturesMode == .HALF_FULL || (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
                 return
             }
         }

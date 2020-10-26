@@ -2894,7 +2894,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     }
     
     func setupSwipeGesture() {
-        if SettingValues.submissionGestureMode == .FULL {
+        if !SettingValues.submissionGestureMode.shouldPage() {
             return
         }
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -2930,10 +2930,10 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
                         return true
                     }
-                } else if SettingValues.submissionGestureMode == .FULL && abs(translation.x) > abs(translation.y) {
+                } else if !SettingValues.submissionGestureMode.shouldPage() && abs(translation.x) > abs(translation.y) {
                     return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
                 }
                 return false
@@ -2960,7 +2960,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: self.tableView).x
-            if (velocity > 0 && SettingValues.submissionActionRight == .NONE) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
+            if (velocity > 0 && (SettingValues.submissionActionRight == .NONE || SettingValues.submissionGestureMode == .HALF || SettingValues.submissionGestureMode == .HALF_FULL)) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
                 recognizer.cancel()
                 return
             }
@@ -2978,7 +2978,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             
-            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode != .FULL {
+            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
                 recognizer.cancel()
                 return
             }

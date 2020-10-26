@@ -54,7 +54,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
-        for item in SettingValues.CommentGesturesMode.cases {
+        for item in SettingValues.CellGestureMode.cases {
             alertController.addAction(title: item.description(), icon: item == SettingValues.commentGesturesMode ? selected : UIImage()) {
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_commentGesturesMode)
                 SettingValues.commentGesturesMode = item
@@ -73,7 +73,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
-        for item in SettingValues.CommentGesturesMode.cases {
+        for item in SettingValues.CellGestureMode.cases {
             alertController.addAction(title: item.description(), icon: item == SettingValues.submissionGestureMode ? selected : UIImage()) {
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_submissionGesturesMode)
                 SettingValues.submissionGestureMode = item

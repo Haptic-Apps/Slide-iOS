@@ -164,7 +164,7 @@ class SettingValues {
     public static var submissionActionDoubleTap = SubmissionAction.NONE
     public static var submissionActionLeft = SubmissionAction.UPVOTE
     public static var submissionActionRight = SubmissionAction.SAVE
-    public static var commentGesturesMode = CommentGesturesMode.NONE
+    public static var commentGesturesMode = CellGestureMode.NONE
     public static var submissionActionForceTouch = SubmissionAction.NONE
 
     public static var sideGesture = SideGesturesMode.NONE
@@ -203,7 +203,7 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
-    public static var submissionGestureMode = CommentGesturesMode.NONE
+    public static var submissionGestureMode = CellGestureMode.NONE
     public static var infoBelowTitle = false
     public static var subredditIcons = false
    // public static var matchSilence = true
@@ -336,22 +336,32 @@ class SettingValues {
         }
     }
 
-    enum CommentGesturesMode: String {
-        static let cases: [CommentGesturesMode] = [.HALF, .NONE, .FULL]
+    enum CellGestureMode: String {
+        static let cases: [CellGestureMode] = [.HALF, .HALF_FULL, .FULL, .NONE]
         
         case HALF = "half"
+        case HALF_FULL = "half_full"
         case NONE = "none"
         case FULL = "full"
 
         func description() -> String {
             switch self {
             case .HALF:
-                return "Right-side Gestures"
+                return "Right-side Gestures with paging"
+            case .HALF_FULL:
+                return "Right-side Gestures without paging (full width)"
             case .NONE:
                 return "No Gestures"
             case .FULL:
-                return "Full gestures"
+                return "Full gestures without paging (full width)"
             }
+        }
+        
+        func shouldPage() -> Bool {
+            if self == .HALF_FULL || self == .FULL {
+                return false
+            }
+            return true
         }
     }
 
@@ -635,8 +645,8 @@ class SettingValues {
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
-        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
-        SettingValues.submissionGestureMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_submissionGesturesMode) ?? "none") ?? .NONE
+        SettingValues.commentGesturesMode = CellGestureMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
+        SettingValues.submissionGestureMode = CellGestureMode.init(rawValue: settings.string(forKey: SettingValues.pref_submissionGesturesMode) ?? "none") ?? .NONE
         SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote") ?? .DOWNVOTE
         SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote") ?? .UPVOTE
         SettingValues.commentActionLeftLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftLeft) ?? "collapse") ?? .COLLAPSE

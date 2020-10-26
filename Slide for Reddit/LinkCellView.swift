@@ -786,7 +786,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
-                if SettingValues.submissionGestureMode == .HALF {
+                if SettingValues.submissionGestureMode == .HALF || SettingValues.submissionGestureMode == .HALF_FULL {
                     return
                 }
                 if getFirstAction(left: false) != .NONE {

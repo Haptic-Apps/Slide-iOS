@@ -480,7 +480,9 @@ class SplitMainViewController: MainViewController {
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
                 setupTabBar(finalSubs)
-                self.dataSource = self
+                if SettingValues.submissionGestureMode.shouldPage() {
+                    self.dataSource = self
+                }
             } else {
                 self.navigationItem.titleView = nil
                 self.dataSource = nil
@@ -640,7 +642,11 @@ class SplitMainViewController: MainViewController {
         let savedPage = saved?.sub ?? ""
                 
         if SettingValues.subredditBar {
-            self.dataSource = self
+            if SettingValues.submissionGestureMode.shouldPage() {
+                self.dataSource = self
+            } else {
+                self.dataSource = nil
+            }
         } else {
             self.dataSource = nil
         }
@@ -757,7 +763,11 @@ class SplitMainViewController: MainViewController {
         self.delegate = self
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
-            self.dataSource = self
+            if SettingValues.submissionGestureMode.shouldPage() {
+                self.dataSource = self
+            } else {
+                self.dataSource = nil
+            }
         } else {
             self.navigationItem.titleView = nil
             self.dataSource = nil
