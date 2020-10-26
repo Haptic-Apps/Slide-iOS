@@ -31,6 +31,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var lastScrollDirectionWasDown = false
     var fullWidthBackGestureRecognizer: UIGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
+    var swipeBackAdded = false
 
     func getTableView() -> UICollectionView {
         return tableView
@@ -385,6 +386,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         if !dataSource.hasContent() {
             self.autoplayHandler.autoplayOnce(self.tableView)
+        }
+        if parentController == nil {
+            if SettingValues.submissionGestureMode != .FULL {
+                setupSwipeGesture()
+            }
         }
     }
 
@@ -2892,11 +2898,16 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
         }
     }
-    
+        
     func setupSwipeGesture() {
-        if !SettingValues.submissionGestureMode.shouldPage() {
+        if SettingValues.submissionGestureMode == .FULL || swipeBackAdded {
             return
         }
+        
+        if let full = fullWidthBackGestureRecognizer {
+            full.view?.removeGestureRecognizer(full)
+        }
+        
         if UIDevice.current.userInterfaceIdiom == .pad {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
@@ -2912,6 +2923,10 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
             }
+            if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+                navGesture.require(toFail: fullWidthBackGestureRecognizer)
+            }
+            swipeBackAdded = true
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
             tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)

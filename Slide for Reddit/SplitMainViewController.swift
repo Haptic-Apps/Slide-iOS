@@ -363,6 +363,8 @@ class SplitMainViewController: MainViewController {
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
+        } else if SettingValues.submissionGestureMode == .HALF_FULL { //Always allow swipe back with paging disabled and not full
+            vc.setupSwipeGesture()
         } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }

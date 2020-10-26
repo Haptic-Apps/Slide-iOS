@@ -2272,14 +2272,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         inHeadView.removeFromSuperview()
         headerCell.endVideos()
         
-        if let full = fullWidthBackGestureRecognizer {
-            if full.view == tableView {
-                full.view?.removeGestureRecognizer(full)
-                self.shouldSetupSwipe = true
-                self.swipeBackAdded = false
-            }
-        }
-
         self.didDisappearCompletely = true
     }
 
@@ -3283,6 +3275,9 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            }
+            if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+                navGesture.require(toFail: fullWidthBackGestureRecognizer)
             }
             fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
             for view in parent?.view.subviews ?? [] {
