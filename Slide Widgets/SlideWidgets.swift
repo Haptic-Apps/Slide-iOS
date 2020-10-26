@@ -352,40 +352,43 @@ struct SubredditLoader {
 
     static func fetch(subreddit: String, completion: @escaping (Result<SubredditPosts, Error>) -> Void) {
         var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=7&raw_json=1"
-
         if subreddit == "frontpage" {
-            let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-            if let subs = shared?.array(forKey: "subscriptions") as? [String] {
-                let filteredSubs = subs.filter { (sub) -> Bool in
-                    return !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated"
+            apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
+        }
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+
+        if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit == "frontpage"  {
+            let filteredSubs = subs.filter { (sub) -> Bool in
+                //XCode was complaining that this would take too long to type check on one line :/
+                if !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated" {
+                    return false
                 }
-                apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
-                let subredditUrl = URL(string: apiUrl)!
-                var request = URLRequest(url: subredditUrl)
-                request.httpMethod = "POST"
-                request.httpBody = "sr=\(filteredSubs.joined(separator: "+"))".data(using: .utf8)
-                let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                    guard error == nil else {
-                        completion(.failure(error!))
-                        return
-                    }
-                    let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
-                    completion(.success(subreddit))
-                }
-                task.resume()
-            } else {
-                apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
-                let subredditUrl = URL(string: apiUrl)!
-                let task = URLSession.shared.dataTask(with: subredditUrl) { (data, response, error) in
-                    guard error == nil else {
-                        completion(.failure(error!))
-                        return
-                    }
-                    let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
-                    completion(.success(subreddit))
-                }
-                task.resume()
+                return true
             }
+            let subredditUrl = URL(string: apiUrl)!
+            var request = URLRequest(url: subredditUrl)
+            request.httpMethod = "POST"
+            request.httpBody = "sr=\(filteredSubs.joined(separator: "+"))".data(using: .utf8)
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil else {
+                    completion(.failure(error!))
+                    return
+                }
+                let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
+                completion(.success(subreddit))
+            }
+            task.resume()
+        } else {
+            let subredditUrl = URL(string: apiUrl)!
+            let task = URLSession.shared.dataTask(with: subredditUrl) { (data, response, error) in
+                guard error == nil else {
+                    completion(.failure(error!))
+                    return
+                }
+                let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
+                completion(.success(subreddit))
+            }
+            task.resume()
         }
     }
 
