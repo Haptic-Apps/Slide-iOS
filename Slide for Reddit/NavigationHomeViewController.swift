@@ -1058,8 +1058,18 @@ extension CurrentAccountHeaderView {
         accountAgeLabel.leftAnchor == accountNameLabel.leftAnchor
         accountAgeLabel.topAnchor == accountNameLabel.bottomAnchor
         
-        shortcutsView.topAnchor == accountImageView.bottomAnchor + 8
-        shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+        if AccountController.isLoggedIn {
+            shortcutsView.topAnchor == accountImageView.bottomAnchor + 8
+            shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.horizontalAnchors == shortcutsView.horizontalAnchors
+            emptyStateLabel.topAnchor == self.shortcutsView.topAnchor
+        } else {
+            emptyStateLabel.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.topAnchor == accountImageView.bottomAnchor + 8
+            emptyStateLabel.heightAnchor == 75
+            shortcutsView.topAnchor == emptyStateLabel.bottomAnchor + 4
+            shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+        }
         
         spinner.centerAnchors == shortcutsView.centerAnchors
         
@@ -1068,8 +1078,6 @@ extension CurrentAccountHeaderView {
         
         modBadge.centerYAnchor == modButton.centerYAnchor - 10
         modBadge.centerXAnchor == modButton.centerXAnchor + 16
-
-        emptyStateLabel.edgeAnchors == shortcutsView.edgeAnchors
     }
     
     func setupActions() {
@@ -1367,7 +1375,7 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return ((!AccountController.isLoggedIn ? 75 : 0) + CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2))
+        return ((!AccountController.isLoggedIn ? 75 + 4 : 0) + CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2))
     }
         
     required init?(coder aDecoder: NSCoder) {
