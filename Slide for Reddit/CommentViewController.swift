@@ -2271,6 +2271,15 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         super.viewDidDisappear(animated)
         inHeadView.removeFromSuperview()
         headerCell.endVideos()
+        
+        if let full = fullWidthBackGestureRecognizer {
+            if full.view == tableView {
+                full.view?.removeGestureRecognizer(full)
+                self.shouldSetupSwipe = true
+                self.swipeBackAdded = false
+            }
+        }
+
         self.didDisappearCompletely = true
     }
 
@@ -3248,7 +3257,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
                 return
             }
         }
-        if SettingValues.commentGesturesMode != .FULL {
+        if SettingValues.commentGesturesMode == .FULL {
             if let full = fullWidthBackGestureRecognizer {
                 full.view?.removeGestureRecognizer(full)
             }
