@@ -27,6 +27,8 @@ extension UIViewController {
             navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary(textAttributes)
         }
         
+        self.setNeedsUpdateOfHomeIndicatorAutoHidden()
+        
         navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
         setNeedsStatusBarAppearanceUpdate()
     }

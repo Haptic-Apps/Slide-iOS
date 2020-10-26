@@ -355,6 +355,22 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     SettingValues.isPro = true
                     UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                     UserDefaults.standard.synchronize()
+                    (strongSelf.presentingViewController as? SettingsViewController)?.doPro()
+                    SettingsPro.changed = true
+                }
+            } else if type == .restored {
+                DispatchQueue.main.async {
+                    strongSelf.alertController?.dismiss(animated: true, completion: nil)
+                    let alertView = UIAlertController(title: "", message: type.message(), preferredStyle: .alert)
+                    let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
+                        self?.dismiss(animated: true, completion: nil)
+                    })
+                    alertView.addAction(action)
+                    strongSelf.present(alertView, animated: true, completion: nil)
+                    SettingValues.isPro = true
+                    UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
+                    UserDefaults.standard.synchronize()
+                    (strongSelf.presentingViewController as? SettingsViewController)?.doPro()
                     SettingsPro.changed = true
                 }
             }
@@ -376,7 +392,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                             mail.mailComposeDelegate = strongSelf
                             mail.setToRecipients(["hapticappsdev@gmail.com"])
                             mail.setSubject("Slide Pro Purchase")
-                            mail.setMessageBody("<p>Apple ID: \nName:\n\n</p>", isHTML: true)
+                            mail.setMessageBody("<p>Apple ID: \nError:" + (error ?? "" ) + "\n\n</p>", isHTML: true)
                             
                             strongSelf.present(mail, animated: true)
                         }

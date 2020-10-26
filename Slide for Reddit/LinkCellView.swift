@@ -786,7 +786,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
             if direction == -1 && self.contentView.frame.origin.x > originalPos {
-                if SettingValues.submissionGestureMode == .HALF {
+                if SettingValues.submissionGestureMode == .HALF || SettingValues.submissionGestureMode == .HALF_FULL {
                     return
                 }
                 if getFirstAction(left: false) != .NONE {
@@ -1001,7 +1001,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         circleShape.lineWidth = 1.5
         // add sublayer
         for layer in progressDot.layer.sublayers ?? [CALayer]() {
-            layer.removeFromSuperlayer()
+            if layer.superlayer != nil {
+                layer.removeFromSuperlayer()
+            }
         }
 
         if !buffering {
@@ -2110,16 +2112,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+        strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
         strongSelf.setOnce = false
-        if #available(iOS 10.0, *) {
-            strongSelf.videoView?.player?.playImmediately(atRate: 1.0)
-        } else {
-            strongSelf.videoView?.player?.play()
-        }
         strongSelf.videoID = strongSelf.link?.getId() ?? ""
         if SettingValues.muteInlineVideos {
             strongSelf.videoView?.player?.isMuted = true
@@ -2178,6 +2176,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         guard let player = videoView.player else {
             return
+        }
+        
+        if player.status == .readyToPlay && player.rate == 0 {
+            print("Ready to play \(self.link?.title)")
+            player.playImmediately(atRate: 1.0)
         }
 
         let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
@@ -2595,7 +2598,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         refreshAccessibility(submission: link)
     }
-    
+        
     override func layoutSubviews() {
         if typeImage != nil {
             return
@@ -2606,7 +2609,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         var leftmargin = 0
         var rightmargin = 0
         
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView){
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
             topmargin = 5
             bottommargin = 5
             leftmargin = 5
@@ -2618,6 +2621,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let f = self.contentView.frame
         let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        if fr.equalTo(self.contentView.frame) {
+            return
+        }
         self.contentView.frame = fr
     }
     

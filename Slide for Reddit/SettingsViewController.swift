@@ -75,9 +75,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         super.viewDidAppear(animated)
         lock.onTintColor = ColorUtil.baseAccent
         if SettingsPro.changed {
-            self.tableView.reloadData()
-            let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
-            navigationItem.rightBarButtonItem = menuB
+            doPro()
         }
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -88,6 +86,12 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+    }
+    
+    func doPro() {
+        self.tableView.reloadData()
+        let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+        navigationItem.rightBarButtonItem = menuB
     }
     
     @objc public func handleBackButton() {
@@ -751,7 +755,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     try! realm.write {
                         realm.deleteAll()
                     }
-                    if let path = realm.configuration.fileURL?.absoluteString {
+                    if let path = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
                         do {
                             try FileManager().removeItem(atPath: path)
                         } catch {

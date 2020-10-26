@@ -100,6 +100,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     override var prefersHomeIndicatorAutoHidden: Bool {
         return true
     }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
 
     var alertController: UIAlertController?
     var tempToken: OAuth2Token?
@@ -107,7 +111,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var currentTitle = "Slide"
 
     //MARK: - Shared functions
-    
     func didUpdate() {
         let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
         suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
@@ -510,12 +513,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     override var keyCommands: [UIKeyCommand]? {
-        return [
+        return UIResponder.isFirstResponderTextField ? nil : [
             UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
             UIKeyCommand(input: "s", modifierFlags: .command, action: #selector(search), discoverabilityTitle: "Search"),
-            UIKeyCommand(input: "h", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
+            UIKeyCommand(input: "p", modifierFlags: .command, action: #selector(hideReadPosts), discoverabilityTitle: "Hide read posts"),
             UIKeyCommand(input: "r", modifierFlags: .command, action: #selector(refresh), discoverabilityTitle: "Reload"),
         ]
     }
@@ -691,7 +694,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             let settings = UserDefaults.standard
                             settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
                             settings.set(storedTitle, forKey: "vtitle")
-                            settings.set(submissions[0], forKey: "vlink")
+                            settings.set(storedLink, forKey: "vlink")
                             /* disable for now DispatchQueue.main.async {
                                 SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
                             }*/
