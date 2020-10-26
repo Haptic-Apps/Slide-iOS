@@ -342,21 +342,51 @@ struct HotPostsProvider: IntentTimelineProvider {
 }
 
 struct SubredditLoader {
+    /*
+    Corresponds to USR_DOMAIN in info.plist, which derives its value
+    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+    */
+    static func USR_DOMAIN() -> String {
+       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }
+
     static func fetch(subreddit: String, completion: @escaping (Result<SubredditPosts, Error>) -> Void) {
         var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=7&raw_json=1"
+
         if subreddit == "frontpage" {
-            apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
-        }
-        let branchContentsURL = URL(string: apiUrl)!
-        let task = URLSession.shared.dataTask(with: branchContentsURL) { (data, response, error) in
-            guard error == nil else {
-                completion(.failure(error!))
-                return
+            let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+            if let subs = shared?.array(forKey: "subscriptions") as? [String] {
+                let filteredSubs = subs.filter { (sub) -> Bool in
+                    return !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated"
+                }
+                apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
+                let subredditUrl = URL(string: apiUrl)!
+                var request = URLRequest(url: subredditUrl)
+                request.httpMethod = "POST"
+                request.httpBody = "sr=\(filteredSubs.joined(separator: "+"))".data(using: .utf8)
+                let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                    guard error == nil else {
+                        completion(.failure(error!))
+                        return
+                    }
+                    let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
+                    completion(.success(subreddit))
+                }
+                task.resume()
+            } else {
+                apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
+                let subredditUrl = URL(string: apiUrl)!
+                let task = URLSession.shared.dataTask(with: subredditUrl) { (data, response, error) in
+                    guard error == nil else {
+                        completion(.failure(error!))
+                        return
+                    }
+                    let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
+                    completion(.success(subreddit))
+                }
+                task.resume()
             }
-            let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
-            completion(.success(subreddit))
         }
-        task.resume()
     }
 
     static func getSubredditInfo(subreddit: String, fromData data: Foundation.Data) -> SubredditPosts {

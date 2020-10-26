@@ -1041,7 +1041,6 @@ extension CurrentAccountHeaderView {
     }
     
     func setupConstraints() {
-                        
         upperButtonStack.heightAnchor == 44
         
         contentView.horizontalAnchors == self.horizontalAnchors + 4
