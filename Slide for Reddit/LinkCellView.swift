@@ -2213,11 +2213,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return
         }
         
-        if player.status == .readyToPlay && player.rate == 0 {
-            print("Ready to play \(self.link?.title)")
-            player.playImmediately(atRate: 1.0)
-        }
-
         let hasAudioTracks = (player.currentItem?.tracks.count ?? 1) > 1
         
         if hasAudioTracks {
@@ -2242,12 +2237,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             let duration = Float(CMTimeGetSeconds(currentItem.duration))
             let time = Float(CMTimeGetSeconds(elapsedTime))
-
-            if duration.isFinite && duration > 0 {
-                updateProgress(CGFloat(time / duration), "\(getTimeString(Int(floor(1 + duration - time))))",
-                    buffering: !currentItem.isPlaybackLikelyToKeepUp)
+            
+            let percentComplete = time / duration
+            if currentItem.status == .readyToPlay && player.rate == 0 {
+                player.playImmediately(atRate: 1.0)
+            } else if lastTime == Float(CMTimeGetSeconds(player.currentTime())) && currentItem.isPlaybackLikelyToKeepUp && player.timeControlStatus == .playing && (percentComplete > 0.1 && percentComplete < 0.9) {
+                //There is a case where videos will freeze at a frame randomly(?) and seeking to current time fixes this... Check to see if we're buffering in case playback is frozen because of that, and make sure we're in the middle of a video
+                player.seek(to: player.currentTime())
             }
-            if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
+
+            let reachedEnd = (percentComplete >= 0.999 || (percentComplete >= 0.93 && lastTime == time))
+            if duration.isFinite && duration > 0 {
+                updateProgress(CGFloat(percentComplete), "\(getTimeString(Int(floor(1 + duration - time))))",
+                    buffering: !currentItem.isPlaybackLikelyToKeepUp && !reachedEnd)
+            }
+            if !handlingPlayerItemDidreachEnd && reachedEnd {
                 handlingPlayerItemDidreachEnd = true
                 self.playerItemDidreachEnd()
             }
@@ -2649,16 +2653,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             bottommargin = 5
             leftmargin = 5
             rightmargin = 5
-            if !SettingValues.flatMode {
-                self.contentView.elevate(elevation: 2)
-            }
         }
         
         let f = self.contentView.frame
         let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        if fr.equalTo(self.contentView.frame) {
+        if fr.equalTo(self.contentView.frame) || self.contentView.frame.size.width == fr.size.width + CGFloat(leftmargin + rightmargin) || self.contentView.frame.size.width == fr.size.width - CGFloat(leftmargin + rightmargin) {
             return
         }
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
+            self.contentView.elevate(elevation: 2)
+        }
+
         self.contentView.frame = fr
     }
     
