@@ -46,12 +46,6 @@
 		4BB1332D824D4CD6076ACE36 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAEA5E4377232980442DB2F4 /* Pods_Slide_for_RedditTests.framework */; };
 		AB1C8BEC9402BB27138F00B2 /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B75BA65338EBA079387BD2C1 /* Pods_Slide_for_Reddit.framework */; };
 		B10965021D080B70313A5BD2 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4913ED7EAB039D771E51F8 /* Pods_Slide_for_RedditUITests.framework */; };
-		B422D252252270AD00A168BB /* ic_garbage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D24F252270AD00A168BB /* ic_garbage@3x.png */; };
-		B422D253252270AD00A168BB /* ic_garbage@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */; };
-		B422D254252270AD00A168BB /* ic_garbage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D251252270AD00A168BB /* ic_garbage@2x.png */; };
-		68893CEE1A2BFBD6C35176C7 /* Pods_Slide_for_RedditTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 915ED518E6B9ED6C4BEFFD9D /* Pods_Slide_for_RedditTests.framework */; };
-		6BD349B859B9F8395991A817 /* Pods_Slide_for_RedditUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18531AD38F7AB98B9AA0D139 /* Pods_Slide_for_RedditUITests.framework */; };
-		835F7C0C6CC2D9F681EED6C3 /* Pods_Slide_for_Reddit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB4FD449588B015728C06B4 /* Pods_Slide_for_Reddit.framework */; };
 		B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */; };
 		B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */; };
 		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
@@ -84,7 +78,6 @@
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
 		BD43E0F324EA162500D18328 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD43E0F224EA162500D18328 /* NetworkMonitor.swift */; };
 		BD78A6942523AA540000639C /* FallbackNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */; };
-		BD78A75F252579390000639C /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD78A75E252579390000639C /* Constants.swift */; };
 		BD87553724D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */; };
 		BD87553924D8AA210096732F /* CommentViewController+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */; };
 		BD87553B24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */; };
@@ -98,6 +91,7 @@
 		BD87554D24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554C24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift */; };
 		BD87554F24D8EF530096732F /* CommentViewController+Thing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87554E24D8EF530096732F /* CommentViewController+Thing.swift */; };
 		BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */; };
+		BDD7629D2547F36000ABE2D4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD7629C2547F36000ABE2D4 /* Constants.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
@@ -518,14 +512,6 @@
 		634D48B04A9C3CCED5085D1F /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
 		68BB1541CAC9B494136DF56D /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
 		6B4B1028DFBCC9C75D897610 /* Pods-Slide for RedditUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.debug.xcconfig"; path = "Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		B422D24F252270AD00A168BB /* ic_garbage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@3x.png"; sourceTree = "<group>"; };
-		B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@2x~ipad.png"; sourceTree = "<group>"; };
-		B422D251252270AD00A168BB /* ic_garbage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@2x.png"; sourceTree = "<group>"; };
-		558A5BB80A5F789402602347 /* Pods-Slide for RedditUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditUITests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditUITests/Pods-Slide for RedditUITests.release.xcconfig"; sourceTree = "<group>"; };
-		5DB4FD449588B015728C06B4 /* Pods_Slide_for_Reddit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_Reddit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8D1724440B35F1E523BF1226 /* Pods-Slide for RedditTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for RedditTests.release.xcconfig"; path = "Target Support Files/Pods-Slide for RedditTests/Pods-Slide for RedditTests.release.xcconfig"; sourceTree = "<group>"; };
-		915ED518E6B9ED6C4BEFFD9D /* Pods_Slide_for_RedditTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Slide_for_RedditTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AEB9CCB25C7270CFCFA9A2F0 /* Pods-Slide for Reddit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Slide for Reddit.debug.xcconfig"; path = "Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit.debug.xcconfig"; sourceTree = "<group>"; };
 		B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotPostsWidget.swift; sourceTree = "<group>"; };
 		B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSubredditsWidget.swift; sourceTree = "<group>"; };
 		B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -551,7 +537,6 @@
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
 		BD43E0F224EA162500D18328 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackNetworkMonitor.swift; sourceTree = "<group>"; };
-		BD78A75E252579390000639C /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
 		BD87553824D8AA210096732F /* CommentViewController+UITableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDataSource.swift"; sourceTree = "<group>"; };
 		BD87553A24D8AA390096732F /* CommentViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
@@ -565,6 +550,7 @@
 		BD87554C24D8EADB0096732F /* CommentViewController+UIScrollViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIScrollViewDelegate.swift"; sourceTree = "<group>"; };
 		BD87554E24D8EF530096732F /* CommentViewController+Thing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+Thing.swift"; sourceTree = "<group>"; };
 		BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
+		BDD7629C2547F36000ABE2D4 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
@@ -1070,7 +1056,7 @@
 		BD78A75D2525790A0000639C /* Constants */ = {
 			isa = PBXGroup;
 			children = (
-				BD78A75E252579390000639C /* Constants.swift */,
+				BDD7629C2547F36000ABE2D4 /* Constants.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -2394,7 +2380,7 @@
 				098B5A4120EFC58300FE201B /* UIApplication+Extensions.swift in Sources */,
 				BE762C9522A2FF7200B29757 /* DraftFindReturnViewController.swift in Sources */,
 				09B2AF6420F7A2ED00580F15 /* VideoSource.swift in Sources */,
-				BD78A75F252579390000639C /* Constants.swift in Sources */,
+				BDD7629D2547F36000ABE2D4 /* Constants.swift in Sources */,
 				BE8AE94121F919FF00E1C0D1 /* SettingsCustomTheme.swift in Sources */,
 				B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */,
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
@@ -2536,72 +2522,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		BE0334B425294B8400B8C6B6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = WidgetConfigIntent/WidgetConfigIntent.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
-				DEVELOPMENT_TEAM = FTT89576VQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 6;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).WidgetConfigIntent";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		BE0334B525294B8400B8C6B6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = WidgetConfigIntent/WidgetConfigIntent.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				DEVELOPMENT_TEAM = FTT89576VQ;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 6;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgetconfigintent;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgetconfigintent";
-				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 		BE20852F21588F3B00D8F33C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2615,8 +2535,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2650,11 +2568,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 205;
-				DEVELOPMENT_TEAM = "";
-				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2684,8 +2597,6 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2717,13 +2628,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 205;
-				DEVELOPMENT_TEAM = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 187;
@@ -2760,8 +2664,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2795,8 +2697,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2954,8 +2854,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -2995,8 +2893,6 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
@@ -3171,8 +3067,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -3208,8 +3102,6 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 192;
-				CURRENT_PROJECT_VERSION = 205;
 				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
