@@ -654,8 +654,21 @@ class PostActions: NSObject {
             BannerUtil.makeBanner(text: "User blocked", color: GMColor.red500Color(), seconds: 3, context: parent, top: true, callback: nil)
             if AccountController.isLoggedIn {
                 do {
-                    try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaUsername(username, completion: { (result) in
-                        print(result)
+                    try (UIApplication.shared.delegate as! AppDelegate).session?.getUserProfile(username, completion: { (result) in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                        case .success(let account):
+                                DispatchQueue.main.async {
+                                    do {
+                                        try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaId(account.getId(), completion: { (result) in
+                                            print(result)
+                                        })
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                        }
                     })
                 } catch {
                     print(error)
