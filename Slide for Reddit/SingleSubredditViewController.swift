@@ -26,8 +26,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
     var numberFiltered = 0
-    var setOffset = CGFloat.zero
-
+    
     var lastScrollDirectionWasDown = false
     var fullWidthBackGestureRecognizer: UIGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
@@ -267,7 +266,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewWillAppear(animated)
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
-
+        
         if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
             inHeadView = UIView().then {
                 $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
@@ -312,6 +311,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         loop?.stop()
 
         first = false
+        tableView.delegate = self
 
         if single && !(parent is SplitMainViewController) {
             setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
@@ -359,8 +359,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
-        refreshControl.setValue(100, forKey: "_snappingHeight")
-
+        
         if dataSource.loaded && dataSource.content.count > oldCount {
             self.tableView.reloadData()
             oldCount = dataSource.content.count
@@ -397,7 +396,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
     }
-
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -541,7 +540,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
 
+    var canRefresh = true
+    var setOffset = CGFloat.zero
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded && !dataSource.loading {
+            if canRefresh && !self.refreshControl.isRefreshing {
+                self.canRefresh = false
+                self.refreshControl.beginRefreshing()
+                self.drefresh(self.refreshControl)
+                HapticUtility.hapticActionStrong()
+            }
+        } else if scrollView.contentOffset.y >= setOffset {
+            self.canRefresh = true
+        }
+
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
             if dataSource.loaded && dataSource.content.count > oldCount {
@@ -952,10 +965,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         refreshControl.tintColor = ColorUtil.theme.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         tableView.alwaysBounceVertical = true
-
+        
         self.automaticallyAdjustsScrollViewInsets = false
 
         // TODO: - Can just use .self instead of .classForCoder()
@@ -1063,9 +1075,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             print(result.error!.description)
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
-                                    if !self.dataSource.loading && !self.dataSource.loaded {
-                                        self.dataSource.getData(reload: true, force: true)
-                                    }
+                                    self.dataSource.getData(reload: true)
                                     self.loadBubbles()
                                 }
                             }
@@ -1102,10 +1112,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         }
                                         self.loadBubbles()
                                     }
-                                } else {
-                                    if !self.dataSource.loading && !self.dataSource.loaded {
-                                        self.dataSource.getData(reload: true, force: true)
-                                    }
+                                    self.dataSource.getData(reload: true)
                                     self.loadBubbles()
                                 }
                             }
@@ -1581,11 +1588,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
-        var itemWidth = width
-        
-        if itemWidth < 10 { //Not a valid width
-            itemWidth = UIScreen.main.bounds.width
-        }
+        let itemWidth = width
         var thumb = submission.thumbnail
         var big = submission.banner
         
@@ -1777,11 +1780,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title side padding
             }
         }
-                
-        var size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))
-        if let layout = layout {
-            let textSize = layout.textBoundingSize
+        
+        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))!
+        let textSize = layout.textBoundingSize
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
             return CGSize(width: itemWidth, height: totalHeight)
@@ -2625,7 +2627,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad || UIDevice.current.userInterfaceIdiom != .pad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 

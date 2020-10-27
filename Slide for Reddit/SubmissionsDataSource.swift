@@ -225,7 +225,6 @@ class SubmissionsDataSource {
 
                         }
                     case .success(let listing):
-                        self.loading = false
                         self.tries = 0
                         if self.isReset {
                             self.content = []
@@ -263,22 +262,44 @@ class SubmissionsDataSource {
                         self.contentIDs += ids
                         
                         self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
+                        
+                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
+                        do {
+                            let realm = try Realm()
+                           // TODO: - insert
+                            realm.beginWrite()
+                            for submission in self.content {
+                                if submission.author != "PAGE_SEPARATOR" {
+                                    realm.create(type(of: submission), value: submission, update: .all)
+                                    if let listing = self.realmListing {
+                                        listing.links.append(submission)
+                                    }
+                                }
+                            }
+                            
+                            try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
+                            try realm.commitWrite()
+                        } catch {
+
+                        }
+                            
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
 
                             if self.content.isEmpty && !SettingValues.hideSeen {
+                                self.loading = false
                                 self.delegate?.emptyState(listing)
                             } else if self.content.isEmpty && newLinks.count != 0 && self.paginator.hasMore() {
+                                self.loading = false
                                 self.loadMore()
                             } else {
+                                self.loading = false
                                 self.delegate?.loadSuccess(before: before, count: self.content.count)
                             }
                         }
                     }
                 })
             } catch {
-                loading = false
                 print(error)
             }
         }

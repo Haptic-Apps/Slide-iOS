@@ -23,6 +23,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     var matchSilence: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "mute")
     var showPages: InsetCell = InsetCell()
     var totallyCollapse: InsetCell = InsetCell()
+    var buttonType: InsetCell =  InsetCell(style: .subtitle, reuseIdentifier: "button")
     var fullyHideNavbar: InsetCell = InsetCell()
     var alwaysShowHeader: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "head")
     var commentLimit: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "cl")

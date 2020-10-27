@@ -92,13 +92,6 @@
 		BDCDC5E324D4F4A10066CA8D /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
-		BE0334AF25294B8400B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
-		BE0334B325294B8400B8C6B6 /* WidgetConfigIntent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BE0334CF25294C0700B8C6B6 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
-		BE03351225294CEE00B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
-		BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE03356625295AB500B8C6B6 /* SettingsWidget.swift */; };
-		BE0335AB252A7AF100B8C6B6 /* HotPostsTileWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0335AA252A7AF000B8C6B6 /* HotPostsTileWidget.swift */; };
-		BE0335B5252AB75B00B8C6B6 /* CurrentAccountWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0335B4252AB75B00B8C6B6 /* CurrentAccountWidget.swift */; };
 		BE0958DF218A08620076966C /* SettingsViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0958DE218A08620076966C /* SettingsViewMode.swift */; };
 		BE0C4F8321BCBE83006C54FF /* ic_lightblue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */; };
 		BE0C4F8421BCBE83006C54FF /* ic_red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */; };
@@ -378,13 +371,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BE0334B125294B8400B8C6B6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE0334AB25294B8400B8C6B6;
-			remoteInfo = WidgetConfigIntent;
-		};
 		BE20851F21588F3B00D8F33C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
@@ -444,7 +430,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				BED90FEC250BF71800090DF5 /* Slide Widgets.appex in Embed App Extensions */,
-				BE0334B325294B8400B8C6B6 /* WidgetConfigIntent.appex in Embed App Extensions */,
 				BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -568,13 +553,6 @@
 		BDCDC5E224D4F4A10066CA8D /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
-		BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetConfigIntent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
-		BE0334B025294B8400B8C6B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BE03355D2529594B00B8C6B6 /* WidgetConfigIntent.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WidgetConfigIntent.entitlements; sourceTree = "<group>"; };
-		BE03356625295AB500B8C6B6 /* SettingsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidget.swift; sourceTree = "<group>"; };
-		BE0335AA252A7AF000B8C6B6 /* HotPostsTileWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotPostsTileWidget.swift; sourceTree = "<group>"; };
-		BE0335B4252AB75B00B8C6B6 /* CurrentAccountWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccountWidget.swift; sourceTree = "<group>"; };
 		BE0958DE218A08620076966C /* SettingsViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewMode.swift; sourceTree = "<group>"; };
 		BE0C4F6D21BCBE80006C54FF /* ic_lightblue@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_lightblue@2x.png"; sourceTree = "<group>"; };
 		BE0C4F6E21BCBE81006C54FF /* ic_red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_red@2x.png"; sourceTree = "<group>"; };
@@ -876,13 +854,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE0334A925294B8400B8C6B6 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE20851A21588F3A00D8F33C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1077,8 +1048,6 @@
 			children = (
 				B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */,
 				B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */,
-				BE0335AA252A7AF000B8C6B6 /* HotPostsTileWidget.swift */,
-				BE0335B4252AB75B00B8C6B6 /* CurrentAccountWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -1127,14 +1096,6 @@
 				BD43E0F224EA162500D18328 /* NetworkMonitor.swift */,
 			);
 			path = Networking;
-		BE0334AD25294B8400B8C6B6 /* WidgetConfigIntent */ = {
-			isa = PBXGroup;
-			children = (
-				BE03355D2529594B00B8C6B6 /* WidgetConfigIntent.entitlements */,
-				BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */,
-				BE0334B025294B8400B8C6B6 /* Info.plist */,
-			);
-			path = WidgetConfigIntent;
 			sourceTree = "<group>";
 		};
 		BE13C2CA21655A31002687F2 /* Extensions */ = {
@@ -1244,7 +1205,6 @@
 				BEBE0C6E222199DA0044FF55 /* IAPHandlerTip.swift */,
 				BEBE0C70222330010044FF55 /* SettingsPostMenu.swift */,
 				BED3B31824CE278B00B9A664 /* SettingsShortcutMenu.swift */,
-				BE03356625295AB500B8C6B6 /* SettingsWidget.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1405,7 +1365,6 @@
 				BE257A6C21F64AA30082A47E /* Open in Slide */,
 				BE99C9F52378AC91007911E2 /* Slide Screenshot Automation */,
 				BED90FE4250BF71600090DF5 /* Slide Widgets */,
-				BE0334AD25294B8400B8C6B6 /* WidgetConfigIntent */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				BE8FCA051E0C46090063B8EF /* Products */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
@@ -1426,7 +1385,6 @@
 				BE257A6B21F64AA30082A47E /* Open in Slide.appex */,
 				BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */,
 				BED90FDF250BF71600090DF5 /* Slide Widgets.appex */,
-				BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1629,23 +1587,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BE0334AB25294B8400B8C6B6 /* WidgetConfigIntent */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BE0334B625294B8400B8C6B6 /* Build configuration list for PBXNativeTarget "WidgetConfigIntent" */;
-			buildPhases = (
-				BE0334A825294B8400B8C6B6 /* Sources */,
-				BE0334A925294B8400B8C6B6 /* Frameworks */,
-				BE0334AA25294B8400B8C6B6 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = WidgetConfigIntent;
-			productName = WidgetConfigIntent;
-			productReference = BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		BE20851021588F3900D8F33C /* Slide for Apple Watch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE20853521588F3B00D8F33C /* Build configuration list for PBXNativeTarget "Slide for Apple Watch" */;
@@ -1721,7 +1662,6 @@
 				BE20852D21588F3B00D8F33C /* PBXTargetDependency */,
 				BE257A7621F64AA30082A47E /* PBXTargetDependency */,
 				BED90FEB250BF71800090DF5 /* PBXTargetDependency */,
-				BE0334B225294B8400B8C6B6 /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
 			packageProductDependencies = (
@@ -1822,9 +1762,6 @@
 				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
-					BE0334AB25294B8400B8C6B6 = {
-						CreatedOnToolsVersion = 12.0.1;
-					};
 					BE20851021588F3900D8F33C = {
 						CreatedOnToolsVersion = 10.0;
 						ProvisioningStyle = Automatic;
@@ -1912,19 +1849,11 @@
 				BE257A6A21F64AA30082A47E /* Open in Slide */,
 				BE99C9F32378AC91007911E2 /* Slide Screenshot Automation */,
 				BED90FDE250BF71600090DF5 /* Slide Widgets */,
-				BE0334AB25294B8400B8C6B6 /* WidgetConfigIntent */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		BE0334AA25294B8400B8C6B6 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE20850F21588F3900D8F33C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2214,15 +2143,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BE0334A825294B8400B8C6B6 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE0334CF25294C0700B8C6B6 /* TimelineSubreddit.intentdefinition in Sources */,
-				BE0334AF25294B8400B8C6B6 /* IntentHandler.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BE20851921588F3A00D8F33C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2478,7 +2398,6 @@
 				BD87554924D8AB270096732F /* CommentViewController+TapBehindModalViewControllerDelegate.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
 				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
-				BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,
 				BE9BFF1B25182D8700C9F7EC /* OnboardingPageViewController+Pages.swift in Sources */,
 				B776B4F018104C3E2A89B878 /* SettingsBackup.swift in Sources */,
@@ -2517,12 +2436,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				BED90FF6250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */,
-				BE0335B5252AB75B00B8C6B6 /* CurrentAccountWidget.swift in Sources */,
 				B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */,
-				BE0335AB252A7AF100B8C6B6 /* HotPostsTileWidget.swift in Sources */,
 				B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */,
 				BED90FE6250BF71600090DF5 /* SlideWidgets.swift in Sources */,
-				BE03351225294CEE00B8C6B6 /* IntentHandler.swift in Sources */,
 				B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2530,11 +2446,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		BE0334B225294B8400B8C6B6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BE0334AB25294B8400B8C6B6 /* WidgetConfigIntent */;
-			targetProxy = BE0334B125294B8400B8C6B6 /* PBXContainerItemProxy */;
-		};
 		BE20852021588F3B00D8F33C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BE20851C21588F3A00D8F33C /* Slide for Apple Watch Extension */;
@@ -2680,6 +2591,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
@@ -2714,6 +2626,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
 				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 187;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
@@ -2746,6 +2661,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
@@ -2780,6 +2696,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
 				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 187;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2814,6 +2734,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -2847,6 +2768,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -2918,7 +2840,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -2977,7 +2899,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -3004,6 +2926,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
@@ -3043,6 +2966,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -3217,6 +3141,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3252,6 +3177,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 205;
+				CURRENT_PROJECT_VERSION = 187;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3275,15 +3201,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BE0334B625294B8400B8C6B6 /* Build configuration list for PBXNativeTarget "WidgetConfigIntent" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BE0334B425294B8400B8C6B6 /* Debug */,
-				BE0334B525294B8400B8C6B6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		BE20853321588F3B00D8F33C /* Build configuration list for PBXNativeTarget "Slide for Apple Watch Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

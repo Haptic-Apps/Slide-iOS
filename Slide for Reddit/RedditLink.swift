@@ -27,11 +27,6 @@ class RedditLink {
         if urlS.absoluteString.startsWith("/m/") {
             return SingleSubredditViewController.init(subName: urlS.absoluteString, single: true)
         }
-        if urlS.absoluteString.contains("/r//m/") {
-            if let multiName = urlS.absoluteString.split("/").last, !multiName.isEmpty {
-                return SingleSubredditViewController.init(subName: "/m/" + multiName, single: true)
-            }
-        }
         if url.isEmpty() {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
                 let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)

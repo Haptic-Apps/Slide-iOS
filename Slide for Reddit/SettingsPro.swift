@@ -96,7 +96,17 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.username.imageView?.image = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")?.toolbarIcon()
         self.username.imageView?.tintColor = ColorUtil.theme.fontColor
         self.username.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        
+
+        self.icons.textLabel?.text = "Premium Icons"
+        self.icons.detailTextLabel?.text = "Freshen up your homescreen with a new icon"
+        self.icons.detailTextLabel?.numberOfLines = 0
+        self.icons.backgroundColor = ColorUtil.theme.foregroundColor
+        self.icons.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.icons.imageView?.image = UIImage(named: "ic_retroapple")
+        self.icons.imageView?.layer.cornerRadius = 10
+        self.icons.imageView?.clipsToBounds = true
+        self.icons.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+
         self.backup.textLabel?.text = "Backup and Restore"
         self.backup.detailTextLabel?.text = "Sync your Slide settings between devices"
         self.backup.detailTextLabel?.numberOfLines = 0
@@ -138,9 +148,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         about.font = UIFont.systemFont(ofSize: 15)
         aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
         about.textColor = ColorUtil.theme.fontColor
-        about.text = "Upgrade to Slide Pro to enjoy some awesome new features while supporting ad-free and open source software!\n\nSlide is my side project while attending university full-time, and every donation helps keep Slide going 😊"
+        about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\nYour support keeps this project going, and helps feed my coffee addiction 😀\n-Carlos"
         about.numberOfLines = 0
-        about.textAlignment = .left
+        about.textAlignment = .center
         about.lineBreakMode = .byClipping
         about.sizeToFit()
         
