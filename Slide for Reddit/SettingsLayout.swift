@@ -271,6 +271,8 @@ class SettingsLayout: BubbleSettingTableViewController {
         switch SettingValues.postImageMode {
         case .CROPPED_IMAGE:
             imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
+        case .SHORT_IMAGE:
+            imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
         case .FULL_IMAGE:
             imageCell.imageView?.image = UIImage(named: "full")?.toolbarIcon()
         case .THUMBNAIL:
@@ -362,6 +364,17 @@ class SettingsLayout: BubbleSettingTableViewController {
             alertController.addAction(title: "Cropped image", icon: UIImage(named: "crop")!.menuIcon()) {
                 UserDefaults.standard.set("cropped", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .CROPPED_IMAGE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                MainViewController.needsReTheme = true
+            }
+            
+            alertController.addAction(title: "Shortened image", icon: UIImage(named: "crop")!.menuIcon()) {
+                UserDefaults.standard.set("short", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .SHORT_IMAGE
                 UserDefaults.standard.synchronize()
                 self.doDisables()
                 self.doLink()

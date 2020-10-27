@@ -139,6 +139,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var bannerImage: UIImageView!
+    var bannerImageBackdrop: UIImageView?
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
     var thumbText: UILabel!
@@ -173,6 +174,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var infoBox: UIStackView!
     var force: ForceTouchGestureRecognizer?
+    
+    var setContentviewFrame = false
 
     var videoView: VideoView!
     var topVideoView: UIView!
@@ -284,7 +287,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
-            $0.contentMode = .scaleAspectFill
+            $0.contentMode = SettingValues.postImageMode == .SHORT_IMAGE && self is BannerLinkCellView ? .scaleAspectFit : .scaleAspectFill
             if !SettingValues.flatMode {
                 $0.layer.cornerRadius = 15
             }
@@ -1590,6 +1593,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let fullImage = ContentType.fullImage(t: type)
         let shouldAutoplay = SettingValues.shouldAutoPlay()
+        let halfScreen = UIScreen.main.bounds.height / 2
         
         let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && shouldAutoplay
 
@@ -1600,10 +1604,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             submissionHeight = test ? 150 : 200
         } else if big {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (full ? 10 : 0))
-            if h == 0 {
-                submissionHeight = test ? 150 : 200
+            if (!full && SettingValues.postImageMode == .SHORT_IMAGE && !(self is AutoplayBannerLinkCellView)) && !overrideFull {
+                submissionHeight = test ? 200 : (h > halfScreen ? halfScreen : h)
             } else {
-                submissionHeight = h
+                if h == 0 {
+                    submissionHeight = test ? 150 : 200
+                } else {
+                    submissionHeight = h
+                }
             }
         }
         
@@ -1703,7 +1711,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web)
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
             }
         } else {
             thumbImage.image = nil
@@ -1785,7 +1793,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
                 loadedImage = bannerImageUrl
-                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight))
+                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
             }
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
@@ -2642,29 +2650,32 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if typeImage != nil {
             return
         }
+        
         super.layoutSubviews()
-        var topmargin = 0
-        var bottommargin = 2
-        var leftmargin = 0
-        var rightmargin = 0
-        
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
-            topmargin = 5
-            bottommargin = 5
-            leftmargin = 5
-            rightmargin = 5
-        }
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        if fr.equalTo(self.contentView.frame) || self.contentView.frame.size.width == fr.size.width + CGFloat(leftmargin + rightmargin) || self.contentView.frame.size.width == fr.size.width - CGFloat(leftmargin + rightmargin) {
-            return
-        }
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
-            self.contentView.elevate(elevation: 2)
-        }
 
-        self.contentView.frame = fr
+        if !setContentviewFrame {
+            self.setContentviewFrame = true
+            var topmargin = 0
+            var bottommargin = 2
+            var leftmargin = 0
+            var rightmargin = 0
+            
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
+                topmargin = 5
+                bottommargin = 5
+                leftmargin = 5
+                rightmargin = 5
+            }
+            
+            let f = self.contentView.frame
+            let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+
+            if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
+                self.contentView.elevate(elevation: 2)
+            }
+
+            self.contentView.frame = fr
+        }
     }
     
     var registered: Bool = false
@@ -3061,7 +3072,7 @@ private extension UIView {
 }
 
 public extension UIImageView {
-    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize?  = nil) {
+    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize?  = nil, isBannerView: Bool) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
         self.backgroundColor = ColorUtil.theme.fontColor
 
@@ -3075,6 +3086,31 @@ public extension UIImageView {
             self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates], context: [.imageThumbnailPixelSize: frame], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
                 self.backgroundColor = oldBackgroundColor
+                
+                if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
+                    for view in self.superview?.subviews ?? [] {
+                        if view.tag == 2000 {
+                            view.removeFromSuperview()
+                        }
+                    }
+                    if self.image?.size.width ?? 0 >= self.frame.size.width && self.image?.size.height ?? 0 >= self.frame.size.height {
+                        let backView = UIImageView(image: self.image?.sd_blurredImage(withRadius: 15))
+                        backView.contentMode = .scaleAspectFill
+                        backView.tag = 2000
+                        self.superview?.addSubview(backView)
+                        backView.edgeAnchors == self.edgeAnchors
+                        self.backgroundColor = .clear
+                        if !SettingValues.flatMode {
+                            backView.layer.cornerRadius = 15
+                        }
+                        if #available(iOS 11.0, *) {
+                            backView.accessibilityIgnoresInvertColors = true
+                        }
+                        backView.clipsToBounds = true
+
+                        self.superview?.bringSubviewToFront(self)
+                    }
+                }
 
                 if cacheType == .none {
                     UIView.animate(withDuration: 0.3, delay: 0, options: .allowUserInteraction, animations: {
