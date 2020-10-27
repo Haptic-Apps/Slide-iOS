@@ -3000,7 +3000,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             
-            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
+            if recognizer.location(in: cell).x < cell.innerView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
                 recognizer.cancel()
                 return
             }
