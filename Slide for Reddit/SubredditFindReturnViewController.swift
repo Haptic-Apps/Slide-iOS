@@ -31,18 +31,22 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
         self.includeCollections = includeCollections
         self.includeSubscriptions = includeSubscriptions
         
+        var subs = [String]()
         if includeSubscriptions {
-            baseSubs.append(contentsOf: Subscriptions.subreddits)
+            subs.append(contentsOf: Subscriptions.subreddits)
             if !includeCollections {
-                baseSubs = baseSubs.filter({ (sub) -> Bool in
+                subs = subs.filter({ (sub) -> Bool in
                     let contained = sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") && !sub.contains("+")
                     return contained
                 })
             }
         }
         if includeCollections {
-            baseSubs.append(contentsOf: ["all", "friends", "frontpage", "popular", "random", "myrandom", "randnsfw"])
+            subs.append(contentsOf: ["all", "friends", "frontpage", "popular", "random", "myrandom"])
         }
+        
+        baseSubs.append(contentsOf: Subscriptions.pinned)
+        baseSubs.append(contentsOf: subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
     }
     
     override func viewWillAppear(_ animated: Bool) {

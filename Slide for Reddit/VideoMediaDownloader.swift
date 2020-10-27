@@ -52,7 +52,13 @@ class VideoMediaDownloader {
     
     func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
         Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
-            completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
+            if response.response?.statusCode == 200 {
+                completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
+            } else {
+                Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
+                    completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"))
+                }
+            }
         }
     }
     
@@ -138,7 +144,7 @@ class VideoMediaDownloader {
         let key = getKeyFromURL()
         var toLoadAudio = self.baseURL
         toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/") ?? toLoadAudio.length)
-        toLoadAudio += "/audio"
+        toLoadAudio += "/DASH_audio.mp4"
         let finalUrl = URL.init(fileURLWithPath: key)
         let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))

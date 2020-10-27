@@ -24,20 +24,21 @@ import WidgetKit
 #endif
 
 class SplitMainViewController: MainViewController {
-    
-    /*
-    Corresponds to USR_DOMAIN in info.plist, which derives its value
-    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
-    */
-    func USR_DOMAIN() -> String {
-       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
-    }
 
     static var isFirst = true
 
     override func handleToolbars() {
     }
     
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
+
+
     override func redoSubs() {
         setupTabBar(finalSubs)
     }
@@ -61,7 +62,21 @@ class SplitMainViewController: MainViewController {
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
         if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
-            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
+            account.sd_setImage(with: imageUrl, for: .normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil, progress: nil) { (image, _, _, _) in
+                if #available(iOS 14.0, *) {
+                    let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
+                    suite?.setValue(AccountController.currentName, forKey: "current_account")
+                    suite?.setValue(AccountController.current?.inboxCount ?? 0, forKey: "inbox")
+                    suite?.setValue((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0), forKey: "karma")
+                    suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
+                    if let data = image?.pngData() {
+                        suite?.setValue(data, forKey: "profile_icon")
+                    }
+                    suite?.synchronize()
+                    
+                    WidgetCenter.shared.reloadTimelines(ofKind: "Current_Account")
+                }
+            }
         } else {
             account.setImage(accountImage, for: UIControl.State.normal)
         }
@@ -176,7 +191,8 @@ class SplitMainViewController: MainViewController {
     }
 
     override func viewDidLoad() {
-        self.navToMux = self.parent?.navigationController?.navigationBar
+        SplitMainViewController.isFirst = true
+        
         self.color1 = ColorUtil.theme.foregroundColor
         self.color2 = ColorUtil.theme.foregroundColor
         
@@ -189,7 +205,12 @@ class SplitMainViewController: MainViewController {
         self.automaticallyAdjustsScrollViewInsets = false
         
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         if SettingValues.subredditBar {
@@ -228,8 +249,43 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
-    }
+
+        if let splitViewController = splitViewController, !UIApplication.shared.isSplitOrSlideOver {
+            (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
+        }
         
+        self.oldSize = self.view.frame.size
+        let landscape = oldSize.width > oldSize.height
+        let currentLandscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        if (landscape && !currentLandscape) || (!landscape && currentLandscape) {
+            if abs(UIScreen.main.bounds.width - oldSize.height) > 40 { //Size changed, but not orientation
+                if #available(iOS 14.0, *) {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
+                        resetForSplit(oldSize)
+                    }
+                } else {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                        resetForSplit(oldSize)
+                    }
+                }
+            }
+        } else if (landscape && currentLandscape) || (!landscape && !currentLandscape) {
+            if abs(UIScreen.main.bounds.width - oldSize.width) > 40 { //Size changed, but not orientation
+                if #available(iOS 14.0, *) {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
+                        resetForSplit(oldSize)
+                    }
+                } else {
+                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+                        resetForSplit(oldSize)
+                    }
+                }
+            }
+        }
+    }
+    
+    var oldSize = CGSize.zero
+
     @objc func onThemeChanged() {
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
@@ -243,12 +299,60 @@ class SplitMainViewController: MainViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         drawerButton.frame = CGRect(x: 8, y: size.height - 48, width: 40, height: 40)
         inHeadView.removeFromSuperview()
-        
+
         doButtons()
         super.viewWillTransition(to: size, with: coordinator)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             self.setupTabBar(self.finalSubs)
             self.getSubredditVC()?.showUI(false)
+        }
+        
+        if oldSize == CGSize.zero {
+            oldSize = size
+            return
+        }
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SPLIT {
+            let landscape = oldSize.width > oldSize.height
+            let currentLandscape = size.width > size.height
+            if (landscape && !currentLandscape) || (!landscape && currentLandscape) {
+                if abs(size.width - oldSize.height) > 40 { //Size changed, but not orientation
+                    resetForSplit(size)
+                }
+            } else if (landscape && currentLandscape) || (!landscape && !currentLandscape) {
+                if abs(size.width - oldSize.width) > 40 { //Size changed, but not orientation
+                    resetForSplit(size)
+                }
+            }
+        }
+    }
+    
+    func resetForSplit(_ size: CGSize) {
+        if UIDevice.current.userInterfaceIdiom == .phone { //Only run this on iPad
+            return
+        }
+        if oldSize.width == size.width || (size.height == oldSize.width && size.width == oldSize.height) {
+            return
+        }
+        oldSize = size
+        var keyWindow = UIApplication.shared.keyWindow
+        if keyWindow == nil {
+            if #available(iOS 13.0, *) {
+                keyWindow = UIApplication.shared.connectedScenes
+                    .filter({ $0.activationState == .foregroundActive })
+                    .map({ $0 as? UIWindowScene })
+                    .compactMap({$0})
+                    .first?.windows
+                    .filter({ $0.isKeyWindow }).first
+            }
+        }
+        guard keyWindow != nil else {
+            return
+        }
+        
+        if #available(iOS 14, *) {
+            //Don't do anything on iOS 14
+        } else {
+            (UIApplication.shared.delegate as? AppDelegate)?.resetSplit(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
         }
     }
 
@@ -258,6 +362,8 @@ class SplitMainViewController: MainViewController {
 
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
+            vc.setupSwipeGesture()
+        } else if SettingValues.submissionGestureMode == .HALF_FULL { //Always allow swipe back with paging disabled and not full
             vc.setupSwipeGesture()
         } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
@@ -296,6 +402,8 @@ class SplitMainViewController: MainViewController {
         self.navigationController?.navigationBar.layoutIfNeeded()
         
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: vc.sub)
+        
+        vc.doToolbar()
     }
 
     override func doRetheme() {
@@ -316,7 +424,7 @@ class SplitMainViewController: MainViewController {
     
     var isReappear = false
     override func viewWillAppearActions(override: Bool = false) {
-        self.edgesForExtendedLayout = UIRectEdge.all
+        self.edgesForExtendedLayout = .all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.presentsWithGesture = true
         //self.navigationController?.setNavigationBarHidden(true, animated: false)
@@ -352,6 +460,9 @@ class SplitMainViewController: MainViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        if navToMux == nil {
+            self.navToMux = self.navigationController?.navigationBar
+        }
         super.viewWillAppear(animated)
         self.viewWillAppearActions()
         self.handleToolbars()
@@ -370,7 +481,9 @@ class SplitMainViewController: MainViewController {
             self.navigationItem.rightBarButtonItems = []
             if SettingValues.subredditBar {
                 setupTabBar(finalSubs)
-                self.dataSource = self
+                if SettingValues.submissionGestureMode.shouldPage() {
+                    self.dataSource = self
+                }
             } else {
                 self.navigationItem.titleView = nil
                 self.dataSource = nil
@@ -379,6 +492,8 @@ class SplitMainViewController: MainViewController {
             doRetheme()
         }
         didUpdate()
+        
+        setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
     }
 
     override func hardReset(soft: Bool = false) {
@@ -399,18 +514,20 @@ class SplitMainViewController: MainViewController {
 
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            if #available(iOS 14, *) {
-                (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
-            } else {
-                (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
-            }
+            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
         if AccountController.isLoggedIn && !MainViewController.first {
             checkForMail()
+        }
+        
+        if #available(iOS 13, *) { } else {
+            (self.navigationController as? SwipeForwardNavigationController)?.pushCompletion?()
+            (self.navigationController as? SwipeForwardNavigationController)?.pushCompletion = nil
         }
     }
     
@@ -442,12 +559,7 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        let main: MainViewController!
-        if #available(iOS 14, *) {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStackNew(window: keyWindow)
-        } else {
-            main = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
-        }
+        let main: MainViewController = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         (UIApplication.shared.delegate as! AppDelegate).login = main
         AccountController.addAccount(context: main, register: register)
     }
@@ -465,8 +577,19 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
-                VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
+                if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
+                    if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
+                        self.navigationController?.popToRootViewController(animated: false)
+                    }
+                    VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                } else {
+                    VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
+                }
                 return
+            } else {
+                if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
+                    self.navigationController?.popToRootViewController(animated: false)
+                }
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
@@ -496,7 +619,15 @@ class SplitMainViewController: MainViewController {
                                     completion: nil)
             
         } else {
-            VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
+            if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
+                self.navigationController?.popToRootViewController(animated: false)
+            }
+
+            if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
+                VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            } else {
+                VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
+            }
         }
     }
     
@@ -510,11 +641,13 @@ class SplitMainViewController: MainViewController {
     @objc override func restartVC() {
         let saved = getSubredditVC()
         let savedPage = saved?.sub ?? ""
-        
-        self.doButtons()
-        
+                
         if SettingValues.subredditBar {
-            self.dataSource = self
+            if SettingValues.submissionGestureMode.shouldPage() {
+                self.dataSource = self
+            } else {
+                self.dataSource = nil
+            }
         } else {
             self.dataSource = nil
         }
@@ -535,16 +668,22 @@ class SplitMainViewController: MainViewController {
         finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.containsIgnoringCase($0) }))
 
         var subs = [UIMutableApplicationShortcutItem]()
-        for subname in finalSubs {
-            if subs.count < 2 && !subname.contains("/") {
-                subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
+        if !finalSubs.isEmpty {
+            for subname in finalSubs {
+                if subs.count < 2 && !subname.contains("/") {
+                    subs.append(UIMutableApplicationShortcutItem.init(type: "me.ccrama.redditslide.subreddit", localizedTitle: subname, localizedSubtitle: nil, icon: UIApplicationShortcutIcon.init(templateImageName: "subs"), userInfo: [ "sub": "\(subname)" as NSSecureCoding ]))
+                } else if subs.count > 2 {
+                    break
+                }
             }
         }
         
         if #available(iOS 14, *) {
-            let faveSubs = Array(finalSubs[0..<4])
             let suite = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-            suite?.setValue(faveSubs, forKey: "favorites")
+            
+            if !finalSubs.isEmpty {
+                suite?.setValue(finalSubs, forKey: "subscriptions")
+            }
             suite?.synchronize()
 
             DispatchQueue.global().async {
@@ -553,21 +692,27 @@ class SplitMainViewController: MainViewController {
                     if item.contains("m/") {
                         let image = SubredditCellView.defaultIconMulti
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.baseColor).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item.replacingOccurrences(of: "/", with: ""))")
                     } else if item == "all" {
                         let image = SubredditCellView.allIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if item == "frontpage" {
                         let image = SubredditCellView.frontpageIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if item == "popular" {
                         let image = SubredditCellView.popularIcon
                         let data = image?.withPadding(10)?.withBackground(color: ColorUtil.getColorForSub(sub: item)).pngData() ?? Data()
-                        suite?.setValue(data, forKey: "raw" + item)
+                        suite?.setValue(data, forKey: "raw\(item)")
                     } else if let icon = Subscriptions.icon(for: item) {
                         suite?.setValue(icon.unescapeHTML, forKey: item)
+                    }
+                    let color = ColorUtil.getColorForSub(sub: raw)
+                    if color == ColorUtil.baseColor {
+                        suite?.removeObject(forKey: "color\(item)")
+                    } else {
+                        suite?.setValue(color.hexString(), forKey: "color\(item.replacingOccurrences(of: "/", with: ""))")
                     }
                 }
                 
@@ -617,7 +762,11 @@ class SplitMainViewController: MainViewController {
         self.delegate = self
         if SettingValues.subredditBar {
             setupTabBar(finalSubs)
-            self.dataSource = self
+            if SettingValues.submissionGestureMode.shouldPage() {
+                self.dataSource = self
+            } else {
+                self.dataSource = nil
+            }
         } else {
             self.navigationItem.titleView = nil
             self.dataSource = nil
@@ -643,6 +792,8 @@ extension SplitMainViewController: NavigationHomeDelegate {
             navigation(homeViewController, didRequestSubreddit: "popular")
         case .RANDOM:
             random(homeViewController)
+        case .READ_LATER:
+            navigation(homeViewController, didRequestReadLater: ())
         case .SAVED:
             accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 4)
         case .UPVOTED:
@@ -662,120 +813,31 @@ extension SplitMainViewController: NavigationHomeDelegate {
             //TODO trending page
         }
     }
-    
-    func doOpen(_ state: OpenState, _ homeViewController: NavigationHomeViewController, toExecute: ( () -> Void)?, toPresent: UIViewController? = nil) {
-        switch state {
-        case .POPOVER_ANY:
-            if let present = toPresent {
-                homeViewController.present(present, animated: true)
-            } else {
-                toExecute?()
-            }
-        case .POPOVER_ANY_NAV:
-            if let present = toPresent {
-                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: nil, parentViewController: homeViewController)
-            } else {
-                toExecute?()
-            }
-        case .POPOVER_AFTER_NAVIGATION:
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
-                nav.pushNextViewControllerFromRight() {
-                    if let present = toPresent {
-                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-                    } else {
-                        toExecute?()
-                    }
-                }
-            } else {
-                var is14Column = false
-                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                    is14Column = true
-                }
 
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
-                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
-                    if let present = toPresent {
-                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-                    } else {
-                        toExecute?()
-                    }
-                } else {
-                    UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
-                                self.splitViewController?.preferredDisplayMode = .primaryHidden
-                            }, completion: { (_) in
-                            })
-                        }
-                    }, completion: { _ in
-                        if let present = toPresent {
-                            VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-                        } else {
-                            toExecute?()
-                        }
-                    })
-                }
-            }
-        case .POPOVER_SIMULTANEOUSLY:
-            if let present = toPresent {
-                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-            } else {
-                toExecute?()
-            }
+    /**
+     Navigate to the home VC and display the specified subreddit.
+     */
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit subredditName: String) {
+        let currentState: OpenState
 
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0 {
-                nav.pushNextViewControllerFromRight() {
-                }
-            } else {
-                var is14Column = false
-                if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                    is14Column = true
-                }
-
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
-                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
-                } else {
-                    UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
-                                self.splitViewController?.preferredDisplayMode = .primaryHidden
-                            }, completion: { (_) in
-                            })
-                        }
-                    }, completion: { _ in
-                    })
-                }
-            }
-        case .POPOVER_SIMULTANEOUSLY:
-            if let present = toPresent {
-                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
-            } else {
-                toExecute?()
-            }
-
-            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self {
-                nav.pushNextViewControllerFromRight() {
-                }
-            } else {
-                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target {
-                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
-                }
-            }
-        }
-        
-    }
-        
-    func navigation(_ homeViewController: NavigationHomeViewController, didRequestSubreddit: String) {
-        var currentState = OpenState.POPOVER_AFTER_NAVIGATION
-        if self.finalSubs.contains(didRequestSubreddit) {
+        // If subscriptions contains the subreddit, do a popover?
+        if self.finalSubs.contains(subredditName) {
             currentState = .POPOVER_SIMULTANEOUSLY
+        } else {
+            currentState = .POPOVER_AFTER_NAVIGATION
         }
         
         doOpen(currentState, homeViewController) {
-            self.goToSubreddit(subreddit: didRequestSubreddit)
+            self.goToSubreddit(subreddit: subredditName)
         }
     }
-    
+
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestReadLater: Void) {
+        let vc = ReadLaterViewController(subreddit: "all")
+        
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
+    }
+
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void) {
         let alert = DragDownAlertMenu(title: "Create a new Multireddit", subtitle: "Name your  Multireddit", icon: nil)
         
@@ -1005,6 +1067,96 @@ extension SplitMainViewController: NavigationHomeDelegate {
         self.doAddAccount(register: false)
     }
 
+    /**
+     Open the given ViewController using the given OpenState.
+     */
+    private func doOpen(_ state: OpenState, _ homeViewController: NavigationHomeViewController, toExecute: ( () -> Void)?, toPresent: UIViewController? = nil) {
+        switch state {
+        case .POPOVER_ANY:
+            if let present = toPresent {
+                homeViewController.present(present, animated: true)
+            } else {
+                toExecute?()
+            }
+        case .POPOVER_ANY_NAV:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: nil, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+        case .POPOVER_AFTER_NAVIGATION:
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
+                nav.pushNextViewControllerFromRight() {
+                    if let present = toPresent {
+                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                    } else {
+                        toExecute?()
+                    }
+                }
+            } else {
+                var is14Column = false
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                    if let present = toPresent {
+                        VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                    } else {
+                        toExecute?()
+                    }
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
+                        }
+                    }, completion: { _ in
+                        if let present = toPresent {
+                            VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+                        } else {
+                            toExecute?()
+                        }
+                    })
+                }
+            }
+        case .POPOVER_SIMULTANEOUSLY:
+            if let present = toPresent {
+                VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
+            } else {
+                toExecute?()
+            }
+
+            if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.pushableViewControllers.count > 0, nav.pushableViewControllers.last is SplitMainViewController {
+                nav.pushNextViewControllerFromRight() {
+                }
+            } else {
+                var is14Column = false
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
+                    is14Column = true
+                }
+
+                if let barButtonItem = self.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
+                    UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
+                } else {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                            UIView.animate(withDuration: 0.5, animations: { () -> Void in
+                                self.splitViewController?.preferredDisplayMode = .primaryHidden
+                            }, completion: { (_) in
+                            })
+                        }
+                    }, completion: { _ in
+                    })
+                }
+            }
+        }
+
+    }
+
     func displayMenu(_ homeViewController: NavigationHomeViewController, _ menu: DragDownAlertMenu) {
         homeViewController.present(menu, animated: true, completion: nil)
     }
@@ -1016,13 +1168,13 @@ extension SplitMainViewController: NavigationHomeDelegate {
         doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
     
-    override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
-        if let secondaryAsNav = secondaryViewController as? UINavigationController, let current = self.navigationController {
-            current.viewControllers += secondaryAsNav.viewControllers
-        } else {
-            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
-        }
-    }
+//    override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
+//        if let secondaryAsNav = secondaryViewController as? UINavigationController, let current = self.navigationController {
+//            current.viewControllers += secondaryAsNav.viewControllers
+//        } else {
+//            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
+//        }
+//    }
 
 }
 
@@ -1035,40 +1187,5 @@ extension MainViewController: PagingTitleDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.doToolbarOffset()
         }
-    }
-}
-
-extension UIImage {
-  func withBackground(color: UIColor, opaque: Bool = true) -> UIImage {
-    UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-        
-    guard let ctx = UIGraphicsGetCurrentContext(), let image = cgImage else { return self }
-    defer { UIGraphicsEndImageContext() }
-        
-    let rect = CGRect(origin: .zero, size: size)
-    ctx.setFillColor(color.cgColor)
-    ctx.fill(rect)
-    ctx.concatenate(CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height))
-    ctx.draw(image, in: rect)
-        
-    return UIGraphicsGetImageFromCurrentImageContext() ?? self
-  }
-}
-extension UIImage {
-    func withPadding(_ padding: CGFloat) -> UIImage? {
-        return withPadding(x: padding, y: padding)
-    }
-
-    func withPadding(x: CGFloat, y: CGFloat) -> UIImage? {
-        let newWidth = size.width + 2 * x
-        let newHeight = size.height + 2 * y
-        let newSize = CGSize(width: newWidth, height: newHeight)
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
-        let origin = CGPoint(x: (newWidth - size.width) / 2, y: (newHeight - size.height) / 2)
-        draw(at: origin)
-        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return imageWithPadding
     }
 }

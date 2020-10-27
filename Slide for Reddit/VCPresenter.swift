@@ -261,8 +261,25 @@ public class VCPresenter {
                 activity.becomeCurrent()
             }
         }
-        showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
-
+        if let presented = recursivePresented(parentVC) {
+            showVC(viewController: vc, popupIfPossible: true, parentNavigationController: presented.navigationController, parentViewController: presented)
+        } else {
+            showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
+        }
+    }
+    
+    static func recursivePresented(_ viewController: UIViewController?) -> UIViewController? {
+        var currentParent = viewController
+        
+        while currentParent != nil {
+            if currentParent?.presentedViewController != nil {
+                currentParent = currentParent?.presentedViewController
+            } else {
+                return currentParent
+            }
+        }
+        
+        return currentParent
     }
 }
 

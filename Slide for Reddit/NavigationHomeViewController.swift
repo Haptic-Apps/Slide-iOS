@@ -31,6 +31,14 @@ class NavigationHomeViewController: UIViewController {
     static var edgeGesture: UIPanGestureRecognizer?
 
     var subsSource = SubscribedSubredditsSectionProvider()
+    
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    
+    override var childForHomeIndicatorAutoHidden: UIViewController? {
+        return nil
+    }
 
     var headerView = UIView()
     
@@ -39,6 +47,7 @@ class NavigationHomeViewController: UIViewController {
     var isSearching = false
 
     var task: DataRequest?
+    var task2: URLSessionDataTask?
 
     var accessibilityCloseButton = UIButton().then {
         $0.accessibilityIdentifier = "Close button"
@@ -134,6 +143,7 @@ class NavigationHomeViewController: UIViewController {
     }
 
     func doViews() {
+        tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
         tableView.separatorColor = ColorUtil.theme.foregroundColor
         
@@ -200,7 +210,13 @@ class NavigationHomeViewController: UIViewController {
                                                name: UIResponder.keyboardWillHideNotification, object: nil)
 
         inHeadView.removeFromSuperview()
-        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20)))
+        
+        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
+        if statusBarHeight == 0 {
+            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
+        }
+
+        inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
         
         self.view.addSubview(inHeadView)
@@ -271,10 +287,18 @@ class NavigationHomeViewController: UIViewController {
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
-
+        
         view.addSubview(tableView)
 
         setColors(MainViewController.current)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return section == numberOfSections(in: tableView) - 1 ? UIView() : nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return section == numberOfSections(in: tableView) - 1 ? 300 : 0
     }
 
     func configureLayout() {
@@ -612,8 +636,15 @@ extension NavigationHomeViewController: UISearchBarDelegate {
         if task != nil {
             task?.cancel()
         }
+        if task2 != nil {
+            task?.cancel()
+        }
+        let searchTerm = searchBar.text?.addPercentEncoding ?? ""
+        if searchTerm == "" {
+            return
+        }
         do {
-            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchBar.text?.addPercentEncoding ?? "")&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
+            let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchTerm)&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
             print("Requesting \(requestString)")
             task = Alamofire.request(requestString, method: .get).responseString { response in
                 do {
@@ -628,12 +659,17 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                                     Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
                                     Subscriptions.subColors[subName.lowercased()] = keyColor
                                 }
+                                if self.suggestions.contains(subName) {
+                                    continue
+                                }
+
                                 self.suggestions.append(subName)
                             } else if sub["kind"].string == "t2", let userName = sub["data"]["name"].string {
                                 self.users.append(userName)
                             }
                         }
                         DispatchQueue.main.async {
+                            self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                             self.tableView.reloadData()
                         }
                     }
@@ -641,6 +677,31 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                 }
             }
         }
+        do {
+            task2 = try? (UIApplication.shared.delegate as? AppDelegate)?.session?.getSubredditSearch(searchTerm, paginator: Paginator(), completion: { (result) in
+                switch result {
+                case .success(let subs):
+                    for sub in subs.children {
+                        let s = sub as! Subreddit
+                        // Ignore nsfw subreddits if nsfw is disabled
+                        if s.over18 && !SettingValues.nsfwEnabled {
+                            continue
+                        }
+                        if self.suggestions.contains(s.displayName) {
+                            continue
+                        }
+                        self.suggestions.append(s.displayName)
+                    }
+                    DispatchQueue.main.async {
+                        self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
+                        self.tableView.reloadData()
+                    }
+                case .failure(let error):
+                    print(error)
+                }
+            })
+        }
+
     }
 
     func searchTableList() {
@@ -786,6 +847,7 @@ protocol NavigationHomeDelegate: AnyObject {
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSearch: String)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestAction: SettingValues.NavigationHeaderActions)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestInbox: Void)
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestReadLater: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestNewMulti: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void)
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSwitchAccountMenu: Void)
@@ -979,7 +1041,6 @@ extension CurrentAccountHeaderView {
     }
     
     func setupConstraints() {
-                        
         upperButtonStack.heightAnchor == 44
         
         contentView.horizontalAnchors == self.horizontalAnchors + 4
@@ -996,8 +1057,18 @@ extension CurrentAccountHeaderView {
         accountAgeLabel.leftAnchor == accountNameLabel.leftAnchor
         accountAgeLabel.topAnchor == accountNameLabel.bottomAnchor
         
-        shortcutsView.topAnchor == accountImageView.bottomAnchor + 8
-        shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+        if AccountController.isLoggedIn {
+            shortcutsView.topAnchor == accountImageView.bottomAnchor + 8
+            shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.horizontalAnchors == shortcutsView.horizontalAnchors
+            emptyStateLabel.topAnchor == self.shortcutsView.topAnchor
+        } else {
+            emptyStateLabel.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.topAnchor == accountImageView.bottomAnchor + 8
+            emptyStateLabel.heightAnchor == 75
+            shortcutsView.topAnchor == emptyStateLabel.bottomAnchor + 4
+            shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+        }
         
         spinner.centerAnchors == shortcutsView.centerAnchors
         
@@ -1006,8 +1077,6 @@ extension CurrentAccountHeaderView {
         
         modBadge.centerYAnchor == modButton.centerYAnchor - 10
         modBadge.centerXAnchor == modButton.centerXAnchor + 16
-
-        emptyStateLabel.edgeAnchors == shortcutsView.edgeAnchors
     }
     
     func setupActions() {
@@ -1053,7 +1122,7 @@ extension CurrentAccountHeaderView {
             )
         }()
         
-        accountNameLabel.addTapGestureRecognizer {
+        contentView.addTapGestureRecognizer {
             [weak self] in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf.parent!, didRequestProfilePageAtIndex: 0)
@@ -1111,10 +1180,7 @@ extension CurrentAccountHeaderView {
             
             self.accountNameLabel.alpha = isOn ? 0 : 1
             self.accountAgeLabel.alpha = isOn ? 0 : 1
-            
-            self.shortcutsView.alpha = isOn ? 0 : 1
-            self.shortcutsView.isUserInteractionEnabled = !isOn
-            
+                        
             self.emptyStateLabel.alpha = isOn ? 1 : 0
             self.emptyStateLabel.isUserInteractionEnabled = isOn
         }
@@ -1164,6 +1230,10 @@ extension CurrentAccountHeaderView {
             if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
                 is14Column = true
             }
+            if #available(iOS 14, *), self.parent?.splitViewController?.style == .doubleColumn {
+                is14Column = true
+            }
+            
             if let barButtonItem = self.parent?.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                 UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
             } else {
@@ -1257,8 +1327,8 @@ class AccountShortcutsView: UIView {
         
         addSubviews(cellStack)
         //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        if AccountController.isLoggedIn {
-            for action in actions {
+        for action in actions {
+            if !action.needsAccount() || AccountController.isLoggedIn {
                 cellStack.addArrangedSubview(UITableViewCell().then {
                     $0.configure(text: action.getTitle(), image: action.getImage())
                     $0.addTapGestureRecognizer {
@@ -1272,24 +1342,26 @@ class AccountShortcutsView: UIView {
                     $0.accessoryType = .disclosureIndicator
                 })
             }
-            
-            cellStack.addArrangedSubview(UITableViewCell().then {
-                $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
-                $0.addTapGestureRecognizer {
-                    let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
-                    for action in SettingValues.NavigationHeaderActions.cases {
+        }
+        
+        cellStack.addArrangedSubview(UITableViewCell().then {
+            $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
+            $0.addTapGestureRecognizer {
+                let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
+                for action in SettingValues.NavigationHeaderActions.cases {
+                    if !action.needsAccount() || AccountController.isLoggedIn {
                         optionMenu.addAction(title: action.getTitle(), icon: action.getImage()) {
                             if let delegate = self.delegate, let parent = self.parent {
                                 delegate.navigation(parent, didRequestAction: action)
                             }
                         }
                     }
-                    self.delegate?.displayMenu(self.parent!, optionMenu)
                 }
-                $0.heightAnchor >= 50
-                $0.accessoryType = .disclosureIndicator
-            })
-        }
+                self.delegate?.displayMenu(self.parent!, optionMenu)
+            }
+            $0.heightAnchor >= 50
+            $0.accessoryType = .disclosureIndicator
+        })
 
         self.clipsToBounds = true
         
@@ -1302,7 +1374,7 @@ class AccountShortcutsView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return (!AccountController.isLoggedIn ? 75 : CGFloat((actions.count + 1) * 50)) + 10 + CGFloat((actions.count + 1) * 2)
+        return ((!AccountController.isLoggedIn ? 75 + 4 : 0) + CGFloat((actions.count + 1) * 50) + 10 + CGFloat((actions.count + 1) * 2))
     }
         
     required init?(coder aDecoder: NSCoder) {

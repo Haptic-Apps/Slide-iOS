@@ -26,6 +26,7 @@ protocol SubmissionDataSouceDelegate: class {
 class SubmissionsDataSource {
     func reset() {
         content = []
+        contentIDs = []
     }
     
     var subreddit: String
@@ -36,12 +37,16 @@ class SubmissionsDataSource {
     var isReset = false
     var realmListing: RListing?
     var updated = NSDate()
+    var contentIDs = [String]()
+    
+    weak var currentSession: URLSessionDataTask?
 
     init(subreddit: String, sorting: LinkSortType, time: TimeFilterWithin) {
         self.subreddit = subreddit
         color = ColorUtil.getColorForSub(sub: subreddit)
         paginator = Paginator()
         content = []
+        contentIDs = []
         self.sorting = sorting
         self.time = time
     }
@@ -86,6 +91,7 @@ class SubmissionsDataSource {
 
     func removeData() {
         self.content = []
+        self.contentIDs = []
     }
     func hideReadPostsPermanently(callback: @escaping (_ indexPaths: [IndexPath]) -> Void) {
         var indexPaths: [IndexPath] = []
@@ -134,7 +140,8 @@ class SubmissionsDataSource {
         }
     }
 
-    func getData(reload: Bool) {
+    func getData(reload: Bool, force: Bool = false) {
+        
         self.isReset = reload
         if let delegate = delegate {
             delegate.preLoadItems()
@@ -150,12 +157,15 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading {
+        if !loading || force {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()
                 }
             }
+            
+            currentSession?.cancel()
+            currentSession = nil
 
             do {
                 loading = true
@@ -176,7 +186,7 @@ class SubmissionsDataSource {
                     subItem = Multireddit.init(name: subreddit.split("/")[3], user: subreddit.split("/")[1])
                 }
                 
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: subItem, sort: sorting, timeFilterWithin: time, limit: SettingValues.submissionLimit, completion: { (result) in
+                try currentSession = (UIApplication.shared.delegate as? AppDelegate)?.session?.getList(paginator, subreddit: subItem, sort: sorting, timeFilterWithin: time, limit: SettingValues.submissionLimit, completion: { (result) in
                     self.loaded = true
                     self.isReset = false
                     switch result {
@@ -191,6 +201,7 @@ class SubmissionsDataSource {
                                     return item.subreddit == self.subreddit
                                 }).first {
                                     self.content = []
+                                    self.contentIDs = []
                                     for i in listing.links {
                                         self.content.append(i)
                                     }
@@ -214,34 +225,30 @@ class SubmissionsDataSource {
 
                         }
                     case .success(let listing):
+                        self.loading = false
                         self.tries = 0
                         if self.isReset {
                             self.content = []
+                            self.contentIDs = []
                             self.page = 0
                             self.numberFiltered = 0
                         }
                         
                         self.offline = false
                         let before = self.content.count
-                        if self.realmListing == nil {
-                            self.realmListing = RListing()
-                            self.realmListing!.subreddit = self.subreddit
-                            self.realmListing!.updated = NSDate()
-                        }
-                        if self.isReset && self.realmListing!.links.count > 0 {
-                            self.realmListing!.links.removeAll()
-                        }
 
                         let newLinks = listing.children.compactMap({ $0 as? Link })
                         var converted: [RSubmission] = []
+                        var ids = [String]()
                         for link in newLinks {
+                            ids.append(link.getId())
                             let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
                         
                         self.delegate?.doPreloadImages(values: converted)
-                        var values = PostFilter.filter(converted, previous: self.content, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
+                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
                             let pageItem = RSubmission()
@@ -253,44 +260,25 @@ class SubmissionsDataSource {
                         self.page += 1
                         
                         self.content += values
+                        self.contentIDs += ids
+                        
                         self.paginator = listing.paginator
-                        self.nomore = !listing.paginator.hasMore() || values.isEmpty
-                        do {
-                            let realm = try Realm()
-                           // TODO: - insert
-                            realm.beginWrite()
-                            for submission in self.content {
-                                if submission.author != "PAGE_SEPARATOR" {
-                                    realm.create(type(of: submission), value: submission, update: .all)
-                                    if let listing = self.realmListing {
-                                        listing.links.append(submission)
-                                    }
-                                }
-                            }
-                            
-                            try realm.create(type(of: self.realmListing!), value: self.realmListing!, update: .all)
-                            try realm.commitWrite()
-                        } catch {
-
-                        }
-                            
+                        self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
 
                             if self.content.isEmpty && !SettingValues.hideSeen {
-                                self.loading = false
                                 self.delegate?.emptyState(listing)
                             } else if self.content.isEmpty && newLinks.count != 0 && self.paginator.hasMore() {
-                                self.loading = false
                                 self.loadMore()
                             } else {
-                                self.loading = false
                                 self.delegate?.loadSuccess(before: before, count: self.content.count)
                             }
                         }
                     }
                 })
             } catch {
+                loading = false
                 print(error)
             }
         }

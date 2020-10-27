@@ -140,6 +140,8 @@ class SettingValues {
     public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
     public static let pref_disablePopupIpad = "DISABLE_POPUP_IPAD"
     public static let pref_disableMulticolumnCollections = "DISABLE_MULTICOLUMN_COLLECTIONS"
+    public static let pref_disableSubredditPopupIpad = "DISABLE_SUB_POPUP_IPAD"
+    public static let pref_portraitMultiColumnCount = "MULTICOLUMN_COUNT_PORTRAIT"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -162,7 +164,7 @@ class SettingValues {
     public static var submissionActionDoubleTap = SubmissionAction.NONE
     public static var submissionActionLeft = SubmissionAction.UPVOTE
     public static var submissionActionRight = SubmissionAction.SAVE
-    public static var commentGesturesMode = CommentGesturesMode.NONE
+    public static var commentGesturesMode = CellGestureMode.NONE
     public static var submissionActionForceTouch = SubmissionAction.NONE
 
     public static var sideGesture = SideGesturesMode.NONE
@@ -191,6 +193,7 @@ class SettingValues {
     public static var commentCountLastVisit = true
     public static var rightThumbnail = true
     public static var multiColumnCount = 2
+    public static var portraitMultiColumnCount = 1
     public static var galleryCount = 2
     public static var nameScrubbing = true
     public static var muteYouTube = true
@@ -200,7 +203,7 @@ class SettingValues {
     public static var wideIndicators = false
     public static var blackShadowbox = false
     public static var hideAutomod = false
-    public static var submissionGestureMode = CommentGesturesMode.NONE
+    public static var submissionGestureMode = CellGestureMode.NONE
     public static var infoBelowTitle = false
     public static var subredditIcons = false
    // public static var matchSilence = true
@@ -276,6 +279,7 @@ class SettingValues {
     public static var fullWidthHeaderCells = false
     public static var disablePopupIpad = false
     public static var disableMulticolumnCollections = false
+    public static var disableSubredditPopupIpad = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -332,22 +336,32 @@ class SettingValues {
         }
     }
 
-    enum CommentGesturesMode: String {
-        static let cases: [CommentGesturesMode] = [.HALF, .NONE, .FULL]
+    enum CellGestureMode: String {
+        static let cases: [CellGestureMode] = [.HALF, .HALF_FULL, .FULL, .NONE]
         
         case HALF = "half"
+        case HALF_FULL = "half_full"
         case NONE = "none"
         case FULL = "full"
 
         func description() -> String {
             switch self {
             case .HALF:
-                return "Right-side Gestures"
+                return "Right-side Gestures with paging"
+            case .HALF_FULL:
+                return "Right-side Gestures without paging (full width)"
             case .NONE:
                 return "No Gestures"
             case .FULL:
-                return "Full gestures"
+                return "Full gestures without paging (full width)"
             }
+        }
+        
+        func shouldPage() -> Bool {
+            if self == .HALF_FULL || self == .FULL {
+                return false
+            }
+            return true
         }
     }
 
@@ -472,6 +486,7 @@ class SettingValues {
         
         let columns = 2 // TODO - Maybe calculate per device?
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
+        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
         SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
@@ -555,6 +570,7 @@ class SettingValues {
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
         SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)
+        SettingValues.disableSubredditPopupIpad = settings.bool(forKey: SettingValues.pref_disableSubredditPopupIpad)
         SettingValues.disableMulticolumnCollections = settings.bool(forKey: SettingValues.pref_disableMulticolumnCollections)
 
         SettingValues.muteYouTube = settings.object(forKey: SettingValues.pref_muteYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_muteYouTube)
@@ -629,8 +645,8 @@ class SettingValues {
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
-        SettingValues.commentGesturesMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
-        SettingValues.submissionGestureMode = CommentGesturesMode.init(rawValue: settings.string(forKey: SettingValues.pref_submissionGesturesMode) ?? "none") ?? .NONE
+        SettingValues.commentGesturesMode = CellGestureMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
+        SettingValues.submissionGestureMode = CellGestureMode.init(rawValue: settings.string(forKey: SettingValues.pref_submissionGesturesMode) ?? "none") ?? .NONE
         SettingValues.commentActionRightLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightLeft) ?? "downvote") ?? .DOWNVOTE
         SettingValues.commentActionRightRight = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionRightRight) ?? "upvote") ?? .UPVOTE
         SettingValues.commentActionLeftLeft = CommentAction.init(rawValue: settings.string(forKey: SettingValues.pref_commentActionLeftLeft) ?? "collapse") ?? .COLLAPSE
@@ -655,7 +671,7 @@ class SettingValues {
 
     public static func doneVersion() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: Bundle.main.releaseVersionNumber!) != nil
+        return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil || settings.object(forKey: Bundle.main.releaseVersionNumber ?? "0") != nil
     }
 
     public static func firstEnter() -> Bool {
@@ -1044,7 +1060,7 @@ class SettingValues {
     }
 
     public enum NavigationHeaderActions: String {
-        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .SAVED, .UPVOTED, .HISTORY, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
+        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .READ_LATER, .SAVED, .UPVOTED, .HISTORY, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
 
         case HOME = "home"
         case POPULAR = "popular"
@@ -1057,14 +1073,27 @@ class SettingValues {
         case COLLECTIONS = "collections"
         case CREATE_MULTI = "create_multi"
         case TRENDING = "trending"
-        
+        case READ_LATER = "readlater"
+
         public static func getMenuNone() -> [NavigationHeaderActions] {
-            let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "saved", "collections", "create_multi"]
+            let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "readlater", "saved", "collections"]
             var toReturn = [NavigationHeaderActions]()
             for item in menu {
-                toReturn.append(NavigationHeaderActions(rawValue: item)!)
+                let action = NavigationHeaderActions(rawValue: item) ?? .HOME
+                if !action.needsAccount() || AccountController.isLoggedIn {
+                    toReturn.append(action)
+                }
             }
             return toReturn
+        }
+        
+        public func needsAccount() -> Bool {
+            switch self {
+            case .HOME, .POPULAR, .READ_LATER, .RANDOM, .AUTO_CACHE, .COLLECTIONS, .TRENDING:
+                return false
+            default:
+                return true
+            }
         }
 
         public func getTitle() -> String {
@@ -1073,6 +1102,8 @@ class SettingValues {
                 return "Home"
             case .POPULAR:
                 return "Popular"
+            case .READ_LATER:
+                return "Read later"
             case .RANDOM:
                 return "Random"
             case .SAVED:
@@ -1103,6 +1134,8 @@ class SettingValues {
                 return UIImage(sfString: SFSymbol.flameFill, overrideString: "upvote")!.menuIcon()
             case .RANDOM:
                 return UIImage(sfString: SFSymbol.shuffle, overrideString: "sync")!.menuIcon()
+            case .READ_LATER:
+                return UIImage(sfString: SFSymbol.bookFill, overrideString: "bookmark")!.menuIcon()
             case .SAVED:
                 return UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
             case .UPVOTED:
@@ -1226,7 +1259,7 @@ class SettingValues {
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
-                return "Multiple column display of submissions \(UIDevice.current.userInterfaceIdiom == .phone ? " (landscape orientation)" : "")"
+                return "Multiple column display of submissions"
             }
         }
     }
