@@ -26,8 +26,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var isScrollingDown = true
     var emptyStateView = EmptyStateView()
     var numberFiltered = 0
-    var setOffset = CGFloat.zero
-
+    
     var lastScrollDirectionWasDown = false
     var fullWidthBackGestureRecognizer: UIGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
@@ -240,13 +239,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         // Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
-<<<<<<< HEAD
         NotificationCenter.default.addObserver(self, selector: #selector(fallbackOnlineChanged(_:)), name: .fallbackOnline, object: nil)
         
         dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
         dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
-=======
->>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
     }
     
     func reTheme() {
@@ -263,7 +259,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewWillAppear(animated)
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
-
+        
         if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
             inHeadView = UIView().then {
                 $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
@@ -303,6 +299,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         loop?.stop()
 
         first = false
+        tableView.delegate = self
 
         if single && !(parent is SplitMainViewController) {
             setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
@@ -344,8 +341,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
-        refreshControl.setValue(100, forKey: "_snappingHeight")
-
+        
         if dataSource.loaded && dataSource.content.count > oldCount {
             self.tableView.reloadData()
             oldCount = dataSource.content.count
@@ -377,7 +373,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
     }
-
+    
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
 
@@ -521,7 +517,20 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
 
+    var canRefresh = true
+    var setOffset = CGFloat.zero
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y < setOffset - 75 - self.headerHeight() && dataSource.loaded && !dataSource.loading {
+            if canRefresh && !self.refreshControl.isRefreshing {
+                self.canRefresh = false
+                self.refreshControl.beginRefreshing()
+                self.drefresh(self.refreshControl)
+                HapticUtility.hapticActionStrong()
+            }
+        } else if scrollView.contentOffset.y >= setOffset {
+            self.canRefresh = true
+        }
 
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
@@ -600,11 +609,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
-<<<<<<< HEAD
         if (single || parent is SplitMainViewController) && Constants.shared.isNetworkOnline {
-=======
-        if single && NetworkMonitor.shared.online {
->>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
             /*UIView.animate(withDuration: 0.25) {
@@ -923,10 +928,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         refreshControl.tintColor = ColorUtil.theme.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-
         tableView.addSubview(refreshControl) // not required when using UITableViewController
         tableView.alwaysBounceVertical = true
-
+        
         self.automaticallyAdjustsScrollViewInsets = false
 
         // TODO: - Can just use .self instead of .classForCoder()
@@ -956,43 +960,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             dataSource.getData(reload: true)
             SingleSubredditViewController.firstPresented = false
         }
-<<<<<<< HEAD
                 
         if single && Constants.shared.isNetworkOnline {
             doToolbar()
-            
-=======
-        
-        dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
-        dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
-        
-
-        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
-            doSortImage(mainVC.sortButton)
-        }
-        
-        more = UIButton.init(type: .custom)
-        more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
-        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let moreB = UIBarButtonItem.init(customView: more)
-        
-        searchbutton = UIButton.init(type: .custom)
-        searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
-        searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
-        searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let searchB = UIBarButtonItem.init(customView: searchbutton)
-
-        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        
-        if parent is SplitMainViewController {
-            parent!.toolbarItems = [searchB, flexButton, moreB]
-        } else {
-            toolbarItems = [searchB, flexButton, moreB]
-        }
-
-        if single && NetworkMonitor.shared.online {
->>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1118,11 +1088,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-<<<<<<< HEAD
         } else if !Constants.shared.isNetworkOnline && single && !self.dataSource.loading && !self.dataSource.loaded {
-=======
-        } else if !NetworkMonitor.shared.online && single && !dataSource.loaded {
->>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
             title = sub
             //hideMenuNav()
             dataSource.getData(reload: true)
@@ -1587,11 +1553,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
-        var itemWidth = width
-        
-        if itemWidth < 10 { //Not a valid width
-            itemWidth = UIScreen.main.bounds.width
-        }
+        let itemWidth = width
         var thumb = submission.thumbnail
         var big = submission.banner
         
@@ -1783,7 +1745,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title side padding
             }
         }
-                
+
         let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
         let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))!
         let textSize = layout.textBoundingSize
@@ -2606,7 +2568,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad || UIDevice.current.userInterfaceIdiom != .pad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 

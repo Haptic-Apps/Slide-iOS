@@ -11,16 +11,18 @@
 	<key>INIntentDefinitionSystemVersion</key>
 	<string>19G46c</string>
 	<key>INIntentDefinitionToolsBuildVersion</key>
-	<string>12A7300</string>
+	<string>12A7208</string>
 	<key>INIntentDefinitionToolsVersion</key>
-	<string>12.0.1</string>
+	<string>12.0</string>
 	<key>INIntents</key>
 	<array>
 		<dict>
 			<key>INIntentCategory</key>
 			<string>information</string>
+			<key>INIntentConfigurable</key>
+			<true/>
 			<key>INIntentDescription</key>
-			<string>Set this widget's subreddit set</string>
+			<string>Set this widget's subreddit</string>
 			<key>INIntentDescriptionID</key>
 			<string>Fpz2v1</string>
 			<key>INIntentEligibleForWidgets</key>
@@ -28,7 +30,17 @@
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>9</integer>
+			<integer>7</integer>
+			<key>INIntentManagedParameterCombinations</key>
+			<dict>
+				<key>sub1,sub2,sub3,sub4</key>
+				<dict>
+					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
+					<true/>
+					<key>INIntentParameterCombinationUpdatesLinked</key>
+					<true/>
+				</dict>
+			</dict>
 			<key>INIntentName</key>
 			<string>TimelineSubreddit</string>
 			<key>INIntentParameters</key>
@@ -37,26 +49,29 @@
 					<key>INIntentParameterConfigurable</key>
 					<true/>
 					<key>INIntentParameterDisplayName</key>
-					<string>Subreddit Set</string>
+					<string>Subreddit 1</string>
 					<key>INIntentParameterDisplayNameID</key>
-					<string>cq6K4U</string>
+					<string>ypu1uw</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>1</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>None</string>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<string>all</string>
+						<key>INIntentParameterMetadataDefaultValueID</key>
+						<string>9L9YgK</string>
+						<key>INIntentParameterMetadataDisableAutocorrect</key>
+						<true/>
+					</dict>
 					<key>INIntentParameterName</key>
-					<string>widgetconfig</string>
-					<key>INIntentParameterObjectType</key>
-					<string>TimelineSubredditINO</string>
-					<key>INIntentParameterObjectTypeNamespace</key>
-					<string>eiy3jD</string>
+					<string>sub1</string>
 					<key>INIntentParameterPromptDialogs</key>
 					<array>
 						<dict>
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
-							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>You can add new subreddit sets from Slide's Widget Settings page!</string>
-							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>NxkNCW</string>
 							<key>INIntentParameterPromptDialogType</key>
 							<string>Configuration</string>
 						</dict>
@@ -66,33 +81,137 @@
 							<key>INIntentParameterPromptDialogType</key>
 							<string>Primary</string>
 						</dict>
+					</array>
+					<key>INIntentParameterTag</key>
+					<integer>1</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Subreddit 2</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>UVbRug</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>2</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>None</string>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<string>frontpage</string>
+						<key>INIntentParameterMetadataDefaultValueID</key>
+						<string>9L9YgK</string>
+						<key>INIntentParameterMetadataDisableAutocorrect</key>
+						<true/>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>sub2</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
 						<dict>
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
-							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>There are ${count} options matching ‘${widgetconfig}’.</string>
-							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>tR8Krp</string>
 							<key>INIntentParameterPromptDialogType</key>
-							<string>DisambiguationIntroduction</string>
+							<string>Configuration</string>
 						</dict>
 						<dict>
 							<key>INIntentParameterPromptDialogCustom</key>
 							<true/>
-							<key>INIntentParameterPromptDialogFormatString</key>
-							<string>Just to confirm, you wanted ‘${widgetconfig}’?</string>
-							<key>INIntentParameterPromptDialogFormatStringID</key>
-							<string>IMJ0In</string>
 							<key>INIntentParameterPromptDialogType</key>
-							<string>Confirmation</string>
+							<string>Primary</string>
 						</dict>
 					</array>
-					<key>INIntentParameterSupportsDynamicEnumeration</key>
-					<true/>
 					<key>INIntentParameterTag</key>
-					<integer>9</integer>
+					<integer>3</integer>
 					<key>INIntentParameterType</key>
-					<string>Object</string>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Subreddit 3</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>N9523d</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>3</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>None</string>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<string>popular</string>
+						<key>INIntentParameterMetadataDefaultValueID</key>
+						<string>9L9YgK</string>
+						<key>INIntentParameterMetadataDisableAutocorrect</key>
+						<true/>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>sub3</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterTag</key>
+					<integer>4</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
+				</dict>
+				<dict>
+					<key>INIntentParameterConfigurable</key>
+					<true/>
+					<key>INIntentParameterDisplayName</key>
+					<string>Subreddit 4</string>
+					<key>INIntentParameterDisplayNameID</key>
+					<string>j2Sxxk</string>
+					<key>INIntentParameterDisplayPriority</key>
+					<integer>4</integer>
+					<key>INIntentParameterMetadata</key>
+					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>None</string>
+						<key>INIntentParameterMetadataDefaultValue</key>
+						<string>slide_ios</string>
+						<key>INIntentParameterMetadataDefaultValueID</key>
+						<string>9L9YgK</string>
+						<key>INIntentParameterMetadataDisableAutocorrect</key>
+						<true/>
+					</dict>
+					<key>INIntentParameterName</key>
+					<string>sub4</string>
+					<key>INIntentParameterPromptDialogs</key>
+					<array>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Configuration</string>
+						</dict>
+						<dict>
+							<key>INIntentParameterPromptDialogCustom</key>
+							<true/>
+							<key>INIntentParameterPromptDialogType</key>
+							<string>Primary</string>
+						</dict>
+					</array>
+					<key>INIntentParameterTag</key>
+					<integer>5</integer>
+					<key>INIntentParameterType</key>
+					<string>String</string>
 				</dict>
 			</array>
 			<key>INIntentResponse</key>
@@ -134,10 +253,10 @@
 			<key>INIntentIneligibleForSuggestions</key>
 			<true/>
 			<key>INIntentLastParameterTag</key>
-			<integer>10</integer>
+			<integer>7</integer>
 			<key>INIntentManagedParameterCombinations</key>
 			<dict>
-				<key>subreddit,colorful</key>
+				<key>subreddit</key>
 				<dict>
 					<key>INIntentParameterCombinationSupportsBackgroundExecution</key>
 					<true/>
@@ -158,58 +277,19 @@
 					<string>eYPzfM</string>
 					<key>INIntentParameterDisplayPriority</key>
 					<integer>1</integer>
-					<key>INIntentParameterName</key>
-					<string>subreddit</string>
-					<key>INIntentParameterObjectType</key>
-					<string>SingleSubredditINO</string>
-					<key>INIntentParameterObjectTypeNamespace</key>
-					<string>eiy3jD</string>
-					<key>INIntentParameterPromptDialogs</key>
-					<array>
-						<dict>
-							<key>INIntentParameterPromptDialogCustom</key>
-							<true/>
-							<key>INIntentParameterPromptDialogType</key>
-							<string>Configuration</string>
-						</dict>
-						<dict>
-							<key>INIntentParameterPromptDialogCustom</key>
-							<true/>
-							<key>INIntentParameterPromptDialogType</key>
-							<string>Primary</string>
-						</dict>
-					</array>
-					<key>INIntentParameterSupportsDynamicEnumeration</key>
-					<true/>
-					<key>INIntentParameterTag</key>
-					<integer>8</integer>
-					<key>INIntentParameterType</key>
-					<string>Object</string>
-				</dict>
-				<dict>
-					<key>INIntentParameterConfigurable</key>
-					<true/>
-					<key>INIntentParameterDisplayName</key>
-					<string>Overlay with subreddit theme color</string>
-					<key>INIntentParameterDisplayNameID</key>
-					<string>IrPBrn</string>
-					<key>INIntentParameterDisplayPriority</key>
-					<integer>2</integer>
 					<key>INIntentParameterMetadata</key>
 					<dict>
+						<key>INIntentParameterMetadataCapitalization</key>
+						<string>None</string>
 						<key>INIntentParameterMetadataDefaultValue</key>
+						<string>all</string>
+						<key>INIntentParameterMetadataDefaultValueID</key>
+						<string>9L9YgK</string>
+						<key>INIntentParameterMetadataDisableAutocorrect</key>
 						<true/>
-						<key>INIntentParameterMetadataFalseDisplayName</key>
-						<string>false</string>
-						<key>INIntentParameterMetadataFalseDisplayNameID</key>
-						<string>CQwPjS</string>
-						<key>INIntentParameterMetadataTrueDisplayName</key>
-						<string>true</string>
-						<key>INIntentParameterMetadataTrueDisplayNameID</key>
-						<string>4fldEb</string>
 					</dict>
 					<key>INIntentParameterName</key>
-					<string>colorful</string>
+					<string>subreddit</string>
 					<key>INIntentParameterPromptDialogs</key>
 					<array>
 						<dict>
@@ -226,9 +306,9 @@
 						</dict>
 					</array>
 					<key>INIntentParameterTag</key>
-					<integer>10</integer>
+					<integer>1</integer>
 					<key>INIntentParameterType</key>
-					<string>Boolean</string>
+					<string>String</string>
 				</dict>
 			</array>
 			<key>INIntentResponse</key>
@@ -258,133 +338,6 @@
 		</dict>
 	</array>
 	<key>INTypes</key>
-	<array>
-		<dict>
-			<key>INTypeDisplayName</key>
-			<string>Timeline Subreddit INO</string>
-			<key>INTypeDisplayNameID</key>
-			<string>g3rPwm</string>
-			<key>INTypeLastPropertyTag</key>
-			<integer>99</integer>
-			<key>INTypeName</key>
-			<string>TimelineSubredditINO</string>
-			<key>INTypeProperties</key>
-			<array>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>1</integer>
-					<key>INTypePropertyName</key>
-					<string>identifier</string>
-					<key>INTypePropertyTag</key>
-					<integer>1</integer>
-					<key>INTypePropertyType</key>
-					<string>String</string>
-				</dict>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>2</integer>
-					<key>INTypePropertyName</key>
-					<string>displayString</string>
-					<key>INTypePropertyTag</key>
-					<integer>2</integer>
-					<key>INTypePropertyType</key>
-					<string>String</string>
-				</dict>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>3</integer>
-					<key>INTypePropertyName</key>
-					<string>pronunciationHint</string>
-					<key>INTypePropertyTag</key>
-					<integer>3</integer>
-					<key>INTypePropertyType</key>
-					<string>String</string>
-				</dict>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>4</integer>
-					<key>INTypePropertyName</key>
-					<string>alternativeSpeakableMatches</string>
-					<key>INTypePropertySupportsMultipleValues</key>
-					<true/>
-					<key>INTypePropertyTag</key>
-					<integer>4</integer>
-					<key>INTypePropertyType</key>
-					<string>SpeakableString</string>
-				</dict>
-			</array>
-		</dict>
-		<dict>
-			<key>INTypeDisplayName</key>
-			<string>Single Subreddit INO</string>
-			<key>INTypeDisplayNameID</key>
-			<string>uGMQGp</string>
-			<key>INTypeLastPropertyTag</key>
-			<integer>100</integer>
-			<key>INTypeName</key>
-			<string>SingleSubredditINO</string>
-			<key>INTypeProperties</key>
-			<array>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>1</integer>
-					<key>INTypePropertyName</key>
-					<string>identifier</string>
-					<key>INTypePropertyTag</key>
-					<integer>1</integer>
-					<key>INTypePropertyType</key>
-					<string>String</string>
-				</dict>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>2</integer>
-					<key>INTypePropertyName</key>
-					<string>displayString</string>
-					<key>INTypePropertyTag</key>
-					<integer>2</integer>
-					<key>INTypePropertyType</key>
-					<string>String</string>
-				</dict>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>3</integer>
-					<key>INTypePropertyName</key>
-					<string>pronunciationHint</string>
-					<key>INTypePropertyTag</key>
-					<integer>3</integer>
-					<key>INTypePropertyType</key>
-					<string>String</string>
-				</dict>
-				<dict>
-					<key>INTypePropertyDefault</key>
-					<true/>
-					<key>INTypePropertyDisplayPriority</key>
-					<integer>4</integer>
-					<key>INTypePropertyName</key>
-					<string>alternativeSpeakableMatches</string>
-					<key>INTypePropertySupportsMultipleValues</key>
-					<true/>
-					<key>INTypePropertyTag</key>
-					<integer>4</integer>
-					<key>INTypePropertyType</key>
-					<string>SpeakableString</string>
-				</dict>
-			</array>
-		</dict>
-	</array>
+	<array/>
 </dict>
 </plist>

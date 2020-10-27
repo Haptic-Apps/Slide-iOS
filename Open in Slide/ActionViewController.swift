@@ -41,18 +41,12 @@ class ActionViewController: UIViewController {
                             
                             var comps = URLComponents(url: shareURL as URL, resolvingAgainstBaseURL: false)!
                             comps.scheme = "slide"
-                            if let newUrl = comps.url {
-                                if self.openURL(newUrl) {
-                                    self.extensionContext!.cancelRequest(withError: NSError())
-                                } else {
-                                    self.extensionContext!.cancelRequest(withError: NSError())
-                                }
+                            let newUrl = comps.url!
+                            
+                            if self.openURL(newUrl) {
+                                self.extensionContext!.cancelRequest(withError: NSError())
                             } else {
-                                if self.openURL(shareURL as URL) {
-                                    self.extensionContext!.cancelRequest(withError: NSError())
-                                } else {
-                                    self.extensionContext!.cancelRequest(withError: NSError())
-                                }
+                                self.extensionContext!.cancelRequest(withError: NSError())
                             }
                         }
                     })

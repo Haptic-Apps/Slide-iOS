@@ -461,7 +461,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString) ?? "") else {
+        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
             return nil
         }
         
@@ -480,7 +480,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString) ?? "") else {
+        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!) else {
             return nil
         }
         

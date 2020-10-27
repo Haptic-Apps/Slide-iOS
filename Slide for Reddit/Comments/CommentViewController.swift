@@ -81,7 +81,6 @@ class CommentViewController: MediaViewController {
     var olderY = CGFloat(0)
     
     var sub: String = ""
-    
     var allCollapsed = false
 
     var subInfo: Subreddit?
@@ -130,11 +129,6 @@ class CommentViewController: MediaViewController {
     var sortButton = UIButton()
 
     var jump: UIView!
-    
-    var savedBack: UIBarButtonItem?
-    var sortB: UIBarButtonItem!
-    var searchB: UIBarButtonItem!
-    var liveB: UIBarButtonItem!
 
     var progressDot = UIView()
     var authorColor: UIColor = ColorUtil.theme.fontColor
@@ -373,7 +367,7 @@ class CommentViewController: MediaViewController {
         if navigationController != nil {
             sortButton = UIButton.init(type: .custom)
             sortButton.accessibilityLabel = "Change sort type"
-            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.addTarget(self, action: #selector(sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             sortB = UIBarButtonItem.init(customView: sortButton)
             
@@ -382,7 +376,7 @@ class CommentViewController: MediaViewController {
             let search = UIButton.init(type: .custom)
             search.accessibilityLabel = "Search"
             search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
-            search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
+            search.addTarget(self, action: #selector(search(_:)), for: UIControl.Event.touchUpInside)
             search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             searchB = UIBarButtonItem.init(customView: search)
             
@@ -411,7 +405,7 @@ class CommentViewController: MediaViewController {
             }
         }
         
-        doStartupItems()
+        initialSetup()
 
         if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
             headerCell.videoView?.player?.play()
@@ -424,7 +418,9 @@ class CommentViewController: MediaViewController {
         
         setNeedsStatusBarAppearanceUpdate()
         if navigationController != nil && (didDisappearCompletely || !loaded) {
-            self.setupTitleView(submission == nil ? subreddit : submission!.subreddit, icon: submission!.subreddit_icon)
+            DispatchQueue.main.async {
+                self.setupTitleView(self.submission == nil ? self.subreddit : self.submission!.subreddit, icon: self.submission!.subreddit_icon)
+            }
             self.updateToolbar()
         }
     }
@@ -466,8 +462,6 @@ class CommentViewController: MediaViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        refreshControl.setValue(100, forKey: "_snappingHeight")
-
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
@@ -475,13 +469,17 @@ class CommentViewController: MediaViewController {
         didDisappearCompletely = false
         let isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
-        if isModal && self.navigationController is TapBehindModalViewController {
+        if isModal && self.navigationController is TapBehindModalViewController{
             self.navigationController?.delegate = self
             (self.navigationController as! TapBehindModalViewController).del = self
         }
         
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
+        if self.shouldAnimateLoad {
+            self.tableViewReloadingAnimation()
+            self.shouldAnimateLoad = false
+        }
         self.finishedPush = true
     }
     
@@ -1319,8 +1317,6 @@ class CommentViewController: MediaViewController {
         label.addTapGestureRecognizer(action: {
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
-        
-        setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
     }
 
     /// Enables searching of comments.
@@ -1551,7 +1547,7 @@ class CommentViewController: MediaViewController {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
                     ColorUtil.matchTraitCollection()
                 }
             } else {

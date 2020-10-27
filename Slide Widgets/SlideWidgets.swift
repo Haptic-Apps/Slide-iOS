@@ -16,58 +16,8 @@ import SwiftUI
 struct SwiftWidgetsBundle: WidgetBundle {
     @WidgetBundleBuilder
     var body: some Widget {
-        Current_Account()
         Favorite_Subreddits()
-        Hot_Posts_Tile()
         Hot_Posts()
-    }
-}
-
-struct AccountTimeline: TimelineProvider {
-    /*
-    Corresponds to USR_DOMAIN in info.plist, which derives its value
-    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
-    */
-    func USR_DOMAIN() -> String {
-       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
-    }
-
-    typealias Entry = AccountEntry
-
-    func placeholder(in context: Context) -> AccountEntry {
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        let currentAccount = shared?.string(forKey: "current_account") ?? "Guest"
-        let karma = shared?.integer(forKey: "karma") ?? 0
-        let inbox = shared?.integer(forKey: "inbox") ?? 0
-        let image = shared?.data(forKey: "profile_icon") ?? Data()
-        let readLater = shared?.integer(forKey: "readlater") ?? 0
-
-        return AccountEntry(date: Date(), name: currentAccount, inbox: inbox, karma: karma, imageData: image, readLater: readLater)
-    }
-    
-    func getSnapshot(in context: Context, completion: @escaping (AccountEntry) -> Void) {
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        let currentAccount = shared?.string(forKey: "current_account") ?? "Guest"
-        let karma = shared?.integer(forKey: "karma") ?? 0
-        let inbox = shared?.integer(forKey: "inbox") ?? 0
-        let image = shared?.data(forKey: "profile_icon") ?? Data()
-        let readLater = shared?.integer(forKey: "readlater") ?? 0
-
-        completion(AccountEntry(date: Date(), name: currentAccount, inbox: inbox, karma: karma, imageData: image, readLater: readLater))
-    }
-    
-    func getTimeline(in context: Context, completion: @escaping (Timeline<AccountEntry>) -> Void) {
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-
-        let currentAccount = shared?.string(forKey: "current_account") ?? "Guest"
-        let karma = shared?.integer(forKey: "karma") ?? 0
-        let inbox = shared?.integer(forKey: "inbox") ?? 0
-        let image = shared?.data(forKey: "profile_icon") ?? Data()
-        let readLater = shared?.integer(forKey: "readlater") ?? 0
-
-        let entry = AccountEntry(date: Date(), name: currentAccount, inbox: inbox, karma: karma, imageData: image, readLater: readLater)
-        let timeline = Timeline(entries: [entry], policy: .after(Calendar.current.date(byAdding: .hour, value: 1, to: Date())!))
-        completion(timeline)
     }
 }
 
@@ -85,13 +35,11 @@ struct SubredditsProvider: IntentTimelineProvider {
     }
     
     func placeholder(in context: Context) -> SubredditEntry {
-        let placeholder = TimelineSubredditProvider.all().first
-        return SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]), colorData: getColorData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
+        return SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"]))
     }
 
     func getSnapshot(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (SubredditEntry) -> Void) {
-        let placeholder = TimelineSubredditProvider.all().first
-        let entry = SubredditEntry(date: Date(), subreddits: placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]), colorData: getColorData(placeholder?.subs ?? ["all", "frontpage", "popular", "slide_ios"]))
+        let entry = SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"]))
         completion(entry)
     }
     
@@ -122,59 +70,24 @@ struct SubredditsProvider: IntentTimelineProvider {
         return toReturn
     }
 
-    func getColorData(_ subs: [String]) -> [String: UIColor] {
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        var toReturn = [String: UIColor]()
-        for item in subs {
-            var color: UIColor?
-            if let hex = shared?.string(forKey: "color\(item.lowercased().replacingOccurrences(of: "/", with: ""))"), !hex.isEmpty {
-                color = UIColor(hexString: hex)
-            }
-            toReturn[item] = color
-        }
-        return toReturn
-    }
-
     func getTimeline(for configuration: TimelineSubredditIntent, in context: Context, completion: @escaping (Timeline<SubredditEntry>) -> Void) {
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
         let entryDate = Calendar.current.date(byAdding: .hour, value: 0, to: currentDate)!
-
-        let subreddits = lookupWidgetDetails(for: configuration).subs
-        let entry = SubredditEntry(date: entryDate, subreddits: subreddits, imageData: getPlaceholderData(subreddits), colorData: getColorData(subreddits))
+        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
+        let subreddits = [configuration.sub1 ?? "all", configuration.sub2 ?? "frontpage", configuration.sub3 ?? "popular", configuration.sub4 ?? "slide_ios"]
+        let entry = SubredditEntry(date: entryDate, subreddits: subreddits, imageData: getPlaceholderData(subreddits))
         let timeline = Timeline(entries: [entry], policy: .atEnd)
         completion(timeline)
     }
-    
-    private func lookupWidgetDetails(for configuration: TimelineSubredditIntent) -> TimelineSubredditDetails {
-        guard let widgetID = configuration.widgetconfig?.identifier, let widgetForConfig = TimelineSubredditProvider.all().first(where: { widget in
-            widget.id == widgetID
-        })
-        else {
-            return TimelineSubredditProvider.all()[0]
-        }
-        return widgetForConfig
-    }
-
 }
 
 struct SubredditEntry: TimelineEntry {
     let date: Date
     let subreddits: [String]
     let imageData: [String: Data]
-    let colorData: [String: UIColor?]
 }
-
-struct AccountEntry: TimelineEntry {
-    public let date: Date
-    public let name: String
-    public let inbox: Int
-    public let karma: Int
-    public let imageData: Data
-    public let readLater: Int
-}
-
 
 class ImageLoader: ObservableObject {
     /*
@@ -235,44 +148,12 @@ struct HotPostsProvider: IntentTimelineProvider {
 
     func placeholder(in context: Context) -> SubredditWithPosts {
         
-        SubredditWithPosts(date: Date(), subreddit: "redacted", colorful: true, posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData(), color: nil)
+        SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
     }
 
     func getSnapshot(for configuration: SingleSubredditIntent, in context: Context, completion: @escaping (SubredditWithPosts) -> Void) {
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        var imageData: Data?
-        let subreddit = lookupWidgetDetails(for: configuration).name
-        if let data = shared?.data(forKey: "raw" + subreddit) {
-            imageData = data
-        } else if let url = URL(string: shared?.string(forKey: subreddit) ?? "") {
-            do {
-                imageData = try Data(contentsOf: url)
-            } catch {
-                if let data = shared?.data(forKey: "raw") {
-                    imageData = data
-                }
-            }
-        } else {
-            if let data = shared?.data(forKey: "raw") {
-                imageData = data
-            }
-        }
-        
-        var color: UIColor?
-        if let hex = shared?.string(forKey: "color\(subreddit.lowercased().replacingOccurrences(of: "/", with: ""))"), !hex.isEmpty {
-            color = UIColor(hexString: hex)
-        }
-
-        SubredditLoader.fetch(subreddit: subreddit) { result in
-            let subredditPosts: SubredditPosts
-            if case .success(let subreddit) = result {
-                subredditPosts = subreddit
-            } else {
-                subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
-            }
-            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: true, posts: subredditPosts, imageData: imageData ?? Data(), color: color)
-            completion(entry)
-        }
+        let entry = SubredditWithPosts(date: Date(), subreddit: "redacted", posts: SubredditPosts(date: Date(), subreddit: "redacted", posts: getBlankPosts()), imageData: getPreviewData())
+        completion(entry)
     }
     
     func getBlankPosts() -> [Post] {
@@ -285,11 +166,9 @@ struct HotPostsProvider: IntentTimelineProvider {
         let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: currentDate)!
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
         var imageData: Data?
-        let subreddit = lookupWidgetDetails(for: configuration).name
-        
-        if let data = shared?.data(forKey: "raw" + subreddit) {
+        if let data = shared?.data(forKey: "raw" + (configuration.subreddit?.lowercased() ?? "")) {
             imageData = data
-        } else if let url = URL(string: shared?.string(forKey: subreddit.lowercased()) ?? "") {
+        } else if let url = URL(string: shared?.string(forKey: configuration.subreddit?.lowercased() ?? "") ?? "") {
             do {
                 imageData = try Data(contentsOf: url)
             } catch {
@@ -302,35 +181,20 @@ struct HotPostsProvider: IntentTimelineProvider {
                 imageData = data
             }
         }
-        
-        var color: UIColor?
-        if let hex = shared?.string(forKey: "color\(subreddit.lowercased().replacingOccurrences(of: "/", with: ""))"), !hex.isEmpty {
-            color = UIColor(hexString: hex)
-        }
 
-        SubredditLoader.fetch(subreddit: subreddit) { result in
+        SubredditLoader.fetch(subreddit: configuration.subreddit ?? "all") { result in
             let subredditPosts: SubredditPosts
             if case .success(let subreddit) = result {
                 subredditPosts = subreddit
             } else {
-                subredditPosts = SubredditPosts(date: Date(), subreddit: subreddit, posts: [])
+                subredditPosts = SubredditPosts(date: Date(), subreddit: configuration.subreddit ?? "all", posts: [])
             }
-            let entry = SubredditWithPosts(date: Date(), subreddit: subreddit, colorful: configuration.colorful?.boolValue ?? true, posts: subredditPosts, imageData: imageData ?? Data(), color: color)
+            let entry = SubredditWithPosts(date: Date(), subreddit: configuration.subreddit ?? "all", posts: subredditPosts, imageData: imageData ?? Data())
             let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
             completion(timeline)
         }
     }
     
-    private func lookupWidgetDetails(for configuration: SingleSubredditIntent) -> SingleSubredditDetails {
-        guard let widgetID = configuration.subreddit?.identifier, let widgetForConfig = SingleSubredditProvider.all().first(where: { widget in
-            widget.id == widgetID
-        })
-      else {
-        return SingleSubredditProvider.all()[0]
-      }
-      return widgetForConfig
-    }
-
     func getPreviewData() -> Data {
         var imageData: Data?
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
@@ -343,9 +207,9 @@ struct HotPostsProvider: IntentTimelineProvider {
 
 struct SubredditLoader {
     static func fetch(subreddit: String, completion: @escaping (Result<SubredditPosts, Error>) -> Void) {
-        var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=7&raw_json=1"
+        var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=5&raw_json=1"
         if subreddit == "frontpage" {
-            apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
+            apiUrl = "https://reddit.com/.json?limit=5&raw_json=1"
         }
         let branchContentsURL = URL(string: apiUrl)!
         let task = URLSession.shared.dataTask(with: branchContentsURL) { (data, response, error) in
@@ -375,9 +239,7 @@ struct SubredditLoader {
                         } catch {
                         }
                     }
-                    if data["stickied"] as? Bool ?? false == false {
-                        posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
-                    }
+                    posts.append(Post(id: data["id"] as! String, author: data["author"] as! String, subreddit: data["subreddit_name_prefixed"] as! String, title: data["title"] as! String, image: data["thumbnail"] as? String ?? "", date: data["created_utc"] as! Double, imageData: imageData))
                 }
             }
         } catch {
@@ -397,13 +259,11 @@ struct SubredditPosts {
 struct SubredditWithPosts: TimelineEntry {
     let date: Date
     let subreddit: String
-    let colorful: Bool
     let posts: SubredditPosts
     let imageData: Data
-    let color: UIColor?
 }
 
-struct Post: Identifiable, Hashable {
+struct Post: Identifiable {
     let id: String
     let author: String
     let subreddit: String
@@ -411,24 +271,4 @@ struct Post: Identifiable, Hashable {
     let image: String
     let date: Double
     let imageData: Data
-}
-
-extension UIColor {
-    convenience init(hexString: String) {
-        let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int = UInt32()
-        Scanner(string: hex).scanHexInt32(&int)
-        let a, r, g, b: UInt32
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
-        }
-        self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
-    }
 }

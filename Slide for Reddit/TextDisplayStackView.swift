@@ -317,15 +317,14 @@ public class TextDisplayStackView: UIStackView {
 //                estimatedHeight += textSizeB.height
 
                 let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                if let layout = YYTextLayout(containerSize: size, text: newTitle) {
-                    firstTextView.textLayout = layout
-                    estimatedHeight += layout.textBoundingSize.height
-                    firstTextView.removeConstraints(addedConstraints)
-                    addedConstraints = batch {
-                        firstTextView.heightAnchor == layout.textBoundingSize.height
-                    }
-                    firstTextView.horizontalAnchors == horizontalAnchors
+                let layout = YYTextLayout(containerSize: size, text: newTitle)!
+                firstTextView.textLayout = layout
+                estimatedHeight += layout.textBoundingSize.height
+                firstTextView.removeConstraints(addedConstraints)
+                addedConstraints = batch {
+                    firstTextView.heightAnchor == layout.textBoundingSize.height
                 }
+                firstTextView.horizontalAnchors == horizontalAnchors
             }
 
         }
