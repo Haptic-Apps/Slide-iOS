@@ -44,7 +44,6 @@ class PlaceholderViewController: UIViewController {
         label.topAnchor == imageView.bottomAnchor + 12
     }
 }
-
 extension UIImage {
     func convertToGrayScale() -> UIImage {
         let filter: CIFilter = CIFilter(name: "CIPhotoEffectMono")!

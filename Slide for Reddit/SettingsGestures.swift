@@ -54,15 +54,13 @@ class SettingsGestures: BubbleSettingTableViewController {
         
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
-        for item in SettingValues.CellGestureMode.cases {
+        for item in SettingValues.CommentGesturesMode.cases {
             alertController.addAction(title: item.description(), icon: item == SettingValues.commentGesturesMode ? selected : UIImage()) {
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_commentGesturesMode)
                 SettingValues.commentGesturesMode = item
                 UserDefaults.standard.synchronize()
                 self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
                 self.updateCells()
-                SplitMainViewController.needsReTheme = true
-                MainViewController.needsReTheme = true
             }
         }
         alertController.show(self)
@@ -73,15 +71,13 @@ class SettingsGestures: BubbleSettingTableViewController {
         
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.getCopy(withSize: .square(size: 20), withColor: .blue)
 
-        for item in SettingValues.CellGestureMode.cases {
+        for item in SettingValues.CommentGesturesMode.cases {
             alertController.addAction(title: item.description(), icon: item == SettingValues.submissionGestureMode ? selected : UIImage()) {
                 UserDefaults.standard.set(item.rawValue, forKey: SettingValues.pref_submissionGesturesMode)
                 SettingValues.submissionGestureMode = item
                 UserDefaults.standard.synchronize()
                 self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
                 self.updateCells()
-                SplitMainViewController.needsReTheme = true
-                MainViewController.needsReTheme = true
             }
         }
         alertController.show(self)

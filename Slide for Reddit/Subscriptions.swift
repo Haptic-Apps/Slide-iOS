@@ -44,6 +44,14 @@ class Subscriptions {
         if let color = subColors.object(forKey: sub.lowercased()) as? String, color != "" {
             return UIColor(hex: color)
         }
+        if sub.lowercased() == "all" {
+            return GMColor.blue500Color()
+        } else if sub.lowercased() == "frontpage" {
+            return GMColor.green500Color()
+        } else if sub.lowercased() == "popular" {
+            return GMColor.purple500Color()
+        }
+
         return nil
     }
 

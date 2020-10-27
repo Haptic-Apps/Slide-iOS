@@ -315,39 +315,3 @@ extension UIImage {
     }
 
 }
-
-extension UIImage {
-    func withBackground(color: UIColor, opaque: Bool = true) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-
-        guard let ctx = UIGraphicsGetCurrentContext(), let image = cgImage else { return self }
-        defer { UIGraphicsEndImageContext() }
-
-        let rect = CGRect(origin: .zero, size: size)
-        ctx.setFillColor(color.cgColor)
-        ctx.fill(rect)
-        ctx.concatenate(CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height))
-        ctx.draw(image, in: rect)
-
-        return UIGraphicsGetImageFromCurrentImageContext() ?? self
-    }
-}
-
-extension UIImage {
-    func withPadding(_ padding: CGFloat) -> UIImage? {
-        return withPadding(x: padding, y: padding)
-    }
-
-    func withPadding(x: CGFloat, y: CGFloat) -> UIImage? {
-        let newWidth = size.width + 2 * x
-        let newHeight = size.height + 2 * y
-        let newSize = CGSize(width: newWidth, height: newHeight)
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
-        let origin = CGPoint(x: (newWidth - size.width) / 2, y: (newHeight - size.height) / 2)
-        draw(at: origin)
-        let imageWithPadding = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return imageWithPadding
-    }
-}

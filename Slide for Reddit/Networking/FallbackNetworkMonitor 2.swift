@@ -95,7 +95,11 @@ final class FallbackNetworkMonitor {
         // Closure used to get back info on Network.
         let callbackClosure: SCNetworkReachabilityCallBack? = { (_, flags, info) in
             guard let info = info else { return }
-            Unmanaged<FallbackNetworkMonitor>.fromOpaque(info).takeUnretainedValue().reachabilityDidChange(flags: flags)
+            print("Inside closure: \(flags.contains(.reachable))")
+            Unmanaged<FallbackNetworkMonitor>.fromOpaque(info).takeUnretainedValue().reachabilityQueue.async {
+                // Needed since this callback is a C pointer which cannot capture context.
+                Unmanaged<FallbackNetworkMonitor>.fromOpaque(info).takeUnretainedValue().reachabilityDidChange(flags: flags)
+            }
         }
         // Checks if received data is not nil.
         if !SCNetworkReachabilitySetCallback(reachability, callbackClosure, &context) {
@@ -112,16 +116,13 @@ final class FallbackNetworkMonitor {
     }
     /// Used to update flags that Network has experienced changes.
     /// - Parameter flags: SCNetworkReachabilityFlags
-    public func reachabilityDidChange(flags: SCNetworkReachabilityFlags) {
-        print("Current Flag: \(currentReachabilityFlags)")
+    private func reachabilityDidChange(flags: SCNetworkReachabilityFlags) {
         // Checks that current flag isn't the same as before, otherwise return.
         guard currentReachabilityFlags != flags else { return }
-        print("New Flag: \(flags)")
         // Assigns current flag info to current.
         currentReachabilityFlags = flags
         // Checks if current flag info is Online.
         let fallbackOnline = currentReachabilityFlags.contains(.reachable)
-        print("Raw fallback Online: \(fallbackOnline)")
         // Assigns info to a dictionary for Notification.
         let fallbackOnlineDictionary = ["fallbackOnline": fallbackOnline]
         //  Assigns Notification to current info.
@@ -135,6 +136,7 @@ final class FallbackNetworkMonitor {
             var flags = SCNetworkReachabilityFlags()
             // Assigns new flag for reachability.
             SCNetworkReachabilityGetFlags(self.reachability, &flags)
+            // Calls did change to update flags
             self.reachabilityDidChange(flags: flags)
         }
     }

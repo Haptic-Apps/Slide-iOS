@@ -16,19 +16,11 @@ class SwipeForwardNavigationController: UINavigationController {
     public var interactivePushGestureRecognizer: UIScreenEdgePanGestureRecognizer?
     public var pushableViewControllers: [UIViewController] = []
  /* View controllers we can push onto the navigation stack by pulling in from the right screen edge. */    // Extra state used to implement completion blocks on pushViewController:
-    public var pushCompletion: SWNavigationControllerPushCompletion?
+    private var pushCompletion: SWNavigationControllerPushCompletion?
     private var pushedViewController: UIViewController?
     public var fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
 
     var pushAnimatedTransitioningClass: SwipeForwardAnimatedTransitioning?
-    
-    override var prefersHomeIndicatorAutoHidden: Bool {
-        return true
-    }
-    
-    override var childForHomeIndicatorAutoHidden: UIViewController? {
-        return nil
-    }
 
     override init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
         super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
@@ -86,18 +78,15 @@ class SwipeForwardNavigationController: UINavigationController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.splitViewController?.delegate = self
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            self.splitViewController?.delegate = self
+        }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
-        if let first = pushableViewControllers.first as? SplitMainViewController {
-            pushableViewControllers.removeAll()
-            pushableViewControllers.append(first)
-        } else {
-            pushableViewControllers.removeAll()
-        }
+        pushableViewControllers.removeAll()
     }
 
     @objc func handleRightSwipe(_ swipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?) {
@@ -214,14 +203,16 @@ extension SwipeForwardNavigationController {
     func push(_ viewController: UIViewController?, animated: Bool, completion: @escaping SWNavigationControllerPushCompletion) {
         pushedViewController = viewController
         pushCompletion = completion
-        if let viewController = viewController {
+        if let viewController = viewController, !(viewController is UINavigationController) {
             super.pushViewController(viewController, animated: animated)
         }
     }
     
     override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
-        if let secondaryAsNav = secondaryViewController as? UINavigationController, (UIDevice.current.userInterfaceIdiom == .phone) {
+        if let secondaryAsNav = secondaryViewController as? UINavigationController, UIDevice.current.userInterfaceIdiom == .phone {
             viewControllers += secondaryAsNav.viewControllers
+        } else {
+            super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
         }
     }
 
@@ -229,7 +220,7 @@ extension SwipeForwardNavigationController {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
-            push(pushedViewController, animated: UIApplication.shared.isSplitOrSlideOver ? false : true) {
+            push(pushedViewController, animated: true) {
                 if !self.pushableViewControllers.isEmpty {
                     self.pushableViewControllers.removeLast()
                     callback?()
@@ -239,7 +230,7 @@ extension SwipeForwardNavigationController {
     }
 }
 
-extension SwipeForwardNavigationController: UISplitViewControllerDelegate {    
+extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
         if UIDevice.current.userInterfaceIdiom == .phone {
             var main: UIViewController?

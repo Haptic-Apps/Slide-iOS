@@ -73,12 +73,14 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         setNeedsStatusBarAppearanceUpdate()
         
         submissionDataSource.delegate = self
+        
+        self.splitViewController?.presentsWithGesture = false
     }
     
     var first = true
     override func viewDidLoad() {
         super.viewDidLoad()
-        if SettingValues.commentGesturesMode.shouldPage() {
+        if SettingValues.commentGesturesMode != .FULL {
             self.dataSource = self
         }
         self.delegate = self

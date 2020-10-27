@@ -412,18 +412,16 @@ extension ImageMediaViewController {
     }
     
     func shareImage(sender: UIView) {
-        if let image = self.imageView.image {
-            let shareItems: Array = [image]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            if let presenter = activityViewController.popoverPresentationController {
-                presenter.sourceView = sender
-                presenter.sourceRect = sender.bounds
-            }
-            if let topController = UIApplication.topViewController(base: self) {
-                topController.present(activityViewController, animated: true, completion: nil)
-            } else {
-                self.present(activityViewController, animated: true, completion: nil)
-            }
+        let shareItems: Array = [self.imageView.image!]
+        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+        if let presenter = activityViewController.popoverPresentationController {
+            presenter.sourceView = sender
+            presenter.sourceRect = sender.bounds
+        }
+        if let topController = UIApplication.topViewController(base: self) {
+            topController.present(activityViewController, animated: true, completion: nil)
+        } else {
+            self.present(activityViewController, animated: true, completion: nil)
         }
     }
 }

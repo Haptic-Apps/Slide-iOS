@@ -251,11 +251,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             isModal13 = true
         }
         let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
-        if #available(iOS 13, *) {
-            tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
-        } else {
-            tabBar.topAnchor == self.view.topAnchor
-        }
+        tabBar.topAnchor == self.view.topAnchor + topAnchorOffset
         tabBar.sizeToFit()
         
         self.dataSource = self

@@ -8,21 +8,6 @@
 
 import Foundation
 
-class VideoSourceSessionCache: NSObject {
-    static var cache: [String: String] = [:]
-    
-    static func addVideo(urlString: String, videoString: String) {
-        cache[urlString] = videoString
-    }
-    
-    static func getURL(from: String) -> String? {
-        return cache[from]
-    }
-
-    static func hasCached(_ video: String) -> Bool {
-        return cache[video] != nil
-    }
-}
 protocol VideoSource {
     func load(url: String, completion: @escaping (String) -> Void, failure: (() -> Void)?) -> URLSessionDataTask?
 }
@@ -49,16 +34,8 @@ class GfycatVideoSource: VideoSource {
             name = name.split("-")[0]
         }
         name = name.split(".")[0]
-        let finalURL = URL(string: "https://api.\(url.contains("redgifs") ? "redgifs" : "gfycat").com/v1/gfycats\(name)")
-        if finalURL == nil {
-            failure?()
-            return nil
-        }
-        if let videoUrl = VideoSourceSessionCache.getURL(from: finalURL!.absoluteString) {
-            completion(videoUrl)
-            return nil
-        }
-        let dataTask = URLSession.shared.dataTask(with: finalURL!) { (data, _, error) in
+        let finalURL = URL(string: "https://api.\(url.contains("redgifs") ? "redgifs" : "gfycat").com/v1/gfycats\(name)")!
+        let dataTask = URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
                 DispatchQueue.main.async {
@@ -78,20 +55,9 @@ class GfycatVideoSource: VideoSource {
                     }
 
                     let gif = GfycatJSONBase.init(dictionary: json)
-                    if let mp4 = gif?.gfyItem?.mobileUrl {
-                        VideoSourceSessionCache.addVideo(urlString: finalURL!.absoluteString, videoString: mp4)
-                        DispatchQueue.main.async {
-                            completion(mp4)
-                        }
-                    } else if let mp4 = gif?.gfyItem?.mp4Url {
-                        VideoSourceSessionCache.addVideo(urlString: finalURL!.absoluteString, videoString: mp4)
-                        DispatchQueue.main.async {
-                            completion(mp4)
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            failure?()
-                        }
+
+                    DispatchQueue.main.async {
+                        completion((gif?.gfyItem?.mp4Url)!)
                     }
                 } catch let error as NSError {
                     print(error)
@@ -116,16 +82,8 @@ class StreamableVideoSource: VideoSource {
     func load(url: String, completion: @escaping (String) -> Void, failure: (() -> Void)? = nil) -> URLSessionDataTask? {
         let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1))
 
-        let finalURL = URL(string: "https://api.streamable.com/videos/" + hash)
-        if finalURL == nil {
-            failure?()
-            return nil
-        }
-        if let videoUrl = VideoSourceSessionCache.getURL(from: finalURL!.absoluteString) {
-            completion(videoUrl)
-            return nil
-        }
-        let dataTask = URLSession.shared.dataTask(with: finalURL!) { (data, _, error) in
+        let finalURL = URL(string: "https://api.streamable.com/videos/" + hash)!
+        let dataTask = URLSession.shared.dataTask(with: finalURL) { (data, _, error) in
             if error != nil {
                 print(error ?? "Error loading gif...")
                 failure?()
@@ -144,16 +102,11 @@ class StreamableVideoSource: VideoSource {
                         }
                         
                         if video.isEmpty() {
-                            video = (gif?.files?.mp4?.url) ?? ""
-                        }
-                        if video.isEmpty() {
-                            failure?()
-                            return
+                            video = (gif?.files?.mp4?.url!)!
                         }
                         if video.hasPrefix("//") {
                             video = "https:" + video
                         }
-                        VideoSourceSessionCache.addVideo(urlString: finalURL!.absoluteString, videoString: video)
                         completion(video)
                     }
                 } catch let error as NSError {

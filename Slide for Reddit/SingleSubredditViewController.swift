@@ -31,20 +31,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var lastScrollDirectionWasDown = false
     var fullWidthBackGestureRecognizer: UIGestureRecognizer!
     var cellGestureRecognizer: UIPanGestureRecognizer!
-    var swipeBackAdded = false
 
     func getTableView() -> UICollectionView {
         return tableView
     }
     
-    override var prefersHomeIndicatorAutoHidden: Bool {
-        return true
-    }
-    
-    override var childForHomeIndicatorAutoHidden: UIViewController? {
-        return nil
-    }
-
     override var prefersStatusBarHidden: Bool {
         return SettingValues.fullyHideNavbar
     }
@@ -52,7 +43,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var autoplayHandler: AutoplayScrollViewHandler!
 
     override var keyCommands: [UIKeyCommand]? {
-        return UIResponder.isFirstResponderTextField ? nil : [
+        return [
             UIKeyCommand(input: " ", modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(spacePressed)),
             UIKeyCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(spacePressedUp)),
@@ -152,7 +143,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         sub = subName
         self.parentController = parent
         
-        single = !(parent is SplitMainViewController)
+        single = parent is SplitMainViewController
         dataSource = SubmissionsDataSource(subreddit: subName, sorting: SettingValues.getLinkSorting(forSubreddit: subName), time: SettingValues.getTimePeriod(forSubreddit: subName))
 
         super.init(nibName: nil, bundle: nil)
@@ -188,8 +179,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !UIApplication.shared.isSplitOrSlideOver && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
-            splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+            splitViewController?.showDetailViewController(PlaceholderViewController(), sender: self)
         }
         
         flowLayout.delegate = self
@@ -233,6 +224,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         reloadNeedingColor()
         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
         tableView.reloadData()
+        self.automaticallyAdjustsScrollViewInsets = false
         
         self.view.addSubview(emptyStateView)
         emptyStateView.setText(title: "Nothing to see here!", message: "No content was found on this subreddit")
@@ -248,10 +240,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         // Notifications
         NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
+<<<<<<< HEAD
         NotificationCenter.default.addObserver(self, selector: #selector(fallbackOnlineChanged(_:)), name: .fallbackOnline, object: nil)
         
         dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
         dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
+=======
+>>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
     }
     
     func reTheme() {
@@ -281,15 +276,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
             inHeadView!.topAnchor == view.topAnchor
             inHeadView!.horizontalAnchors == view.horizontalAnchors
-            var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
-            if statusBarHeight == 0 {
-                statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
-            }
-
-            inHeadView!.heightAnchor == statusBarHeight
+            inHeadView!.heightAnchor == (UIApplication.shared.statusBarUIView?.frame.size.height ?? 0)
             
             let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-            var topOffset = statusBarHeight
+            var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
@@ -316,8 +306,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if single && !(parent is SplitMainViewController) {
             setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
-        } else if #available(iOS 13, *) {} else {
-            setupBaseBarColors(ColorUtil.getColorForSub(sub: sub, true))
         }
         
         if !dataSource.loaded {
@@ -326,14 +314,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        var isBelow13 = true
-        if #available(iOS 13, *) {
-            isBelow13 = false
-        }
-        navigationController?.navigationBar.isTranslucent = isBelow13 ? true : false
+        navigationController?.navigationBar.isTranslucent = false
         
         if !single {
-            splitViewController?.navigationController?.navigationBar.isTranslucent = isBelow13 ? true : false
+            splitViewController?.navigationController?.navigationBar.isTranslucent = false
             splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
         }
         if let bar = splitViewController?.navigationController?.navigationBar {
@@ -388,11 +372,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         if !dataSource.hasContent() {
             self.autoplayHandler.autoplayOnce(self.tableView)
-        }
-        if parentController == nil {
-            if SettingValues.submissionGestureMode != .FULL {
-                setupSwipeGesture()
-            }
         }
     }
 
@@ -543,6 +522,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+
         if !(dataSource.delegate is SingleSubredditViewController) {
             dataSource.delegate = self
             if dataSource.loaded && dataSource.content.count > oldCount {
@@ -570,11 +550,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.isHiding = false
         })
         
-        if single || parent is SplitMainViewController {
-            if SettingValues.totallyCollapse {
-                self.navigationController?.setToolbarHidden(true, animated: true)
-            }
-
+        if single {
+            self.navigationController?.setToolbarHidden(true, animated: true)
             //hideMenuNav()
         //} else {
             /*if let topView = self.menuNav?.topView {
@@ -623,7 +600,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
+<<<<<<< HEAD
         if (single || parent is SplitMainViewController) && Constants.shared.isNetworkOnline {
+=======
+        if single && NetworkMonitor.shared.online {
+>>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
             /*UIView.animate(withDuration: 0.25) {
@@ -932,32 +913,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     var lastVersion = 0
     
-    func doToolbar() {
-        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
-            doSortImage(mainVC.sortButton)
-        }
-        
-        more = UIButton.init(type: .custom)
-        more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
-        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let moreB = UIBarButtonItem.init(customView: more)
-        
-        searchbutton = UIButton.init(type: .custom)
-        searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
-        searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
-        searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
-        let searchB = UIBarButtonItem.init(customView: searchbutton)
-
-        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
-        
-        if parent is SplitMainViewController {
-            parent!.toolbarItems = [searchB, flexButton, moreB]
-        } else {
-            toolbarItems = [searchB, flexButton, moreB]
-        }
-    }
-    
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
         inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
@@ -988,12 +943,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         lastVersion = SingleSubredditViewController.cellVersion
 
         let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
-        if statusBarHeight == 0 {
-            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
-        }
-
-        var topOffset = statusBarHeight
+        var topOffset = self.inHeadView?.frame.size.height ?? 20
         if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
             topOffset = 0
         }
@@ -1003,14 +953,46 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         if (SingleSubredditViewController.firstPresented && !single && !dataSource.hasContent()) || (!dataSource.hasContent() && !single && !SettingValues.subredditBar) {
-            dataSource.delegate = self
-            dataSource.getData(reload: true, force: true)
+            dataSource.getData(reload: true)
             SingleSubredditViewController.firstPresented = false
         }
+<<<<<<< HEAD
                 
         if single && Constants.shared.isNetworkOnline {
             doToolbar()
             
+=======
+        
+        dataSource.sorting = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        dataSource.time = SettingValues.getTimePeriod(forSubreddit: self.sub)
+        
+
+        if let mainVC = self.parent as? MainViewController, (!self.single || mainVC is SplitMainViewController) {
+            doSortImage(mainVC.sortButton)
+        }
+        
+        more = UIButton.init(type: .custom)
+        more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
+        more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
+        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let moreB = UIBarButtonItem.init(customView: more)
+        
+        searchbutton = UIButton.init(type: .custom)
+        searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
+        searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
+        searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        let searchB = UIBarButtonItem.init(customView: searchbutton)
+
+        let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
+        
+        if parent is SplitMainViewController {
+            parent!.toolbarItems = [searchB, flexButton, moreB]
+        } else {
+            toolbarItems = [searchB, flexButton, moreB]
+        }
+
+        if single && NetworkMonitor.shared.online {
+>>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
             sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
@@ -1077,63 +1059,73 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                             print(result.error!.description)
                             DispatchQueue.main.async {
                                 if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
-                                    if !self.dataSource.loading && !self.dataSource.loaded {
-                                        self.dataSource.getData(reload: true, force: true)
+                                    if !self.dataSource.loaded {
+                                        self.dataSource.getData(reload: true)
                                     }
                                     self.loadBubbles()
+                                } else {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+                                        let alert = UIAlertController.init(title: "Subreddit not found", message: "r/\(self.sub) could not be found, is it spelled correctly?", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { [weak self] (_) in
+                                            guard let self = self else { return }
+
+                                            self.navigationController?.popViewController(animated: true)
+                                            self.dismiss(animated: true, completion: nil)
+                                            
+                                        }))
+                                        self.present(alert, animated: true, completion: nil)
+                                    }
+                                    
                                 }
                             }
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
                                 //TODO: Hook into Shortcuts
-                                if self.subInfo != nil {
-                                    if !self.subInfo!.over18 {
+                                if !self.subInfo!.over18 {
 
-                                    }
-                                    if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
-                                        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                            let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
-                                            alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
-                                                self.navigationController?.popViewController(animated: true)
-                                                self.dismiss(animated: true, completion: nil)
-                                            }))
-                                            self.present(alert, animated: true, completion: nil)
-                                        }
-                                    } else {
-                                        if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
-                                            //self.menuNav?.setSubredditObject(subreddit: r)
-                                            if SettingValues.saveHistory {
-                                                if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
-                                                    Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
-                                                } else if !self.subInfo!.over18 {
-                                                    Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
-                                                }
-                                            }
-                                        }
-                                        if !self.dataSource.loading && !self.dataSource.loaded {
-                                            self.dataSource.getData(reload: true, force: true)
-                                        }
-                                        self.loadBubbles()
+                                }
+                                if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
+                                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                                        let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
+                                        alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
+                                            self.navigationController?.popViewController(animated: true)
+                                            self.dismiss(animated: true, completion: nil)
+                                        }))
+                                        self.present(alert, animated: true, completion: nil)
                                     }
                                 } else {
-                                    if !self.dataSource.loading && !self.dataSource.loaded {
-                                        self.dataSource.getData(reload: true, force: true)
+                                    if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
+                                        //self.menuNav?.setSubredditObject(subreddit: r)
+
+                                        if SettingValues.saveHistory {
+                                            if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
+                                                Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                            } else if !self.subInfo!.over18 {
+                                                Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
+                                            }
+                                        }
+                                    }
+                                    if !self.dataSource.loaded {
+                                        self.dataSource.getData(reload: true)
                                     }
                                     self.loadBubbles()
                                 }
+                                
                             }
                         }
                     })
                 } catch {
                 }
             }
+<<<<<<< HEAD
         } else if !Constants.shared.isNetworkOnline && single && !self.dataSource.loading && !self.dataSource.loaded {
+=======
+        } else if !NetworkMonitor.shared.online && single && !dataSource.loaded {
+>>>>>>> parent of 50a62739... Merge remote-tracking branch 'upstream/develop' into develop
             title = sub
             //hideMenuNav()
-            dataSource.getData(reload: true, force: true)
-        } else if !dataSource.loaded {
-            self.loadBubbles()
+            dataSource.getData(reload: true)
         }
     }
     
@@ -1346,7 +1338,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         filterView.heightAnchor == CGFloat(50 * settings.tableView(settings.tableView, numberOfRowsInSection: 0))
         alert.addAction(AlertAction(title: "Apply", style: .preferred, handler: { (_) in
             if reload {
-                self.dataSource.getData(reload: true, force: true)
+                self.dataSource.getData(reload: true)
             } else {
                 self.applyFilters()
             }
@@ -1489,7 +1481,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.tableView.reloadData()
         }, completion: nil)
         
-        dataSource.getData(reload: true, force: true)
+        dataSource.getData(reload: true)
     }
 
     func deleteSelf(_ cell: LinkCellView) {
@@ -1792,19 +1784,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
                 
-        var size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))
-        if let layout = layout {
-            let textSize = layout.textBoundingSize
+        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
+        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))!
+        let textSize = layout.textBoundingSize
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
-            return CGSize(width: itemWidth, height: totalHeight)
-        } else { //If layout is nil, just return a size that won't crash the app...
-            let textSize = CGSize(width: 100, height: 100)
+        let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
 
-            let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0)
-            return CGSize(width: itemWidth, height: totalHeight)
-        }
+        return CGSize(width: itemWidth, height: totalHeight)
     }
     
     // TODO: - This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
@@ -1998,11 +1984,6 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
     func loadSuccess(before: Int, count: Int) {
         self.oldPosition = CGPoint.zero
         var paths = [IndexPath]()
-        if count < before {
-            self.flowLayout.invalidateLayout()
-            self.tableView.reloadData()
-            return
-        }
         for i in before..<count {
             paths.append(IndexPath.init(item: i + self.headerOffset(), section: 0))
         }
@@ -2018,12 +1999,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             })
 
             let navOffset = (-1 * ( (self.navigationController?.navigationBar.frame.size.height ?? 64)))
-            var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
-            if statusBarHeight == 0 {
-                statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
-            }
-
-            var topOffset = (-1 * statusBarHeight)
+            var topOffset = (-1 * ( (self.inHeadView?.frame.size.height ?? 20)))
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
@@ -2032,16 +2008,6 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             
             setOffset = paddingOffset + navOffset + topOffset + headerHeight
             
-            let newNavOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-            var newTopOffset = statusBarHeight
-            if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
-                newTopOffset = 0
-            }
-
-            if newNavOffset + newTopOffset + 8 > self.tableView.contentInset.top {
-                self.tableView.contentInset = UIEdgeInsets.init(top: CGFloat(newNavOffset + newTopOffset + 8), left: 0, bottom: 65, right: 0)
-            }
-
             self.tableView.contentOffset = CGPoint.init(x: 0, y: setOffset)
         } else {
             self.flowLayout.invalidateLayout()
@@ -2076,12 +2042,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.indicator?.isHidden = true
         
         let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
-        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
-        if statusBarHeight == 0 {
-            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
-        }
-
-        var topOffset = statusBarHeight
+        var topOffset = UIApplication.shared.statusBarUIView?.frame.size.height ?? 20
         if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
             topOffset = 0
         }
@@ -2550,16 +2511,22 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         }
         
         var numberOfColumns = CGFloat.zero
-        var portraitCount = SettingValues.portraitMultiColumnCount
+        var portraitCount = CGFloat(SettingValues.multiColumnCount / 2)
+        if portraitCount == 0 {
+            portraitCount = 1
+        }
         
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        if portraitCount == 1 && pad {
+            portraitCount = 2
+        }
         
         if SettingValues.appMode == .MULTI_COLUMN {
             if UIApplication.shared.statusBarOrientation.isPortrait {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
                     numberOfColumns = 1
                 } else {
-                    numberOfColumns = CGFloat(portraitCount)
+                    numberOfColumns = portraitCount
                 }
             } else {
                 numberOfColumns = CGFloat(SettingValues.multiColumnCount)
@@ -2922,16 +2889,11 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
         }
     }
-        
+    
     func setupSwipeGesture() {
-        if SettingValues.submissionGestureMode == .FULL || swipeBackAdded {
+        if SettingValues.submissionGestureMode == .FULL {
             return
         }
-        
-        if let full = fullWidthBackGestureRecognizer {
-            full.view?.removeGestureRecognizer(full)
-        }
-        
         if UIDevice.current.userInterfaceIdiom == .pad {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
@@ -2947,10 +2909,6 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
                 fullWidthBackGestureRecognizer.require(toFail: navGesture)
             }
-            if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-                navGesture.require(toFail: fullWidthBackGestureRecognizer)
-            }
-            swipeBackAdded = true
             fullWidthBackGestureRecognizer.delegate = self
             //parent.requireFailureOf(fullWidthBackGestureRecognizer)
             tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
@@ -2969,10 +2927,10 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || SettingValues.submissionGestureMode == .FULL || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
                         return true
                     }
-                } else if !SettingValues.submissionGestureMode.shouldPage() && abs(translation.x) > abs(translation.y) {
+                } else if SettingValues.submissionGestureMode == .FULL && abs(translation.x) > abs(translation.y) {
                     return gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.1
                 }
                 return false
@@ -2999,7 +2957,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         if recognizer.view != nil && recognizer.state == .began {
             let velocity = recognizer.velocity(in: self.tableView).x
-            if (velocity > 0 && (SettingValues.submissionActionRight == .NONE || SettingValues.submissionGestureMode == .HALF || SettingValues.submissionGestureMode == .HALF_FULL)) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
+            if (velocity > 0 && SettingValues.submissionActionRight == .NONE) || (velocity < 0 && SettingValues.submissionActionLeft == .NONE) {
                 recognizer.cancel()
                 return
             }
@@ -3017,7 +2975,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             
-            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
+            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode != .FULL {
                 recognizer.cancel()
                 return
             }

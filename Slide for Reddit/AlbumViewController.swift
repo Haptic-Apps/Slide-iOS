@@ -279,12 +279,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         view.backgroundColor = UIColor.black
         self.navigationController?.view.backgroundColor = UIColor.clear
         
-        var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
-        if statusBarHeight == 0 {
-            statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
-        }
-
-        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + statusBarHeight, width: self.view.frame.size.width, height: 56))
+        let navigationBar = UINavigationBar.init(frame: CGRect.init(x: 0, y: 5 + (UIApplication.shared.statusBarUIView?.frame.size.height ?? 20), width: self.view.frame.size.width, height: 56))
         navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isTranslucent = true
@@ -413,7 +408,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     @objc func overview(_ sender: UIBarButtonItem) {
         let alert = AlertController(title: nil, message: nil, preferredStyle: .alert)
 
-        //alert.setupTheme()
+        alert.setupTheme()
         alert.addAsyncImagePicker(
             flow: .vertical,
             paging: false,
@@ -466,7 +461,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as? ModalMediaViewController)?.embeddedVC.data.baseURL?.absoluteString) ?? "") else {
+        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString) ?? "") else {
             return nil
         }
         
@@ -485,7 +480,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as? ModalMediaViewController)?.embeddedVC.data.baseURL?.absoluteString) ?? "") else {
+        guard let viewControllerIndex = urlStringKeys.firstIndex(of: ((viewController as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString) ?? "") else {
             return nil
         }
         
