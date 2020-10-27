@@ -16,41 +16,40 @@ import SDWebImage
 import UIKit
 
 class SettingsViewController: MediaTableViewController, MFMailComposeViewControllerDelegate {
-    var goPro: UITableViewCell = InsetCell()
+    var goPro: UITableViewCell = UITableViewCell()
 
-    var general: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "general")
-    var manageSubs: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "managesubs")
-    var mainTheme: UITableViewCell = InsetCell()
-    var postLayout: UITableViewCell = InsetCell()
-    var icon: UITableViewCell = InsetCell()
-    var subThemes: UITableViewCell = InsetCell()
-    var font: UITableViewCell = InsetCell()
-    var comments: UITableViewCell = InsetCell()
-    var linkHandling: UITableViewCell = InsetCell()
-    var history: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "history")
-    var dataSaving: UITableViewCell = InsetCell()
-    var filters: UITableViewCell = InsetCell()
-    var content: UITableViewCell = InsetCell()
-    var lockCell: UITableViewCell = InsetCell()
-    var subIconsCell: UITableViewCell = InsetCell()
-    var subCell: UITableViewCell = InsetCell()
-    var licenseCell: UITableViewCell = InsetCell()
-    var contributorsCell: UITableViewCell = InsetCell()
-    var aboutCell: UITableViewCell = InsetCell()
-    var githubCell: UITableViewCell = InsetCell()
-    var clearCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "cache")
-    var cacheCell: UITableViewCell = InsetCell()
-    var backupCell: UITableViewCell = InsetCell()
-    var gestureCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "gestures")
-    var widgetsCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "widgets")
-    var autoPlayCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "autoplay")
-    var tagsCell: UITableViewCell = InsetCell()
-    var audioSettings = InsetCell()
-    var postActionCell: UITableViewCell = InsetCell()
-    var shortcutCell: UITableViewCell = InsetCell()
-    var coffeeCell: UITableViewCell = InsetCell()
+    var general: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "general")
+    var manageSubs: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "managesubs")
+    var mainTheme: UITableViewCell = UITableViewCell()
+    var postLayout: UITableViewCell = UITableViewCell()
+    var icon: UITableViewCell = UITableViewCell()
+    var subThemes: UITableViewCell = UITableViewCell()
+    var font: UITableViewCell = UITableViewCell()
+    var comments: UITableViewCell = UITableViewCell()
+    var linkHandling: UITableViewCell = UITableViewCell()
+    var history: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "history")
+    var dataSaving: UITableViewCell = UITableViewCell()
+    var filters: UITableViewCell = UITableViewCell()
+    var content: UITableViewCell = UITableViewCell()
+    var lockCell: UITableViewCell = UITableViewCell()
+    var subIconsCell: UITableViewCell = UITableViewCell()
+    var subCell: UITableViewCell = UITableViewCell()
+    var licenseCell: UITableViewCell = UITableViewCell()
+    var contributorsCell: UITableViewCell = UITableViewCell()
+    var aboutCell: UITableViewCell = UITableViewCell()
+    var githubCell: UITableViewCell = UITableViewCell()
+    var clearCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "cache")
+    var cacheCell: UITableViewCell = UITableViewCell()
+    var backupCell: UITableViewCell = UITableViewCell()
+    var gestureCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "gestures")
+    var autoPlayCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "autoplay")
+    var tagsCell: UITableViewCell = UITableViewCell()
+    var audioSettings = UITableViewCell()
+    var postActionCell: UITableViewCell = UITableViewCell()
+    var shortcutCell: UITableViewCell = UITableViewCell()
+    var coffeeCell: UITableViewCell = UITableViewCell()
 
-    var viewModeCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "viewmode")
+    var viewModeCell: UITableViewCell = UITableViewCell(style: .subtitle, reuseIdentifier: "viewmode")
     var lock = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
@@ -186,9 +185,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         // set the title
         self.title = "Settings"
         self.tableView.separatorStyle = .none
-        
-        self.tableView.rowHeight = UITableView.automaticDimension
-        self.tableView.estimatedRowHeight = 200
 
         self.general.textLabel?.text = "General"
         self.general.accessoryType = .disclosureIndicator
@@ -198,7 +194,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
         self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
-        
+
         self.general.detailTextLabel?.numberOfLines = 0
         self.general.detailTextLabel?.lineBreakMode = .byWordWrapping
 
@@ -209,7 +205,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.manageSubs.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.theme.fontColor
         self.manageSubs.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange the sidebar"
+        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange your subreddits"
         self.manageSubs.detailTextLabel?.numberOfLines = 0
 
         self.postActionCell.textLabel?.text = "Reorder post actions"
@@ -311,7 +307,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.cacheCell.imageView?.image = UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.postLayout.textLabel?.text = "Card layout"
+        self.postLayout.textLabel?.text = "Submission layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -526,9 +522,18 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+        if indexPath.section == 0 {
+            return 74
+        } else {
+            // Hide content row if not logged in
+            if indexPath == IndexPath(row: 3, section: 2) &&
+                !AccountController.canShowNSFW {
+                return 0
+            }
+            return 64
+        }
     }
-    
+
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
@@ -537,92 +542,72 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell
         switch indexPath.section {
         case 0:
         if SettingValues.isPro {
             switch indexPath.row {
-            case 0: cell = self.general
-            case 1: cell = self.manageSubs
-            case 2: cell = self.viewModeCell
-            case 3: cell = self.lockCell
-            case 4: cell = self.subIconsCell
-            case 5: cell = self.gestureCell
-            case 6: cell = self.widgetsCell
-
+            case 0: return self.general
+            case 1: return self.manageSubs
+            case 2: return self.viewModeCell
+            case 3: return self.lockCell
+            case 4: return self.subIconsCell
+            case 5: return self.gestureCell
             default: fatalError("Unknown row in section 0")
             }
         } else {
             switch indexPath.row {
-            case 0: cell = self.general
-            case 1: cell = self.manageSubs
-            case 2: cell = self.goPro
-            case 3: cell = self.viewModeCell
-            case 4: cell = self.lockCell
-            case 5: cell = self.subIconsCell
-            case 6: cell = self.gestureCell
-            case 7: cell = self.widgetsCell
-
+            case 0: return self.general
+            case 1: return self.manageSubs
+            case 2: return self.goPro
+            case 3: return self.viewModeCell
+            case 4: return self.lockCell
+            case 5: return self.subIconsCell
+            case 6: return self.gestureCell
             default: fatalError("Unknown row in section 0")
             }
         }
         case 1:
             switch indexPath.row {
-            case 0: cell = self.mainTheme
-            case 1: cell = self.icon
-            case 2: cell = self.postLayout
-            case 3: cell = self.autoPlayCell
-            case 4: cell = self.audioSettings
-            case 5: cell = self.subThemes
-            case 6: cell = self.font
-            case 7: cell = self.comments
-            case 8: cell = self.postActionCell
-            case 9: cell = self.shortcutCell
+            case 0: return self.mainTheme
+            case 1: return self.icon
+            case 2: return self.postLayout
+            case 3: return self.autoPlayCell
+            case 4: return self.audioSettings
+            case 5: return self.subThemes
+            case 6: return self.font
+            case 7: return self.comments
+            case 8: return self.postActionCell
+            case 9: return self.shortcutCell
             default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
-            case 0: cell = self.linkHandling
-            case 1: cell = self.history
-            case 2: cell = self.dataSaving
-            case 3: cell = self.content
-            case 4: cell = self.filters
-            case 5: cell = self.cacheCell
-            case 6: cell = self.clearCell
-            case 7: cell = self.backupCell
-            case 8: cell = self.tagsCell
+            case 0: return self.linkHandling
+            case 1: return self.history
+            case 2: return self.dataSaving
+            case 3: return self.content
+            case 4: return self.filters
+            case 5: return self.cacheCell
+            case 6: return self.clearCell
+            case 7: return self.backupCell
+            case 8: return self.tagsCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
             switch indexPath.row {
-            case 0: cell = self.aboutCell
-            case 1: cell = self.subCell
-            case 2: cell = self.contributorsCell
+            case 0: return self.aboutCell
+            case 1: return self.subCell
+            case 2: return self.contributorsCell
             //case 4: return self.coffeeCell
-            case 3: cell = self.githubCell
-            case 4: cell = self.licenseCell
+            case 3: return self.githubCell
+            case 4: return self.licenseCell
             default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
         }
-        return cell
+
     }
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let cell = cell as? InsetCell {
-            if indexPath.row == 0 {
-                cell.top = true
-            } else {
-                cell.top = false
-            }
-            if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
-                cell.bottom = true
-            } else {
-                cell.bottom = false
-            }
-        }
-    }
-
 //    func showMultiColumn() {
 //        if !VCPresenter.proDialogShown(feature: true, self) {
 //            let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
@@ -668,7 +653,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SubredditReorderViewController()
             case 2:
                 if !SettingValues.isPro {
-                    VCPresenter.proDialogShown(feature: true, self)
+                    ch = SettingsPro()
                 } else {
                     ch = SettingsViewMode()
                 }

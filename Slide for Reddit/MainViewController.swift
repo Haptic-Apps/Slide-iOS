@@ -792,7 +792,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
                     ColorUtil.matchTraitCollection()
                 }
             } else {

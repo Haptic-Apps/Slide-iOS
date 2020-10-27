@@ -15,15 +15,14 @@ import UserNotifications
 
 class SettingsGeneral: BubbleSettingTableViewController {
 
-    var hideFAB: InsetCell = InsetCell(style: .subtitle, reuseIdentifier: "hidefab")
-    var scrubUsername: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "scrub")
+    var hideFAB: InsetCell = InsetCell()
+    var scrubUsername: InsetCell = InsetCell()
     var pinToolbar: InsetCell = InsetCell()
     var hapticFeedback: InsetCell = InsetCell()
     var autoKeyboard: InsetCell = InsetCell()
     var matchSilence: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "mute")
     var showPages: InsetCell = InsetCell()
     var totallyCollapse: InsetCell = InsetCell()
-    var buttonType: InsetCell = InsetCell(style: .subtitle, reuseIdentifier: "button")
     var fullyHideNavbar: InsetCell = InsetCell()
     var alwaysShowHeader: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "head")
     var commentLimit: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "cl")
@@ -97,7 +96,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
             SubredditReorderViewController.changed = true
-            doDisables()
         } else if changed == hapticFeedback {
             SettingValues.hapticFeedback = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
@@ -162,7 +160,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
             s.isOn = isOn
-            s.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
+            s.addTarget(self, action: #selector(SettingsLayout.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
             cell.accessoryView = s
         }
         cell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -170,45 +168,26 @@ class SettingsGeneral: BubbleSettingTableViewController {
     
     override func loadView() {
         super.loadView()
-        headers = ["Subreddits", "Auto-Hide", "Interaction", "Notifications", "Sorting", "Loading limits"]
+        headers = ["Display", "Interaction", "Notifications", "Sorting", "Loading limits"]
 
         // set the title
         self.title = "General"
         
         createCell(hapticFeedback, hapticFeedbackSwitch, isOn: SettingValues.hapticFeedback, text: "Haptic feedback throughout app")
-        createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Subreddit quick action button")
-        createCell(buttonType, nil, isOn: false, text: "Action")
-        buttonType.accessoryView = UIImageView(image: SettingValues.fabType.getPhoto()?.navIcon())
-        
-        createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Username Scrubbing")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Hide top bars on scroll")
+        createCell(hideFAB, hideFABSwitch, isOn: !SettingValues.hiddenFAB, text: "Subreddit bottom action bubble")
+        createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Hide your username everywhere")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Auto-Hide toolbars")
        // createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Let iOS handle audio focus")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard with bottom drawer")
-        createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators when loading more submissions")
-        createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.totallyCollapse, text: "Hide bottom bars on scroll")
+        createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Page separators with new submissions")
+        createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.totallyCollapse, text: "Hide bottom navigation bar on scroll")
         createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.fullyHideNavbar, text: "Hide status bar on scroll")
-        createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Show subreddit header")
+        createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Always show subreddit header")
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
         self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.alwaysShowHeader.detailTextLabel?.numberOfLines = 0
         
-        self.hideFAB.detailTextLabel?.text = "Pro tip: long on the button to quickly change the action"
-        self.hideFAB.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.hideFAB.backgroundColor = ColorUtil.theme.foregroundColor
-        self.hideFAB.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.hideFAB.detailTextLabel?.numberOfLines = 0
-
-        self.scrubUsername.detailTextLabel?.text = "Hide your username everywhere"
-        self.scrubUsername.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.scrubUsername.backgroundColor = ColorUtil.theme.foregroundColor
-        self.scrubUsername.textLabel?.textColor = ColorUtil.theme.fontColor
-
-        self.buttonType.detailTextLabel?.text = SettingValues.fabType.getTitle()
-        self.buttonType.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.buttonType.backgroundColor = ColorUtil.theme.foregroundColor
-        self.buttonType.textLabel?.textColor = ColorUtil.theme.fontColor
-
-        self.postSorting.textLabel?.text = "Default subreddit sorting"
+        self.postSorting.textLabel?.text = "Default post sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
         self.postSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.postSorting.backgroundColor = ColorUtil.theme.foregroundColor
@@ -282,8 +261,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.commentSorting.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.tableView.tableFooterView = UIView()
-        
-        doDisables()
     }
 
     func showCountMenu(_ submissions: Bool) {
@@ -345,29 +322,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.present(alert, animated: true, completion: nil)
 
     }
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 6
+        return 5
     }
-    
-    func doDisables() {
-        if SettingValues.hiddenFAB {
-            buttonType.textLabel?.isEnabled = false
-            buttonType.detailTextLabel?.isEnabled = false
-            buttonType.isUserInteractionEnabled = false
-            (buttonType.accessoryView as? UIImageView)?.alpha = 0.5
-            buttonType.accessoryView = UIImageView(image: UIImage(sfString: .xmark, overrideString: "close")?.menuIcon())
-            self.buttonType.detailTextLabel?.text = "Disabled"
-        } else {
-            buttonType.textLabel?.isEnabled = true
-            buttonType.detailTextLabel?.isEnabled = true
-            buttonType.isUserInteractionEnabled = true
-            (buttonType.accessoryView as? UIImageView)?.alpha = 1
-            buttonType.accessoryView = UIImageView(image: SettingValues.fabType.getPhoto()?.navIcon())
-            self.buttonType.detailTextLabel?.text = SettingValues.fabType.getTitle()
-        }
-    }
-
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: InsetCell
@@ -375,38 +332,34 @@ class SettingsGeneral: BubbleSettingTableViewController {
         case 0:
             switch indexPath.row {
             case 0: cell = self.hideFAB
-            case 1: cell = self.buttonType
-            case 2: cell = self.showPages
-            case 3: cell = self.scrubUsername
-            case 4: cell = self.alwaysShowHeader
+            case 1: cell = self.showPages
+            case 2: cell = self.autoKeyboard
+            case 3: cell = self.pinToolbar
+            case 4: cell = self.totallyCollapse
+            case 5: cell = self.fullyHideNavbar
+            case 6: cell = self.scrubUsername
+            case 7: cell = self.alwaysShowHeader
             default: fatalError("Unknown row in section 0")
             }
         case 1:
-            switch indexPath.row {
-            case 0: cell = self.pinToolbar
-            case 1: cell = self.totallyCollapse
-            case 2: cell = self.fullyHideNavbar
-            default: fatalError("Unknown row in section 0")
-            }
-        case 2:
             switch indexPath.row {
             case 0: cell = self.hapticFeedback
             //case 1: return self.matchSilence
             default: fatalError("Unknown row in section 0")
             }
-        case 3:
+        case 2:
             switch indexPath.row {
             case 0: cell = self.notifications
             default: fatalError("Unknown row in section 1")
             }
-        case 4:
+        case 3:
             switch indexPath.row {
             case 0: cell = self.postSorting
             case 1: cell = self.commentSorting
             case 2: cell = self.searchSorting
             default: fatalError("Unknown row in section 2")
             }
-        case 5:
+        case 4:
             switch indexPath.row {
             case 0: cell = self.postLimit
             case 1: cell = self.commentLimit
@@ -465,21 +418,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
 
         actionSheetController.show(self)
     }
-    
-    func changeFab() {
-        let actionSheetController = DragDownAlertMenu(title: "Change action", subtitle: "", icon: nil, themeColor: ColorUtil.baseAccent, full: true)
-
-        for t in SettingValues.FabType.cases {
-            actionSheetController.addAction(title: t.getTitle(), icon: t.getPhoto()?.menuIcon(), action: {
-                UserDefaults.standard.set(t.rawValue, forKey: SettingValues.pref_fabType)
-                SettingValues.fabType = t
-                self.doDisables()
-            })
-        }
-
-        actionSheetController.show(self)
-    }
-
 
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
         if s == .hot || s == .new || s == .rising || s == .best {
@@ -514,11 +452,11 @@ class SettingsGeneral: BubbleSettingTableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
 
-        if indexPath.section == 4 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             showMenu(tableView.cellForRow(at: indexPath))
-        } else if indexPath.section == 4 && indexPath.row == 1 {
+        } else if indexPath.section == 3 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
-        } else if indexPath.section == 4 && indexPath.row == 2 {
+        } else if indexPath.section == 3 && indexPath.row == 2 {
             showMenuSearch(tableView.cellForRow(at: indexPath))
         }
 
@@ -527,12 +465,11 @@ class SettingsGeneral: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let pad = UIDevice.current.userInterfaceIdiom == .pad
         switch section {
-        case 0: return 4 + (!pad ? 1 : 0)
-        case 1: return 3
+        case 0: return 7 + (!pad ? 1 : 0)
+        case 1: return 1
         case 2: return 1
-        case 3: return 1
-        case 4: return 3
-        case 5: return 2
+        case 3: return 3
+        case 4: return 2
         default: fatalError("Unknown number of sections")
         }
     }
@@ -553,10 +490,6 @@ public class InsetCell: UITableViewCell {
     }
     var top = false
     var bottom = false
-
-    /// Minimum height of the cell. Only effective when the table view's
-    /// row height is set to `UITableView.automaticDimension`.
-    var minHeight: CGFloat? = 60
     
     override public func layoutSubviews() {
         super.layoutSubviews()
@@ -591,20 +524,6 @@ public class InsetCell: UITableViewCell {
         shape.path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: 10, height: 10)).cgPath
         layer.mask = shape
         layer.masksToBounds = true
-    }
-}
-
-extension InsetCell { // Support minHeight variable. See https://stackoverflow.com/a/48853081/7138792
-    public override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
-        let size = super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-        guard let minHeight = minHeight else { return size }
-        return CGSize(width: size.width, height: max(size.height, minHeight))
-    }
-
-    public override func systemLayoutSizeFitting(_ targetSize: CGSize) -> CGSize {
-        let size = super.systemLayoutSizeFitting(targetSize)
-        guard let minHeight = minHeight else { return size }
-        return CGSize(width: size.width, height: max(size.height, minHeight))
     }
 }
 
