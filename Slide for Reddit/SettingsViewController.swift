@@ -718,7 +718,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 3:
                 ch = SettingsContent()
             case 4:
-                ch = FiltersViewController()
+                ch = SettingsContentFilters()
             case 5:
                 ch = CacheSettings()
             case 6:

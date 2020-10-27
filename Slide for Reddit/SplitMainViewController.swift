@@ -247,35 +247,6 @@ class SplitMainViewController: MainViewController {
         if let splitViewController = splitViewController, !UIApplication.shared.isSplitOrSlideOver {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
-        
-        self.oldSize = self.view.frame.size
-        let landscape = oldSize.width > oldSize.height
-        let currentLandscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
-        if (landscape && !currentLandscape) || (!landscape && currentLandscape) {
-            if abs(UIScreen.main.bounds.width - oldSize.height) > 40 { //Size changed, but not orientation
-                if #available(iOS 14.0, *) {
-                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
-                        resetForSplit(oldSize)
-                    }
-                } else {
-                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                        resetForSplit(oldSize)
-                    }
-                }
-            }
-        } else if (landscape && currentLandscape) || (!landscape && !currentLandscape) {
-            if abs(UIScreen.main.bounds.width - oldSize.width) > 40 { //Size changed, but not orientation
-                if #available(iOS 14.0, *) {
-                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad && splitViewController?.style != .tripleColumn {
-                        resetForSplit(oldSize)
-                    }
-                } else {
-                    if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                        resetForSplit(oldSize)
-                    }
-                }
-            }
-        }
     }
     
     var oldSize = CGSize.zero
@@ -299,54 +270,6 @@ class SplitMainViewController: MainViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             self.setupTabBar(self.finalSubs)
             self.getSubredditVC()?.showUI(false)
-        }
-        
-        if oldSize == CGSize.zero {
-            oldSize = size
-            return
-        }
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SPLIT {
-            let landscape = oldSize.width > oldSize.height
-            let currentLandscape = size.width > size.height
-            if (landscape && !currentLandscape) || (!landscape && currentLandscape) {
-                if abs(size.width - oldSize.height) > 40 { //Size changed, but not orientation
-                    resetForSplit(size)
-                }
-            } else if (landscape && currentLandscape) || (!landscape && !currentLandscape) {
-                if abs(size.width - oldSize.width) > 40 { //Size changed, but not orientation
-                    resetForSplit(size)
-                }
-            }
-        }
-    }
-    
-    func resetForSplit(_ size: CGSize) {
-        if UIDevice.current.userInterfaceIdiom == .phone { //Only run this on iPad
-            return
-        }
-        if oldSize.width == size.width || (size.height == oldSize.width && size.width == oldSize.height) {
-            return
-        }
-        oldSize = size
-        var keyWindow = UIApplication.shared.keyWindow
-        if keyWindow == nil {
-            if #available(iOS 13.0, *) {
-                keyWindow = UIApplication.shared.connectedScenes
-                    .filter({ $0.activationState == .foregroundActive })
-                    .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
-                    .first?.windows
-                    .filter({ $0.isKeyWindow }).first
-            }
-        }
-        guard keyWindow != nil else {
-            return
-        }
-        
-        if #available(iOS 14, *) {
-            //Don't do anything on iOS 14
-        } else {
-            (UIApplication.shared.delegate as? AppDelegate)?.resetSplit(self, window: keyWindow!, size.width < UIScreen.main.bounds.width)
         }
     }
 

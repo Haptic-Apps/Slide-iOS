@@ -133,7 +133,7 @@ class AccountController {
      */
     public static func challengeWithAllScopes(_ context: UIViewController, register: Bool) throws {
         do {
-            try self.challengeWithScopes(["identity", "edit", "flair", "history", "modconfig", "modflair", "modlog", "modposts", "modwiki", "mysubreddits", "privatemessages", "read", "report", "save", "submit", "subscribe", "vote", "wikiedit", "wikiread"], context, register: register)
+            try self.challengeWithScopes(["account", "identity", "edit", "flair", "history", "modconfig", "modflair", "modlog", "modposts", "modwiki", "mysubreddits", "privatemessages", "read", "report", "save", "submit", "subscribe", "vote", "wikiedit", "wikiread"], context, register: register)
         } catch {
             throw error
         }

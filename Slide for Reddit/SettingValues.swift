@@ -294,6 +294,7 @@ class SettingValues {
     enum PostImageMode: String {
         case FULL_IMAGE = "full"
         case CROPPED_IMAGE = "cropped"
+        case SHORT_IMAGE = "short"
         case THUMBNAIL = "thumbnail"
         //for future implementation case NONE = "none"
     }

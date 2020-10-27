@@ -478,7 +478,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             
             if let url = URL(string: icon!) {
                 if ContentType.isImage(uri: url) {
-                    image.loadImageWithPulsingAnimation(atUrl: url, withPlaceHolderImage: LinkCellImageCache.web)
+                    image.loadImageWithPulsingAnimation(atUrl: url, withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                 } else {
                     image.image = LinkCellImageCache.web
                     let slp = SwiftLinkPreview(session: URLSession.shared,
@@ -486,7 +486,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
                                                responseQueue: DispatchQueue.main,
                                                cache: DisabledCache.instance)
                     slp.preview(icon!, onSuccess: { (response) in
-                        image.loadImageWithPulsingAnimation(atUrl: URL(string: response.image ?? response.icon ?? ""), withPlaceHolderImage: LinkCellImageCache.web)
+                        image.loadImageWithPulsingAnimation(atUrl: URL(string: response.image ?? response.icon ?? ""), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                     }, onError: { (_) in })
                 }
             } else {

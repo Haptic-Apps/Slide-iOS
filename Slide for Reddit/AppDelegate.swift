@@ -448,69 +448,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.makeKeyAndVisible()
         
         setupSplitLayout(splitViewController)
-
-        //Check if in split mode, if so reset to triple column mode
-        let oldSize = window.frame.size
-        if abs(UIScreen.main.bounds.width - oldSize.width) > 10 && abs(UIScreen.main.bounds.width - oldSize.height) > 10 { //Size changed, but not orientation
-            if SettingValues.appMode != .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
-                self.resetSplit(main, window: window, true)
-            }
-        }
-
         return main
     }
             
-    func resetSplit(_ main: SplitMainViewController, window: UIWindow, _ split: Bool) {
-        let splitViewController = NoHomebarSplitViewController()
-
-        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
-            splitViewController.viewControllers = [
-                SwipeForwardNavigationController(
-                    rootViewController: NavigationHomeViewController(controller: main)),
-                SwipeForwardNavigationController(
-                    rootViewController: main),
-            ]
-        } else {
-            let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
-            swipeNav.pushViewController(main, animated: false)
-            splitViewController.viewControllers = [
-                swipeNav
-            ]
-        }
-        if #available(iOS 14.0, *) {
-            splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-            splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            if splitViewController.style == .tripleColumn {
-                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            }
-        } else {
-            splitViewController.preferredPrimaryColumnWidthFraction = 0.4
-            splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.4
-        }
-        
-        splitViewController.presentsWithGesture = true
-
-        // Set display mode and split behavior
-        if (SettingValues.appMode == .SINGLE || SettingValues.appMode == .MULTI_COLUMN) && !split {
-            splitViewController.preferredDisplayMode = .secondaryOnly
-            if #available(iOS 14.0, *) {
-                splitViewController.preferredSplitBehavior = .overlay
-            }
-        } else {
-            if #available(iOS 14.0, *) {
-                splitViewController.preferredDisplayMode = .oneBesideSecondary
-                splitViewController.preferredSplitBehavior = .displace
-            } else {
-                splitViewController.preferredDisplayMode = .allVisible
-            }
-        }
-
-        window.rootViewController = splitViewController
-        self.window = window
-        window.makeKeyAndVisible()
-    }
-    
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
         let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn

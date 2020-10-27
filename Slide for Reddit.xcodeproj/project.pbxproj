@@ -278,7 +278,7 @@
 		BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE854972239310E300D51DDC /* GalleryLinkCellView.swift */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
-		BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */; };
+		BE8630111E2EDFB2004F0E1F /* SettingsContentFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* SettingsContentFilters.swift */; };
 		BE8833F1251FB66900131DEB /* ic_space@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833EE251FB66800131DEB /* ic_space@2x.png */; };
 		BE8833F2251FB66900131DEB /* ic_space@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */; };
 		BE8833F3251FB66900131DEB /* ic_space@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833F0251FB66900131DEB /* ic_space@3x.png */; };
@@ -744,7 +744,7 @@
 		BE854972239310E300D51DDC /* GalleryLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryLinkCellView.swift; sourceTree = "<group>"; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
-		BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
+		BE8630101E2EDFB2004F0E1F /* SettingsContentFilters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsContentFilters.swift; sourceTree = "<group>"; };
 		BE8833EE251FB66800131DEB /* ic_space@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@2x.png"; sourceTree = "<group>"; };
 		BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@2x~ipad.png"; sourceTree = "<group>"; };
 		BE8833F0251FB66900131DEB /* ic_space@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@3x.png"; sourceTree = "<group>"; };
@@ -1179,7 +1179,7 @@
 				BE2B8A0A1E2602CA0053D493 /* SubredditReorderViewController.swift */,
 				BE6EA6C51E1C1E8000E9E709 /* Streamable */,
 				BE2DEAAD1E2682A800FBF0B5 /* SettingsGeneral.swift */,
-				BE8630101E2EDFB2004F0E1F /* FiltersViewController.swift */,
+				BE8630101E2EDFB2004F0E1F /* SettingsContentFilters.swift */,
 				BE780B5D1E32B41300DAA1EB /* SubredditThemeViewController.swift */,
 				BE780B631E3405F300DAA1EB /* SettingsTheme.swift */,
 				BE35217D1E3D325A00C30B8D /* SettingsFont.swift */,
@@ -2344,7 +2344,7 @@
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,
 				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,
-				BE8630111E2EDFB2004F0E1F /* FiltersViewController.swift in Sources */,
+				BE8630111E2EDFB2004F0E1F /* SettingsContentFilters.swift in Sources */,
 				BE15FE752163D03900288D86 /* TopLockViewController.swift in Sources */,
 				BE36886220E5709300987320 /* FullLinkCellView.swift in Sources */,
 				BEB2B2351E35D25100BF761C /* InboxContributionLoader.swift in Sources */,
