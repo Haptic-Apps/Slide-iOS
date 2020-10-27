@@ -1570,7 +1570,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         
         let fullImage = ContentType.fullImage(t: type)
-        
+        let halfScreen = UIScreen.main.bounds.height / 2
+
         if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
@@ -1578,10 +1579,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             submissionHeight = 200
         } else if big {
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !isGallery) ? CGFloat(10) : CGFloat(0)))
-            if h == 0 {
-                submissionHeight = 200
+            if (SettingValues.postImageMode == .SHORT_IMAGE) && (ContentType.displayVideo(t: type) && type != .VIDEO) {
+                submissionHeight = h > halfScreen ? halfScreen : h
             } else {
-                submissionHeight = h
+                if h == 0 {
+                    submissionHeight = 200
+                } else {
+                    submissionHeight = h
+                }
             }
         }
         
@@ -1723,9 +1728,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 16 : 24) //title label padding
         }
-        
+
         if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
+        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
+            submissionHeight = submissionHeight > halfScreen ? halfScreen : submissionHeight
         } else if big {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
@@ -2937,7 +2944,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             
-            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode != .FULL {
+            if recognizer.location(in: cell).x < cell.innerView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
                 recognizer.cancel()
                 return
             }

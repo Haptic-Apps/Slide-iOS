@@ -488,96 +488,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let splitViewController = UISplitViewController()
             splitViewController.preferredDisplayMode = .oneOverSecondary
             splitViewController.presentsWithGesture = true
-
-            let main = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-            let navHome = NavigationHomeViewController(controller: main)
-
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), main]
-            
             window.rootViewController = splitViewController
             self.window = window
             window.makeKeyAndVisible()
+        
+            setupSplitLayout(splitViewController)
             return main
         }
-
     }
-
-    @available(iOS 14.0, *)
-    func resetStackNew(_ soft: Bool = false, window: UIWindow?) -> MainViewController {
-        guard let window = window else {
-            fatalError("Window must exist when resetting the stack!")
-        }
-
-        if !soft {
-            return doHard14(window)
-        } else if let oldSplit = window.rootViewController as? UISplitViewController {
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
-                    let splitViewController = UISplitViewController(style: .doubleColumn)
-                    splitViewController.preferredDisplayMode = .secondaryOnly
-                    splitViewController.presentsWithGesture = true
-                    splitViewController.preferredSplitBehavior = .overlay
-                                 
-                    let main = (oldSplit.viewController(for: .supplementary) as! SplitMainViewController)
-                    let oldSidebar = (oldSplit.viewController(for: .primary) as! SwipeForwardNavigationController).viewControllers[0]
-
-                    splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: oldSidebar), for: .primary)
-
-                    splitViewController.setViewController(main, for: .secondary)
-                    
-                    guard let snapshotImageView = window.snapshotView(afterScreenUpdates: true) else {
-                        return main
-                    }
-                    window.addSubview(snapshotImageView)
-                    window.rootViewController = splitViewController
-                    window.bringSubviewToFront(snapshotImageView)
-
-                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
-                        snapshotImageView.alpha = 0
-                    }, completion: { (success) -> Void in
-                        snapshotImageView.removeFromSuperview()
-                    })
-
-                    return main
-                } else {
-                    let splitViewController = UISplitViewController(style: .tripleColumn)
-                    splitViewController.preferredDisplayMode = .automatic
-                    splitViewController.presentsWithGesture = true
-                    splitViewController.preferredSplitBehavior = .automatic
-                    
-                    splitViewController.preferredSupplementaryColumnWidthFraction = 0.4
-                    splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width / 3
-                    
-                    let main = (oldSplit.viewController(for: .secondary) as! SplitMainViewController)
-                    let oldSidebar = (oldSplit.viewController(for: .primary) as! SwipeForwardNavigationController).viewControllers[0]
-                    
-                    splitViewController.setViewController(SwipeForwardNavigationController(rootViewController: oldSidebar), for: .primary)
-
-                    splitViewController.setViewController(main, for: .supplementary)
-                    splitViewController.setViewController(PlaceholderViewController(), for: .secondary)
-
-                    guard let snapshotImageView = window.snapshotView(afterScreenUpdates: true) else {
-                        return main
-                    }
-                    window.addSubview(snapshotImageView)
-                    window.rootViewController = splitViewController
-                    window.bringSubviewToFront(snapshotImageView)
-                    
-                    UIView.animate(withDuration: 0.4, animations: { () -> Void in
-                        snapshotImageView.alpha = 0
-                    }, completion: { (success) -> Void in
-                        snapshotImageView.removeFromSuperview()
-                    })
-                    return main
-                }
-            } else {
-                return doHard14(window)
-            }
-        } else {
-            return doHard14(window)
-        }
-    }
-    
+            
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -1183,6 +1102,7 @@ extension URL {
         return results
     }
 }
+    
 extension Session {
     /**
      Refresh own token.

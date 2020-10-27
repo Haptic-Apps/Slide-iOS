@@ -209,7 +209,11 @@ extension SwipeForwardNavigationController {
     }
     
     override func collapseSecondaryViewController(_ secondaryViewController: UIViewController, for splitViewController: UISplitViewController) {
-        if let secondaryAsNav = secondaryViewController as? UINavigationController, UIDevice.current.userInterfaceIdiom == .phone {
+        var not14 = true
+        if #available(iOS 14, *) {
+            not14 = false
+        }
+        if let secondaryAsNav = secondaryViewController as? UINavigationController, (UIDevice.current.userInterfaceIdiom == .phone || not14) {
             viewControllers += secondaryAsNav.viewControllers
         } else {
             super.collapseSecondaryViewController(secondaryViewController, for: splitViewController)
@@ -232,7 +236,12 @@ extension SwipeForwardNavigationController {
 
 extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-        if UIDevice.current.userInterfaceIdiom == .phone {
+        var not14 = true
+        if #available(iOS 14, *) {
+            not14 = false
+        }
+
+        if UIDevice.current.userInterfaceIdiom == .phone || not14 {
             var main: UIViewController?
             for viewController in viewControllers {
                 if viewController is MainViewController {

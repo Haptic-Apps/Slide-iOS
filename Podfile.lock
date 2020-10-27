@@ -1,57 +1,57 @@
 PODS:
   - Alamofire (4.9.1)
-  - DTCoreText (1.6.25):
-    - DTCoreText/Core (= 1.6.25)
+  - DTCoreText (1.6.26):
+    - DTCoreText/Core (= 1.6.26)
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTCoreText/Core (1.6.25):
+  - DTCoreText/Core (1.6.26):
     - DTFoundation/Core (~> 1.7.5)
     - DTFoundation/DTAnimatedGIF (~> 1.7.5)
     - DTFoundation/DTHTMLParser (~> 1.7.5)
     - DTFoundation/UIKit (~> 1.7.5)
-  - DTFoundation/Core (1.7.15)
-  - DTFoundation/DTAnimatedGIF (1.7.15)
-  - DTFoundation/DTHTMLParser (1.7.15):
+  - DTFoundation/Core (1.7.16)
+  - DTFoundation/DTAnimatedGIF (1.7.16)
+  - DTFoundation/DTHTMLParser (1.7.16):
     - DTFoundation/Core
-  - DTFoundation/UIKit (1.7.15):
+  - DTFoundation/UIKit (1.7.16):
     - DTFoundation/Core
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (117.0.0):
+  - MaterialComponents/ActivityIndicator (118.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (117.0.0)
-  - MaterialComponents/Availability (117.0.0)
-  - MaterialComponents/Elevation (117.0.0):
+  - MaterialComponents/AnimationTiming (118.1.0)
+  - MaterialComponents/Availability (118.1.0)
+  - MaterialComponents/Elevation (118.1.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Ink (117.0.0):
+  - MaterialComponents/Ink (118.1.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (117.0.0)
-  - MaterialComponents/private/Application (117.0.0)
-  - MaterialComponents/private/Color (117.0.0):
+  - MaterialComponents/Palettes (118.1.0)
+  - MaterialComponents/private/Application (118.1.0)
+  - MaterialComponents/private/Color (118.1.0):
     - MaterialComponents/Availability
-  - MaterialComponents/private/Math (117.0.0)
-  - MaterialComponents/ProgressView (117.0.0):
+  - MaterialComponents/private/Math (118.1.0)
+  - MaterialComponents/ProgressView (118.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
-  - MaterialComponents/Ripple (117.0.0):
+  - MaterialComponents/Ripple (118.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (117.0.0)
-  - MaterialComponents/ShadowLayer (117.0.0):
+  - MaterialComponents/ShadowElevations (118.1.0)
+  - MaterialComponents/ShadowLayer (118.1.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (117.0.0):
+  - MaterialComponents/Tabs (118.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -62,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (117.0.0):
+  - MaterialComponents/Typography (118.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
     - MDFTextAccessibility
@@ -154,13 +154,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DTCoreText:
-    :commit: a42a55a704ab6003b50b4a4806d33d9218ddbfc2
+    :commit: 24823e50ec7496b80bd9dd346459136511cfa9d5
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: 7c5d816cc37e073ca4bda1c713b51ffee91acf33
+    :commit: a1813197efb1952e7045f02621503e6364b63a4b
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: a22003f93a803c2e14b193f636669c21358fb1d7
@@ -177,11 +177,11 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  DTCoreText: e92f4cf6b36d9d71ce4436d12cf089d74ab0596b
-  DTFoundation: 767ca882209ef4d5132ec7e702526d5ed5bb71a2
+  DTCoreText: ec749e013f2e1f76de5e7c7634642e600a7467ce
+  DTFoundation: e7781d9fd2f202bfd451fbbf8cab71ce83b46498
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 29320b6a89c4c90e41c7a41fc70e91127ac34161
+  MaterialComponents: e4a7c8b5eabe7856ef58f632fb5800a229bda5be
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MDFTextAccessibility: 85c09a1bd9c321f494348e632a25063bcda35a53
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc

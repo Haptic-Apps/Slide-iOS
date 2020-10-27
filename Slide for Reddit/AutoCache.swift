@@ -203,6 +203,8 @@ public class AutoCache: NSObject {
                 thumb = true
             } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
+            } else if big && (SettingValues.postImageMode == .SHORT_IMAGE) {
+                height = Int(UIScreen.main.bounds.height / 2)
             }
 
             if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {
