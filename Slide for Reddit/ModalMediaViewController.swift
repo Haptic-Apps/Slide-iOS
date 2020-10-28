@@ -377,22 +377,22 @@ class ModalMediaViewController: UIViewController {
     }
 
     func configureLayout() {
-        embeddedVC.view.edgeAnchors == self.view.edgeAnchors
+        embeddedVC.view.edgeAnchors |==| self.view.edgeAnchors
 
-        gradientView.horizontalAnchors == self.view.horizontalAnchors
-        gradientView.topAnchor == self.view.topAnchor
+        gradientView.horizontalAnchors |==| self.view.horizontalAnchors
+        gradientView.topAnchor |==| self.view.topAnchor
 
-        closeButton.sizeAnchors == .square(size: 38)
-        closeButton.topAnchor == gradientView.safeTopAnchor + 8
-        closeButton.leftAnchor == gradientView.safeLeftAnchor + 12
+        closeButton.sizeAnchors |==| .square(size: 38)
+        closeButton.topAnchor |==| gradientView.safeTopAnchor + 8
+        closeButton.leftAnchor |==| gradientView.safeLeftAnchor + 12
         closeButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         closeButton.layer.masksToBounds = true
         closeButton.layer.cornerRadius = 18
         
-        titleView.leftAnchor == closeButton.rightAnchor + 8
-        titleView.topAnchor == gradientView.safeTopAnchor + 8
-        titleView.rightAnchor == gradientView.safeRightAnchor - 8
-        titleView.bottomAnchor == gradientView.bottomAnchor - 8
+        titleView.leftAnchor |==| closeButton.rightAnchor + 8
+        titleView.topAnchor |==| gradientView.safeTopAnchor + 8
+        titleView.rightAnchor |==| gradientView.safeRightAnchor - 8
+        titleView.bottomAnchor |==| gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
         titleView.preferredMaxLayoutWidth = self.titleView.frame.size.width

@@ -24,28 +24,28 @@ final class TextLinkCellView: LinkCellView {
         let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
         let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
         constraintsForType = batch {
-            title.topAnchor == innerView.topAnchor + (ctwelve - 5)
+            title.topAnchor |==| innerView.topAnchor + (ctwelve - 5)
             if SettingValues.actionBarMode == .SIDE_RIGHT {
-                sideButtons.topAnchor == innerView.topAnchor + ctwelve
-                title.rightAnchor == sideButtons.leftAnchor - ceight
-                title.leftAnchor == innerView.leftAnchor + ctwelve
+                sideButtons.topAnchor |==| innerView.topAnchor + ctwelve
+                title.rightAnchor |==| sideButtons.leftAnchor - ceight
+                title.leftAnchor |==| innerView.leftAnchor + ctwelve
             } else if SettingValues.actionBarMode == .SIDE {
-                sideButtons.topAnchor == innerView.topAnchor + ctwelve
-                title.leftAnchor == sideButtons.rightAnchor + ceight
-                title.rightAnchor == innerView.rightAnchor - ctwelve
+                sideButtons.topAnchor |==| innerView.topAnchor + ctwelve
+                title.leftAnchor |==| sideButtons.rightAnchor + ceight
+                title.rightAnchor |==| innerView.rightAnchor - ctwelve
             } else {
-                title.horizontalAnchors == innerView.horizontalAnchors + ctwelve
+                title.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
             }
             if !SettingValues.actionBarMode.isFull() {
-                title.bottomAnchor == innerView.bottomAnchor - ctwelve
+                title.bottomAnchor |==| innerView.bottomAnchor - ctwelve
             } else {
-                title.bottomAnchor <= box.topAnchor - ceight
+                title.bottomAnchor |<=| box.topAnchor - ceight
             }
             
-            subicon.topAnchor == title.topAnchor
-            subicon.leftAnchor == title.leftAnchor
-            subicon.widthAnchor == 24
-            subicon.heightAnchor == 24
+            subicon.topAnchor |==| title.topAnchor
+            subicon.leftAnchor |==| title.leftAnchor
+            subicon.widthAnchor |==| 24
+            subicon.heightAnchor |==| 24
         }
     }
 

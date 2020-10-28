@@ -252,10 +252,10 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
-        link.contentView.heightAnchor == link.estimateHeight(false, true, np: false)
-        link.contentView.widthAnchor == min(self.tableView.frame.size.width, 350)
+        link.contentView.heightAnchor |==| link.estimateHeight(false, true, np: false)
+        link.contentView.widthAnchor |==| min(self.tableView.frame.size.width, 350)
         linkCell.contentView.addSubview(link.contentView)
-        link.contentView.centerAnchors == linkCell.contentView.centerAnchors
+        link.contentView.centerAnchors |==| linkCell.contentView.centerAnchors
         
         switch SettingValues.postViewMode {
         case .CARD:

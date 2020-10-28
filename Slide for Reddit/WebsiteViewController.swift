@@ -178,7 +178,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         webView.allowsBackForwardNavigationGestures = false
 
         self.view.addSubview(webView)
-        webView.edgeAnchors == self.view.edgeAnchors
+        webView.edgeAnchors |==| self.view.edgeAnchors
         myProgressView = UIProgressView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 10))
         myProgressView.progressTintColor = ColorUtil.accentColorForSub(sub: sub)
         self.view.addSubview(myProgressView)

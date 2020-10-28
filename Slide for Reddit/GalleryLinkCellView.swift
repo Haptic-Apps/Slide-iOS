@@ -22,24 +22,24 @@ final class GalleryLinkCellView: LinkCellView {
         constraintsForType = batch {
             bannerImage.isHidden = false
             // Image goes above title
-            title.horizontalAnchors == innerView.horizontalAnchors + ctwelve
+            title.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
             
-            title.bottomAnchor == box.topAnchor - ceight
+            title.bottomAnchor |==| box.topAnchor - ceight
             
-            bannerImage.topAnchor == innerView.topAnchor + bannerPadding
-            bannerImage.bottomAnchor == title.topAnchor - ceight
-            bannerImage.horizontalAnchors == innerView.horizontalAnchors + bannerPadding
+            bannerImage.topAnchor |==| innerView.topAnchor + bannerPadding
+            bannerImage.bottomAnchor |==| title.topAnchor - ceight
+            bannerImage.horizontalAnchors |==| innerView.horizontalAnchors + bannerPadding
             
-            subicon.topAnchor == title.topAnchor
-            subicon.leftAnchor == title.leftAnchor
-            subicon.widthAnchor == 24
-            subicon.heightAnchor == 24
+            subicon.topAnchor |==| title.topAnchor
+            subicon.leftAnchor |==| title.leftAnchor
+            subicon.widthAnchor |==| 24
+            subicon.heightAnchor |==| 24
 
-            videoView.edgeAnchors == bannerImage.edgeAnchors
-            topVideoView.edgeAnchors == videoView.edgeAnchors
-            infoContainer.heightAnchor == CGFloat(45)
-            tagbody.bottomAnchor == bannerImage.bottomAnchor - 8
-            tagbody.rightAnchor == bannerImage.rightAnchor - 8
+            videoView.edgeAnchors |==| bannerImage.edgeAnchors
+            topVideoView.edgeAnchors |==| videoView.edgeAnchors
+            infoContainer.heightAnchor |==| CGFloat(45)
+            tagbody.bottomAnchor |==| bannerImage.bottomAnchor - 8
+            tagbody.rightAnchor |==| bannerImage.rightAnchor - 8
         }
     }
     
@@ -57,7 +57,7 @@ final class GalleryLinkCellView: LinkCellView {
         self.videoView.layer.cornerRadius = 5
                 
         constraintsForContent = batch {
-            // bannerImage.heightAnchor >= CGFloat(submissionHeight)
+            // bannerImage.heightAnchor |>=| CGFloat(submissionHeight)
         }
     }
     

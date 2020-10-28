@@ -198,8 +198,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
 
-        tableView.verticalAnchors == view.verticalAnchors
-        tableView.horizontalAnchors == view.safeHorizontalAnchors
+        tableView.verticalAnchors |==| view.verticalAnchors
+        tableView.horizontalAnchors |==| view.safeHorizontalAnchors
 
         if SettingValues.submissionGestureMode != .NONE {
             setupGestures()
@@ -240,7 +240,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         emptyStateView.isHidden = true
         emptyStateView.isUserInteractionEnabled = false
-        emptyStateView.edgeAnchors == self.tableView.edgeAnchors
+        emptyStateView.edgeAnchors |==| self.tableView.edgeAnchors
 
         self.view.bringSubviewToFront(emptyStateView)
 
@@ -278,14 +278,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.view.addSubview(inHeadView!)
             inHeadView!.isHidden = UIDevice.current.orientation.isLandscape
 
-            inHeadView!.topAnchor == view.topAnchor
-            inHeadView!.horizontalAnchors == view.horizontalAnchors
+            inHeadView!.topAnchor |==| view.topAnchor
+            inHeadView!.horizontalAnchors |==| view.horizontalAnchors
             var statusBarHeight = UIApplication.shared.statusBarUIView?.frame.size.height ?? 0
             if statusBarHeight == 0 {
                 statusBarHeight = (self.navigationController?.navigationBar.frame.minY ?? 20)
             }
 
-            inHeadView!.heightAnchor == statusBarHeight
+            inHeadView!.heightAnchor |==| statusBarHeight
             
             let navOffset = self.navigationController?.navigationBar.frame.size.height ?? 64
             var topOffset = statusBarHeight
@@ -336,7 +336,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             splitViewController?.navigationController?.setNavigationBarHidden(true, animated: false)
         }
         if let bar = splitViewController?.navigationController?.navigationBar {
-            bar.heightAnchor == 0
+            bar.heightAnchor |==| 0
         }
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -578,16 +578,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         //} else {
             /*if let topView = self.menuNav?.topView {
                 self.menu.deactivateImmediateConstraints()
-                self.menu.topAnchor == topView.topAnchor - 10
-                self.menu.widthAnchor == 56
-                self.menu.heightAnchor == 56
-                self.menu.leftAnchor == topView.leftAnchor
+                self.menu.topAnchor |==| topView.topAnchor - 10
+                self.menu.widthAnchor |==| 56
+                self.menu.heightAnchor |==| 56
+                self.menu.leftAnchor |==| topView.leftAnchor
                 
                 self.more.deactivateImmediateConstraints()
-                self.more.topAnchor == topView.topAnchor - 10
-                self.more.widthAnchor == 56
-                self.more.heightAnchor == 56
-                self.more.rightAnchor == topView.rightAnchor
+                self.more.topAnchor |==| topView.topAnchor - 10
+                self.more.widthAnchor |==| 56
+                self.more.heightAnchor |==| 56
+                self.more.rightAnchor |==| topView.rightAnchor
             }
             UIView.animate(withDuration: 0.25) {
                 self.menuNav?.view.frame = CGRect(x: 0, y: UIScreen.main.bounds.height - (SettingValues.totallyCollapse ? 0 : ((self.menuNav?.bottomOffset ?? 56) / 2)), width: self.menuNav?.view.frame.width ?? 0, height: self.menuNav?.view.frame.height ?? 0)
@@ -628,16 +628,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             /*UIView.animate(withDuration: 0.25) {
                 if self.menu.superview != nil, let topView = self.menuNav?.topView {
                     self.menu.deactivateImmediateConstraints()
-                    self.menu.topAnchor == topView.topAnchor
-                    self.menu.widthAnchor == 56
-                    self.menu.heightAnchor == 56
-                    self.menu.leftAnchor == topView.leftAnchor
+                    self.menu.topAnchor |==| topView.topAnchor
+                    self.menu.widthAnchor |==| 56
+                    self.menu.heightAnchor |==| 56
+                    self.menu.leftAnchor |==| topView.leftAnchor
 
                     self.more.deactivateImmediateConstraints()
-                    self.more.topAnchor == topView.topAnchor
-                    self.more.widthAnchor == 56
-                    self.more.heightAnchor == 56
-                    self.more.rightAnchor == topView.rightAnchor
+                    self.more.topAnchor |==| topView.topAnchor
+                    self.more.widthAnchor |==| 56
+                    self.more.heightAnchor |==| 56
+                    self.more.rightAnchor |==| topView.rightAnchor
                 }
 
                 self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.view.frame.width, height: self.menuNav?.view.frame.height ?? 0)
@@ -744,12 +744,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab!.titleEdgeInsets = UIEdgeInsets.init(top: 0, left: 20, bottom: 0, right: 20)
             self.navigationController?.toolbar.addSubview(self.fab!)
             self.view.addSubview(fabHelper!)
-            self.fabHelper!.bottomAnchor == self.view.safeBottomAnchor
+            self.fabHelper!.bottomAnchor |==| self.view.safeBottomAnchor
             self.fabHelper!.backgroundColor = .clear
             
-            self.fabHelper!.heightAnchor == 45
-            self.fabHelper!.widthAnchor == self.fab!.frame.size.width
-            self.fabHelper!.centerXAnchor == self.view.centerXAnchor
+            self.fabHelper!.heightAnchor |==| 45
+            self.fabHelper!.widthAnchor |==| self.fab!.frame.size.width
+            self.fabHelper!.centerXAnchor |==| self.view.centerXAnchor
 
             self.fab?.transform = CGAffineTransform.init(scaleX: 0.001, y: 0.001)
             UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
@@ -1024,9 +1024,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 }
                 
                 label.addSubview(sideView)
-                sideView.sizeAnchors == CGSize.square(size: 30)
-                sideView.centerYAnchor == label.centerYAnchor
-                sideView.leftAnchor == label.leftAnchor
+                sideView.sizeAnchors |==| CGSize.square(size: 30)
+                sideView.centerYAnchor |==| label.centerYAnchor
+                sideView.leftAnchor |==| label.leftAnchor
 
                 sideView.layer.cornerRadius = 15
                 sideView.clipsToBounds = true
@@ -1310,9 +1310,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         alert.contentView.addSubview(filterView)
         settings.didMove(toParent: alert)
 
-        filterView.verticalAnchors == alert.contentView.verticalAnchors
-        filterView.horizontalAnchors == alert.contentView.horizontalAnchors + 8
-        filterView.heightAnchor == CGFloat(50 * settings.tableView(settings.tableView, numberOfRowsInSection: 0))
+        filterView.verticalAnchors |==| alert.contentView.verticalAnchors
+        filterView.horizontalAnchors |==| alert.contentView.horizontalAnchors + 8
+        filterView.heightAnchor |==| CGFloat(50 * settings.tableView(settings.tableView, numberOfRowsInSection: 0))
         alert.addAction(AlertAction(title: "Apply", style: .preferred, handler: { (_) in
             if reload {
                 self.dataSource.getData(reload: true, force: true)
@@ -1359,11 +1359,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         group.isUserInteractionEnabled = true
         group.addSubviews(isDefault, defaultLabel)
         defaultLabel.textColor = ColorUtil.accentColorForSub(sub: self.sub)
-        defaultLabel.centerYAnchor == group.centerYAnchor
-        isDefault.leftAnchor == group.leftAnchor
-        isDefault.centerYAnchor == group.centerYAnchor
-        defaultLabel.leftAnchor == isDefault.rightAnchor + 10
-        defaultLabel.rightAnchor == group.rightAnchor
+        defaultLabel.centerYAnchor |==| group.centerYAnchor
+        isDefault.leftAnchor |==| group.leftAnchor
+        isDefault.centerYAnchor |==| group.centerYAnchor
+        defaultLabel.leftAnchor |==| isDefault.rightAnchor + 10
+        defaultLabel.rightAnchor |==| group.rightAnchor
 
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
         
@@ -1954,7 +1954,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             indicator?.indicatorMode = .indeterminate
             indicator?.cycleColors = [ColorUtil.getColorForSub(sub: sub), ColorUtil.accentColorForSub(sub: sub)]
             self.view.addSubview(indicator!)
-            indicator!.centerAnchors == self.view.centerAnchors
+            indicator!.centerAnchors |==| self.view.centerAnchors
             indicator?.startAnimating()
         }
     }
@@ -3029,9 +3029,9 @@ public class LoadingCell: UICollectionViewCell {
         
         self.contentView.addSubview(loader)
 
-        loader.topAnchor == self.contentView.topAnchor + 10
-        loader.bottomAnchor == self.contentView.bottomAnchor - 10
-        loader.centerXAnchor == self.contentView.centerXAnchor
+        loader.topAnchor |==| self.contentView.topAnchor + 10
+        loader.bottomAnchor |==| self.contentView.bottomAnchor - 10
+        loader.centerXAnchor |==| self.contentView.centerXAnchor
     }
 }
 
@@ -3052,9 +3052,9 @@ public class NothingHereCell: UICollectionViewCell {
         let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         text.attributedText = title
-        text.topAnchor == self.contentView.topAnchor + 10
-        text.bottomAnchor == self.contentView.bottomAnchor - 10
-        text.centerXAnchor == self.contentView.centerXAnchor
+        text.topAnchor |==| self.contentView.topAnchor + 10
+        text.bottomAnchor |==| self.contentView.bottomAnchor - 10
+        text.centerXAnchor |==| self.contentView.centerXAnchor
     }
 }
 
@@ -3099,9 +3099,9 @@ public class ReadLaterCell: UICollectionViewCell {
         title.clipsToBounds = true
         self.contentView.addSubview(titleView)
         
-        titleView.heightAnchor == 60
-        titleView.horizontalAnchors == self.contentView.horizontalAnchors
-        titleView.topAnchor == self.contentView.topAnchor
+        titleView.heightAnchor |==| 60
+        titleView.horizontalAnchors |==| self.contentView.horizontalAnchors
+        titleView.topAnchor |==| self.contentView.topAnchor
     }
 }
 
@@ -3121,21 +3121,21 @@ public class PageCell: UICollectionViewCell {
     func setupView() {
         self.contentView.addSubviews(title, time)
         
-        title.heightAnchor == 60
-        title.horizontalAnchors == self.contentView.horizontalAnchors
-        title.topAnchor == self.contentView.topAnchor + 10
-        title.bottomAnchor == self.contentView.bottomAnchor - 10
+        title.heightAnchor |==| 60
+        title.horizontalAnchors |==| self.contentView.horizontalAnchors
+        title.topAnchor |==| self.contentView.topAnchor + 10
+        title.bottomAnchor |==| self.contentView.bottomAnchor - 10
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textAlignment = .center
         title.textColor = ColorUtil.theme.fontColor
         
-        time.heightAnchor == 60
-        time.leftAnchor == self.contentView.leftAnchor
-        time.topAnchor == self.contentView.topAnchor + 10
-        time.bottomAnchor == self.contentView.bottomAnchor - 10
+        time.heightAnchor |==| 60
+        time.leftAnchor |==| self.contentView.leftAnchor
+        time.topAnchor |==| self.contentView.topAnchor + 10
+        time.bottomAnchor |==| self.contentView.bottomAnchor - 10
         time.numberOfLines = 0
-        time.widthAnchor == 70
+        time.widthAnchor |==| 70
         time.lineBreakMode = .byWordWrapping
         time.textAlignment = .center
     }
@@ -3205,15 +3205,15 @@ public class LinksHeaderCellView: UICollectionViewCell {
             stack.removeArrangedSubview(view)
             var oldSize = scroll.contentSize
             oldSize.width -= 38
-            stack.widthAnchor == oldSize.width
+            stack.widthAnchor |==| oldSize.width
             scroll.contentSize = oldSize
             view.removeFromSuperview()
         })
 
         let widthS = CGFloat(30)
 
-        view.heightAnchor == CGFloat(30)
-        view.widthAnchor == widthS
+        view.heightAnchor |==| CGFloat(30)
+        view.widthAnchor |==| widthS
         
         stack.addArrangedSubview(view)
         return 30
@@ -3232,8 +3232,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
         
         let widthS = CGFloat(30)
         
-        view.heightAnchor == CGFloat(30)
-        view.widthAnchor == widthS
+        view.heightAnchor |==| CGFloat(30)
+        view.widthAnchor |==| widthS
         
         stack.addArrangedSubview(view)
         return 30
@@ -3252,8 +3252,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
         
         let widthS = CGFloat(30)
 
-        view.heightAnchor == CGFloat(30)
-        view.widthAnchor == widthS
+        view.heightAnchor |==| CGFloat(30)
+        view.widthAnchor |==| widthS
         
         stack.addArrangedSubview(view)
         return 30
@@ -3274,21 +3274,21 @@ public class LinksHeaderCellView: UICollectionViewCell {
             var spacerView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 10))
             buttonBase.addArrangedSubview(spacerView)
 
-            /*sort.heightAnchor == 30
+            /*sort.heightAnchor |==| 30
             sort.addSubviews(sortImage, sortTitle)
-            sortImage.sizeAnchors == CGSize.square(size: 25)
-            sortImage.centerYAnchor == sort.centerYAnchor
-            sortImage.leftAnchor == sort.leftAnchor + 8
-            sortTitle.leftAnchor == sortImage.rightAnchor + 8
-            sortTitle.centerYAnchor == sortImage.centerYAnchor
-            sortTitle.rightAnchor == sort.rightAnchor
+            sortImage.sizeAnchors |==| CGSize.square(size: 25)
+            sortImage.centerYAnchor |==| sort.centerYAnchor
+            sortImage.leftAnchor |==| sort.leftAnchor + 8
+            sortTitle.leftAnchor |==| sortImage.rightAnchor + 8
+            sortTitle.centerYAnchor |==| sortImage.centerYAnchor
+            sortTitle.rightAnchor |==| sort.rightAnchor
             sort.addTapGestureRecognizer {
                 self.del?.showSortMenu(self)
             }
             sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
 
             var sortWidth = 25 + 8 + 8 + (sortTitle.text ?? "").size(with: sortTitle.font).width
-            sort.widthAnchor == sortWidth
+            sort.widthAnchor |==| sortWidth
 
             buttonBase.addArrangedSubview(sort)
             finalWidth += sortWidth + 8*/
@@ -3317,8 +3317,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 
                 let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(45)
                 
-                view.heightAnchor == CGFloat(30)
-                view.widthAnchor == widthS
+                view.heightAnchor |==| CGFloat(30)
+                view.widthAnchor |==| widthS
                 
                 finalWidth += widthS
                 finalWidth += 8
@@ -3334,14 +3334,14 @@ public class LinksHeaderCellView: UICollectionViewCell {
             self.contentView.isUserInteractionEnabled = true
             buttonBase.isUserInteractionEnabled = true
             
-            scroll.heightAnchor == CGFloat(30)
-            scroll.horizontalAnchors == self.contentView.horizontalAnchors
+            scroll.heightAnchor |==| CGFloat(30)
+            scroll.horizontalAnchors |==| self.contentView.horizontalAnchors
 
             scroll.addSubview(buttonBase)
-            buttonBase.heightAnchor == CGFloat(30)
-            buttonBase.edgeAnchors == scroll.edgeAnchors
-            buttonBase.centerYAnchor == scroll.centerYAnchor
-            buttonBase.widthAnchor == finalWidth
+            buttonBase.heightAnchor |==| CGFloat(30)
+            buttonBase.edgeAnchors |==| scroll.edgeAnchors
+            buttonBase.centerYAnchor |==| scroll.centerYAnchor
+            buttonBase.widthAnchor |==| finalWidth
             scroll.alwaysBounceHorizontal = true
             scroll.showsHorizontalScrollIndicator = false
 
@@ -3354,22 +3354,22 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 imageView.clipsToBounds = true
                 
                 if UIDevice.current.userInterfaceIdiom == .pad {
-                    imageView.verticalAnchors == header.verticalAnchors
-                    imageView.horizontalAnchors == header.horizontalAnchors + 4
+                    imageView.verticalAnchors |==| header.verticalAnchors
+                    imageView.horizontalAnchors |==| header.horizontalAnchors + 4
                     imageView.layer.cornerRadius = 15
                 } else {
-                    imageView.edgeAnchors == header.edgeAnchors
+                    imageView.edgeAnchors |==| header.edgeAnchors
                 }
                 
-                header.heightAnchor == 180
-                header.horizontalAnchors == self.contentView.horizontalAnchors
-                header.topAnchor == self.contentView.topAnchor + 4
-                scroll.topAnchor == self.header.bottomAnchor + 4
+                header.heightAnchor |==| 180
+                header.horizontalAnchors |==| self.contentView.horizontalAnchors
+                header.topAnchor |==| self.contentView.topAnchor + 4
+                scroll.topAnchor |==| self.header.bottomAnchor + 4
                 imageView.sd_setImage(with: del!.headerImage!)
-                header.heightAnchor == 140
+                header.heightAnchor |==| 140
                 
             } else {
-                scroll.topAnchor == self.contentView.topAnchor + 4
+                scroll.topAnchor |==| self.contentView.topAnchor + 4
             }
 
             scroll.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))

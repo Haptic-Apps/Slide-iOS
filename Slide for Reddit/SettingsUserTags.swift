@@ -30,7 +30,7 @@ class SettingsUserTags: UITableViewController {
         self.view.addSubview(emptyStateView)
         emptyStateView.setText(title: "No User Tags", message: "Add a user tag here or from any user profile.")
         emptyStateView.isHidden = !tags.isEmpty
-        emptyStateView.edgeAnchors == self.tableView.edgeAnchors
+        emptyStateView.edgeAnchors |==| self.tableView.edgeAnchors
         
         self.view.bringSubviewToFront(emptyStateView)
     }
@@ -157,14 +157,14 @@ class TagCellView: UITableViewCell {
     
     func configureLayout() {
         batch {
-            body.leftAnchor == contentView.leftAnchor + 8
-            body.rightAnchor == contentView.rightAnchor - 8
-            body.topAnchor == contentView.topAnchor + 8
-            body.bottomAnchor == contentView.bottomAnchor - 8
+            body.leftAnchor |==| contentView.leftAnchor + 8
+            body.rightAnchor |==| contentView.rightAnchor - 8
+            body.topAnchor |==| contentView.topAnchor + 8
+            body.bottomAnchor |==| contentView.bottomAnchor - 8
             
-            title.leftAnchor == body.leftAnchor + 16
-            title.rightAnchor == body.rightAnchor - 16
-            title.centerYAnchor == body.centerYAnchor
+            title.leftAnchor |==| body.leftAnchor + 16
+            title.rightAnchor |==| body.rightAnchor - 16
+            title.centerYAnchor |==| body.centerYAnchor
         }
     }
 

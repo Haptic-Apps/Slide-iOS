@@ -329,38 +329,38 @@ class SubredditHeaderView: UIView {
 
     func setupAnchors() {
     
-        self.widthAnchor == UIScreen.main.bounds.width
+        self.widthAnchor |==| UIScreen.main.bounds.width
 
-        submit.horizontalAnchors == horizontalAnchors + CGFloat(12)
-        sorting.horizontalAnchors == horizontalAnchors + CGFloat(12)
-        mods.horizontalAnchors == horizontalAnchors + CGFloat(12)
+        submit.horizontalAnchors |==| horizontalAnchors + CGFloat(12)
+        sorting.horizontalAnchors |==| horizontalAnchors + CGFloat(12)
+        mods.horizontalAnchors |==| horizontalAnchors + CGFloat(12)
         if AccountController.isLoggedIn {
-            flair.horizontalAnchors == horizontalAnchors + CGFloat(12)
+            flair.horizontalAnchors |==| horizontalAnchors + CGFloat(12)
         }
-        info.horizontalAnchors == horizontalAnchors + CGFloat(12)
-        subscribers.leftAnchor == leftAnchor + CGFloat(12)
-        subscribers.rightAnchor == here.leftAnchor - CGFloat(4)
-        here.leftAnchor == subscribers.rightAnchor + CGFloat(4)
-        here.widthAnchor == subscribers.widthAnchor
-        here.rightAnchor == rightAnchor - CGFloat(12)
-        here.centerYAnchor == subscribers.centerYAnchor
+        info.horizontalAnchors |==| horizontalAnchors + CGFloat(12)
+        subscribers.leftAnchor |==| leftAnchor + CGFloat(12)
+        subscribers.rightAnchor |==| here.leftAnchor - CGFloat(4)
+        here.leftAnchor |==| subscribers.rightAnchor + CGFloat(4)
+        here.widthAnchor |==| subscribers.widthAnchor
+        here.rightAnchor |==| rightAnchor - CGFloat(12)
+        here.centerYAnchor |==| subscribers.centerYAnchor
         
-        subscribers.topAnchor == topAnchor + CGFloat(16)
-        submit.topAnchor == subscribers.bottomAnchor + CGFloat(8)
-        mods.topAnchor == submit.bottomAnchor + CGFloat(2)
-        sorting.topAnchor == mods.bottomAnchor + CGFloat(2)
+        subscribers.topAnchor |==| topAnchor + CGFloat(16)
+        submit.topAnchor |==| subscribers.bottomAnchor + CGFloat(8)
+        mods.topAnchor |==| submit.bottomAnchor + CGFloat(2)
+        sorting.topAnchor |==| mods.bottomAnchor + CGFloat(2)
         if AccountController.isLoggedIn {
-            flair.heightAnchor == CGFloat(50)
-            flair.topAnchor == sorting.bottomAnchor + CGFloat(2)
-            info.topAnchor == flair.bottomAnchor + CGFloat(16)
+            flair.heightAnchor |==| CGFloat(50)
+            flair.topAnchor |==| sorting.bottomAnchor + CGFloat(2)
+            info.topAnchor |==| flair.bottomAnchor + CGFloat(16)
         } else {
-            info.topAnchor == sorting.bottomAnchor + CGFloat(16)
+            info.topAnchor |==| sorting.bottomAnchor + CGFloat(16)
         }
-        info.bottomAnchor == bottomAnchor - CGFloat(16)
-        subscribers.heightAnchor == CGFloat(50)
-        submit.heightAnchor == CGFloat(50)
-        mods.heightAnchor == CGFloat(50)
-        sorting.heightAnchor == CGFloat(50)
+        info.bottomAnchor |==| bottomAnchor - CGFloat(16)
+        subscribers.heightAnchor |==| CGFloat(50)
+        submit.heightAnchor |==| CGFloat(50)
+        mods.heightAnchor |==| CGFloat(50)
+        sorting.heightAnchor |==| CGFloat(50)
     }
 
     func getEstHeight() -> CGFloat {

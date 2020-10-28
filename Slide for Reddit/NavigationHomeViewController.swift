@@ -303,21 +303,21 @@ class NavigationHomeViewController: UIViewController {
 
     func configureLayout() {
     
-        //horizontalSubGroup.topAnchor == view.topAnchor
-        //horizontalSubGroup.horizontalAnchors == view.horizontalAnchors
-        //horizontalSubGroup.heightAnchor == 90
-        accountHeader!.topAnchor == headerView.topAnchor
-        accountHeader!.horizontalAnchors == headerView.horizontalAnchors
-        accountHeader!.heightAnchor == accountHeader!.estimateHeight()
-        searchBar.topAnchor == accountHeader!.bottomAnchor + 4
-        searchBar.horizontalAnchors == headerView.horizontalAnchors + 8
-        searchBar.heightAnchor == 50
-        searchBar.bottomAnchor == headerView.bottomAnchor
+        //horizontalSubGroup.topAnchor |==| view.topAnchor
+        //horizontalSubGroup.horizontalAnchors |==| view.horizontalAnchors
+        //horizontalSubGroup.heightAnchor |==| 90
+        accountHeader!.topAnchor |==| headerView.topAnchor
+        accountHeader!.horizontalAnchors |==| headerView.horizontalAnchors
+        accountHeader!.heightAnchor |==| accountHeader!.estimateHeight()
+        searchBar.topAnchor |==| accountHeader!.bottomAnchor + 4
+        searchBar.horizontalAnchors |==| headerView.horizontalAnchors + 8
+        searchBar.heightAnchor |==| 50
+        searchBar.bottomAnchor |==| headerView.bottomAnchor
 
-        tableView.topAnchor == view.safeTopAnchor
+        tableView.topAnchor |==| view.safeTopAnchor
         tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
-        tableView.horizontalAnchors == view.horizontalAnchors
-        tableView.bottomAnchor == view.bottomAnchor
+        tableView.horizontalAnchors |==| view.horizontalAnchors
+        tableView.bottomAnchor |==| view.bottomAnchor
     }
     
     override func didReceiveMemoryWarning() {
@@ -485,8 +485,8 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         label.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         let toReturn = UIView()
         toReturn.addSubview(label)
-        label.centerYAnchor == toReturn.centerYAnchor
-        label.leftAnchor == toReturn.safeLeftAnchor + 16
+        label.centerYAnchor |==| toReturn.centerYAnchor
+        label.leftAnchor |==| toReturn.safeLeftAnchor + 16
         toReturn.backgroundColor = ColorUtil.theme.foregroundColor
 
         if section == 0 {
@@ -1041,42 +1041,42 @@ extension CurrentAccountHeaderView {
     }
     
     func setupConstraints() {
-        upperButtonStack.heightAnchor == 44
+        upperButtonStack.heightAnchor |==| 44
         
-        contentView.horizontalAnchors == self.horizontalAnchors + 4
-        contentView.verticalAnchors == self.verticalAnchors + 4
+        contentView.horizontalAnchors |==| self.horizontalAnchors + 4
+        contentView.verticalAnchors |==| self.verticalAnchors + 4
         
-        accountImageView.leftAnchor == contentView.safeLeftAnchor + 10
-        accountImageView.topAnchor == contentView.topAnchor
-        accountImageView.sizeAnchors == CGSize.square(size: 70)
+        accountImageView.leftAnchor |==| contentView.safeLeftAnchor + 10
+        accountImageView.topAnchor |==| contentView.topAnchor
+        accountImageView.sizeAnchors |==| CGSize.square(size: 70)
         
-        accountNameLabel.topAnchor == contentView.safeTopAnchor
-        accountNameLabel.leftAnchor == accountImageView.rightAnchor + 10
-        accountNameLabel.rightAnchor == contentView.rightAnchor - 10
+        accountNameLabel.topAnchor |==| contentView.safeTopAnchor
+        accountNameLabel.leftAnchor |==| accountImageView.rightAnchor + 10
+        accountNameLabel.rightAnchor |==| contentView.rightAnchor - 10
         
-        accountAgeLabel.leftAnchor == accountNameLabel.leftAnchor
-        accountAgeLabel.topAnchor == accountNameLabel.bottomAnchor
+        accountAgeLabel.leftAnchor |==| accountNameLabel.leftAnchor
+        accountAgeLabel.topAnchor |==| accountNameLabel.bottomAnchor
         
         if AccountController.isLoggedIn {
-            shortcutsView.topAnchor == accountImageView.bottomAnchor + 8
-            shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
-            emptyStateLabel.horizontalAnchors == shortcutsView.horizontalAnchors
-            emptyStateLabel.topAnchor == self.shortcutsView.topAnchor
+            shortcutsView.topAnchor |==| accountImageView.bottomAnchor + 8
+            shortcutsView.horizontalAnchors |==| contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.horizontalAnchors |==| shortcutsView.horizontalAnchors
+            emptyStateLabel.topAnchor |==| self.shortcutsView.topAnchor
         } else {
-            emptyStateLabel.horizontalAnchors == contentView.safeHorizontalAnchors + 10
-            emptyStateLabel.topAnchor == accountImageView.bottomAnchor + 8
-            emptyStateLabel.heightAnchor == 75
-            shortcutsView.topAnchor == emptyStateLabel.bottomAnchor + 4
-            shortcutsView.horizontalAnchors == contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.horizontalAnchors |==| contentView.safeHorizontalAnchors + 10
+            emptyStateLabel.topAnchor |==| accountImageView.bottomAnchor + 8
+            emptyStateLabel.heightAnchor |==| 75
+            shortcutsView.topAnchor |==| emptyStateLabel.bottomAnchor + 4
+            shortcutsView.horizontalAnchors |==| contentView.safeHorizontalAnchors + 10
         }
         
-        spinner.centerAnchors == shortcutsView.centerAnchors
+        spinner.centerAnchors |==| shortcutsView.centerAnchors
         
-        mailBadge.centerYAnchor == mailButton.centerYAnchor - 10
-        mailBadge.centerXAnchor == mailButton.centerXAnchor + 16
+        mailBadge.centerYAnchor |==| mailButton.centerYAnchor - 10
+        mailBadge.centerXAnchor |==| mailButton.centerXAnchor + 16
         
-        modBadge.centerYAnchor == modButton.centerYAnchor - 10
-        modBadge.centerXAnchor == modButton.centerXAnchor + 16
+        modBadge.centerYAnchor |==| modButton.centerYAnchor - 10
+        modBadge.centerXAnchor |==| modButton.centerXAnchor + 16
     }
     
     func setupActions() {
@@ -1336,7 +1336,7 @@ class AccountShortcutsView: UIView {
                             delegate.navigation(parent, didRequestAction: action)
                         }
                     }
-                    $0.heightAnchor >= 50
+                    $0.heightAnchor |>=| 50
                     $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.accessoryType = .disclosureIndicator
@@ -1359,7 +1359,7 @@ class AccountShortcutsView: UIView {
                 }
                 self.delegate?.displayMenu(self.parent!, optionMenu)
             }
-            $0.heightAnchor >= 50
+            $0.heightAnchor |>=| 50
             $0.accessoryType = .disclosureIndicator
         })
 
@@ -1382,13 +1382,13 @@ class AccountShortcutsView: UIView {
     }
         
     func setupAnchors() {
-        //infoStack.topAnchor == topAnchor
-        //infoStack.horizontalAnchors == horizontalAnchors
+        //infoStack.topAnchor |==| topAnchor
+        //infoStack.horizontalAnchors |==| horizontalAnchors
         
-        cellStack.topAnchor == topAnchor
-        cellStack.horizontalAnchors == horizontalAnchors
+        cellStack.topAnchor |==| topAnchor
+        cellStack.horizontalAnchors |==| horizontalAnchors
         
-        cellStack.bottomAnchor == bottomAnchor
+        cellStack.bottomAnchor |==| bottomAnchor
     }
 }
 

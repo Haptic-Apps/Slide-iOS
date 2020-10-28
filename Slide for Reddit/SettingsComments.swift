@@ -330,8 +330,8 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             let circleView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 12))
             circleView.layer.cornerRadius = 6
             circleView.backgroundColor = currentColors[i]
-            circleView.heightAnchor == 12
-            circleView.widthAnchor == 12
+            circleView.heightAnchor |==| 12
+            circleView.widthAnchor |==| 12
             stack.addArrangedSubview(circleView)
         }
         themeColorCell.accessoryView = stack

@@ -146,15 +146,15 @@ private class IconCell: InsetCell {
 
         contentView.addSubviews(iconView, textStack)
 
-        iconView.sizeAnchors == CGSize(width: 40, height: 40)
+        iconView.sizeAnchors |==| CGSize(width: 40, height: 40)
         iconView.layer.cornerRadius = 10
         iconView.clipsToBounds = true
-        iconView.leftAnchor == contentView.leftAnchor + 10
-        iconView.centerYAnchor == contentView.centerYAnchor
+        iconView.leftAnchor |==| contentView.leftAnchor + 10
+        iconView.centerYAnchor |==| contentView.centerYAnchor
 
-        textStack.leftAnchor == iconView.rightAnchor + 8
-        textStack.rightAnchor == contentView.rightAnchor - 10
-        textStack.verticalAnchors == contentView.verticalAnchors + 10
+        textStack.leftAnchor |==| iconView.rightAnchor + 8
+        textStack.rightAnchor |==| contentView.rightAnchor - 10
+        textStack.verticalAnchors |==| contentView.verticalAnchors + 10
 
         textStack.addArrangedSubview(titleLabel)
         titleLabel.numberOfLines = 0
