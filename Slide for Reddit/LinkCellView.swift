@@ -239,9 +239,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         innerView.topAnchor == contentView.topAnchor + topmargin
         innerView.bottomAnchor == contentView.bottomAnchor - bottommargin
         
-        
-        layoutIfNeeded()
-
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true
@@ -1161,7 +1158,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     buttons.bottomAnchor == innerView.bottomAnchor - ceight
 
                 }
-            buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+                buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if SettingValues.actionBarMode.isSide() {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.rightAnchor == innerView.rightAnchor - ceight
@@ -1188,6 +1185,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(constraintsForType)
         constraintsForType = []
+        layoutIfNeeded()
         // Deriving classes will populate constraintsForType in the override for this method.
     }
     
@@ -1590,6 +1588,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         setVisibility(share, actions.isShareEnabled)
         setVisibility(edit, actions.isEditPossible && full)
         setVisibility(mod, actions.isModPossible)
+
+        for view in self.superview?.subviews ?? [] {
+            if view.tag == 2000 {
+                view.removeFromSuperview()
+            }
+        }
 
         thumb = submission.thumbnail
         big = submission.banner
@@ -2154,7 +2158,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
         strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-        strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.default)
+        strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
         strongSelf.updater?.isPaused = false
     }
 
@@ -3049,12 +3053,7 @@ public extension UIImageView {
                 self.backgroundColor = oldBackgroundColor
                 
                 if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
-                    for view in self.superview?.subviews ?? [] {
-                        if view.tag == 2000 {
-                            view.removeFromSuperview()
-                        }
-                    }
-                    if self.image?.size.width ?? 0 >= self.frame.size.width && self.image?.size.height ?? 0 >= self.frame.size.height {
+                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) { //Aspect ratio of current image is less than
                         let backView = UIImageView(image: self.image?.sd_blurredImage(withRadius: 15))
                         backView.contentMode = .scaleAspectFill
                         backView.tag = 2000
