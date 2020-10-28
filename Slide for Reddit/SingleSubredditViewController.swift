@@ -260,6 +260,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         //self.showMenuNav(true)
         self.tableView.reloadData()
         self.setupFab(self.view.bounds.size)
+        self.doToolbar()
     }
 
     override func viewWillAppear(_ animated: Bool) {
