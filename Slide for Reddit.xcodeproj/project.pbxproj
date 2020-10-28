@@ -49,15 +49,15 @@
 		B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */; };
 		B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */; };
 		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
-		B4F333B925126FCE0032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333B825126FCE0032BB64 /* SwiftPackageProductDependency */; };
-		B4F333BB25126FCE0032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333BA25126FCE0032BB64 /* SwiftPackageProductDependency */; };
-		B4F333E1251273AF0032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333E0251273AF0032BB64 /* SwiftPackageProductDependency */; };
-		B4F333EB251274050032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333EA251274050032BB64 /* SwiftPackageProductDependency */; };
-		B4F333F52512742E0032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333F42512742E0032BB64 /* SwiftPackageProductDependency */; };
-		B4F3348B2512770F0032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3348A2512770F0032BB64 /* SwiftPackageProductDependency */; };
-		B4F3349F251277B80032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3349E251277B80032BB64 /* SwiftPackageProductDependency */; };
-		B4F3354C25127BAB0032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3354B25127BAB0032BB64 /* SwiftPackageProductDependency */; };
-		B4F3355625127BD20032BB64 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3355525127BD20032BB64 /* SwiftPackageProductDependency */; };
+		B4F333B925126FCE0032BB64 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333B825126FCE0032BB64 /* Realm */; };
+		B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333BA25126FCE0032BB64 /* RealmSwift */; };
+		B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333E0251273AF0032BB64 /* SDWebImage */; };
+		B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333EA251274050032BB64 /* BadgeSwift */; };
+		B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333F42512742E0032BB64 /* BiometricAuthentication */; };
+		B4F3348B2512770F0032BB64 /* Embassy in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3348A2512770F0032BB64 /* Embassy */; };
+		B4F3349F251277B80032BB64 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3349E251277B80032BB64 /* Starscream */; };
+		B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3354B25127BAB0032BB64 /* Anchorage */; };
+		B4F3355625127BD20032BB64 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3355525127BD20032BB64 /* Then */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
 		B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B2AEE4A2438F5803329C /* SettingsPro.swift */; };
 		B776B1E23F4DEC18069F1579 /* MediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BC65995FE8D1EE75E2AB /* MediaViewController.swift */; };
@@ -76,6 +76,7 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
+		BD0A600F2549F929009A056D /* SettingsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0A600E2549F929009A056D /* SettingsWidget.swift */; };
 		BD43E0F324EA162500D18328 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD43E0F224EA162500D18328 /* NetworkMonitor.swift */; };
 		BD78A6942523AA540000639C /* FallbackNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */; };
 		BD87553724D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */; };
@@ -535,6 +536,7 @@
 		B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
+		BD0A600E2549F929009A056D /* SettingsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWidget.swift; sourceTree = "<group>"; };
 		BD43E0F224EA162500D18328 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		BD78A6932523AA540000639C /* FallbackNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackNetworkMonitor.swift; sourceTree = "<group>"; };
 		BD87553624D8A9A10096732F /* CommentViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
@@ -874,19 +876,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4F333B925126FCE0032BB64 /* BuildFile in Frameworks */,
-				B4F333F52512742E0032BB64 /* BuildFile in Frameworks */,
+				B4F333B925126FCE0032BB64 /* Realm in Frameworks */,
+				B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */,
 				BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */,
-				B4F3355625127BD20032BB64 /* BuildFile in Frameworks */,
-				B4F333E1251273AF0032BB64 /* BuildFile in Frameworks */,
-				B4F333BB25126FCE0032BB64 /* BuildFile in Frameworks */,
-				B4F333EB251274050032BB64 /* BuildFile in Frameworks */,
+				B4F3355625127BD20032BB64 /* Then in Frameworks */,
+				B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */,
+				B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */,
+				B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */,
 				BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */,
-				B4F3354C25127BAB0032BB64 /* BuildFile in Frameworks */,
-				B4F3348B2512770F0032BB64 /* BuildFile in Frameworks */,
+				B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */,
+				B4F3348B2512770F0032BB64 /* Embassy in Frameworks */,
 				BE2E9F0823492B4300FE07B4 /* CloudKit.framework in Frameworks */,
 				BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */,
-				B4F3349F251277B80032BB64 /* BuildFile in Frameworks */,
+				B4F3349F251277B80032BB64 /* Starscream in Frameworks */,
 				6D5EBF71FAC69AF8AD1D06AE /* Pods_Slide_for_Reddit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1517,6 +1519,7 @@
 				BED396A824F2C5FF003922D5 /* SubmissionsDataSource.swift */,
 				BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */,
 				BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */,
+				BD0A600E2549F929009A056D /* SettingsWidget.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1676,15 +1679,15 @@
 			);
 			name = "Slide for Reddit";
 			packageProductDependencies = (
-				B4F333B825126FCE0032BB64 /* SwiftPackageProductDependency */,
-				B4F333BA25126FCE0032BB64 /* SwiftPackageProductDependency */,
-				B4F333E0251273AF0032BB64 /* SwiftPackageProductDependency */,
-				B4F333EA251274050032BB64 /* SwiftPackageProductDependency */,
-				B4F333F42512742E0032BB64 /* SwiftPackageProductDependency */,
-				B4F3348A2512770F0032BB64 /* SwiftPackageProductDependency */,
-				B4F3349E251277B80032BB64 /* SwiftPackageProductDependency */,
-				B4F3354B25127BAB0032BB64 /* SwiftPackageProductDependency */,
-				B4F3355525127BD20032BB64 /* SwiftPackageProductDependency */,
+				B4F333B825126FCE0032BB64 /* Realm */,
+				B4F333BA25126FCE0032BB64 /* RealmSwift */,
+				B4F333E0251273AF0032BB64 /* SDWebImage */,
+				B4F333EA251274050032BB64 /* BadgeSwift */,
+				B4F333F42512742E0032BB64 /* BiometricAuthentication */,
+				B4F3348A2512770F0032BB64 /* Embassy */,
+				B4F3349E251277B80032BB64 /* Starscream */,
+				B4F3354B25127BAB0032BB64 /* Anchorage */,
+				B4F3355525127BD20032BB64 /* Then */,
 			);
 			productName = "Slide for Reddit";
 			productReference = BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */;
@@ -1839,14 +1842,14 @@
 			);
 			mainGroup = BE8FC9FB1E0C46090063B8EF;
 			packageReferences = (
-				B4F333B725126FCE0032BB64 /* RemoteSwiftPackageReference */,
-				B4F333DF251273AF0032BB64 /* RemoteSwiftPackageReference */,
-				B4F333E9251274050032BB64 /* RemoteSwiftPackageReference */,
-				B4F333F32512742E0032BB64 /* RemoteSwiftPackageReference */,
-				B4F334892512770F0032BB64 /* RemoteSwiftPackageReference */,
-				B4F3349D251277B80032BB64 /* RemoteSwiftPackageReference */,
-				B4F3354A25127BAB0032BB64 /* RemoteSwiftPackageReference */,
-				B4F3355425127BD20032BB64 /* RemoteSwiftPackageReference */,
+				B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
+				B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */,
+				B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */,
+				B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */,
+				B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */,
+				B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */,
+				B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */,
 			);
 			productRefGroup = BE8FCA051E0C46090063B8EF /* Products */;
 			projectDirPath = "";
@@ -2413,6 +2416,7 @@
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
 				0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
+				BD0A600F2549F929009A056D /* SettingsWidget.swift in Sources */,
 				BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */,
 				BEAD1F75251424CB0096A216 /* SubredditThemeEditViewController.swift in Sources */,
 				BE5E53751E1DAEB7004FE226 /* RedditLink.swift in Sources */,
@@ -3259,7 +3263,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B4F333B725126FCE0032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-cocoa.git";
 			requirement = {
@@ -3267,7 +3271,7 @@
 				minimumVersion = 4.4.0;
 			};
 		};
-		B4F333DF251273AF0032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
 			requirement = {
@@ -3275,7 +3279,7 @@
 				minimumVersion = 5.9.1;
 			};
 		};
-		B4F333E9251274050032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/swift-badge";
 			requirement = {
@@ -3283,7 +3287,7 @@
 				minimumVersion = 8.0.2;
 			};
 		};
-		B4F333F32512742E0032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rushisangani/BiometricAuthentication";
 			requirement = {
@@ -3291,7 +3295,7 @@
 				minimumVersion = 3.1.2;
 			};
 		};
-		B4F334892512770F0032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/envoy/Embassy";
 			requirement = {
@@ -3299,7 +3303,7 @@
 				minimumVersion = 4.1.1;
 			};
 		};
-		B4F3349D251277B80032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/daltoniam/Starscream";
 			requirement = {
@@ -3307,7 +3311,7 @@
 				version = 3.1.1;
 			};
 		};
-		B4F3354A25127BAB0032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Rightpoint/Anchorage";
 			requirement = {
@@ -3315,7 +3319,7 @@
 				minimumVersion = 4.4.0;
 			};
 		};
-		B4F3355425127BD20032BB64 /* RemoteSwiftPackageReference */ = {
+		B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/devxoul/Then";
 			requirement = {
@@ -3326,49 +3330,49 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B4F333B825126FCE0032BB64 /* SwiftPackageProductDependency */ = {
+		B4F333B825126FCE0032BB64 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F333B725126FCE0032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
 			productName = Realm;
 		};
-		B4F333BA25126FCE0032BB64 /* SwiftPackageProductDependency */ = {
+		B4F333BA25126FCE0032BB64 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F333B725126FCE0032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
 			productName = RealmSwift;
 		};
-		B4F333E0251273AF0032BB64 /* SwiftPackageProductDependency */ = {
+		B4F333E0251273AF0032BB64 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F333DF251273AF0032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */;
 			productName = SDWebImage;
 		};
-		B4F333EA251274050032BB64 /* SwiftPackageProductDependency */ = {
+		B4F333EA251274050032BB64 /* BadgeSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F333E9251274050032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */;
 			productName = BadgeSwift;
 		};
-		B4F333F42512742E0032BB64 /* SwiftPackageProductDependency */ = {
+		B4F333F42512742E0032BB64 /* BiometricAuthentication */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F333F32512742E0032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */;
 			productName = BiometricAuthentication;
 		};
-		B4F3348A2512770F0032BB64 /* SwiftPackageProductDependency */ = {
+		B4F3348A2512770F0032BB64 /* Embassy */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F334892512770F0032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */;
 			productName = Embassy;
 		};
-		B4F3349E251277B80032BB64 /* SwiftPackageProductDependency */ = {
+		B4F3349E251277B80032BB64 /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F3349D251277B80032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */;
 			productName = Starscream;
 		};
-		B4F3354B25127BAB0032BB64 /* SwiftPackageProductDependency */ = {
+		B4F3354B25127BAB0032BB64 /* Anchorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F3354A25127BAB0032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */;
 			productName = Anchorage;
 		};
-		B4F3355525127BD20032BB64 /* SwiftPackageProductDependency */ = {
+		B4F3355525127BD20032BB64 /* Then */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = B4F3355425127BD20032BB64 /* RemoteSwiftPackageReference */;
+			package = B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */;
 			productName = Then;
 		};
 /* End XCSwiftPackageProductDependency section */
