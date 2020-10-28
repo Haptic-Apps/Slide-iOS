@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 1/10/17.
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import BiometricAuthentication
 import LicensesViewController
@@ -42,6 +41,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     var cacheCell: UITableViewCell = InsetCell()
     var backupCell: UITableViewCell = InsetCell()
     var gestureCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "gestures")
+    var widgetsCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "widgets")
     var autoPlayCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "autoplay")
     var tagsCell: UITableViewCell = InsetCell()
     var audioSettings = InsetCell()
@@ -74,9 +74,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         super.viewDidAppear(animated)
         lock.onTintColor = ColorUtil.baseAccent
         if SettingsPro.changed {
-            self.tableView.reloadData()
-            let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
-            navigationItem.rightBarButtonItem = menuB
+            doPro()
         }
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -87,6 +85,12 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         let barButton = UIBarButtonItem.init(customView: button)
         
         navigationItem.leftBarButtonItem = barButton
+    }
+    
+    func doPro() {
+        self.tableView.reloadData()
+        let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
+        navigationItem.rightBarButtonItem = menuB
     }
     
     @objc public func handleBackButton() {
@@ -181,6 +185,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         // set the title
         self.title = "Settings"
         self.tableView.separatorStyle = .none
+        
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = 200
 
         self.general.textLabel?.text = "General"
         self.general.accessoryType = .disclosureIndicator
@@ -190,7 +197,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.general.imageView?.tintColor = ColorUtil.theme.fontColor
         self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
-
+        
         self.general.detailTextLabel?.numberOfLines = 0
         self.general.detailTextLabel?.lineBreakMode = .byWordWrapping
 
@@ -201,7 +208,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.manageSubs.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
         self.manageSubs.imageView?.tintColor = ColorUtil.theme.fontColor
         self.manageSubs.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange your subreddits"
+        self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange the sidebar"
         self.manageSubs.detailTextLabel?.numberOfLines = 0
 
         self.postActionCell.textLabel?.text = "Reorder post actions"
@@ -286,6 +293,16 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.gestureCell.detailTextLabel?.text = "Swipe and tap gestures for submissions and comments"
         self.gestureCell.detailTextLabel?.numberOfLines = 0
 
+        self.widgetsCell.textLabel?.text = "Widgets"
+        self.widgetsCell.accessoryType = .disclosureIndicator
+        self.widgetsCell.backgroundColor = ColorUtil.theme.foregroundColor
+        self.widgetsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.imageView?.image = UIImage(sfString: .squareGrid2x2, overrideString: "gestures")?.toolbarIcon()
+        self.widgetsCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.widgetsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.detailTextLabel?.text = "Create subreddit lists for Slide widgets"
+        self.widgetsCell.detailTextLabel?.numberOfLines = 0
+
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
         self.cacheCell.backgroundColor = ColorUtil.theme.foregroundColor
@@ -293,7 +310,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.cacheCell.imageView?.image = UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")?.toolbarIcon()
         self.cacheCell.imageView?.tintColor = ColorUtil.theme.fontColor
 
-        self.postLayout.textLabel?.text = "Submission layout"
+        self.postLayout.textLabel?.text = "Card layout"
         self.postLayout.accessoryType = .disclosureIndicator
         self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -508,18 +525,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 74
-        } else {
-            // Hide content row if not logged in
-            if indexPath == IndexPath(row: 3, section: 2) &&
-                !AccountController.canShowNSFW {
-                return 0
-            }
-            return 64
-        }
+        return UITableView.automaticDimension
     }
-
+    
     func tableView(tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     }
     
@@ -528,6 +536,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell: UITableViewCell
         switch indexPath.section {
         case 0:
         if SettingValues.isPro {
@@ -538,6 +547,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 3: cell = self.lockCell
             case 4: cell = self.subIconsCell
             case 5: cell = self.gestureCell
+            case 6: cell = self.widgetsCell
 
             default: fatalError("Unknown row in section 0")
             }
@@ -550,65 +560,81 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 4: cell = self.lockCell
             case 5: cell = self.subIconsCell
             case 6: cell = self.gestureCell
-                
+            case 7: cell = self.widgetsCell
+
             default: fatalError("Unknown row in section 0")
             }
         }
         case 1:
             switch indexPath.row {
-            case 0: return self.mainTheme
-            case 1: return self.icon
-            case 2: return self.postLayout
-            case 3: return self.autoPlayCell
-            case 4: return self.audioSettings
-            case 5: return self.subThemes
-            case 6: return self.font
-            case 7: return self.comments
-            case 8: return self.postActionCell
-            case 9: return self.shortcutCell
+            case 0: cell = self.mainTheme
+            case 1: cell = self.icon
+            case 2: cell = self.postLayout
+            case 3: cell = self.autoPlayCell
+            case 4: cell = self.audioSettings
+            case 5: cell = self.subThemes
+            case 6: cell = self.font
+            case 7: cell = self.comments
+            case 8: cell = self.postActionCell
+            case 9: cell = self.shortcutCell
             default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
-            case 0: return self.linkHandling
-            case 1: return self.history
-            case 2: return self.dataSaving
-            case 3: return self.content
-            case 4: return self.filters
-            case 5: return self.cacheCell
-            case 6: return self.clearCell
-            case 7: return self.backupCell
-            case 8: return self.tagsCell
+            case 0: cell = self.linkHandling
+            case 1: cell = self.history
+            case 2: cell = self.dataSaving
+            case 3: cell = self.content
+            case 4: cell = self.filters
+            case 5: cell = self.cacheCell
+            case 6: cell = self.clearCell
+            case 7: cell = self.backupCell
+            case 8: cell = self.tagsCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
             switch indexPath.row {
-            case 0: return self.aboutCell
-            case 1: return self.subCell
-            case 2: return self.contributorsCell
+            case 0: cell = self.aboutCell
+            case 1: cell = self.subCell
+            case 2: cell = self.contributorsCell
             //case 4: return self.coffeeCell
-            case 3: return self.githubCell
-            case 4: return self.licenseCell
+            case 3: cell = self.githubCell
+            case 4: cell = self.licenseCell
             default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
         }
-
+        return cell
     }
     
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let cell = cell as? InsetCell {
+            if indexPath.row == 0 {
+                cell.top = true
+            } else {
+                cell.top = false
+            }
+            if indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+                cell.bottom = true
+            } else {
+                cell.bottom = false
+            }
+        }
+    }
+
 //    func showMultiColumn() {
 //        if !VCPresenter.proDialogShown(feature: true, self) {
 //            let actionSheetController: UIAlertController = UIAlertController(title: "Multi Column Mode", message: "", preferredStyle: .actionSheet)
-//            
+//
 //            let cancelActionButton: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { _ -> Void in
 //            }
 //            actionSheetController.addAction(cancelActionButton)
-//            
+//
 //            multiColumn = UISwitch.init(frame: CGRect.init(x: 20, y: 20, width: 75, height: 50))
 //            multiColumn.isOn = SettingValues.multiColumn
 //            multiColumn.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControlEvents.valueChanged)
 //            actionSheetController.view.addSubview(multiColumn)
-//            
+//
 //            let values = [["1", "2", "3", "4", "5"]]
 //            actionSheetController.addPickerView(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)]) { (_, _, chosen, _) in
 //                SettingValues.multiColumnCount = chosen.row + 1
@@ -616,18 +642,17 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 //                UserDefaults.standard.synchronize()
 //                SubredditReorderViewController.changed = true
 //            }
-//            
+//
 //            actionSheetController.modalPresentationStyle = .popover
-//            
+//
 //            if let presenter = actionSheetController.popoverPresentationController {
 //                presenter.sourceView = multiColumnCell
 //                presenter.sourceRect = multiColumnCell.bounds
 //            }
-//            
+//
 //            self.present(actionSheetController, animated: true, completion: nil)
 //        }
 //    }
-
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         var ch: UIViewController?
@@ -641,7 +666,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SubredditReorderViewController()
             case 2:
                 if !SettingValues.isPro {
-                    ch = SettingsPro()
+                    VCPresenter.proDialogShown(feature: true, self)
                 } else {
                     ch = SettingsViewMode()
                 }
@@ -656,7 +681,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 6:
                 if !SettingValues.isPro {
                     ch = SettingsGestures()
+                } else {
+                    ch = SettingsWidget()
                 }
+            case 7:
+                ch = SettingsWidget()
             default:
                 break
             }
@@ -724,7 +753,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     try! realm.write {
                         realm.deleteAll()
                     }
-                    if let path = realm.configuration.fileURL?.absoluteString {
+                    if let path = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
                         do {
                             try FileManager().removeItem(atPath: path)
                         } catch {
@@ -853,8 +882,12 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var iOS14 = false
+        if #available(iOS 14.0, *) {
+            iOS14 = true
+        }
         switch section {
-        case 0: return (SettingValues.isPro) ? 6 : 7
+        case 0: return ((SettingValues.isPro) ? 6 : 7) + (iOS14 ? 1 : 0)
         case 1: return 10
         case 2: return 9
         case 3: return 5
@@ -889,5 +922,5 @@ extension Bundle {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
