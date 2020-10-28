@@ -251,22 +251,22 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         aboutArea.addSubview(three)
         aboutArea.addSubview(six)
         aboutArea.addSubview(about)
-        three.horizontalAnchors == aboutArea.horizontalAnchors + 8
-        six.horizontalAnchors == aboutArea.horizontalAnchors + 8
+        three.horizontalAnchors |==| aboutArea.horizontalAnchors + 8
+        six.horizontalAnchors |==| aboutArea.horizontalAnchors + 8
         
-        three.topAnchor == aboutArea.topAnchor + 16
-        six.topAnchor == three.bottomAnchor + 12
-        three.heightAnchor == 45
-        six.heightAnchor == 45
+        three.topAnchor |==| aboutArea.topAnchor + 16
+        six.topAnchor |==| three.bottomAnchor + 12
+        three.heightAnchor |==| 45
+        six.heightAnchor |==| 45
         
-        about.horizontalAnchors == aboutArea.horizontalAnchors + 12
-        about.topAnchor == six.bottomAnchor + 12
-        about.bottomAnchor == aboutArea.bottomAnchor - 16
+        about.horizontalAnchors |==| aboutArea.horizontalAnchors + 12
+        about.topAnchor |==| six.bottomAnchor + 12
+        about.bottomAnchor |==| aboutArea.bottomAnchor - 16
         
         let rect = about.textRect(forBounds: CGRect(x: 0, y: 0, width: self.tableView.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: 0)
 
-        aboutArea.heightAnchor == 45 + 45 + 16 + 12 + 18 + 12 + rect.size.height
-        aboutArea.widthAnchor == self.tableView.frame.width
+        aboutArea.heightAnchor |==| 45 + 45 + 16 + 12 + 18 + 12 + rect.size.height
+        aboutArea.widthAnchor |==| self.tableView.frame.width
         
         self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
         

@@ -38,8 +38,8 @@ extension AlertController {
         self.contentView.addSubview(vcView)
         vc.didMove(toParent: self)
         
-        vcView.heightAnchor == vc.preferredContentSize.height
-        vcView.edgeAnchors == self.contentView.edgeAnchors
+        vcView.heightAnchor |==| vc.preferredContentSize.height
+        vcView.edgeAnchors |==| self.contentView.edgeAnchors
     }
     
     func addBlurView() {
@@ -48,7 +48,7 @@ extension AlertController {
         blurEffect.setValue(8, forKeyPath: "blurRadius")
         blurView.effect = blurEffect
         self.view.subviews[0].insertSubview(blurView, at: 0)
-        blurView.edgeAnchors == self.view.subviews[0].edgeAnchors
+        blurView.edgeAnchors |==| self.view.subviews[0].edgeAnchors
         blurView.layer.cornerRadius = 13
         blurView.clipsToBounds = true
     }

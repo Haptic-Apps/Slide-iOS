@@ -336,8 +336,8 @@ class SettingsGeneral: BubbleSettingTableViewController {
         let pv = pickerView.view!
         alert.contentView.addSubview(pv)
         
-        pv.edgeAnchors == alert.contentView.edgeAnchors - 14
-        pv.heightAnchor == CGFloat(216)
+        pv.edgeAnchors |==| alert.contentView.edgeAnchors - 14
+        pv.heightAnchor |==| CGFloat(216)
         pickerView.didMove(toParent: alert)
         
         alert.addBlurView()

@@ -3340,8 +3340,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Rightpoint/Anchorage";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.4.0;
+				branch = "feature/colejd/add-custom-operators";
+				kind = branch;
 			};
 		};
 		B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */ = {

@@ -42,7 +42,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
 
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         self.addSubview(collectionView)
-        collectionView.edgeAnchors == self.edgeAnchors
+        collectionView.edgeAnchors |==| self.edgeAnchors
         collectionView.backgroundColor = .clear
 
         self.collectionView.delegate = self
@@ -224,23 +224,23 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
     func configureLayout() {
         batch {
             if SettingValues.subredditIcons {
-                sideView.leftAnchor == innerView.leftAnchor + 10
-                sideView.sizeAnchors == CGSize.square(size: 30)
-                sideView.centerYAnchor == innerView.centerYAnchor
+                sideView.leftAnchor |==| innerView.leftAnchor + 10
+                sideView.sizeAnchors |==| CGSize.square(size: 30)
+                sideView.centerYAnchor |==| innerView.centerYAnchor
 
-                icon.edgeAnchors == sideView.edgeAnchors
-                icon.sizeAnchors == CGSize.square(size: 30)
+                icon.edgeAnchors |==| sideView.edgeAnchors
+                icon.sizeAnchors |==| CGSize.square(size: 30)
 
-                title.leftAnchor == sideView.rightAnchor + 8
-                title.centerYAnchor == innerView.centerYAnchor
-                title.rightAnchor == innerView.rightAnchor - 10
+                title.leftAnchor |==| sideView.rightAnchor + 8
+                title.centerYAnchor |==| innerView.centerYAnchor
+                title.rightAnchor |==| innerView.rightAnchor - 10
             } else {
-                title.leftAnchor == innerView.leftAnchor + 4
-                title.centerYAnchor == innerView.centerYAnchor
-                title.rightAnchor == innerView.rightAnchor - 4
+                title.leftAnchor |==| innerView.leftAnchor + 4
+                title.centerYAnchor |==| innerView.centerYAnchor
+                title.rightAnchor |==| innerView.rightAnchor - 4
             }
-            innerView.centerYAnchor == self.contentView.centerYAnchor
-            innerView.centerXAnchor == self.contentView.centerXAnchor
+            innerView.centerYAnchor |==| self.contentView.centerYAnchor
+            innerView.centerXAnchor |==| self.contentView.centerXAnchor
         }
     }
     

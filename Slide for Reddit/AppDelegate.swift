@@ -834,10 +834,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             let cv = themeView.contentView
             alert.view.addSubview(cv)
-            cv.leftAnchor == alert.view.leftAnchor + 8
-            cv.rightAnchor == alert.view.rightAnchor - 8
-            cv.topAnchor == alert.view.topAnchor + 90
-            cv.heightAnchor == 60
+            cv.leftAnchor |==| alert.view.leftAnchor + 8
+            cv.rightAnchor |==| alert.view.rightAnchor - 8
+            cv.topAnchor |==| alert.view.topAnchor + 90
+            cv.heightAnchor |==| 60
         
             alert.showWindowless()
             return true
@@ -937,7 +937,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 backView?.backgroundColor = ColorUtil.theme.backgroundColor
                 if let window = self.window {
                     window.insertSubview(backView!, at: 0)
-                    backView!.edgeAnchors == window.edgeAnchors
+                    backView!.edgeAnchors |==| window.edgeAnchors
                     backView!.layer.zPosition = 1
                 }
             }

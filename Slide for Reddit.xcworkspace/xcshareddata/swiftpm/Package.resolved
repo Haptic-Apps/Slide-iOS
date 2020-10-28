@@ -5,9 +5,9 @@
         "package": "Anchorage",
         "repositoryURL": "https://github.com/Rightpoint/Anchorage",
         "state": {
-          "branch": null,
-          "revision": "18fed38e95db3200aecbd5b7101b981f91656084",
-          "version": "4.4.0"
+          "branch": "feature/colejd/add-custom-operators",
+          "revision": "73eeee423f22862ed7122159e079f4cf907399e2",
+          "version": null
         }
       },
       {
