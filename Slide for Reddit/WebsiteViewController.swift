@@ -33,16 +33,12 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         self.view.backgroundColor = .white
 
         if navigationController != nil {
-            let sort = UIButton.init(type: .custom)
-            sort.setImage(UIImage(sfString: SFSymbol.textformatAlt, overrideString: "size")?.navIcon(), for: UIControl.State.normal)
+            let sort = UIButton(buttonImage: UIImage(sfString: SFSymbol.textformatAlt, overrideString: "size"))
             sort.addTarget(self, action: #selector(self.readerMode(_:)), for: UIControl.Event.touchUpInside)
-            sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let sortB = UIBarButtonItem.init(customView: sort)
             
-            let nav = UIButton.init(type: .custom)
-            nav.setImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.navIcon(), for: UIControl.State.normal)
+            let nav = UIButton(buttonImage: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav"))
             nav.addTarget(self, action: #selector(self.openExternally(_:)), for: UIControl.Event.touchUpInside)
-            nav.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let navB = UIBarButtonItem.init(customView: nav)
 
             navigationItem.rightBarButtonItems = [sortB, navB]
@@ -57,11 +53,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         
-        let back = UIButton(type: .custom)
+        let back = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back"), toolbar: true)
         back.accessibilityLabel = "Go to last page"
-        back.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")?.toolbarIcon(), for: UIControl.State.normal)
         back.addTarget(self, action: #selector(goBack), for: UIControl.Event.touchUpInside)
-        back.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         let backB = UIBarButtonItem(customView: back)
         
         if !webView.canGoBack {
@@ -69,11 +63,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             back.alpha = 0.5
         }
 
-        let forward = UIButton(type: .custom)
+        let forward = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronRight, overrideString: "next"), toolbar: true)
         forward.accessibilityLabel = "Go forward"
-        forward.setImage(UIImage(sfString: SFSymbol.chevronRight, overrideString: "next")?.toolbarIcon(), for: UIControl.State.normal)
         forward.addTarget(self, action: #selector(goNext), for: UIControl.Event.touchUpInside)
-        forward.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         let forwardB = UIBarButtonItem(customView: forward)
 
         if !webView.canGoForward {

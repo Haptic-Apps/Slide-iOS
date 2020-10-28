@@ -84,7 +84,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         let overview = UIButton.init(type: .custom)
         overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
         overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
-        overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        overview.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
         let gridB = UIBarButtonItem.init(customView: overview)
 
         navItem?.rightBarButtonItem = gridB
@@ -206,7 +206,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                     let overview = UIButton.init(type: .custom)
                     overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
                     overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
-                    overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+                    overview.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
                     let gridB = UIBarButtonItem.init(customView: overview)
 
                     self.navItem?.rightBarButtonItem = gridB
@@ -295,7 +295,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: UIControl.State.normal)
         close.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
-        close.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        close.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
         let closeB = UIBarButtonItem.init(customView: close)
         navItem?.leftBarButtonItem = closeB
         
@@ -384,7 +384,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             let overview = UIButton.init(type: .custom)
             overview.setImage(UIImage(sfString: SFSymbol.squareGrid2x2Fill, overrideString: "grid")?.navIcon(true), for: UIControl.State.normal)
             overview.addTarget(self, action: #selector(self.overview(_:)), for: UIControl.Event.touchUpInside)
-            overview.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            overview.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
             let gridB = UIBarButtonItem.init(customView: overview)
 
             self.navItem?.rightBarButtonItem = gridB

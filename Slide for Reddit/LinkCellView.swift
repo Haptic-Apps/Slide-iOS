@@ -2,7 +2,7 @@
 //  LinkCellView.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 12/24/16.
+//  Created by Carlos Crane on 12/35/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
 
@@ -217,6 +217,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        if title == nil {
+            configureView()
+            configureLayout()
+        }
     }
     
     func configureView() {
@@ -1140,23 +1145,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 if SettingValues.actionBarMode == .FULL_LEFT {
                     box.rightAnchor == innerView.rightAnchor - ctwelve
-                    box.bottomAnchor == innerView.bottomAnchor - ceight
-                    box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
                     box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                     box.heightAnchor == CGFloat(24)
-                    buttons.heightAnchor == CGFloat(24)
+                    buttons.heightAnchor == CGFloat(35)
                     buttons.leftAnchor == innerView.leftAnchor + ctwelve
-                    buttons.bottomAnchor == innerView.bottomAnchor - ceight
+                    buttons.bottomAnchor == innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    box.centerYAnchor == buttons.centerYAnchor + 3
                 } else {
                     box.leftAnchor == innerView.leftAnchor + ctwelve
-                    box.bottomAnchor == innerView.bottomAnchor - ceight
-                    box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
                     box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                     box.heightAnchor == CGFloat(24)
-                    buttons.heightAnchor == CGFloat(24)
+                    buttons.heightAnchor == CGFloat(35)
                     buttons.rightAnchor == innerView.rightAnchor - ctwelve
-                    buttons.bottomAnchor == innerView.bottomAnchor - ceight
-
+                    buttons.bottomAnchor == innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    box.centerYAnchor == buttons.centerYAnchor + 3
+                }
+                for view in buttons.subviews {
+                    view.heightAnchor == CGFloat(35)
                 }
                 buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if SettingValues.actionBarMode.isSide() {
@@ -1278,10 +1283,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
-        if title == nil {
-            configureView()
-            configureLayout()
-        }
         if videoTask != nil {
             videoTask!.cancel()
         }
@@ -1589,12 +1590,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         setVisibility(edit, actions.isEditPossible && full)
         setVisibility(mod, actions.isModPossible)
 
-        for view in self.superview?.subviews ?? [] {
-            if view.tag == 2000 {
-                view.removeFromSuperview()
-            }
-        }
-
         thumb = submission.thumbnail
         big = submission.banner
         
@@ -1704,6 +1699,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumb = false
         }
         
+        for view in self.bannerImage.superview?.subviews ?? [] {
+            if view.tag == 2000 { //TODO - tags are bad
+                view.removeFromSuperview()
+            }
+        }
+
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             thumbText.isHidden = true
@@ -2337,7 +2338,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
-                self.showBody(width: self.innerView.frame.size.width - 24)
+                self.showBody(width: self.innerView.frame.size.width - 35)
             })
         }
         
@@ -2448,7 +2449,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {
-                            self.showBody(width: self.innerView.frame.size.width - 24)
+                            self.showBody(width: self.innerView.frame.size.width - 35)
                         }
                     }
                 }}
@@ -2724,7 +2725,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 paddingRight = 5
             }
             
-            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 24)
+            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 35)
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
@@ -2758,13 +2759,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if !full {
                 if thumb {
                     estimatedUsableWidth -= thumbheight //is the same as the width
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //between edge and thumb
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
                 } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //12 padding on either side
                 }
             } else {
-                estimatedUsableWidth -= (24) //12 padding on either side
+                estimatedUsableWidth -= (35) //12 padding on either side
                 if thumb {
                     fullHeightExtras += 45 + 12 + 12
                 } else {
@@ -2848,14 +2849,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !full {
             if thumb {
                 estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //between edge and thumb
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between thumb and label
             } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //12 padding on either side
             }
         } else {
             fullHeightExtras += 12
-            estimatedUsableWidth -= (24) //12 padding on either side
+            estimatedUsableWidth -= (35) //12 padding on either side
             if thumb {
                 fullHeightExtras += 45 + 12 + 12
             } else {
@@ -2877,7 +2878,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             estimatedUsableWidth -= 40
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
             if thumb {
-                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
+                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 35) //between edge and thumb no longer exists
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
             }
         }
@@ -3049,7 +3050,7 @@ extension UIView: MaterialView {
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: elevation)
         self.layer.shadowRadius = CGFloat(elevation)
-        self.layer.shadowOpacity = 0.24
+        self.layer.shadowOpacity = 0.35
     }
 }
 extension UIGestureRecognizer {
@@ -3093,9 +3094,10 @@ public extension UIImageView {
                 
                 if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
                     if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) { //Aspect ratio of current image is less than
+                        self.contentMode = .scaleAspectFit
                         let backView = UIImageView(image: self.image?.sd_blurredImage(withRadius: 15))
                         backView.contentMode = .scaleAspectFill
-                        backView.tag = 2000
+                        backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors == self.edgeAnchors
                         self.backgroundColor = .clear
@@ -3108,6 +3110,8 @@ public extension UIImageView {
                         backView.clipsToBounds = true
 
                         self.superview?.bringSubviewToFront(self)
+                    } else {
+                        self.contentMode = .scaleAspectFill //Otherwise, fill view
                     }
                 }
 

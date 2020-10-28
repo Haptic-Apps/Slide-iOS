@@ -58,16 +58,12 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         UIApplication.shared.applicationIconBadgeNumber = 0
         navigationController?.setNavigationBarHidden(false, animated: true)
         setupBaseBarColors()
-        let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(), for: UIControl.State.normal)
+        let edit = UIButton(buttonImage: UIImage(sfString: SFSymbol.pencil, overrideString: "edit"))
         edit.addTarget(self, action: #selector(self.new(_:)), for: UIControl.Event.touchUpInside)
-        edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
-        let read = UIButton.init(type: .custom)
-        read.setImage(UIImage(sfString: .eyeFill, overrideString: "seen")?.navIcon(), for: UIControl.State.normal)
+        let read = UIButton(buttonImage: UIImage(sfString: SFSymbol.eyeFill, overrideString: "seen"))
         read.addTarget(self, action: #selector(self.read(_:)), for: UIControl.Event.touchUpInside)
-        read.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let readB = UIBarButtonItem.init(customView: read)
 
         navigationItem.rightBarButtonItems = [editB, readB]

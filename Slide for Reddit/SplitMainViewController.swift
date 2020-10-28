@@ -115,7 +115,8 @@ class SplitMainViewController: MainViewController {
         sortButton = ExpandedHitButton(type: .custom)
         sortButton.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
         sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+        sortButton.imageView?.contentMode = .center
+        sortButton.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
         
         if viewControllers != nil && viewControllers!.count > 0 {
             if let currentVC = viewControllers?[0] as? SingleSubredditViewController {

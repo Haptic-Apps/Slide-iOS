@@ -1177,17 +1177,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         isSearch = false
         
         searchBar.tintColor = ColorUtil.theme.fontColor
-        sortButton = UIButton.init(type: .custom)
+        sortButton = UIButton(buttonImage: nil)
         sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
         doSortImage(sortButton)
         
-        let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+        let search = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search"))
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
-        search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
 
         navigationItem.rightBarButtonItems = [sortB, searchB]
@@ -1414,17 +1411,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         self.tableView.reloadData()
         
-        sortButton = UIButton.init(type: .custom)
+        sortButton = UIButton(buttonImage: nil)
         sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-        sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let sortB = UIBarButtonItem.init(customView: sortButton)
 
         doSortImage(sortButton)
         
-        let search = UIButton.init(type: .custom)
-        search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
+        let search = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search"))
         search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
-        search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: search)
 
         navigationItem.rightBarButtonItems = [sortB, searchB]
@@ -1606,19 +1600,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.isHiding = true
         
         if navigationController != nil {
-            sortButton = UIButton.init(type: .custom)
+            sortButton = UIButton(buttonImage: nil)
             sortButton.accessibilityLabel = "Change sort type"
             sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
-            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             sortB = UIBarButtonItem.init(customView: sortButton)
             
             doSortImage(sortButton)
 
-            let search = UIButton.init(type: .custom)
+            let search = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search"))
             search.accessibilityLabel = "Search"
-            search.setImage(UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.navIcon(), for: UIControl.State.normal)
             search.addTarget(self, action: #selector(self.search(_:)), for: UIControl.Event.touchUpInside)
-            search.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             searchB = UIBarButtonItem.init(customView: search)
             
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
@@ -1702,6 +1693,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.reloadTableViewAnimated()
         }
         self.finishedPush = true
+        
+        if SettingValues.commentGesturesMode != .FULL && !(parent is PagingCommentViewController) {
+            setupSwipeGesture()
+        }
     }
  
     var duringAnimation = false
@@ -2129,39 +2124,29 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             items.append(loadFullThreadButton)
             items.append(space)
         } else {
-            let up = UIButton(type: .custom)
+            let up = UIButton(buttonImage:UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up"), toolbar: true)
             up.accessibilityLabel = "Navigate up one comment thread"
-            up.setImage(UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up")?.toolbarIcon(), for: UIControl.State.normal)
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
-            up.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let upB = UIBarButtonItem(customView: up)
 
-            let nav = UIButton(type: .custom)
+            let nav = UIButton(buttonImage:UIImage(sfString: SFSymbol.safariFill, overrideString: "nav"), toolbar: true)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
-            nav.setImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.toolbarIcon(), for: UIControl.State.normal)
             nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
-            nav.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let navB = UIBarButtonItem(customView: nav)
 
-            let down = UIButton(type: .custom)
+            let down = UIButton(buttonImage:UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down"), toolbar: true)
             down.accessibilityLabel = "Navigate down one comment thread"
-            down.setImage(UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down")?.toolbarIcon(), for: UIControl.State.normal)
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
-            down.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             let downB = UIBarButtonItem(customView: down)
 
-            let more = UIButton(type: .custom)
+            let more = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh"), toolbar: true)
             more.accessibilityLabel = "Post options"
-            more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.toolbarIcon(), for: UIControl.State.normal)
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             moreB = UIBarButtonItem(customView: more)
             
-            let mod = UIButton(type: .custom)
+            let mod = UIButton(buttonImage:UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod"), toolbar: true)
             mod.accessibilityLabel = "Moderator options"
-            mod.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.toolbarIcon(), for: UIControl.State.normal)
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
-            mod.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
             modB = UIBarButtonItem(customView: mod)
             if modLink.isEmpty() && modB.customView != nil {
                 modB.customView? = UIView(frame: modB.customView!.frame)
@@ -3253,7 +3238,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if let full = fullWidthBackGestureRecognizer {
                 full.view?.removeGestureRecognizer(full)
             }
-            //setupFullSwipeView(self.tableView.tableHeaderView)
             return
         }
         

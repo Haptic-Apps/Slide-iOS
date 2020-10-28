@@ -134,16 +134,12 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
         tabBar = MDCTabBar()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-        let sort = UIButton.init(type: .custom)
-        sort.setImage(UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.navIcon(), for: UIControl.State.normal)
+        let sort = UIButton(buttonImage: UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white"))
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-        sort.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         sortB = UIBarButtonItem.init(customView: sort)
         
-        let more = UIButton.init(type: .custom)
-        more.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.navIcon(), for: UIControl.State.normal)
+        let more = UIButton(buttonImage: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info"))
         more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         moreB = UIBarButtonItem.init(customView: more)
     }
     

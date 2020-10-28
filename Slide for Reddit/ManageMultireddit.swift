@@ -52,20 +52,16 @@ class ManageMultireddit: UITableViewController {
         
         tableView.reloadData()
         
-        let add = UIButton.init(type: .custom)
-        add.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.navIcon(), for: UIControl.State.normal)
+        let add = UIButton(buttonImage: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add"))
         add.addTarget(self, action: #selector(self.add(_:)), for: UIControl.Event.touchUpInside)
-        add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 30)
+        add.frame = CGRect.init(x: -15, y: 0, width: 30, height: 44)
         let addB = UIBarButtonItem.init(customView: add)
         self.navigationItem.rightBarButtonItem = addB
         
         if dismissCallback != nil {
-            let button = UIButtonWithContext.init(type: .custom)
+            let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
             button.parentController = self.navigationController
             button.contextController = self
-            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(self.close(_:)), for: .touchUpInside)
             
             let barButton = UIBarButtonItem.init(customView: button)

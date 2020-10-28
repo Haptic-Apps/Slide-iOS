@@ -906,16 +906,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             doSortImage(mainVC.sortButton)
         }
         
-        more = UIButton.init(type: .custom)
-        more.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")?.menuIcon(), for: UIControl.State.normal)
+        more = UIButton(buttonImage: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh"), toolbar: true)
         more.addTarget(self, action: #selector(self.showMoreNone(_:)), for: UIControl.Event.touchUpInside)
-        more.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let moreB = UIBarButtonItem.init(customView: more)
         
-        searchbutton = UIButton.init(type: .custom)
-        searchbutton.setImage(UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")?.menuIcon(), for: UIControl.State.normal)
+        searchbutton = UIButton(buttonImage: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search"), toolbar: true)
         searchbutton.addTarget(self, action: #selector(self.search), for: UIControl.Event.touchUpInside)
-        searchbutton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         let searchB = UIBarButtonItem.init(customView: searchbutton)
 
         let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
@@ -984,14 +980,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             sortButton = UIButton.init(type: .custom)
             sortButton.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
-            sortButton.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            sortButton.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
             let sortB = UIBarButtonItem.init(customView: sortButton)
             doSortImage(sortButton)
 
             subb = UIButton.init(type: .custom)
             subb.setImage(UIImage(named: Subscriptions.subreddits.contains(sub) ? "subbed" : "addcircle")?.navIcon(), for: UIControl.State.normal)
             subb.addTarget(self, action: #selector(self.subscribeSingle(_:)), for: UIControl.Event.touchUpInside)
-            subb.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            subb.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
             if !(parent is SplitMainViewController) {
                 navigationItem.rightBarButtonItems = [sortB]
             }
@@ -1691,7 +1687,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             paddingRight = 5
         }
         
-        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 24)
+        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 35)
         
         let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
         let textHeight = CGFloat(submission.isSelf ? 5 : 0)

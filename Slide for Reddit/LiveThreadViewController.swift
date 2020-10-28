@@ -133,10 +133,8 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             
             progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
             let liveB = UIBarButtonItem.init(customView: progressDot)
-            let more = UIButton.init(type: .custom)
-            more.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.navIcon(), for: UIControl.State.normal)
+            let more = UIButton(buttonImage: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info"))
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-            more.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
             let moreB = UIBarButtonItem.init(customView: more)
             if complete {
                 navigationItem.rightBarButtonItem = moreB

@@ -141,7 +141,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.theme.navIconColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
-            readLater.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
+            readLater.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
 
             readLaterB = UIBarButtonItem.init(customView: readLater)
             

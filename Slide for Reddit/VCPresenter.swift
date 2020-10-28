@@ -61,11 +61,9 @@ public class VCPresenter {
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
 
-            let button = UIButtonWithContext.init(type: .custom)
+            let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
             button.parentController = newParent
             button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
 
             let barButton = UIBarButtonItem.init(customView: button)
@@ -93,13 +91,10 @@ public class VCPresenter {
                 viewController.setupBaseBarColors()
             }
         } else {
-            let button = UIButtonWithContext.init(type: .custom)
+            let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.chevronLeft, overrideString: "close"))
             button.accessibilityLabel = "Back"
             button.accessibilityTraits = UIAccessibilityTraits.button
             button.parentController = parentNavigationController!
-            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(sfString: SFSymbol.chevronLeft, overrideString: "back")!.navIcon(), for: UIControl.State.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
             button.addTarget(self, action: #selector(VCPresenter.handleBackButton(controller:)), for: .touchUpInside)
 
             let barButton = UIBarButtonItem.init(customView: button)
@@ -203,12 +198,9 @@ public class VCPresenter {
                 (parentViewController as! MediaTableViewController).setAlphaOfBackgroundViews(alpha: 1)
             }
         }
-        let button = UIButtonWithContext.init(type: .custom)
+        let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
         button.parentController = newParent
         button.contextController = parentViewController
-        button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         
         let barButton = UIBarButtonItem.init(customView: button)

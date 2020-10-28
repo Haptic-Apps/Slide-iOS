@@ -27,22 +27,16 @@ class SearchViewController: ContentListingViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let edit = UIButton.init(type: .custom)
-        edit.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.navIcon(), for: UIControl.State.normal)
+        let edit = UIButton(buttonImage: UIImage(sfString: SFSymbol.pencil, overrideString: "edit"))
         edit.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
-        edit.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         let editB = UIBarButtonItem.init(customView: edit)
 
-        let time = UIButton.init(type: .custom)
-        time.setImage(UIImage(sfString: SFSymbol.clockFill, overrideString: "restore")?.navIcon(), for: UIControl.State.normal)
+        let time = UIButton(buttonImage: UIImage(sfString: SFSymbol.clockFill, overrideString: "restore"))
         time.addTarget(self, action: #selector(self.time(_:)), for: UIControl.Event.touchUpInside)
-        time.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         timeB = UIBarButtonItem.init(customView: time)
 
-        let filter = UIButton.init(type: .custom)
-        filter.setImage(UIImage(named: "filter")?.navIcon(), for: UIControl.State.normal)
+        let filter = UIButton(buttonImage: UIImage(named: "filter"))
         filter.addTarget(self, action: #selector(self.filter(_:)), for: UIControl.Event.touchUpInside)
-        filter.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         filterB = UIBarButtonItem.init(customView: filter)
 
         navigationItem.rightBarButtonItems = [editB, filterB, timeB]

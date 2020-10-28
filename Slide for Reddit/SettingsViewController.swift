@@ -77,10 +77,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         if SettingsPro.changed {
             doPro()
         }
-        let button = UIButtonWithContext.init(type: .custom)
+        let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-        button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-        button.frame = CGRect.init(x: 0, y: 0, width: 25, height: 25)
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
         
         let barButton = UIBarButtonItem.init(customView: button)
