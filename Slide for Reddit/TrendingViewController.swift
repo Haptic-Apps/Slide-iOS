@@ -135,7 +135,7 @@ class TrendingViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section |==| 0 {
+        if indexPath.section == 0 {
             VCPresenter.openRedditLink("https://reddit.com/r/all/search?q=\(trendingSearches[indexPath.row].searchTerm)", nil, self)
         } else {
             VCPresenter.openRedditLink("https://reddit.com/r/\(trendingSubs[indexPath.row])", nil, self)
@@ -153,7 +153,7 @@ class TrendingViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section |==| 0 ? trendingSearches.count : (trendingSearches.count |==| 0 ? 0 : trendingSubs.count)
+        return section == 0 ? trendingSearches.count : (trendingSearches.count == 0 ? 0 : trendingSubs.count)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -161,7 +161,7 @@ class TrendingViewController: UITableViewController {
     }
         
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section |==| 0 {
+        if indexPath.section == 0 {
             let thing = trendingSearches[indexPath.row]
             var cell: TrendingCellView?
             let c = tableView.dequeueReusableCell(withIdentifier: "trending", for: indexPath) as! TrendingCellView
