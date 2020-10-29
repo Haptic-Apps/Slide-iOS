@@ -16,11 +16,19 @@ import UIKit
 class TrendingViewController: UITableViewController {
     var trendingSubs: [String] = []
     var trendingSearches: [TrendingItem] = []
-    
+    var spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
+
     var taskSearches: DataRequest?
     var taskSubs: DataRequest?
-
+    
     func loadData() {
+        
+        spinnerIndicator.color = ColorUtil.theme.fontColor
+        self.tableView.addSubview(spinnerIndicator)
+        spinnerIndicator.centerAnchors == self.tableView.centerAnchors
+        spinnerIndicator.sizeAnchors == CGSize(width: 75, height: 75)
+        spinnerIndicator.startAnimating()
+
         do {
             let requestString = "https://www.reddit.com/api/trending_searches_v1.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&obey_over18=1&raw_json=1&sr_detail=1"
             taskSearches = Alamofire.request(requestString, method: .get).responseString { response in
@@ -32,18 +40,21 @@ class TrendingViewController: UITableViewController {
                     if let searches = json["trending_searches"].array {
                         for searchLinkJSON in searches {
                             var searchItem = TrendingItem()
-                            let linkData = searchLinkJSON["results"]["data"]["children"].array
+                            let linkData = searchLinkJSON["results"]["data"]["children"].array?[0]["data"]
                             
-                            searchItem.imageUrl = linkData?[0]["thumbnail"].stringValue ?? ""
-                            searchItem.title = linkData?[0]["title"].stringValue ?? ""
-                            searchItem.subreddit = linkData?[0]["subreddit"].stringValue ?? ""
-                            searchItem.imageUrl = linkData?[0]["thumbnail"].stringValue ?? ""
+                            searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
+                            searchItem.title = linkData?["title"].stringValue ?? ""
+                            searchItem.subreddit = linkData?["subreddit"].stringValue ?? ""
+                            searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
                             searchItem.searchTerm = searchLinkJSON["query_string"].stringValue ?? ""
                             searchItem.searchTitle = searchLinkJSON["display_string"].stringValue ?? ""
                             self.trendingSearches.append(searchItem)
                         }
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
+                            self.spinnerIndicator.stopAnimating()
+                            self.spinnerIndicator.isHidden = true
+                            self.spinnerIndicator.removeFromSuperview()
                         }
                     }
                 } catch {
@@ -85,11 +96,29 @@ class TrendingViewController: UITableViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label: UILabel = UILabel()
+        label.textColor = ColorUtil.baseAccent
+        label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
+        let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 24, bottom: 0, right: 0))
+        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        
+        switch section {
+        case 0: label.text = "Trending Topics"
+        case 1: label.text = "Trending Subreddits"
+        default: label.text = ""
+        }
+        return toReturn
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return trendingSearches.isEmpty ? 0 : 30
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.register(TrendingCellView.classForCoder(), forCellReuseIdentifier: "trending")
-        self.tableView.isEditing = true
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
                 
         //TODO show loading indicator
@@ -104,6 +133,15 @@ class TrendingViewController: UITableViewController {
         return UITableView.automaticDimension
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 0 {
+            VCPresenter.openRedditLink("https://reddit.com/r/all/search?q=\(trendingSearches[indexPath.row].searchTerm)", nil, self)
+        } else {
+            VCPresenter.openRedditLink("https://reddit.com/r/\(trendingSubs[indexPath.row])", nil, self)
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         taskSubs?.cancel()
@@ -115,9 +153,13 @@ class TrendingViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? trendingSearches.count : trendingSubs.count
+        return section == 0 ? trendingSearches.count : (trendingSearches.count == 0 ? 0 : trendingSubs.count)
     }
     
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+        
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let thing = trendingSearches[indexPath.row]
@@ -138,11 +180,7 @@ class TrendingViewController: UITableViewController {
             return cell!
         }
     }
-        
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.separatorStyle = .none
@@ -166,6 +204,7 @@ class TrendingCellView: UITableViewCell {
     var thumbView = UIImageView()
     var subName = UILabel()
     var subDot = UIImageView()
+    var innerView = UIView()
     
     weak var navController: UIViewController?
     static var defaultIcon = UIImage(sfString: SFSymbol.rCircle, overrideString: "subs")?.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white)
@@ -228,37 +267,41 @@ class TrendingCellView: UITableViewCell {
         searchTitle.text = item.searchTitle
         searchTitle.sizeToFit()
 
-        contentView.backgroundColor = ColorUtil.theme.foregroundColor
-        contentView.clipsToBounds = true
-        contentView.layer.cornerRadius = 5
         self.backgroundColor = ColorUtil.theme.backgroundColor
+        contentView.backgroundColor = ColorUtil.theme.backgroundColor
 
+        innerView.backgroundColor = ColorUtil.theme.foregroundColor
     }
 
     func configureLayout() {
         batch {
-            contentView.addSubviews(textView, subDot, subName, thumbView, searchTitle)
+            contentView.addSubview(innerView)
+            innerView.topAnchor == contentView.topAnchor + 2.5
+            innerView.bottomAnchor == contentView.bottomAnchor
+            innerView.leftAnchor == contentView.leftAnchor
+            innerView.rightAnchor == contentView.rightAnchor
+            
+            innerView.addSubviews(textView, subDot, subName, thumbView, searchTitle)
             subDot.sizeAnchors == CGSize.square(size: 25)
 
-            searchTitle.horizontalAnchors == contentView.horizontalAnchors + 8
-            searchTitle.topAnchor == contentView.topAnchor + 8
+            searchTitle.horizontalAnchors == innerView.horizontalAnchors + 16
+            searchTitle.topAnchor == innerView.topAnchor + 12
 
-            subDot.leftAnchor == contentView.leftAnchor + 8
+            subDot.leftAnchor == innerView.leftAnchor + 16
             subName.leftAnchor == subDot.rightAnchor + 4
             subName.centerYAnchor == subDot.centerYAnchor
-            subDot.topAnchor == searchTitle.bottomAnchor - 8
+            subDot.topAnchor == searchTitle.bottomAnchor + 8
             
-            textView.leftAnchor == contentView.leftAnchor + 8
+            textView.leftAnchor == innerView.leftAnchor + 16
             textView.topAnchor == subDot.bottomAnchor + 8
-            textView.bottomAnchor >= contentView.bottomAnchor - 8
+            textView.bottomAnchor <= innerView.bottomAnchor - 12
             
-            thumbView.sizeAnchors == CGSize(width: 50, height: 50)
-            thumbView.topAnchor == subDot.topAnchor
-            thumbView.rightAnchor == contentView.rightAnchor - 8
-            thumbView.bottomAnchor <= contentView.bottomAnchor - 8
+            thumbView.sizeAnchors == CGSize(width: 65, height: 65)
+            thumbView.topAnchor == searchTitle.bottomAnchor + 8
+            thumbView.rightAnchor == innerView.rightAnchor - 8
+            thumbView.bottomAnchor <= innerView.bottomAnchor - 12
             
             textView.rightAnchor == thumbView.leftAnchor - 8
-            
         }
     }
 }

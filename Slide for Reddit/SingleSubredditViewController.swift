@@ -1974,6 +1974,8 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
     func loadSuccess(before: Int, count: Int) {
         self.oldPosition = CGPoint.zero
         var paths = [IndexPath]()
+        emptyStateView.isHidden = true
+        
         if count < before {
             self.flowLayout.invalidateLayout()
             self.tableView.reloadData()
