@@ -25,8 +25,8 @@ class TrendingViewController: UITableViewController {
         
         spinnerIndicator.color = ColorUtil.theme.fontColor
         self.tableView.addSubview(spinnerIndicator)
-        spinnerIndicator.centerAnchors == self.tableView.centerAnchors
-        spinnerIndicator.sizeAnchors == CGSize(width: 75, height: 75)
+        spinnerIndicator.centerAnchors |==| self.tableView.centerAnchors
+        spinnerIndicator.sizeAnchors |==| CGSize(width: 75, height: 75)
         spinnerIndicator.startAnimating()
 
         do {
@@ -135,7 +135,7 @@ class TrendingViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 {
+        if indexPath.section |==| 0 {
             VCPresenter.openRedditLink("https://reddit.com/r/all/search?q=\(trendingSearches[indexPath.row].searchTerm)", nil, self)
         } else {
             VCPresenter.openRedditLink("https://reddit.com/r/\(trendingSubs[indexPath.row])", nil, self)
@@ -153,7 +153,7 @@ class TrendingViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? trendingSearches.count : (trendingSearches.count == 0 ? 0 : trendingSubs.count)
+        return section |==| 0 ? trendingSearches.count : (trendingSearches.count |==| 0 ? 0 : trendingSubs.count)
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -161,7 +161,7 @@ class TrendingViewController: UITableViewController {
     }
         
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
+        if indexPath.section |==| 0 {
             let thing = trendingSearches[indexPath.row]
             var cell: TrendingCellView?
             let c = tableView.dequeueReusableCell(withIdentifier: "trending", for: indexPath) as! TrendingCellView
@@ -276,32 +276,32 @@ class TrendingCellView: UITableViewCell {
     func configureLayout() {
         batch {
             contentView.addSubview(innerView)
-            innerView.topAnchor == contentView.topAnchor + 2.5
-            innerView.bottomAnchor == contentView.bottomAnchor
-            innerView.leftAnchor == contentView.leftAnchor
-            innerView.rightAnchor == contentView.rightAnchor
+            innerView.topAnchor |==| contentView.topAnchor + 2.5
+            innerView.bottomAnchor |==| contentView.bottomAnchor
+            innerView.leftAnchor |==| contentView.leftAnchor
+            innerView.rightAnchor |==| contentView.rightAnchor
             
             innerView.addSubviews(textView, subDot, subName, thumbView, searchTitle)
-            subDot.sizeAnchors == CGSize.square(size: 25)
+            subDot.sizeAnchors |==| CGSize.square(size: 25)
 
-            searchTitle.horizontalAnchors == innerView.horizontalAnchors + 16
-            searchTitle.topAnchor == innerView.topAnchor + 12
+            searchTitle.horizontalAnchors |==| innerView.horizontalAnchors + 16
+            searchTitle.topAnchor |==| innerView.topAnchor + 12
 
-            subDot.leftAnchor == innerView.leftAnchor + 16
-            subName.leftAnchor == subDot.rightAnchor + 4
-            subName.centerYAnchor == subDot.centerYAnchor
-            subDot.topAnchor == searchTitle.bottomAnchor + 8
+            subDot.leftAnchor |==| innerView.leftAnchor + 16
+            subName.leftAnchor |==| subDot.rightAnchor + 4
+            subName.centerYAnchor |==| subDot.centerYAnchor
+            subDot.topAnchor |==| searchTitle.bottomAnchor + 8
             
-            textView.leftAnchor == innerView.leftAnchor + 16
-            textView.topAnchor == subDot.bottomAnchor + 8
-            textView.bottomAnchor <= innerView.bottomAnchor - 12
+            textView.leftAnchor |==| innerView.leftAnchor + 16
+            textView.topAnchor |==| subDot.bottomAnchor + 8
+            textView.bottomAnchor |<=| innerView.bottomAnchor - 12
             
-            thumbView.sizeAnchors == CGSize(width: 65, height: 65)
-            thumbView.topAnchor == searchTitle.bottomAnchor + 8
-            thumbView.rightAnchor == innerView.rightAnchor - 8
-            thumbView.bottomAnchor <= innerView.bottomAnchor - 12
+            thumbView.sizeAnchors |==| CGSize(width: 65, height: 65)
+            thumbView.topAnchor |==| searchTitle.bottomAnchor + 8
+            thumbView.rightAnchor |==| innerView.rightAnchor - 8
+            thumbView.bottomAnchor |<=| innerView.bottomAnchor - 12
             
-            textView.rightAnchor == thumbView.leftAnchor - 8
+            textView.rightAnchor |==| thumbView.leftAnchor - 8
         }
     }
 }
