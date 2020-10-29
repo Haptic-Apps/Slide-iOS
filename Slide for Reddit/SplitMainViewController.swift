@@ -85,7 +85,7 @@ class SplitMainViewController: MainViewController {
         account.contentMode = .scaleAspectFill
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
-        account.sizeAnchors == CGSize.square(size: 30)
+        account.sizeAnchors |==| CGSize.square(size: 30)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
@@ -137,7 +137,7 @@ class SplitMainViewController: MainViewController {
         account.clipsToBounds = true
         account.contentMode = .scaleAspectFill
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        account.sizeAnchors == CGSize.square(size: 30)
+        account.sizeAnchors |==| CGSize.square(size: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"

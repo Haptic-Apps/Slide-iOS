@@ -198,7 +198,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.alignment = .center
         }
         self.thumbImageContainer.addSubview(self.thumbImage)
-        self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
+        self.thumbImage.edgeAnchors |==| self.thumbImageContainer.edgeAnchors
         closeButton.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: .normal)
         closeButton.addTarget(self, action: #selector(self.exit), for: UIControl.Event.touchUpInside)
 
@@ -218,15 +218,15 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
         buttons.addArrangedSubviews( upvote, downvote)
         self.baseBody.addSubview(buttons)
-        baseBody.topAnchor == buttons.topAnchor
+        baseBody.topAnchor |==| buttons.topAnchor
        // TODO: - add gestures here
         self.view.addSubview(baseBody)
         self.view.addSubview(topBody)
-        baseBody.horizontalAnchors == self.view.horizontalAnchors + 12
-        baseBody.bottomAnchor == self.view.bottomAnchor - 12
-        topBody.horizontalAnchors == self.view.horizontalAnchors
-        topBody.bottomAnchor == baseBody.topAnchor
-        topBody.topAnchor == self.view.topAnchor
+        baseBody.horizontalAnchors |==| self.view.horizontalAnchors + 12
+        baseBody.bottomAnchor |==| self.view.bottomAnchor - 12
+        topBody.horizontalAnchors |==| self.view.horizontalAnchors
+        topBody.bottomAnchor |==| baseBody.topAnchor
+        topBody.topAnchor |==| self.view.topAnchor
         
         self.view.bringSubviewToFront(gradientView)
     }
@@ -237,30 +237,30 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     
     func configureLayout() {
         baseBody.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 16, right: 16)
-        box.leftAnchor == baseBody.leftAnchor + 12
-        box.bottomAnchor == baseBody.bottomAnchor - 8
-        box.centerYAnchor == buttons.centerYAnchor // Align vertically with buttons
+        box.leftAnchor |==| baseBody.leftAnchor + 12
+        box.bottomAnchor |==| baseBody.bottomAnchor - 8
+        box.centerYAnchor |==| buttons.centerYAnchor // Align vertically with buttons
         box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-        box.heightAnchor == CGFloat(24)
-        buttons.heightAnchor == CGFloat(24)
-        buttons.rightAnchor == baseBody.rightAnchor - 12
-        buttons.bottomAnchor == baseBody.bottomAnchor - 8
+        box.heightAnchor |==| CGFloat(24)
+        buttons.heightAnchor |==| CGFloat(24)
+        buttons.rightAnchor |==| baseBody.rightAnchor - 12
+        buttons.bottomAnchor |==| baseBody.bottomAnchor - 8
         buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         
-        gradientView.horizontalAnchors == self.view.horizontalAnchors
-        gradientView.topAnchor == self.view.topAnchor
+        gradientView.horizontalAnchors |==| self.view.horizontalAnchors
+        gradientView.topAnchor |==| self.view.topAnchor
 
-        closeButton.sizeAnchors == .square(size: 38)
-        closeButton.topAnchor == gradientView.safeTopAnchor + 8
-        closeButton.leftAnchor == gradientView.safeLeftAnchor + 12
+        closeButton.sizeAnchors |==| .square(size: 38)
+        closeButton.topAnchor |==| gradientView.safeTopAnchor + 8
+        closeButton.leftAnchor |==| gradientView.safeLeftAnchor + 12
         closeButton.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         closeButton.layer.masksToBounds = true
         closeButton.layer.cornerRadius = 18
         
-        titleLabel.leftAnchor == closeButton.rightAnchor + 8
-        titleLabel.topAnchor == gradientView.safeTopAnchor + 8
-        titleLabel.rightAnchor == gradientView.safeRightAnchor - 8
-        titleLabel.bottomAnchor == gradientView.bottomAnchor - 8
+        titleLabel.leftAnchor |==| closeButton.rightAnchor + 8
+        titleLabel.topAnchor |==| gradientView.safeTopAnchor + 8
+        titleLabel.rightAnchor |==| gradientView.safeRightAnchor - 8
+        titleLabel.bottomAnchor |==| gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
         titleLabel.preferredMaxLayoutWidth = self.titleLabel.frame.size.width
@@ -300,7 +300,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             let size = CGSize(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude)
             let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
             titleLabel.textLayout = layout
-            titleLabel.heightAnchor == layout.textBoundingSize.height
+            titleLabel.heightAnchor |==| layout.textBoundingSize.height
         } else if let link = content as! RComment? {
             archived = link.archived
             upvote.image = LinkCellImageCache.upvote
@@ -366,15 +366,15 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
         if type == .SELF {
             topBody.addSubview(bodyScrollView)
-            bodyScrollView.horizontalAnchors == topBody.horizontalAnchors + 12
-            bodyScrollView.verticalAnchors == topBody.verticalAnchors + 12
+            bodyScrollView.horizontalAnchors |==| topBody.horizontalAnchors + 12
+            bodyScrollView.verticalAnchors |==| topBody.verticalAnchors + 12
             textView.estimatedWidth = UIScreen.main.bounds.width - 24
             textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! RSubmission).htmlBody)
             bodyScrollView.addSubview(textView)
-            textView.leftAnchor == bodyScrollView.leftAnchor
-            textView.widthAnchor == textView.estimatedWidth
-            textView.topAnchor == bodyScrollView.topAnchor + 58
-            textView.heightAnchor == textView.estimatedHeight + 50
+            textView.leftAnchor |==| bodyScrollView.leftAnchor
+            textView.widthAnchor |==| textView.estimatedWidth
+            textView.topAnchor |==| bodyScrollView.topAnchor + 58
+            textView.heightAnchor |==| textView.estimatedHeight + 50
             bodyScrollView.contentSize = CGSize(width: bodyScrollView.bounds.width, height: textView.estimatedHeight + 108)
             parentVC?.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC?.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
@@ -388,9 +388,9 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                     self.addChild(embed!)
                     embed!.didMove(toParent: self)
                     self.topBody.addSubview(embed!.view)
-                    embed!.view.horizontalAnchors == topBody.horizontalAnchors
-                    embed!.view.topAnchor == topBody.safeTopAnchor
-                    embed!.view.bottomAnchor == topBody.bottomAnchor
+                    embed!.view.horizontalAnchors |==| topBody.horizontalAnchors
+                    embed!.view.topAnchor |==| topBody.safeTopAnchor
+                    embed!.view.bottomAnchor |==| topBody.bottomAnchor
                 } else {
                     //Shouldn't be here
                 }
@@ -400,12 +400,12 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
             self.populated = true
             topBody.addSubviews(thumbImageContainer, infoContainer)
-            thumbImageContainer.centerAnchors == topBody.centerAnchors
-            infoContainer.horizontalAnchors == topBody.horizontalAnchors
-            infoContainer.topAnchor == thumbImageContainer.bottomAnchor + 8
+            thumbImageContainer.centerAnchors |==| topBody.centerAnchors
+            infoContainer.horizontalAnchors |==| topBody.horizontalAnchors
+            infoContainer.topAnchor |==| thumbImageContainer.bottomAnchor + 8
             let thumbSize: CGFloat = 85
-            thumbImageContainer.widthAnchor == thumbSize
-            thumbImageContainer.heightAnchor == thumbSize
+            thumbImageContainer.widthAnchor |==| thumbSize
+            thumbImageContainer.heightAnchor |==| thumbSize
 
                 var text = ""
                 switch type {
@@ -542,7 +542,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     func horizontalSpace(_ space: CGFloat) -> UIView {
         return UIView().then {
-            $0.widthAnchor == space
+            $0.widthAnchor |==| space
         }
     }
 

@@ -105,8 +105,8 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         // 5
 
         self.view.addSubview(tabBar)
-        tabBar.heightAnchor == 48
-        tabBar.horizontalAnchors == self.view.horizontalAnchors
+        tabBar.heightAnchor |==| 48
+        tabBar.horizontalAnchors |==| self.view.horizontalAnchors
         
         self.edgesForExtendedLayout = UIRectEdge.all
         
@@ -119,7 +119,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         }
         let tabBarTopOffset = ((self.navigationController?.navigationBar.frame.size.height ?? 64) +
             (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height))
-        tabBar.topAnchor == self.view.topAnchor + tabBarTopOffset
+        tabBar.topAnchor |==| self.view.topAnchor + tabBarTopOffset
         tabBar.sizeToFit()
 
         time = History.getInboxSeen()

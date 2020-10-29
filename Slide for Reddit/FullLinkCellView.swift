@@ -29,34 +29,34 @@ final class FullLinkCellView: LinkCellView {
         let bannerPadding = CFloat(5)
         
         constraintsForType = batch {
-            textView.bottomAnchor == infoBox.topAnchor - (ctwelve / 2)
-            infoBox.bottomAnchor >= box.topAnchor - (ctwelve / 2)
-            infoBox.horizontalAnchors == innerView.horizontalAnchors + ctwelve
-            textView.topAnchor == title.bottomAnchor + ceight
-            textView.horizontalAnchors == innerView.horizontalAnchors + ctwelve
-            title.topAnchor == innerView.topAnchor + (ctwelve - 5)
-            title.horizontalAnchors == innerView.horizontalAnchors + ctwelve
+            textView.bottomAnchor |==| infoBox.topAnchor - (ctwelve / 2)
+            infoBox.bottomAnchor |>=| box.topAnchor - (ctwelve / 2)
+            infoBox.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
+            textView.topAnchor |==| title.bottomAnchor + ceight
+            textView.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
+            title.topAnchor |==| innerView.topAnchor + (ctwelve - 5)
+            title.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
 
             if big {
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
-                title.bottomAnchor <= bannerImage.topAnchor - ceight
+                title.bottomAnchor |<=| bannerImage.topAnchor - ceight
                 
-                bannerImage.horizontalAnchors == innerView.horizontalAnchors + bannerPadding
-                bannerImage.bottomAnchor == infoBox.topAnchor - ctwelve
+                bannerImage.horizontalAnchors |==| innerView.horizontalAnchors + bannerPadding
+                bannerImage.bottomAnchor |==| infoBox.topAnchor - ctwelve
                 if thumb {
                     infoContainer.isHidden = false
                 } else {
                     infoContainer.isHidden = true
                 }
-                infoContainer.heightAnchor == CGFloat(45)
-                infoContainer.leftAnchor == bannerImage.leftAnchor
-                infoContainer.bottomAnchor == bannerImage.bottomAnchor
-                infoContainer.rightAnchor == bannerImage.rightAnchor
+                infoContainer.heightAnchor |==| CGFloat(45)
+                infoContainer.leftAnchor |==| bannerImage.leftAnchor
+                infoContainer.bottomAnchor |==| bannerImage.bottomAnchor
+                infoContainer.rightAnchor |==| bannerImage.rightAnchor
                 
                 if videoView != nil {
-                    videoView.edgeAnchors == bannerImage.edgeAnchors
-                    topVideoView.edgeAnchors == videoView.edgeAnchors
+                    videoView.edgeAnchors |==| bannerImage.edgeAnchors
+                    topVideoView.edgeAnchors |==| videoView.edgeAnchors
                 }
             } else if thumb {
                 thumbImageContainer.isHidden = false
@@ -64,21 +64,21 @@ final class FullLinkCellView: LinkCellView {
                 info.textColor = ColorUtil.theme.fontColor
                 let ceight = CGFloat(8)
                 let ctwelve = CGFloat(12)
-                thumbImageContainer.bottomAnchor <= infoBox.topAnchor - ceight
+                thumbImageContainer.bottomAnchor |<=| infoBox.topAnchor - ceight
                 
                 // Thumbnail sizing
-                thumbImageContainer.topAnchor == title.bottomAnchor + ctwelve
-                thumbImageContainer.leftAnchor == innerView.leftAnchor + ctwelve
-                infoContainer.heightAnchor == CGFloat(75)
+                thumbImageContainer.topAnchor |==| title.bottomAnchor + ctwelve
+                thumbImageContainer.leftAnchor |==| innerView.leftAnchor + ctwelve
+                infoContainer.heightAnchor |==| CGFloat(75)
                 infoContainer.isHidden = false
 
                 let thumbSize: CGFloat = 75
-                thumbImageContainer.widthAnchor == thumbSize
-                thumbImageContainer.heightAnchor == thumbSize
+                thumbImageContainer.widthAnchor |==| thumbSize
+                thumbImageContainer.heightAnchor |==| thumbSize
                 
-                infoContainer.leftAnchor == thumbImageContainer.rightAnchor + bannerPadding
-                infoContainer.verticalAnchors == thumbImageContainer.verticalAnchors
-                infoContainer.rightAnchor == innerView.rightAnchor - bannerPadding
+                infoContainer.leftAnchor |==| thumbImageContainer.rightAnchor + bannerPadding
+                infoContainer.verticalAnchors |==| thumbImageContainer.verticalAnchors
+                infoContainer.rightAnchor |==| innerView.rightAnchor - bannerPadding
             }
         }
         layoutForContent()
@@ -88,7 +88,7 @@ final class FullLinkCellView: LinkCellView {
         super.layoutForContent()
         
         constraintsForContent = batch {
-            bannerImage.heightAnchor == CGFloat(submissionHeight)
+            bannerImage.heightAnchor |==| CGFloat(submissionHeight)
         }
     }
     

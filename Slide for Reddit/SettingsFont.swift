@@ -136,15 +136,15 @@ class SettingsFont: BubbleSettingTableViewController {
         
         submissionSize.contentView.addSubview(sliderSub)
         if let label = submissionSize.textLabel {
-            label.topAnchor == submissionSize.contentView.topAnchor + 20
-            label.leftAnchor == submissionSize.contentView.leftAnchor + 21
-            label.bottomAnchor == submissionSize.contentView.bottomAnchor - 50
-            label.heightAnchor == 20
+            label.topAnchor |==| submissionSize.contentView.topAnchor + 20
+            label.leftAnchor |==| submissionSize.contentView.leftAnchor + 21
+            label.bottomAnchor |==| submissionSize.contentView.bottomAnchor - 50
+            label.heightAnchor |==| 20
         }
         
-        sliderSub.horizontalAnchors == submissionSize.contentView.horizontalAnchors
-        sliderSub.heightAnchor == 60
-        sliderSub.bottomAnchor == submissionSize.contentView.bottomAnchor
+        sliderSub.horizontalAnchors |==| submissionSize.contentView.horizontalAnchors
+        sliderSub.heightAnchor |==| 60
+        sliderSub.bottomAnchor |==| submissionSize.contentView.bottomAnchor
 
         submissionSize.textLabel?.text = "Font size"
 
@@ -175,15 +175,15 @@ class SettingsFont: BubbleSettingTableViewController {
         
         commentSize.contentView.addSubview(slider)
         if let label = commentSize.textLabel {
-            label.topAnchor == commentSize.contentView.topAnchor + 20
-            label.leftAnchor == commentSize.contentView.leftAnchor + 21
-            label.bottomAnchor == commentSize.contentView.bottomAnchor - 50
-            label.heightAnchor == 20
+            label.topAnchor |==| commentSize.contentView.topAnchor + 20
+            label.leftAnchor |==| commentSize.contentView.leftAnchor + 21
+            label.bottomAnchor |==| commentSize.contentView.bottomAnchor - 50
+            label.heightAnchor |==| 20
         }
         
-        slider.horizontalAnchors == commentSize.contentView.horizontalAnchors
-        slider.heightAnchor == 60
-        slider.bottomAnchor == commentSize.contentView.bottomAnchor
+        slider.horizontalAnchors |==| commentSize.contentView.horizontalAnchors
+        slider.heightAnchor |==| 60
+        slider.bottomAnchor |==| commentSize.contentView.bottomAnchor
         commentFont.textLabel?.text = "Font"
         commentFont.addTapGestureRecognizer { [weak self] in
             self?.commentFontCellWasTapped()

@@ -95,7 +95,7 @@ public extension UIViewController {
         titleLabel.sizeToFit()
         subTitleLabel.sizeToFit()
         
-        stackView.heightAnchor == 45
+        stackView.heightAnchor |==| 45
 
         return stackView
     }

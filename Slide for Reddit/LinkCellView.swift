@@ -239,10 +239,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             rightmargin = 5
         }
 
-        innerView.leftAnchor == contentView.leftAnchor + leftmargin
-        innerView.rightAnchor == contentView.rightAnchor - rightmargin
-        innerView.topAnchor == contentView.topAnchor + topmargin
-        innerView.bottomAnchor == contentView.bottomAnchor - bottommargin
+        innerView.leftAnchor |==| contentView.leftAnchor + leftmargin
+        innerView.rightAnchor |==| contentView.rightAnchor - rightmargin
+        innerView.topAnchor |==| contentView.topAnchor + topmargin
+        innerView.bottomAnchor |==| contentView.bottomAnchor - bottommargin
         
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
@@ -302,10 +302,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbImageContainer.addSubview(self.thumbImage)
         self.thumbImage.addSubview(self.thumbText)
         
-        self.thumbImage.edgeAnchors == self.thumbImageContainer.edgeAnchors
-        self.thumbText.horizontalAnchors == self.thumbImage.horizontalAnchors - 2
-        self.thumbText.heightAnchor == 20
-        self.thumbText.bottomAnchor == self.thumbImage.bottomAnchor + 2
+        self.thumbImage.edgeAnchors |==| self.thumbImageContainer.edgeAnchors
+        self.thumbText.horizontalAnchors |==| self.thumbImage.horizontalAnchors - 2
+        self.thumbText.heightAnchor |==| 20
+        self.thumbText.bottomAnchor |==| self.thumbImage.bottomAnchor + 2
         
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
@@ -819,7 +819,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     diff = self.innerView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
-                        typeImage.leftAnchor == self.leftAnchor + 4
+                        typeImage.leftAnchor |==| self.leftAnchor + 4
                     }
                 }
             } else if direction == 1 && self.innerView.frame.origin.x < originalPos {
@@ -830,7 +830,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     
                     //TODO: Bug here, this is triggering on first left-to-right swipe for some reason, doesn't affect comments
                     tiConstraints = batch {
-                        typeImage.rightAnchor == self.rightAnchor - 4
+                        typeImage.rightAnchor |==| self.rightAnchor - 4
                     }
                 }
             }
@@ -881,17 +881,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 print(direction)
                 if direction == 1 {
                     tiConstraints = batch {
-                        typeImage.leftAnchor == self.leftAnchor + 4
+                        typeImage.leftAnchor |==| self.leftAnchor + 4
                     }
                 } else {
                     tiConstraints = batch {
-                        typeImage.rightAnchor == self.rightAnchor - 4
+                        typeImage.rightAnchor |==| self.rightAnchor - 4
                     }
                 }
 
-                typeImage.centerYAnchor == self.centerYAnchor
-                typeImage.heightAnchor == 45
-                typeImage.widthAnchor == 45
+                typeImage.centerYAnchor |==| self.centerYAnchor
+                typeImage.heightAnchor |==| 45
+                typeImage.widthAnchor |==| 45
             }
             
             let progress = Float(min(abs(currentTranslation) / (self.innerView.bounds.width), 1))
@@ -1084,32 +1084,32 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         self.clipsToBounds = true
         if videoView != nil {
-            progressDot.widthAnchor == 20
-            progressDot.heightAnchor == 20
-            progressDot.leftAnchor == topVideoView.leftAnchor + 8
-            progressDot.bottomAnchor == topVideoView.bottomAnchor - 8
+            progressDot.widthAnchor |==| 20
+            progressDot.heightAnchor |==| 20
+            progressDot.leftAnchor |==| topVideoView.leftAnchor + 8
+            progressDot.bottomAnchor |==| topVideoView.bottomAnchor - 8
             progressDot.layer.cornerRadius = 10
             progressDot.clipsToBounds = true
             
-            spinner.widthAnchor == 20
-            spinner.heightAnchor == 20
-            spinner.leftAnchor == topVideoView.leftAnchor + 8
-            spinner.bottomAnchor == topVideoView.bottomAnchor - 8
+            spinner.widthAnchor |==| 20
+            spinner.heightAnchor |==| 20
+            spinner.leftAnchor |==| topVideoView.leftAnchor + 8
+            spinner.bottomAnchor |==| topVideoView.bottomAnchor - 8
             spinner.clipsToBounds = true
 
-            timeView.leftAnchor == progressDot.rightAnchor + 8
-            timeView.bottomAnchor == topVideoView.bottomAnchor - 8
-            timeView.heightAnchor == 20
+            timeView.leftAnchor |==| progressDot.rightAnchor + 8
+            timeView.bottomAnchor |==| topVideoView.bottomAnchor - 8
+            timeView.heightAnchor |==| 20
             timeView.isHidden = true
             
-            sound.widthAnchor == 30
-            sound.heightAnchor == 30
-            sound.rightAnchor == topVideoView.rightAnchor
-            sound.bottomAnchor == topVideoView.bottomAnchor
+            sound.widthAnchor |==| 30
+            sound.heightAnchor |==| 30
+            sound.rightAnchor |==| topVideoView.rightAnchor
+            sound.bottomAnchor |==| topVideoView.bottomAnchor
             
-            playView.widthAnchor == 70
-            playView.heightAnchor == 70
-            playView.centerAnchors == topVideoView.centerAnchors
+            playView.widthAnchor |==| 70
+            playView.heightAnchor |==| 70
+            playView.centerAnchors |==| topVideoView.centerAnchors
             playView.clipsToBounds = true
             playView.layer.cornerRadius = 35
             playView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -1144,34 +1144,34 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if SettingValues.actionBarMode.isFull() || full || self is GalleryLinkCellView {
                 
                 if SettingValues.actionBarMode == .FULL_LEFT {
-                    box.rightAnchor == innerView.rightAnchor - ctwelve
+                    box.rightAnchor |==| innerView.rightAnchor - ctwelve
                     box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-                    box.heightAnchor == CGFloat(24)
-                    buttons.heightAnchor == CGFloat(35)
-                    buttons.leftAnchor == innerView.leftAnchor + ctwelve
-                    buttons.bottomAnchor == innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
-                    box.centerYAnchor == buttons.centerYAnchor + 3
+                    box.heightAnchor |==| CGFloat(24)
+                    buttons.heightAnchor |==| CGFloat(35)
+                    buttons.leftAnchor |==| innerView.leftAnchor + ctwelve
+                    buttons.bottomAnchor |==| innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    box.centerYAnchor |==| buttons.centerYAnchor + 3
                 } else {
-                    box.leftAnchor == innerView.leftAnchor + ctwelve
+                    box.leftAnchor |==| innerView.leftAnchor + ctwelve
                     box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-                    box.heightAnchor == CGFloat(24)
-                    buttons.heightAnchor == CGFloat(35)
-                    buttons.rightAnchor == innerView.rightAnchor - ctwelve
-                    buttons.bottomAnchor == innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
-                    box.centerYAnchor == buttons.centerYAnchor + 3
+                    box.heightAnchor |==| CGFloat(24)
+                    buttons.heightAnchor |==| CGFloat(35)
+                    buttons.rightAnchor |==| innerView.rightAnchor - ctwelve
+                    buttons.bottomAnchor |==| innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    box.centerYAnchor |==| buttons.centerYAnchor + 3
                 }
                 for view in buttons.subviews {
-                    view.heightAnchor == CGFloat(35)
+                    view.heightAnchor |==| CGFloat(35)
                 }
                 buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if SettingValues.actionBarMode.isSide() {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
-                    sideButtons.rightAnchor == innerView.rightAnchor - ceight
+                    sideButtons.rightAnchor |==| innerView.rightAnchor - ceight
                 } else {
-                    sideButtons.leftAnchor == innerView.leftAnchor + ceight
+                    sideButtons.leftAnchor |==| innerView.leftAnchor + ceight
                 }
-                sideScore.widthAnchor == CGFloat(40)
-                sideButtons.widthAnchor == CGFloat(40)
+                sideScore.widthAnchor |==| CGFloat(40)
+                sideButtons.widthAnchor |==| CGFloat(40)
             }
             
             title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
@@ -1370,7 +1370,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         title.attributedText = finalTitle
         /*title.removeConstraints(titleAttrs)
         titleAttrs = batch {
-            title.heightAnchor == bounds.textBoundingSize.height
+            title.heightAnchor |==| bounds.textBoundingSize.height
         }*/
         //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
         title.textVerticalAlignment = .top
@@ -1434,10 +1434,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         innerView.bringSubviewToFront(overView)
         innerView.bringSubviewToFront(typeImage)
         overView.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
-        overView.edgeAnchors == self.innerView.edgeAnchors
-        typeImage.centerAnchors == self.innerView.centerAnchors
-        typeImage.heightAnchor == 45
-        typeImage.widthAnchor == 45
+        overView.edgeAnchors |==| self.innerView.edgeAnchors
+        typeImage.centerAnchors |==| self.innerView.centerAnchors
+        typeImage.heightAnchor |==| 45
+        typeImage.widthAnchor |==| 45
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
             self.typeImage.alpha = 0
             overView.alpha = 0
@@ -1822,7 +1822,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
-                self.bannerImage.heightAnchor == self.submissionHeight ~ .low
+                self.bannerImage.heightAnchor |==| self.submissionHeight ~ .low
             }
         } else {
             bannerImage.image = nil
@@ -1924,14 +1924,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
             outer.addSubviews(icon, popup)
-            icon.leftAnchor == outer.leftAnchor + CGFloat(8)
-            icon.centerYAnchor == outer.centerYAnchor
-            icon.widthAnchor == 40
+            icon.leftAnchor |==| outer.leftAnchor + CGFloat(8)
+            icon.centerYAnchor |==| outer.centerYAnchor
+            icon.widthAnchor |==| 40
             icon.contentMode = .center
 
-            popup.leftAnchor == icon.rightAnchor + CGFloat(8)
-            popup.verticalAnchors == outer.verticalAnchors
-            popup.rightAnchor == outer.rightAnchor - CGFloat(8)
+            popup.leftAnchor |==| icon.rightAnchor + CGFloat(8)
+            popup.verticalAnchors |==| outer.verticalAnchors
+            popup.rightAnchor |==| outer.rightAnchor - CGFloat(8)
             
             infoBox.spacing = 4
             
@@ -1970,8 +1970,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             infoBox.spacing = 4
             infoBox.addArrangedSubview(outer)
             
-            outer.horizontalAnchors == infoBox.horizontalAnchors
-            outer.heightAnchor == 48
+            outer.horizontalAnchors |==| infoBox.horizontalAnchors
+            outer.heightAnchor |==| 48
         }
 
        // TODO: - maybe? self.innerView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
@@ -2591,20 +2591,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
                 outer.addSubviews(icon, popup)
-                icon.leftAnchor == outer.leftAnchor + CGFloat(8)
-                icon.centerYAnchor == outer.centerYAnchor
-                icon.widthAnchor == 40
+                icon.leftAnchor |==| outer.leftAnchor + CGFloat(8)
+                icon.centerYAnchor |==| outer.centerYAnchor
+                icon.widthAnchor |==| 40
                 icon.contentMode = .center
 
-                popup.leftAnchor == icon.rightAnchor + CGFloat(8)
-                popup.verticalAnchors == outer.verticalAnchors
-                popup.rightAnchor == outer.rightAnchor - CGFloat(8)
+                popup.leftAnchor |==| icon.rightAnchor + CGFloat(8)
+                popup.verticalAnchors |==| outer.verticalAnchors
+                popup.rightAnchor |==| outer.rightAnchor - CGFloat(8)
                 
                 infoBox.spacing = 4
                 infoBox.addArrangedSubview(outer)
                 
-                outer.horizontalAnchors == infoBox.horizontalAnchors
-                outer.heightAnchor == 48
+                outer.horizontalAnchors |==| infoBox.horizontalAnchors
+                outer.heightAnchor |==| 48
                 
                 outer.addTapGestureRecognizer {
                     let shareItems: Array = [link.url]
@@ -2645,20 +2645,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 let icon = UIImageView(image: UIImage(named: icon)!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.white))
                 outer.addSubviews(icon, popup)
-                icon.leftAnchor == outer.leftAnchor + CGFloat(8)
-                icon.centerYAnchor == outer.centerYAnchor
-                icon.widthAnchor == 40
+                icon.leftAnchor |==| outer.leftAnchor + CGFloat(8)
+                icon.centerYAnchor |==| outer.centerYAnchor
+                icon.widthAnchor |==| 40
                 icon.contentMode = .center
                 
-                popup.leftAnchor == icon.rightAnchor + CGFloat(8)
-                popup.verticalAnchors == outer.verticalAnchors
-                popup.rightAnchor == outer.rightAnchor - CGFloat(8)
+                popup.leftAnchor |==| icon.rightAnchor + CGFloat(8)
+                popup.verticalAnchors |==| outer.verticalAnchors
+                popup.rightAnchor |==| outer.rightAnchor - CGFloat(8)
                 
                 infoBox.spacing = 4
                 infoBox.addArrangedSubview(outer)
                 
-                outer.horizontalAnchors == infoBox.horizontalAnchors
-                outer.heightAnchor == 48
+                outer.horizontalAnchors |==| infoBox.horizontalAnchors
+                outer.heightAnchor |==| 48
             }
         }
 
@@ -3099,7 +3099,7 @@ public extension UIImageView {
                         backView.contentMode = .scaleAspectFill
                         backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
-                        backView.edgeAnchors == self.edgeAnchors
+                        backView.edgeAnchors |==| self.edgeAnchors
                         self.backgroundColor = .clear
                         if !SettingValues.flatMode {
                             backView.layer.cornerRadius = 15
@@ -3425,7 +3425,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 }
             }
             vc.preferredContentSize = image.frame.size
-            image.edgeAnchors == vc.view.edgeAnchors
+            image.edgeAnchors |==| vc.view.edgeAnchors
             return vc
         }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()

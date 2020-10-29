@@ -74,9 +74,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         textView.removeConstraints(oldConstraints)
         oldConstraints = batch {
             if size.height < 40 {
-                textView.heightAnchor == 40
+                textView.heightAnchor |==| 40
             } else {
-                textView.heightAnchor == size.height
+                textView.heightAnchor |==| size.height
             }
         }
         
@@ -393,7 +393,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
-                        typeImage.leftAnchor == self.leftAnchor + 4
+                        typeImage.leftAnchor |==| self.leftAnchor + 4
                     }
                 }
             } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
@@ -402,7 +402,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     diff = self.contentView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
-                        typeImage.rightAnchor == self.rightAnchor - 4
+                        typeImage.rightAnchor |==| self.rightAnchor - 4
                     }
                 }
             }
@@ -449,14 +449,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 self.bringSubviewToFront(typeImage)
                 tiConstraints = batch {
                     if direction == 1 {
-                        typeImage.leftAnchor == self.leftAnchor + 4
+                        typeImage.leftAnchor |==| self.leftAnchor + 4
                     } else {
-                        typeImage.rightAnchor == self.rightAnchor - 4
+                        typeImage.rightAnchor |==| self.rightAnchor - 4
                     }
                 }
-                typeImage.centerYAnchor == self.centerYAnchor
-                typeImage.heightAnchor == 45
-                typeImage.widthAnchor == 45
+                typeImage.centerYAnchor |==| self.centerYAnchor
+                typeImage.heightAnchor |==| 45
+                typeImage.widthAnchor |==| 45
             }
             
             let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
@@ -617,8 +617,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }, completion: { (_) in
             self.contentView.removeConstraints(self.tempConstraints)
             self.tempConstraints = []
-            self.menuHeight.append(self.menu.heightAnchor == CGFloat(0))
-            self.menuHeight.append(self.commentBody.bottomAnchor == self.contentView.bottomAnchor - CGFloat(8))
+            self.menuHeight.append(self.menu.heightAnchor |==| CGFloat(0))
+            self.menuHeight.append(self.commentBody.bottomAnchor |==| self.contentView.bottomAnchor - CGFloat(8))
             self.parent!.reloadHeightsNone()
             if oldLocation != CGPoint.zero {
                 UIView.performWithoutAnimation {
@@ -749,14 +749,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         NSLayoutConstraint.deactivate(self.oldConstraints)
         oldConstraints = []
         self.menuHeight = batch {
-            self.menu.heightAnchor <= CGFloat(45)
-            self.menu.horizontalAnchors == self.contentView.horizontalAnchors
-            self.menu.bottomAnchor == self.contentView.bottomAnchor
-            self.menu.topAnchor == self.commentBody.bottomAnchor + CGFloat(8)
+            self.menu.heightAnchor |<=| CGFloat(45)
+            self.menu.horizontalAnchors |==| self.contentView.horizontalAnchors
+            self.menu.bottomAnchor |==| self.contentView.bottomAnchor
+            self.menu.topAnchor |==| self.commentBody.bottomAnchor + CGFloat(8)
             if self.body != nil {
-                self.body!.heightAnchor == CGFloat(0)
+                self.body!.heightAnchor |==| CGFloat(0)
             }
-            self.reply.heightAnchor == CGFloat(0)
+            self.reply.heightAnchor |==| CGFloat(0)
         }
         
         if animate {
@@ -775,22 +775,22 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         menu.isHidden = doBody
         if !doBody {
             tempConstraints = batch {
-                self.menu.heightAnchor <= CGFloat(45)
-                self.menu.horizontalAnchors == self.contentView.horizontalAnchors
-                self.menu.topAnchor == self.commentBody.bottomAnchor + CGFloat(8)
+                self.menu.heightAnchor |<=| CGFloat(45)
+                self.menu.horizontalAnchors |==| self.contentView.horizontalAnchors
+                self.menu.topAnchor |==| self.commentBody.bottomAnchor + CGFloat(8)
             }
         }
         
         oldConstraints = []
         menuHeight = batch {
             if doBody {
-                commentBody.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
-                menu.heightAnchor == CGFloat(0)
+                commentBody.bottomAnchor |==| contentView.bottomAnchor - CGFloat(8)
+                menu.heightAnchor |==| CGFloat(0)
             }
             if body != nil {
-                body!.heightAnchor == CGFloat(0)
+                body!.heightAnchor |==| CGFloat(0)
             }
-            reply.heightAnchor == CGFloat(0)
+            reply.heightAnchor |==| CGFloat(0)
         }
         updateDepth()
         if doBody {
@@ -1009,19 +1009,19 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         NSLayoutConstraint.deactivate(menuHeight)
         menuHeight = batch {
-            reply.topAnchor == commentBody.bottomAnchor + CGFloat(8)
-            reply.bottomAnchor == contentView.bottomAnchor
-            reply.horizontalAnchors == contentView.horizontalAnchors
-            body!.horizontalAnchors == reply.horizontalAnchors + CGFloat(8)
-            body!.topAnchor == reply.topAnchor + CGFloat(8)
-            discardB.leftAnchor == reply.leftAnchor + CGFloat(8)
-            sendB.rightAnchor == reply.rightAnchor - CGFloat(8)
-            discardB.topAnchor == body!.bottomAnchor + CGFloat(8)
-            sendB.topAnchor == body!.bottomAnchor + CGFloat(8)
-            discardB.bottomAnchor == reply.bottomAnchor - CGFloat(8)
-            sendB.bottomAnchor == reply.bottomAnchor - CGFloat(8)
-            sendB.heightAnchor == CGFloat(45)
-            discardB.heightAnchor == CGFloat(45)
+            reply.topAnchor |==| commentBody.bottomAnchor + CGFloat(8)
+            reply.bottomAnchor |==| contentView.bottomAnchor
+            reply.horizontalAnchors |==| contentView.horizontalAnchors
+            body!.horizontalAnchors |==| reply.horizontalAnchors + CGFloat(8)
+            body!.topAnchor |==| reply.topAnchor + CGFloat(8)
+            discardB.leftAnchor |==| reply.leftAnchor + CGFloat(8)
+            sendB.rightAnchor |==| reply.rightAnchor - CGFloat(8)
+            discardB.topAnchor |==| body!.bottomAnchor + CGFloat(8)
+            sendB.topAnchor |==| body!.bottomAnchor + CGFloat(8)
+            discardB.bottomAnchor |==| reply.bottomAnchor - CGFloat(8)
+            sendB.bottomAnchor |==| reply.bottomAnchor - CGFloat(8)
+            sendB.heightAnchor |==| CGFloat(45)
+            discardB.heightAnchor |==| CGFloat(45)
         }
         
         updateDepth()
@@ -1039,7 +1039,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
         oldConstraints = batch {
-            body!.heightAnchor >= 40
+            body!.heightAnchor |>=| 40
         }
         
         body!.sizeToFitHeight()
@@ -1300,10 +1300,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             
             alert.contentView.addSubview(text)
-            text.edgeAnchors == alert.contentView.edgeAnchors
+            text.edgeAnchors |==| alert.contentView.edgeAnchors
             
             let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
-            text.heightAnchor == height
+            text.heightAnchor |==| height
             
             alert.addCloseButton()
             alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
@@ -1424,25 +1424,25 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func configureLayout() {
         
-        topViewSpace.horizontalAnchors == contentView.horizontalAnchors
-        topViewSpace.topAnchor == contentView.topAnchor
-        title.topAnchor == topViewSpace.bottomAnchor + CGFloat(8)
+        topViewSpace.horizontalAnchors |==| contentView.horizontalAnchors
+        topViewSpace.topAnchor |==| contentView.topAnchor
+        title.topAnchor |==| topViewSpace.bottomAnchor + CGFloat(8)
 
-        title.leftAnchor == sideView.rightAnchor + CGFloat(12)
-        title.rightAnchor == contentView.rightAnchor - CGFloat(4)
-        commentBody.topAnchor == title.bottomAnchor
-        commentBody.leftAnchor == sideView.rightAnchor + CGFloat(12)
-        commentBody.rightAnchor == contentView.rightAnchor - CGFloat(4)
+        title.leftAnchor |==| sideView.rightAnchor + CGFloat(12)
+        title.rightAnchor |==| contentView.rightAnchor - CGFloat(4)
+        commentBody.topAnchor |==| title.bottomAnchor
+        commentBody.leftAnchor |==| sideView.rightAnchor + CGFloat(12)
+        commentBody.rightAnchor |==| contentView.rightAnchor - CGFloat(4)
 
-        childrenCount.topAnchor == topViewSpace.bottomAnchor + CGFloat(4)
-        childrenCount.rightAnchor == contentView.rightAnchor - CGFloat(4)
-        sideView.verticalAnchors == contentView.verticalAnchors
-        sideViewSpace.verticalAnchors == contentView.verticalAnchors
+        childrenCount.topAnchor |==| topViewSpace.bottomAnchor + CGFloat(4)
+        childrenCount.rightAnchor |==| contentView.rightAnchor - CGFloat(4)
+        sideView.verticalAnchors |==| contentView.verticalAnchors
+        sideViewSpace.verticalAnchors |==| contentView.verticalAnchors
         
-        specialButton.widthAnchor == 25
-        specialButton.heightAnchor == 25
-        specialButton.bottomAnchor == contentView.bottomAnchor
-        specialButton.rightAnchor == contentView.rightAnchor
+        specialButton.widthAnchor |==| 25
+        specialButton.heightAnchor |==| 25
+        specialButton.bottomAnchor |==| contentView.bottomAnchor
+        specialButton.rightAnchor |==| contentView.rightAnchor
         updateDepth()
         menu.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
@@ -1453,10 +1453,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     func updateDepth() {
         NSLayoutConstraint.deactivate(sideConstraints)
         sideConstraints = batch {
-            sideViewSpace.leftAnchor == contentView.leftAnchor - CGFloat(8)
-            sideViewSpace.widthAnchor == CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth))
-            sideView.leftAnchor == sideViewSpace.rightAnchor
-            sideView.widthAnchor == CGFloat(sideWidth)
+            sideViewSpace.leftAnchor |==| contentView.leftAnchor - CGFloat(8)
+            sideViewSpace.widthAnchor |==| CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth))
+            sideView.leftAnchor |==| sideViewSpace.rightAnchor
+            sideView.widthAnchor |==| CGFloat(sideWidth)
         }
     }
 
@@ -1574,17 +1574,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         NSLayoutConstraint.deactivate(oldConstraints)
         oldConstraints = []
         menuHeight = batch {
-            commentBody.bottomAnchor == contentView.bottomAnchor - CGFloat(8)
-            menu.heightAnchor == CGFloat(0)
+            commentBody.bottomAnchor |==| contentView.bottomAnchor - CGFloat(8)
+            menu.heightAnchor |==| CGFloat(0)
             if body != nil {
-                body!.heightAnchor == CGFloat(0)
+                body!.heightAnchor |==| CGFloat(0)
             }
-            reply.heightAnchor == CGFloat(0)
+            reply.heightAnchor |==| CGFloat(0)
         }
         updateDepth()
         NSLayoutConstraint.deactivate(topMargin)
         topMargin = batch {
-            topViewSpace.heightAnchor == CGFloat(marginTop)
+            topViewSpace.heightAnchor |==| CGFloat(marginTop)
         }
         
         connectGestures()
@@ -1699,7 +1699,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         NSLayoutConstraint.deactivate(topMargin)
         topMargin = batch {
-            topViewSpace.heightAnchor == CGFloat(marginTop)
+            topViewSpace.heightAnchor |==| CGFloat(marginTop)
         }
     }
     

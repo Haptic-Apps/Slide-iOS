@@ -307,9 +307,9 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.setItems([navItem!], animated: false)
         self.view.addSubview(navigationBar)
         
-        navigationBar.topAnchor == self.view.safeTopAnchor
-        navigationBar.horizontalAnchors == self.view.horizontalAnchors
-        navigationBar.heightAnchor == 56
+        navigationBar.topAnchor |==| self.view.safeTopAnchor
+        navigationBar.horizontalAnchors |==| self.view.horizontalAnchors
+        navigationBar.heightAnchor |==| 56
         
         if galleryItems.isEmpty {
             if baseURL == nil {
