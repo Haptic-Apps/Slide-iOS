@@ -2960,6 +2960,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     strongSelf.upvote()
                 }
             }, isUpvoted: upvoted, failure: nil)
+            updater?.isPaused = true
             let postContentTransitioningDelegate = PostContentPresentationManager()
             postContentTransitioningDelegate.sourceImageView = self.videoView
             controller.transitioningDelegate = postContentTransitioningDelegate

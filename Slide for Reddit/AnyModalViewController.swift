@@ -433,7 +433,7 @@ class AnyModalViewController: UIViewController {
 
         setOnce = false
         displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidUpdate))
-        displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
+        displayLink?.add(to: .current, forMode: RunLoop.Mode.common)
         displayLink?.isPaused = false
 
         videoView.player?.play()
@@ -469,6 +469,8 @@ class AnyModalViewController: UIViewController {
         } else {
             toReturnTo?.videoView.player = self.embeddedPlayer
             toReturnTo?.playView?.isHidden = true
+            toReturnTo?.updater?.isPaused = false
+
             stopDisplayLink()
         }
         DispatchQueue.global(qos: .background).async {
@@ -905,23 +907,32 @@ extension AnyModalViewController {
 
             scrubber.updateWithTime(elapsedTime: player.currentTime())
 
-            if toReturnTo == nil {
-                guard let embeddedPlayer = embeddedPlayer else {
-                    return
+            guard let embeddedPlayer = embeddedPlayer else {
+                return
+            }
+            let elapsedTime = embeddedPlayer.currentTime()
+            if CMTIME_IS_INVALID(elapsedTime) {
+                return
+            }
+            let duration = Float(CMTimeGetSeconds(embeddedPlayer.currentItem!.duration))
+            let time = Float(CMTimeGetSeconds(elapsedTime))
+            
+            if !handlingPlayerItemDidreachEnd {
+                let percentComplete = time / duration
+                if let currentItem = player.currentItem {
+                    if currentItem.status == .readyToPlay && player.rate == 0 {
+                        player.playImmediately(atRate: 1.0)
+                    }
                 }
-                let elapsedTime = embeddedPlayer.currentTime()
-                if CMTIME_IS_INVALID(elapsedTime) {
-                    return
-                }
-                let duration = Float(CMTimeGetSeconds(embeddedPlayer.currentItem!.duration))
-                let time = Float(CMTimeGetSeconds(elapsedTime))
-                
-                if !handlingPlayerItemDidreachEnd && ((time / duration) >= 0.999 || ((time / duration) >= 0.94 && lastTime == time)) {
+
+                let reachedEnd = (percentComplete >= 0.999 || (percentComplete >= 0.93 && lastTime == time))
+
+                if reachedEnd {
                     handlingPlayerItemDidreachEnd = true
                     self.playerItemDidreachEnd()
                 }
-                lastTime = time
             }
+            lastTime = time
         }
     }
 }
