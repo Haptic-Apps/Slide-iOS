@@ -736,8 +736,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
         case .CREATE_MULTI:
             navigation(homeViewController, didRequestNewMulti: ())
         case .TRENDING:
-            ()
-            //TODO trending page
+            navigation(homeViewController, didRequestTrending: ())
         }
     }
 
@@ -952,6 +951,10 @@ extension SplitMainViewController: NavigationHomeDelegate {
             
             doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
         }
+    }
+
+    func navigation(_ homeViewController: NavigationHomeViewController, didRequestTrending: Void) {
+        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: TrendingViewController())
     }
 
     func navigation(_ homeViewController: NavigationHomeViewController?, didRequestAccountChangeToName accountName: String) {
