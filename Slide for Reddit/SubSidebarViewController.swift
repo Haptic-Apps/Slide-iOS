@@ -38,8 +38,8 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         header.frame.size.width = self.view.frame.size.width
         scrollView.contentSize = header.frame.size
         scrollView.addSubview(header)
-        header.leftAnchor |==| scrollView.leftAnchor
-        header.topAnchor |==| scrollView.topAnchor
+        header.leftAnchor /==/ scrollView.leftAnchor
+        header.topAnchor /==/ scrollView.topAnchor
         scrollView.clipsToBounds = true
         scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
 
@@ -67,7 +67,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         subbed.addTarget(self, action: #selector(doSub(_:)), for: .valueChanged)
 
         self.view.addSubview(scrollView)
-        scrollView.edgeAnchors |==| self.view.edgeAnchors
+        scrollView.edgeAnchors /==/ self.view.edgeAnchors
         title = subreddit!.displayName
         self.setupBaseBarColors()
         color = ColorUtil.getColorForSub(sub: subreddit!.displayName)

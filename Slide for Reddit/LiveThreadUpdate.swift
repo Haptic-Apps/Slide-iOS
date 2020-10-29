@@ -76,13 +76,13 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.contentView.addSubview(web)
 
             self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-            title.horizontalAnchors |==| self.contentView.horizontalAnchors + 8
-            image.horizontalAnchors |==| self.contentView.horizontalAnchors + 8
-            image.topAnchor |==| self.contentView.topAnchor + 4
-            web.horizontalAnchors |==| image.horizontalAnchors
-            web.verticalAnchors |==| image.verticalAnchors
-            self.title.topAnchor |==| self.image.bottomAnchor + 4
-            self.title.bottomAnchor |==| self.contentView.bottomAnchor - 4
+            title.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
+            image.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
+            image.topAnchor /==/ self.contentView.topAnchor + 4
+            web.horizontalAnchors /==/ image.horizontalAnchors
+            web.verticalAnchors /==/ image.verticalAnchors
+            self.title.topAnchor /==/ self.image.bottomAnchor + 4
+            self.title.bottomAnchor /==/ self.contentView.bottomAnchor - 4
             
             let touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
                 text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
@@ -237,7 +237,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
         self.contentView.removeConstraints(imageAnchors)
         imageAnchors = batch {
-            self.image.heightAnchor |==| CGFloat(imageHeight)
+            self.image.heightAnchor /==/ CGFloat(imageHeight)
         }
     }
     

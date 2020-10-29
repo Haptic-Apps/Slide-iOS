@@ -22,70 +22,70 @@ final class BannerLinkCellView: LinkCellView {
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
-                title.topAnchor |==| innerView.topAnchor + (ctwelve - 5)
+                title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
-                    sideButtons.topAnchor |==| innerView.topAnchor + ctwelve
-                    sideButtons.bottomAnchor |<=| bannerImage.topAnchor - ceight
-                    title.rightAnchor |==| sideButtons.leftAnchor - ceight
-                    title.leftAnchor |==| innerView.leftAnchor + ctwelve
+                    sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
+                    sideButtons.bottomAnchor /<=/ bannerImage.topAnchor - ceight
+                    title.rightAnchor /==/ sideButtons.leftAnchor - ceight
+                    title.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 } else if SettingValues.actionBarMode == .SIDE {
-                    sideButtons.topAnchor |==| innerView.topAnchor + ctwelve
-                    sideButtons.bottomAnchor |<=| bannerImage.topAnchor - ceight
-                    title.leftAnchor |==| sideButtons.rightAnchor + ceight
-                    title.rightAnchor |==| innerView.rightAnchor - ctwelve
+                    sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
+                    sideButtons.bottomAnchor /<=/ bannerImage.topAnchor - ceight
+                    title.leftAnchor /==/ sideButtons.rightAnchor + ceight
+                    title.rightAnchor /==/ innerView.rightAnchor - ctwelve
                 } else {
-                    title.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
+                    title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor |<=| bannerImage.topAnchor - ceight
+                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight
 
-                bannerImage.horizontalAnchors |==| innerView.horizontalAnchors + bannerPadding
+                bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 
                 if SettingValues.actionBarMode.isFull() {
-                    bannerImage.bottomAnchor |==| box.topAnchor - ctwelve
+                    bannerImage.bottomAnchor /==/ box.topAnchor - ctwelve
                 } else {
-                    bannerImage.bottomAnchor |==| innerView.bottomAnchor - ctwelve
+                    bannerImage.bottomAnchor /==/ innerView.bottomAnchor - ctwelve
                 }
             } else {
                 // Image goes above title
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
-                    title.rightAnchor |==| sideButtons.leftAnchor - ceight
-                    title.leftAnchor |==| innerView.leftAnchor + ctwelve
+                    title.rightAnchor /==/ sideButtons.leftAnchor - ceight
+                    title.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 } else if SettingValues.actionBarMode == .SIDE {
-                    title.leftAnchor |==| sideButtons.rightAnchor + ceight
-                    title.rightAnchor |==| innerView.rightAnchor - ctwelve
+                    title.leftAnchor /==/ sideButtons.rightAnchor + ceight
+                    title.rightAnchor /==/ innerView.rightAnchor - ctwelve
                 } else {
-                    title.horizontalAnchors |==| innerView.horizontalAnchors + ctwelve
+                    title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor |<=| innerView.bottomAnchor - ceight
+                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight
                 } else {
-                    title.bottomAnchor |==| box.topAnchor - ceight
+                    title.bottomAnchor /==/ box.topAnchor - ceight
                 }
                 
-                bannerImage.topAnchor |==| innerView.topAnchor + bannerPadding
-                bannerImage.bottomAnchor |==| title.topAnchor - ceight
-                bannerImage.horizontalAnchors |==| innerView.horizontalAnchors + bannerPadding
+                bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding
+                bannerImage.bottomAnchor /==/ title.topAnchor - ceight
+                bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
-                    sideButtons.topAnchor |==| bannerImage.bottomAnchor + ceight
+                    sideButtons.topAnchor /==/ bannerImage.bottomAnchor + ceight
                     sideButtons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-                    sideButtons.bottomAnchor |<=| innerView.bottomAnchor - ceight
+                    sideButtons.bottomAnchor /<=/ innerView.bottomAnchor - ceight
                 }
             }
 
-            subicon.topAnchor |==| title.topAnchor
-            subicon.leftAnchor |==| title.leftAnchor
-            subicon.widthAnchor |==| 24
-            subicon.heightAnchor |==| 24
+            subicon.topAnchor /==/ title.topAnchor
+            subicon.leftAnchor /==/ title.leftAnchor
+            subicon.widthAnchor /==/ 24
+            subicon.heightAnchor /==/ 24
 
-            infoContainer.heightAnchor |==| CGFloat(45)
+            infoContainer.heightAnchor /==/ CGFloat(45)
             if !SettingValues.smallerTag {
-                infoContainer.leftAnchor |==| bannerImage.leftAnchor
-                infoContainer.bottomAnchor |==| bannerImage.bottomAnchor
-                infoContainer.rightAnchor |==| bannerImage.rightAnchor 
+                infoContainer.leftAnchor /==/ bannerImage.leftAnchor
+                infoContainer.bottomAnchor /==/ bannerImage.bottomAnchor
+                infoContainer.rightAnchor /==/ bannerImage.rightAnchor 
             } else {
-                tagbody.bottomAnchor |==| bannerImage.bottomAnchor - 8
-                tagbody.rightAnchor |==| bannerImage.rightAnchor - 8
+                tagbody.bottomAnchor /==/ bannerImage.bottomAnchor - 8
+                tagbody.rightAnchor /==/ bannerImage.rightAnchor - 8
             }
         }
     }
@@ -94,7 +94,7 @@ final class BannerLinkCellView: LinkCellView {
         super.layoutForContent()
 
         constraintsForContent = batch {
-           // bannerImage.heightAnchor |>=| CGFloat(submissionHeight)
+           // bannerImage.heightAnchor />=/ CGFloat(submissionHeight)
         }
     }
     

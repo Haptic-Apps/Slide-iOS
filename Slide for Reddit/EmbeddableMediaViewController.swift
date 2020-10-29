@@ -49,10 +49,10 @@ class EmbeddableMediaViewController: UIViewController {
         // Configure views
         progressView = VerticalAlignedLabel()
         self.view.addSubview(progressView)
-        progressView.widthAnchor |==| 50
-        progressView.heightAnchor |==| 40
-        progressView.rightAnchor |==| self.view.safeRightAnchor - 20
-        progressView.topAnchor |==| self.view.safeTopAnchor + 20
+        progressView.widthAnchor /==/ 50
+        progressView.heightAnchor /==/ 40
+        progressView.rightAnchor /==/ self.view.safeRightAnchor - 20
+        progressView.topAnchor /==/ self.view.safeTopAnchor + 20
         progressView.layer.cornerRadius = 10
         progressView.alpha = 0.5
         progressView.isHidden = true

@@ -118,6 +118,6 @@ class CancelButtonViewController: UIViewController {
             $0.textAlignment = .center
         }
         self.view.addSubview(cancelView)
-        cancelView.edgeAnchors |==| self.view.edgeAnchors
+        cancelView.edgeAnchors /==/ self.view.edgeAnchors
     }
 }

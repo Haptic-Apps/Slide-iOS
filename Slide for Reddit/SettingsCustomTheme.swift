@@ -128,8 +128,8 @@ class SettingsCustomTheme: UITableViewController {
             
             alert.contentView.addSubview(textField)
             
-            textField.edgeAnchors |==| alert.contentView.edgeAnchors
-            textField.heightAnchor |==| CGFloat(44 + 12)
+            textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+            textField.heightAnchor /==/ CGFloat(44 + 12)
             let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
             let blurView = UIVisualEffectView(frame: UIScreen.main.bounds)
             blurEffect.setValue(8, forKeyPath: "blurRadius")
@@ -440,8 +440,8 @@ class SettingsCustomTheme: UITableViewController {
                 
                 alert.contentView.addSubview(textField)
                 
-                textField.edgeAnchors |==| alert.contentView.edgeAnchors
-                textField.heightAnchor |==| CGFloat(44 + 12)
+                textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+                textField.heightAnchor /==/ CGFloat(44 + 12)
                 
                 alert.addAction(confirmAction)
                 alert.addCancelButton()
@@ -460,8 +460,8 @@ class SettingsCustomTheme: UITableViewController {
             
             let view = UIView()
             alert.contentView.addSubview(view)
-            view.edgeAnchors |==| alert.contentView.edgeAnchors
-            view.heightAnchor |==| 400
+            view.edgeAnchors /==/ alert.contentView.edgeAnchors
+            view.heightAnchor /==/ 400
 
             vcv.isUserInteractionEnabled = true
             vcv.backgroundColor = UIColor.clear
@@ -483,10 +483,10 @@ class SettingsCustomTheme: UITableViewController {
             }
             alert.view!.addSubview(vcv)
             vc.didMove(toParent: alert)
-            vcv.horizontalAnchors |==| alert.contentView.superview!.horizontalAnchors
-            vcv.topAnchor |==| alert.contentView.superview!.topAnchor + 70
-            vcv.bottomAnchor |==| alert.contentView.superview!.bottomAnchor
-            vcv.heightAnchor |==| 400
+            vcv.horizontalAnchors /==/ alert.contentView.superview!.horizontalAnchors
+            vcv.topAnchor /==/ alert.contentView.superview!.topAnchor + 70
+            vcv.bottomAnchor /==/ alert.contentView.superview!.bottomAnchor
+            vcv.heightAnchor /==/ 400
         }
     }
     

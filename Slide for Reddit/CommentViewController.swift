@@ -130,7 +130,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     $0.contentMode = .center
                 }
                 jump.addSubview(image)
-                image.edgeAnchors |==| jump.edgeAnchors
+                image.edgeAnchors /==/ jump.edgeAnchors
                 jump.addTapGestureRecognizer {
                     self.goDown(self.jump)
                 }
@@ -140,14 +140,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             
             view.addSubview(jump)
-            jump.bottomAnchor |==| view.bottomAnchor - 24
+            jump.bottomAnchor /==/ view.bottomAnchor - 24
             if SettingValues.commentJumpButton == .RIGHT {
-                jump.rightAnchor |==| view.rightAnchor - 24
+                jump.rightAnchor /==/ view.rightAnchor - 24
             } else {
-                jump.leftAnchor |==| view.leftAnchor + 24
+                jump.leftAnchor /==/ view.leftAnchor + 24
             }
-            jump.widthAnchor |==| 40
-            jump.heightAnchor |==| 40
+            jump.widthAnchor /==/ 40
+            jump.heightAnchor /==/ 40
             jump.transform = CGAffineTransform(translationX: 0, y: 70)
             
             UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
@@ -334,10 +334,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 }
                                             }
                                             self.view.addSubview(self.liveView!)
-                                            self.liveView!.topAnchor |==| self.view.safeTopAnchor + 20
-                                            self.liveView!.centerXAnchor |==| self.view.centerXAnchor
-                                            self.liveView!.heightAnchor |==| 40
-                                            self.liveView!.widthAnchor |==| 130
+                                            self.liveView!.topAnchor /==/ self.view.safeTopAnchor + 20
+                                            self.liveView!.centerXAnchor /==/ self.view.centerXAnchor
+                                            self.liveView!.heightAnchor /==/ 40
+                                            self.liveView!.widthAnchor /==/ 130
                                         }
                                         self.liveView!.text = "\(self.liveNewCount) NEW COMMENT\((self.liveNewCount > 1) ? "S" : "")"
                                         self.liveView!.setNeedsLayout()
@@ -1112,9 +1112,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             
             label.addSubview(sideView)
-            sideView.sizeAnchors |==| CGSize.square(size: 30)
-            sideView.centerYAnchor |==| label.centerYAnchor
-            sideView.leftAnchor |==| label.leftAnchor
+            sideView.sizeAnchors /==/ CGSize.square(size: 30)
+            sideView.centerYAnchor /==/ label.centerYAnchor
+            sideView.leftAnchor /==/ label.leftAnchor
 
             sideView.layer.cornerRadius = 15
             sideView.clipsToBounds = true
@@ -1210,11 +1210,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             group.isUserInteractionEnabled = true
             group.addSubviews(isDefault, defaultLabel)
             defaultLabel.textColor = ColorUtil.accentColorForSub(sub: self.sub)
-            defaultLabel.centerYAnchor |==| group.centerYAnchor
-            isDefault.leftAnchor |==| group.leftAnchor
-            isDefault.centerYAnchor |==| group.centerYAnchor
-            defaultLabel.leftAnchor |==| isDefault.rightAnchor + 10
-            defaultLabel.rightAnchor |==| group.rightAnchor
+            defaultLabel.centerYAnchor /==/ group.centerYAnchor
+            isDefault.leftAnchor /==/ group.leftAnchor
+            isDefault.centerYAnchor /==/ group.centerYAnchor
+            defaultLabel.leftAnchor /==/ isDefault.rightAnchor + 10
+            defaultLabel.rightAnchor /==/ group.rightAnchor
 
             let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
             
@@ -1300,8 +1300,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
 
-        tableView.verticalAnchors |==| view.verticalAnchors
-        tableView.horizontalAnchors |==| view.safeHorizontalAnchors
+        tableView.verticalAnchors /==/ view.verticalAnchors
+        tableView.horizontalAnchors /==/ view.safeHorizontalAnchors
 
         self.automaticallyAdjustsScrollViewInsets = false
         self.registerForPreviewing(with: self, sourceView: self.tableView)
@@ -1618,7 +1618,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
                 if self.navigationController == nil {
                     self.view.addSubview(activityIndicator)
-                    activityIndicator.centerAnchors |==| self.view.centerAnchors
+                    activityIndicator.centerAnchors /==/ self.view.centerAnchors
                 } else {
                     let barButton = UIBarButtonItem(customView: activityIndicator)
                     navigationItem.rightBarButtonItems = [barButton]
@@ -1632,7 +1632,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                 activityIndicator.color = ColorUtil.theme.navIconColor
                 self.view.addSubview(activityIndicator)
-                activityIndicator.centerAnchors |==| self.view.centerAnchors
+                activityIndicator.centerAnchors /==/ self.view.centerAnchors
                 activityIndicator.startAnimating()
             }
         }
@@ -1840,8 +1840,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.blurEffect.setValue(10, forKeyPath: "blurRadius")
         self.navigationController!.view!.insertSubview(blackView, at: self.navigationController!.view!.subviews.count)
         self.navigationController!.view!.insertSubview(blurView!, at: self.navigationController!.view!.subviews.count)
-        blurView!.edgeAnchors |==| self.navigationController!.view!.edgeAnchors
-        blackView.edgeAnchors |==| self.navigationController!.view!.edgeAnchors
+        blurView!.edgeAnchors /==/ self.navigationController!.view!.edgeAnchors
+        blackView.edgeAnchors /==/ self.navigationController!.view!.edgeAnchors
         
         UIView.animate(withDuration: 0.2, delay: 1, options: .curveEaseInOut, animations: {
             self.blackView.alpha = 0.2
@@ -3377,15 +3377,15 @@ class ParentCommentViewController: UIViewController {
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubview(scrollView)
-        scrollView.edgeAnchors |==| self.view.edgeAnchors
+        scrollView.edgeAnchors /==/ self.view.edgeAnchors
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         scrollView.addSubview(childView)
-        childView.widthAnchor |==| estimatedSize.width
-        childView.heightAnchor |==| estimatedSize.height
-        childView.topAnchor |==| scrollView.topAnchor
+        childView.widthAnchor /==/ estimatedSize.width
+        childView.heightAnchor /==/ estimatedSize.height
+        childView.topAnchor /==/ scrollView.topAnchor
         scrollView.contentSize = estimatedSize
     }
     override func viewWillDisappear(_ animated: Bool) {

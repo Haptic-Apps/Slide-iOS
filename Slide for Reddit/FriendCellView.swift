@@ -52,13 +52,13 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     func setupConstraints() {
-        self.title.leftAnchor |==| self.icon.rightAnchor + 8
-        self.title.rightAnchor |==| self.contentView.rightAnchor - 8
-        self.title.verticalAnchors |==| self.contentView.verticalAnchors
-        self.icon.leftAnchor |==| self.contentView.leftAnchor + 8
-        self.icon.heightAnchor |==| 30
-        self.icon.widthAnchor |==| 30
-        self.icon.verticalAnchors |==| self.contentView.verticalAnchors + 20
+        self.title.leftAnchor /==/ self.icon.rightAnchor + 8
+        self.title.rightAnchor /==/ self.contentView.rightAnchor - 8
+        self.title.verticalAnchors /==/ self.contentView.verticalAnchors
+        self.icon.leftAnchor /==/ self.contentView.leftAnchor + 8
+        self.icon.heightAnchor /==/ 30
+        self.icon.widthAnchor /==/ 30
+        self.icon.verticalAnchors /==/ self.contentView.verticalAnchors + 20
     }
     
     func setFriend(friend: RFriend, parent: UIViewController & MediaVCDelegate) {

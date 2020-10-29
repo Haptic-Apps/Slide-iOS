@@ -93,7 +93,7 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
         tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
 
         self.view.addSubview(tabBar)
-        tabBar.heightAnchor |==| 48
+        tabBar.heightAnchor /==/ 48
         setupBaseBarColors()
 
         self.edgesForExtendedLayout = UIRectEdge.all
@@ -107,12 +107,12 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
         }
         let topAnchorOffset = (self.navigationController?.navigationBar.frame.size.height ?? 64) + (isModal13 ? 0 : UIApplication.shared.statusBarFrame.height)
         if #available(iOS 13, *) {
-            tabBar.topAnchor |==| self.view.topAnchor + topAnchorOffset
+            tabBar.topAnchor /==/ self.view.topAnchor + topAnchorOffset
         } else {
-            tabBar.topAnchor |==| self.view.topAnchor
+            tabBar.topAnchor /==/ self.view.topAnchor
         }
 
-        tabBar.horizontalAnchors |==| self.view.horizontalAnchors
+        tabBar.horizontalAnchors /==/ self.view.horizontalAnchors
         tabBar.sizeToFit()
         
         time = History.getInboxSeen()

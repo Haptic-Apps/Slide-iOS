@@ -130,9 +130,9 @@ public class TextDisplayStackView: UIStackView {
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.isUserInteractionEnabled = true
 
-        firstTextView.horizontalAnchors |==| self.horizontalAnchors
-        overflow.horizontalAnchors |==| self.horizontalAnchors
-        links.horizontalAnchors |==| self.horizontalAnchors
+        firstTextView.horizontalAnchors /==/ self.horizontalAnchors
+        overflow.horizontalAnchors /==/ self.horizontalAnchors
+        links.horizontalAnchors /==/ self.horizontalAnchors
 
         self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
@@ -196,10 +196,10 @@ public class TextDisplayStackView: UIStackView {
             let layout = YYTextLayout(containerSize: size, text: string)!
             firstTextView.textLayout = layout
             estimatedHeight += layout.textBoundingSize.height
-            firstTextView.horizontalAnchors |==| horizontalAnchors
+            firstTextView.horizontalAnchors /==/ horizontalAnchors
             firstTextView.removeConstraints(addedConstraints)
             addedConstraints = batch {
-                firstTextView.heightAnchor |==| layout.textBoundingSize.height
+                firstTextView.heightAnchor /==/ layout.textBoundingSize.height
             }
         }
 
@@ -322,9 +322,9 @@ public class TextDisplayStackView: UIStackView {
                     estimatedHeight += layout.textBoundingSize.height
                     firstTextView.removeConstraints(addedConstraints)
                     addedConstraints = batch {
-                        firstTextView.heightAnchor |==| layout.textBoundingSize.height
+                        firstTextView.heightAnchor /==/ layout.textBoundingSize.height
                     }
-                    firstTextView.horizontalAnchors |==| horizontalAnchors
+                    firstTextView.horizontalAnchors /==/ horizontalAnchors
                 }
             }
 
@@ -370,8 +370,8 @@ public class TextDisplayStackView: UIStackView {
 
                 let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(35)
                 
-                view.heightAnchor |==| CGFloat(25)
-                view.widthAnchor |==| widthS
+                view.heightAnchor /==/ CGFloat(25)
+                view.widthAnchor /==/ widthS
                 
                 finalWidth += widthS
                 finalWidth += 8
@@ -383,18 +383,18 @@ public class TextDisplayStackView: UIStackView {
             
             buttonBase.isUserInteractionEnabled = true
             if !ignoreHeight {
-                links.heightAnchor |==| CGFloat(30)
+                links.heightAnchor /==/ CGFloat(30)
             }
-            links.horizontalAnchors |==| self.horizontalAnchors
+            links.horizontalAnchors /==/ self.horizontalAnchors
             
             links.addSubview(buttonBase)
             links.isHidden = false
             if !ignoreHeight {
-                buttonBase.heightAnchor |==| CGFloat(30)
+                buttonBase.heightAnchor /==/ CGFloat(30)
             }
-            buttonBase.edgeAnchors |==| links.edgeAnchors
-            buttonBase.centerYAnchor |==| links.centerYAnchor
-            buttonBase.widthAnchor |==| finalWidth
+            buttonBase.edgeAnchors /==/ links.edgeAnchors
+            buttonBase.centerYAnchor /==/ links.centerYAnchor
+            buttonBase.widthAnchor /==/ finalWidth
             links.alwaysBounceHorizontal = true
             links.showsHorizontalScrollIndicator = false
             links.contentSize = CGSize.init(width: finalWidth + 30, height: CGFloat(30))
@@ -459,8 +459,8 @@ public class TextDisplayStackView: UIStackView {
                 let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction, longAction: self.longTouchLinkAction, linksCallback: linksCallback, indexCallback: indexCallback)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
-                table.horizontalAnchors |==| overflow.horizontalAnchors
-                table.heightAnchor |==| table.globalHeight
+                table.horizontalAnchors /==/ overflow.horizontalAnchors
+                table.heightAnchor /==/ table.globalHeight
                 table.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
@@ -473,15 +473,15 @@ public class TextDisplayStackView: UIStackView {
                 line.backgroundColor = ColorUtil.theme.fontColor
                 overflow.addArrangedSubview(line)
                 estimatedHeight += 1
-                line.heightAnchor |==| CGFloat(1)
-                line.horizontalAnchors |==| overflow.horizontalAnchors
+                line.heightAnchor /==/ CGFloat(1)
+                line.horizontalAnchors /==/ overflow.horizontalAnchors
             } else if block.startsWith("<pre><code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 body.accessibilityIdentifier = "Code block"
                 overflow.addArrangedSubview(body)
-                body.horizontalAnchors |==| overflow.horizontalAnchors
+                body.horizontalAnchors /==/ overflow.horizontalAnchors
                 //if !ignoreHeight {
-                    body.heightAnchor |>=| body.globalHeight
+                    body.heightAnchor />=/ body.globalHeight
                 //}
                 body.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
@@ -515,16 +515,16 @@ public class TextDisplayStackView: UIStackView {
                 label.attributedText = text
 
                 baseView.addSubview(label)
-                label.leftAnchor |==| baseView.leftAnchor + CGFloat(8)
-                label.rightAnchor |==| baseView.rightAnchor - CGFloat(4)
-                label.topAnchor |==| baseView.topAnchor
-                label.bottomAnchor |==| baseView.bottomAnchor
+                label.leftAnchor /==/ baseView.leftAnchor + CGFloat(8)
+                label.rightAnchor /==/ baseView.rightAnchor - CGFloat(4)
+                label.topAnchor /==/ baseView.topAnchor
+                label.bottomAnchor /==/ baseView.bottomAnchor
                 baseView.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 overflow.addArrangedSubview(baseView)
                             
-                baseView.horizontalAnchors |==| overflow.horizontalAnchors
+                baseView.horizontalAnchors /==/ overflow.horizontalAnchors
                 if !ignoreHeight {
-                    baseView.heightAnchor |==| layout.textBoundingSize.height
+                    baseView.heightAnchor /==/ layout.textBoundingSize.height
                 }
             } else {
                 if block.trimmed().isEmpty || block.trimmed() == "\n" {
@@ -550,9 +550,9 @@ public class TextDisplayStackView: UIStackView {
 
                 overflow.addArrangedSubview(label)
 
-                label.horizontalAnchors |==| overflow.horizontalAnchors
+                label.horizontalAnchors /==/ overflow.horizontalAnchors
                 if !ignoreHeight {
-                    label.heightAnchor |==| layout.textBoundingSize.height
+                    label.heightAnchor /==/ layout.textBoundingSize.height
                 }
             }
         }

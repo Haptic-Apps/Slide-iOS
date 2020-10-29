@@ -82,11 +82,11 @@ class CodeDisplayView: UIScrollView {
         
         addSubview(baseLabel)
         contentInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 0, right: 8)
-        baseLabel.widthAnchor |==| getWidestCell()
+        baseLabel.widthAnchor /==/ getWidestCell()
         globalHeight = textSizeB.height + 16
-        baseLabel.heightAnchor |==| textSizeB.height
-        baseLabel.leftAnchor |==| leftAnchor
-        baseLabel.topAnchor |==| topAnchor
+        baseLabel.heightAnchor /==/ textSizeB.height
+        baseLabel.leftAnchor /==/ leftAnchor
+        baseLabel.topAnchor /==/ topAnchor
         contentSize = CGSize.init(width: getWidestCell() + 16, height: textSizeB.height)
     }
     

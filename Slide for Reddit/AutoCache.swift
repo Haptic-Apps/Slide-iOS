@@ -263,7 +263,7 @@ public class AutoCache: NSObject {
         
         let textParts = "Caching in progress\nPreparing..."
         popup.numberOfLines = 0
-        popup.heightAnchor |==| 70
+        popup.heightAnchor /==/ 70
         
         var attributes = EKAttributes.topNote
         attributes.name = "autocache"
@@ -285,11 +285,11 @@ public class AutoCache: NSObject {
         
         if let progressBar = AutoCache.progressBar {
             popup.addSubview(progressBar)
-            progressBar.horizontalAnchors |==| popup.horizontalAnchors + 4
-            progressBar.bottomAnchor |==| popup.bottomAnchor
+            progressBar.horizontalAnchors /==/ popup.horizontalAnchors + 4
+            progressBar.bottomAnchor /==/ popup.bottomAnchor
             popup.clipsToBounds = true
             popup.layer.cornerRadius = 15
-            progressBar.heightAnchor |==| 4
+            progressBar.heightAnchor /==/ 4
             progressBar.progress = 0.0
         }
         
@@ -297,10 +297,10 @@ public class AutoCache: NSObject {
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
         button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withColor: .white), for: UIControl.State.normal)
         popup.addSubview(button)
-        button.rightAnchor |==| popup.rightAnchor - 4
-        button.heightAnchor |==| 25
-        button.widthAnchor |==| 25
-        button.centerYAnchor |==| popup.centerYAnchor
+        button.rightAnchor /==/ popup.rightAnchor - 4
+        button.heightAnchor /==/ 25
+        button.widthAnchor /==/ 25
+        button.centerYAnchor /==/ popup.centerYAnchor
         button.addTapGestureRecognizer {
             AutoCache.cancelAutocache(completed: -1)
         }

@@ -45,16 +45,16 @@ extension BottomMenuPresentationController {
             blurEffect.setValue(5, forKeyPath: "blurRadius")
             blurView.effect = blurEffect
             backgroundView.insertSubview(blurView, at: 0)
-            blurView.horizontalAnchors |==| backgroundView.horizontalAnchors
-            blurView.verticalAnchors |==| backgroundView.verticalAnchors
+            blurView.horizontalAnchors /==/ backgroundView.horizontalAnchors
+            blurView.verticalAnchors /==/ backgroundView.verticalAnchors
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundViewTapped))
         backgroundView.addGestureRecognizer(tapGesture)
 
         containerView?.addSubview(backgroundView)
-        backgroundView.horizontalAnchors |==| containerView!.horizontalAnchors
-        backgroundView.verticalAnchors |==| containerView!.verticalAnchors
+        backgroundView.horizontalAnchors /==/ containerView!.horizontalAnchors
+        backgroundView.verticalAnchors /==/ containerView!.verticalAnchors
         
         backgroundView.alpha = 0
         presentingViewController.transitionCoordinator?.animate(alongsideTransition: { [weak self] _ in

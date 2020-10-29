@@ -204,12 +204,12 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             if let navVC = parentController?.parent?.navigationController {
                 navVC.view.addSubviews(backgroundView, self.view)
                 navVC.view.bringSubviewToFront(backgroundView)
-                backgroundView.edgeAnchors |==| navVC.view.edgeAnchors
+                backgroundView.edgeAnchors /==/ navVC.view.edgeAnchors
                 navVC.view.bringSubviewToFront(self.view)
             } else if let navVC = parentController?.navigationController {
                 navVC.view.addSubviews(backgroundView, self.view)
                 navVC.view.bringSubviewToFront(backgroundView)
-                backgroundView.edgeAnchors |==| navVC.view.edgeAnchors
+                backgroundView.edgeAnchors /==/ navVC.view.edgeAnchors
                 navVC.view.bringSubviewToFront(self.view)
             } else {
                 NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
@@ -420,12 +420,12 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         if let navVC = parentController?.parent?.navigationController {
             navVC.view.addSubviews(backgroundView, self.view)
             navVC.view.bringSubviewToFront(backgroundView)
-            backgroundView.edgeAnchors |==| navVC.view.edgeAnchors
+            backgroundView.edgeAnchors /==/ navVC.view.edgeAnchors
             navVC.view.bringSubviewToFront(self.view)
         } else  if let navVC = parentController?.navigationController {
             navVC.view.addSubviews(backgroundView, self.view)
             navVC.view.bringSubviewToFront(backgroundView)
-            backgroundView.edgeAnchors |==| navVC.view.edgeAnchors
+            backgroundView.edgeAnchors /==/ navVC.view.edgeAnchors
             navVC.view.bringSubviewToFront(self.view)
         } else {
             NSLog("Warning: No parentController!.navigationController. Background behind drawer probably won't show up.")
@@ -471,8 +471,8 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             let blurView = UIVisualEffectView(frame: backgroundView.frame)
             blurView.effect = blurEffect
             backgroundView.insertSubview(blurView, at: 0)
-            blurView.horizontalAnchors |==| backgroundView.horizontalAnchors
-            blurView.verticalAnchors |==| backgroundView.verticalAnchors
+            blurView.horizontalAnchors /==/ backgroundView.horizontalAnchors
+            blurView.verticalAnchors /==/ backgroundView.verticalAnchors
         }
         
         //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
@@ -480,7 +480,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         //TODO collapse
         
         parentController!.view.addSubview(backgroundView)
-        backgroundView.edgeAnchors |==| parentController!.view.edgeAnchors
+        backgroundView.edgeAnchors /==/ parentController!.view.edgeAnchors
 
         backgroundView.alpha = 0
         backgroundView.isHidden = true
@@ -562,50 +562,50 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
     func configureLayout() {
     
-        //horizontalSubGroup.topAnchor |==| view.topAnchor
-        //horizontalSubGroup.horizontalAnchors |==| view.horizontalAnchors
-        //horizontalSubGroup.heightAnchor |==| 90
+        //horizontalSubGroup.topAnchor /==/ view.topAnchor
+        //horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
+        //horizontalSubGroup.heightAnchor /==/ 90
 
-        headerView.topAnchor |==| view.topAnchor
-        headerView.horizontalAnchors |==| view.horizontalAnchors
+        headerView.topAnchor /==/ view.topAnchor
+        headerView.horizontalAnchors /==/ view.horizontalAnchors
 
-        accessibilityCloseButton.topAnchor |==| headerView.topAnchor
-        accessibilityCloseButton.leftAnchor |==| headerView.leftAnchor
-        accessibilityCloseButton.sizeAnchors |==| .square(size: 10)
+        accessibilityCloseButton.topAnchor /==/ headerView.topAnchor
+        accessibilityCloseButton.leftAnchor /==/ headerView.leftAnchor
+        accessibilityCloseButton.sizeAnchors /==/ .square(size: 10)
 
-        dragHandleView.topAnchor |==| headerView.topAnchor + 8
-        dragHandleView.centerXAnchor |==| headerView.centerXAnchor
-        dragHandleView.sizeAnchors |==| CGSize(width: 60, height: 6)
+        dragHandleView.topAnchor /==/ headerView.topAnchor + 8
+        dragHandleView.centerXAnchor /==/ headerView.centerXAnchor
+        dragHandleView.sizeAnchors /==/ CGSize(width: 60, height: 6)
         dragHandleView.layer.cornerRadius = 3
         
-        editButton.leftAnchor |==| backgroundView.leftAnchor
-        editButton.topAnchor |==| backgroundView.topAnchor
-        editButton.sizeAnchors |==| .square(size: 20)
+        editButton.leftAnchor /==/ backgroundView.leftAnchor
+        editButton.topAnchor /==/ backgroundView.topAnchor
+        editButton.sizeAnchors /==/ .square(size: 20)
         
-        subredditInfoView.topAnchor |==| dragHandleView.bottomAnchor + 4
-        subredditInfoView.horizontalAnchors |==| headerView.horizontalAnchors + 4
+        subredditInfoView.topAnchor /==/ dragHandleView.bottomAnchor + 4
+        subredditInfoView.horizontalAnchors /==/ headerView.horizontalAnchors + 4
         
-        searchBar.topAnchor |==| subredditInfoView.bottomAnchor + 4
-        searchBar.horizontalAnchors |==| headerView.horizontalAnchors
-        searchBar.heightAnchor |==| 50
-        searchBar.bottomAnchor |==| headerView.bottomAnchor
+        searchBar.topAnchor /==/ subredditInfoView.bottomAnchor + 4
+        searchBar.horizontalAnchors /==/ headerView.horizontalAnchors
+        searchBar.heightAnchor /==/ 50
+        searchBar.bottomAnchor /==/ headerView.bottomAnchor
 
-        tableView.topAnchor |==| headerView.bottomAnchor - 2
-        tableView.horizontalAnchors |==| view.horizontalAnchors
-        tableView.bottomAnchor |==| view.bottomAnchor
+        tableView.topAnchor /==/ headerView.bottomAnchor - 2
+        tableView.horizontalAnchors /==/ view.horizontalAnchors
+        tableView.bottomAnchor /==/ view.bottomAnchor
         
-        subIconView.sizeAnchors |==| CGSize.square(size: 50)
-        subIconView.leftAnchor |==| subredditInfoView.leftAnchor + 4
-        subTitleView.centerYAnchor |==| subIconView.centerYAnchor
-        subTitleView.leftAnchor |==| subIconView.rightAnchor + 8
+        subIconView.sizeAnchors /==/ CGSize.square(size: 50)
+        subIconView.leftAnchor /==/ subredditInfoView.leftAnchor + 4
+        subTitleView.centerYAnchor /==/ subIconView.centerYAnchor
+        subTitleView.leftAnchor /==/ subIconView.rightAnchor + 8
         
-        subIconView.topAnchor |==| subredditInfoView.topAnchor
-        subInfoLabel.topAnchor |==| subIconView.bottomAnchor + 8
-        subInfoLabel.horizontalAnchors |==| subredditInfoView.horizontalAnchors + 8
-        subInfoLabel.bottomAnchor |==| subredditInfoView.bottomAnchor + 4
+        subIconView.topAnchor /==/ subredditInfoView.topAnchor
+        subInfoLabel.topAnchor /==/ subIconView.bottomAnchor + 8
+        subInfoLabel.horizontalAnchors /==/ subredditInfoView.horizontalAnchors + 8
+        subInfoLabel.bottomAnchor /==/ subredditInfoView.bottomAnchor + 4
         
         subLayoutBatch = batch {
-            subInfoLabel.heightAnchor |==| 0
+            subInfoLabel.heightAnchor /==/ 0
         }
     }
 
@@ -733,7 +733,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         subInfoLabel.tColor = ColorUtil.accentColorForSub(sub: subreddit.displayName)
         
         subInfoLabel.setTextWithTitleHTML(NSAttributedString(), htmlString: subreddit.publicDescriptionHtml)
-        subInfoLabel.heightAnchor |==| subInfoLabel.estimatedHeight*/
+        subInfoLabel.heightAnchor /==/ subInfoLabel.estimatedHeight*/
     }
 
     func reloadData() {
@@ -1117,7 +1117,7 @@ class HorizontalSubredditGroup: UIView {
         super.init(frame: frame)
 
         addSubview(stack)
-        stack.edgeAnchors |==| edgeAnchors
+        stack.edgeAnchors /==/ edgeAnchors
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -1150,14 +1150,14 @@ class HorizontalSubredditGroup: UIView {
             let dot = UIImageView().then {
                 $0.backgroundColor = ColorUtil.baseAccent
                 $0.layer.cornerRadius = 25
-                $0.heightAnchor |==| 50
+                $0.heightAnchor /==/ 50
                 $0.contentMode = .center
-                $0.widthAnchor |==| 50
+                $0.widthAnchor /==/ 50
                 $0.image = UIImage(sfString: .rCircleFill, overrideString: "subs")!.getCopy(withSize: CGSize.square(size: 25), withColor: .white)
             }
             button.addSubview(dot)
-            dot.centerXAnchor |==| button.centerXAnchor
-            dot.bottomAnchor |==| button.bottomAnchor - 25
+            dot.centerXAnchor /==/ button.centerXAnchor
+            dot.bottomAnchor /==/ button.bottomAnchor - 25
             stack.addArrangedSubview(button)
             button.addTarget(self, action: #selector(buttonWasTapped), for: .touchUpInside)
             buttons.append(button)

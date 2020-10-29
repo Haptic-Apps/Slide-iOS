@@ -62,14 +62,14 @@ class OnboardingViewController: UIViewController {
     private func setupConstraints() {
         batch {
             // Page view controller
-            pageViewController.view.topAnchor |==| view.safeAreaLayoutGuide.topAnchor
-            pageViewController.view.horizontalAnchors |==| view.horizontalAnchors
+            pageViewController.view.topAnchor /==/ view.safeAreaLayoutGuide.topAnchor
+            pageViewController.view.horizontalAnchors /==/ view.horizontalAnchors
 
             // Finish button
-            finishButton.topAnchor |==| pageViewController.view.bottomAnchor
-            finishButton.heightAnchor |==| 40
-            finishButton.centerXAnchor |==| view.centerXAnchor
-            finishButton.bottomAnchor |==| view.safeAreaLayoutGuide.bottomAnchor - 16
+            finishButton.topAnchor /==/ pageViewController.view.bottomAnchor
+            finishButton.heightAnchor /==/ 40
+            finishButton.centerXAnchor /==/ view.centerXAnchor
+            finishButton.bottomAnchor /==/ view.safeAreaLayoutGuide.bottomAnchor - 16
         }
     }
     
@@ -78,7 +78,7 @@ class OnboardingViewController: UIViewController {
         
         if !widthSet {
             widthSet = true
-            finishButton.widthAnchor |==| min(max(200, self.view.frame.size.width - 32), 400)
+            finishButton.widthAnchor /==/ min(max(200, self.view.frame.size.width - 32), 400)
         }
     }
     

@@ -98,13 +98,13 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         
         func configureLayout() {
             batch {
-                label.leftAnchor |==| contentView.leftAnchor + 2
-                label.rightAnchor |==| contentView.rightAnchor - 2
-                label.topAnchor |==| contentView.topAnchor + 8
-                separator.topAnchor |==| label.bottomAnchor + 8
-                separator.horizontalAnchors |==| contentView.horizontalAnchors
-                separator.bottomAnchor |==| contentView.bottomAnchor
-                separator.heightAnchor |==| CGFloat(1)
+                label.leftAnchor /==/ contentView.leftAnchor + 2
+                label.rightAnchor /==/ contentView.rightAnchor - 2
+                label.topAnchor /==/ contentView.topAnchor + 8
+                separator.topAnchor /==/ label.bottomAnchor + 8
+                separator.horizontalAnchors /==/ contentView.horizontalAnchors
+                separator.bottomAnchor /==/ contentView.bottomAnchor
+                separator.heightAnchor /==/ CGFloat(1)
             }
         }
         

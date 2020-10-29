@@ -1359,25 +1359,25 @@ class UpdateViewController: UIViewController {
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubviews(scrollView, titleView, comments)
-        titleView.horizontalAnchors |==| self.view.horizontalAnchors
+        titleView.horizontalAnchors /==/ self.view.horizontalAnchors
         titleView.textAlignment = .center
-        titleView.topAnchor |==| self.view.topAnchor + 15
-        scrollView.topAnchor |==| self.titleView.bottomAnchor + 15
-        scrollView.horizontalAnchors |==| self.view.horizontalAnchors + 10
-        comments.topAnchor |==| self.scrollView.bottomAnchor + 15
-        comments.bottomAnchor |==| self.view.bottomAnchor - 15
-        comments.heightAnchor |==| 40
+        titleView.topAnchor /==/ self.view.topAnchor + 15
+        scrollView.topAnchor /==/ self.titleView.bottomAnchor + 15
+        scrollView.horizontalAnchors /==/ self.view.horizontalAnchors + 10
+        comments.topAnchor /==/ self.scrollView.bottomAnchor + 15
+        comments.bottomAnchor /==/ self.view.bottomAnchor - 15
+        comments.heightAnchor /==/ 40
         comments.layer.cornerRadius = 10
         comments.layer.masksToBounds = true
-        comments.horizontalAnchors |==| self.view.horizontalAnchors + 15
+        comments.horizontalAnchors /==/ self.view.horizontalAnchors + 15
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         scrollView.addSubview(childView)
-        childView.widthAnchor |==| estimatedSize.width
-        childView.heightAnchor |==| estimatedSize.height
-        childView.topAnchor |==| scrollView.topAnchor
+        childView.widthAnchor /==/ estimatedSize.width
+        childView.heightAnchor /==/ estimatedSize.height
+        childView.topAnchor /==/ scrollView.topAnchor
         scrollView.contentSize = estimatedSize
     }
     override func viewWillDisappear(_ animated: Bool) {

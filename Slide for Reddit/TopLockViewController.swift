@@ -25,12 +25,12 @@ public class TopLockViewController: UIViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         self.view.addSubviews(imageView, unlockButton)
         
-        imageView.widthAnchor |==| 150
-        imageView.heightAnchor |==| 150
-        imageView.centerAnchors |==| self.view.centerAnchors
+        imageView.widthAnchor /==/ 150
+        imageView.heightAnchor /==/ 150
+        imageView.centerAnchors /==/ self.view.centerAnchors
         
-        unlockButton.centerXAnchor |==| self.view.centerXAnchor
-        unlockButton.bottomAnchor |==| self.view.safeBottomAnchor - 16
+        unlockButton.centerXAnchor /==/ self.view.centerXAnchor
+        unlockButton.bottomAnchor /==/ self.view.safeBottomAnchor - 16
         unlockButton.isHidden = true
         TopLockViewController.presented = true
     }

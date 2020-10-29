@@ -34,13 +34,13 @@ public class BannerUtil {
         }
         popup.attributedText = finalText
         popup.numberOfLines = 0
-        popup.heightAnchor |==| 50
+        popup.heightAnchor /==/ 50
         popup.backgroundColor = color
         //popup.roundCorners(UIRectCorner.allCorners, radius: 25)
         popup.clipsToBounds = true
         popup.layer.cornerRadius = 25
         popup.layer.mask?.cornerRadius = 25
-        popup.widthAnchor |==| 250
+        popup.widthAnchor /==/ 250
         popup.layer.masksToBounds = true
         popup.layer.shadowOffset = CGSize.init(width: 0, height: 3)
         popup.layer.shadowColor = UIColor.black.cgColor

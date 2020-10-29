@@ -152,19 +152,19 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         aboutArea.addSubview(lunch)
         aboutArea.addSubview(about)
 
-        bagel.horizontalAnchors |==| aboutArea.horizontalAnchors + 8
-        coffee.horizontalAnchors |==| aboutArea.horizontalAnchors + 8
-        lunch.horizontalAnchors |==| aboutArea.horizontalAnchors + 8
+        bagel.horizontalAnchors /==/ aboutArea.horizontalAnchors + 8
+        coffee.horizontalAnchors /==/ aboutArea.horizontalAnchors + 8
+        lunch.horizontalAnchors /==/ aboutArea.horizontalAnchors + 8
 
-        bagel.topAnchor |==| about.bottomAnchor + 16
-        coffee.topAnchor |==| bagel.bottomAnchor + 12
-        lunch.topAnchor |==| coffee.bottomAnchor + 12
-        bagel.heightAnchor |==| 45
-        coffee.heightAnchor |==| 45
-        lunch.heightAnchor |==| 45
+        bagel.topAnchor /==/ about.bottomAnchor + 16
+        coffee.topAnchor /==/ bagel.bottomAnchor + 12
+        lunch.topAnchor /==/ coffee.bottomAnchor + 12
+        bagel.heightAnchor /==/ 45
+        coffee.heightAnchor /==/ 45
+        lunch.heightAnchor /==/ 45
 
-        about.horizontalAnchors |==| aboutArea.horizontalAnchors + 12
-        about.topAnchor |==| aboutArea.topAnchor + 12
+        about.horizontalAnchors /==/ aboutArea.horizontalAnchors + 12
+        about.topAnchor /==/ aboutArea.topAnchor + 12
         
         let rect = about.textRect(forBounds: CGRect(x: 0, y: 0, width: self.view.frame.size.width - 24, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: 0)
         
@@ -174,7 +174,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         total += CGFloat(16 + 16)
         total += rect.height
         self.preferredContentSize = CGSize(width: self.view.frame.size.width, height: total)
-        aboutArea.edgeAnchors |==| self.view.edgeAnchors
+        aboutArea.edgeAnchors /==/ self.view.edgeAnchors
     }
     
     var alertController: UIAlertController?

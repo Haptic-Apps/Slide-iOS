@@ -300,8 +300,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
         let pv = pickerView.view!
         actionSheetController.contentView.addSubview(pv)
         
-        pv.edgeAnchors |==| actionSheetController.contentView.edgeAnchors - 14
-        pv.heightAnchor |==| CGFloat(216)
+        pv.edgeAnchors /==/ actionSheetController.contentView.edgeAnchors - 14
+        pv.heightAnchor /==/ CGFloat(216)
         pickerView.didMove(toParent: actionSheetController)
         
         actionSheetController.addBlurView()
@@ -333,8 +333,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
         let pv = pickerView.view!
         actionSheetController.contentView.addSubview(pv)
         
-        pv.edgeAnchors |==| actionSheetController.contentView.edgeAnchors - 14
-        pv.heightAnchor |==| CGFloat(216)
+        pv.edgeAnchors /==/ actionSheetController.contentView.edgeAnchors - 14
+        pv.heightAnchor /==/ CGFloat(216)
         pickerView.didMove(toParent: actionSheetController)
         
         actionSheetController.addBlurView()
@@ -366,8 +366,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
         let pv = pickerView.view!
         actionSheetController.contentView.addSubview(pv)
         
-        pv.edgeAnchors |==| actionSheetController.contentView.edgeAnchors - 14
-        pv.heightAnchor |==| CGFloat(216)
+        pv.edgeAnchors /==/ actionSheetController.contentView.edgeAnchors - 14
+        pv.heightAnchor /==/ CGFloat(216)
         pickerView.didMove(toParent: actionSheetController)
         
         actionSheetController.addBlurView()

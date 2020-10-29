@@ -73,9 +73,9 @@ class OnboardingSplashPageViewController: UIViewController {
         baseView = UIView()
         view.addSubview(baseView)
         
-        baseView.centerAnchors |==| self.view.centerAnchors
-        baseView.widthAnchor |==| CGFloat(bubbles) * 30
-        baseView.heightAnchor |==| CGFloat(bubbles) * 30
+        baseView.centerAnchors /==/ self.view.centerAnchors
+        baseView.widthAnchor /==/ CGFloat(bubbles) * 30
+        baseView.heightAnchor /==/ CGFloat(bubbles) * 30
 
         for i in 0..<Int(bubbles) {
             if i % 2 == 0 {
@@ -193,15 +193,15 @@ class OnboardingSplashPageViewController: UIViewController {
     }
         
     func setupConstriants() {
-        textView.horizontalAnchors |==| self.view.horizontalAnchors + 32
-        textView.bottomAnchor |==| self.imageView.topAnchor - 40
+        textView.horizontalAnchors /==/ self.view.horizontalAnchors + 32
+        textView.bottomAnchor /==/ self.imageView.topAnchor - 40
         
-        imageView.centerAnchors |==| self.view.centerAnchors
-        imageView.widthAnchor |==| 100
-        imageView.heightAnchor |==| 100
+        imageView.centerAnchors /==/ self.view.centerAnchors
+        imageView.widthAnchor /==/ 100
+        imageView.heightAnchor /==/ 100
         
-        subTextView.horizontalAnchors |==| self.view.horizontalAnchors + 32
-        subTextView.bottomAnchor |==| self.view.safeBottomAnchor - 8
+        subTextView.horizontalAnchors /==/ self.view.horizontalAnchors + 32
+        subTextView.bottomAnchor /==/ self.view.safeBottomAnchor - 8
     }
 
     @available(*, unavailable)
@@ -290,18 +290,18 @@ class PreviewSubredditView: UIView {
         let size = Int.random(in: 5...10)
         let scale = CGFloat(5) / CGFloat(size)
         
-        bubble.widthAnchor |==| 30 * scale
-        bubble.heightAnchor |==| 30 * scale
+        bubble.widthAnchor /==/ 30 * scale
+        bubble.heightAnchor /==/ 30 * scale
         
         bubble.layer.cornerRadius = 15 * scale
         
-        label.widthAnchor |==| CGFloat(Int.random(in: 40...150)) * scale
-        label.heightAnchor |==| 25 * scale
+        label.widthAnchor /==/ CGFloat(Int.random(in: 40...150)) * scale
+        label.heightAnchor /==/ 25 * scale
         label.layer.cornerRadius = 5 * scale
         label.clipsToBounds = true
         
-        label.leftAnchor |==| bubble.rightAnchor + 8 * scale
-        label.centerYAnchor |==| bubble.centerYAnchor
+        label.leftAnchor /==/ bubble.rightAnchor + 8 * scale
+        label.centerYAnchor /==/ bubble.centerYAnchor
     }
 }
 
@@ -357,15 +357,15 @@ class OnboardingFeaturePageViewController: UIViewController {
     }
     
     func setupConstriants() {
-        textView.horizontalAnchors |==| self.view.horizontalAnchors + 16
-        textView.topAnchor |==| self.view.safeTopAnchor + 8
+        textView.horizontalAnchors /==/ self.view.horizontalAnchors + 16
+        textView.topAnchor /==/ self.view.safeTopAnchor + 8
         
-        imageView.centerAnchors |==| self.view.centerAnchors
-        imageView.widthAnchor |==| 100
-        imageView.heightAnchor |==| 100
+        imageView.centerAnchors /==/ self.view.centerAnchors
+        imageView.widthAnchor /==/ 100
+        imageView.heightAnchor /==/ 100
         
-        subTextView.horizontalAnchors |==| self.view.horizontalAnchors + 16
-        subTextView.bottomAnchor |==| self.view.safeBottomAnchor - 8
+        subTextView.horizontalAnchors /==/ self.view.horizontalAnchors + 16
+        subTextView.bottomAnchor /==/ self.view.safeBottomAnchor - 8
     }
 
     @available(*, unavailable)
@@ -470,16 +470,16 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     }
     
     func setupConstraints() {
-        body.horizontalAnchors |==| self.view.horizontalAnchors + 32
-        body.bottomAnchor |==| self.subButton.topAnchor - 4
-        body.topAnchor |==| self.view.topAnchor + 4
-        content.edgeAnchors |==| body.edgeAnchors
+        body.horizontalAnchors /==/ self.view.horizontalAnchors + 32
+        body.bottomAnchor /==/ self.subButton.topAnchor - 4
+        body.topAnchor /==/ self.view.topAnchor + 4
+        content.edgeAnchors /==/ body.edgeAnchors
         
-        self.subButton.bottomAnchor |==| self.view.bottomAnchor - 8
-        self.subButton.horizontalAnchors |==| self.view.horizontalAnchors + 8
+        self.subButton.bottomAnchor /==/ self.view.bottomAnchor - 8
+        self.subButton.horizontalAnchors /==/ self.view.horizontalAnchors + 8
         
         self.subButton.alpha = 0 //Hide for now
-        self.subButton.heightAnchor |==| 0
+        self.subButton.heightAnchor /==/ 0
     }
     
     
@@ -565,16 +565,16 @@ class OnboardingVideoPageViewController: UIViewController {
     }
 
     func setupConstraints() {
-        textView.horizontalAnchors |==| self.view.horizontalAnchors + 16
-        textView.topAnchor |==| self.view.safeTopAnchor + 8
+        textView.horizontalAnchors /==/ self.view.horizontalAnchors + 16
+        textView.topAnchor /==/ self.view.safeTopAnchor + 8
         
-        videoContainer.topAnchor |==| textView.bottomAnchor + 32
-        videoContainer.bottomAnchor |==| self.subTextView.topAnchor - 32
-        videoContainer.widthAnchor |==| self.videoContainer.heightAnchor * aspectRatio
-        videoContainer.centerXAnchor |==| self.view.centerXAnchor
+        videoContainer.topAnchor /==/ textView.bottomAnchor + 32
+        videoContainer.bottomAnchor /==/ self.subTextView.topAnchor - 32
+        videoContainer.widthAnchor /==/ self.videoContainer.heightAnchor * aspectRatio
+        videoContainer.centerXAnchor /==/ self.view.centerXAnchor
         
-        subTextView.bottomAnchor |==| self.view.safeBottomAnchor - 8
-        subTextView.horizontalAnchors |==| self.view.horizontalAnchors + 16
+        subTextView.bottomAnchor /==/ self.view.safeBottomAnchor - 8
+        subTextView.horizontalAnchors /==/ self.view.horizontalAnchors + 16
     }
     
     func startVideos() {

@@ -125,37 +125,37 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
 
         view.addSubviews(primaryCard, accentCard, resetCard)
         
-        primaryCard.topAnchor |==| self.view.safeTopAnchor + 16
-        primaryCard.horizontalAnchors |==| self.view.horizontalAnchors + 8
-        primary.rightAnchor |==| primaryCard.rightAnchor - 8
-        primary.leftAnchor |==| primaryWell!.rightAnchor + 8
-        primary.centerYAnchor |==| primaryCard.centerYAnchor
-        primaryCard.heightAnchor |==| 50
+        primaryCard.topAnchor /==/ self.view.safeTopAnchor + 16
+        primaryCard.horizontalAnchors /==/ self.view.horizontalAnchors + 8
+        primary.rightAnchor /==/ primaryCard.rightAnchor - 8
+        primary.leftAnchor /==/ primaryWell!.rightAnchor + 8
+        primary.centerYAnchor /==/ primaryCard.centerYAnchor
+        primaryCard.heightAnchor /==/ 50
         
-        primaryWell!.centerYAnchor |==| primaryCard.centerYAnchor
-        primaryWell!.leftAnchor |==| primaryCard.leftAnchor + 8
+        primaryWell!.centerYAnchor /==/ primaryCard.centerYAnchor
+        primaryWell!.leftAnchor /==/ primaryCard.leftAnchor + 8
         
-        accentCard.topAnchor |==| self.primaryCard.bottomAnchor + 16
-        accentCard.horizontalAnchors |==| self.view.horizontalAnchors + 8
-        accent.rightAnchor |==| accentCard.rightAnchor - 8
-        accent.leftAnchor |==| accentWell!.rightAnchor + 8
-        accent.centerYAnchor |==| accentCard.centerYAnchor
-        accentCard.heightAnchor |==| 50
+        accentCard.topAnchor /==/ self.primaryCard.bottomAnchor + 16
+        accentCard.horizontalAnchors /==/ self.view.horizontalAnchors + 8
+        accent.rightAnchor /==/ accentCard.rightAnchor - 8
+        accent.leftAnchor /==/ accentWell!.rightAnchor + 8
+        accent.centerYAnchor /==/ accentCard.centerYAnchor
+        accentCard.heightAnchor /==/ 50
         
-        accentWell!.centerYAnchor |==| accentCard.centerYAnchor
-        accentWell!.leftAnchor |==| accentCard.leftAnchor + 8
+        accentWell!.centerYAnchor /==/ accentCard.centerYAnchor
+        accentWell!.leftAnchor /==/ accentCard.leftAnchor + 8
         
-        resetCard.topAnchor |==| self.accentCard.bottomAnchor + 24
-        resetCard.horizontalAnchors |==| self.view.horizontalAnchors + 8
-        resetCard.heightAnchor |==| 50
+        resetCard.topAnchor /==/ self.accentCard.bottomAnchor + 24
+        resetCard.horizontalAnchors /==/ self.view.horizontalAnchors + 8
+        resetCard.heightAnchor /==/ 50
         
-        resetIcon.sizeAnchors |==| CGSize.square(size: 30)
-        resetIcon.centerYAnchor |==| resetCard.centerYAnchor
-        resetIcon.leftAnchor |==| resetCard.leftAnchor + 8
-        resetLabel.rightAnchor |==| resetCard.rightAnchor
-        resetLabel.leftAnchor |==| resetIcon.rightAnchor + 8
+        resetIcon.sizeAnchors /==/ CGSize.square(size: 30)
+        resetIcon.centerYAnchor /==/ resetCard.centerYAnchor
+        resetIcon.leftAnchor /==/ resetCard.leftAnchor + 8
+        resetLabel.rightAnchor /==/ resetCard.rightAnchor
+        resetLabel.leftAnchor /==/ resetIcon.rightAnchor + 8
         
-        resetLabel.centerYAnchor |==| resetCard.centerYAnchor
+        resetLabel.centerYAnchor /==/ resetCard.centerYAnchor
     }
     
     //Primary color changed, set color and call delegate
@@ -208,9 +208,9 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
             }
             
             label.addSubview(sideView)
-            sideView.sizeAnchors |==| CGSize.square(size: 30)
-            sideView.centerYAnchor |==| label.centerYAnchor
-            sideView.leftAnchor |==| label.leftAnchor
+            sideView.sizeAnchors /==/ CGSize.square(size: 30)
+            sideView.centerYAnchor /==/ label.centerYAnchor
+            sideView.leftAnchor /==/ label.leftAnchor
 
             sideView.layer.cornerRadius = 15
             sideView.clipsToBounds = true

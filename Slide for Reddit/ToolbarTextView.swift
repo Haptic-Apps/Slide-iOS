@@ -109,8 +109,8 @@ public class ToolbarTextView: NSObject {
         
         alert.contentView.addSubview(innerView)
         
-        innerView.edgeAnchors |==| alert.contentView.edgeAnchors - 8
-        innerView.heightAnchor |==| CGFloat(200)
+        innerView.edgeAnchors /==/ alert.contentView.edgeAnchors - 8
+        innerView.heightAnchor /==/ CGFloat(200)
         
         alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
             let selectedData = inner.tableView.indexPathsForSelectedRows?.map { inner.baseDrafts[$0.row] }
@@ -265,8 +265,8 @@ public class ToolbarTextView: NSObject {
                                                 
                                                 alert.contentView.addSubview(textField)
                                                 
-                                                textField.edgeAnchors |==| alert.contentView.edgeAnchors
-                                                textField.heightAnchor |==| CGFloat(44 + 12)
+                                                textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+                                                textField.heightAnchor /==/ CGFloat(44 + 12)
 
                                                 alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
                                                     let text = self.insertText ?? ""
@@ -330,8 +330,8 @@ public class ToolbarTextView: NSObject {
                                 
                                 alert.contentView.addSubview(textField)
                                 
-                                textField.edgeAnchors |==| alert.contentView.edgeAnchors
-                                textField.heightAnchor |==| CGFloat(44 + 12)
+                                textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+                                textField.heightAnchor /==/ CGFloat(44 + 12)
                                 
                                 alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
                                     let text = self.insertText ?? ""
@@ -470,8 +470,8 @@ public class ToolbarTextView: NSObject {
         
         alert.contentView.addSubview(textField)
         
-        textField.edgeAnchors |==| alert.contentView.edgeAnchors
-        textField.heightAnchor |==| CGFloat(58 * 2)
+        textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+        textField.heightAnchor /==/ CGFloat(58 * 2)
         
         alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
             let text = self.insertText ?? ""

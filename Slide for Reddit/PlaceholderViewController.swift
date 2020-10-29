@@ -38,10 +38,10 @@ class PlaceholderViewController: UIViewController {
         self.view.addSubview(imageView)
         self.view.addSubview(label)
 
-        imageView.centerAnchors |==| view.centerAnchors
-        imageView.sizeAnchors |==| .square(size: 125)
-        label.centerXAnchor |==| view.centerXAnchor
-        label.topAnchor |==| imageView.bottomAnchor + 12
+        imageView.centerAnchors /==/ view.centerAnchors
+        imageView.sizeAnchors /==/ .square(size: 125)
+        label.centerXAnchor /==/ view.centerXAnchor
+        label.topAnchor /==/ imageView.bottomAnchor + 12
     }
 }
 

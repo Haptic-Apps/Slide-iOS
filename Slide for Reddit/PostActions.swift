@@ -118,10 +118,10 @@ class PostActions: NSObject {
             }
             
             alert.contentView.addSubview(text)
-            text.edgeAnchors |==| alert.contentView.edgeAnchors
+            text.edgeAnchors /==/ alert.contentView.edgeAnchors
             
             let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
-            text.heightAnchor |==| height
+            text.heightAnchor /==/ height
             
             alert.addCloseButton()
             alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
@@ -616,8 +616,8 @@ class PostActions: NSObject {
             
             alert.contentView.addSubview(textField)
             
-            textField.edgeAnchors |==| alert.contentView.edgeAnchors
-            textField.heightAnchor |==| CGFloat(44 + 12)
+            textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+            textField.heightAnchor /==/ CGFloat(44 + 12)
             
             alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""

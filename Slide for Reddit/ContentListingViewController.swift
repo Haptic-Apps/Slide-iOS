@@ -182,8 +182,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
         self.view.addSubview(tableView)
-        tableView.verticalAnchors |==| view.verticalAnchors
-        tableView.horizontalAnchors |==| view.safeHorizontalAnchors
+        tableView.verticalAnchors /==/ view.verticalAnchors
+        tableView.horizontalAnchors /==/ view.safeHorizontalAnchors
         
         self.tableView.delegate = self
         self.tableView.dataSource = self
@@ -194,7 +194,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
         tableView.addSubview(refreshControl)
-        refreshControl.centerAnchors |==| tableView.centerAnchors
+        refreshControl.centerAnchors /==/ tableView.centerAnchors
         
         tableView.alwaysBounceVertical = true
         
@@ -220,7 +220,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             emptyStateView.setText(title: "Nothing to see here!", message: "No content was found.")
         }
         emptyStateView.isHidden = true
-        emptyStateView.edgeAnchors |==| self.tableView.edgeAnchors
+        emptyStateView.edgeAnchors /==/ self.tableView.edgeAnchors
         self.view.bringSubviewToFront(emptyStateView)
         
         session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -678,8 +678,8 @@ class EmptyStateView: UIView {
         self.init(frame: .zero)
         
         addSubview(titleLabel)
-        titleLabel.centerAnchors |==| centerAnchors
-        titleLabel.widthAnchor |==| self.widthAnchor - 50
+        titleLabel.centerAnchors /==/ centerAnchors
+        titleLabel.widthAnchor /==/ self.widthAnchor - 50
         
         setText(title: "Title Placeholder", message: "Message Placeholder")
     }

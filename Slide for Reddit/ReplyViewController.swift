@@ -429,9 +429,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         replies!.isSelected = true
         replies!.addTarget(self, action: #selector(self.changeState(_:)), for: .touchUpInside)
         
-        replies!.heightAnchor |==| CGFloat(30)
+        replies!.heightAnchor /==/ CGFloat(30)
         let width = replies!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
-        replies!.widthAnchor |==| width
+        replies!.widthAnchor /==/ width
         
         info = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
             $0.layer.cornerRadius = 15
@@ -448,9 +448,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         info!.isSelected = true
         info!.addTarget(self, action: #selector(self.info(_:)), for: .touchUpInside)
         
-        info!.heightAnchor |==| CGFloat(30)
+        info!.heightAnchor /==/ CGFloat(30)
         let widthI = info!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
-        info!.widthAnchor |==| widthI
+        info!.widthAnchor /==/ widthI
 
          sticky = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 45)).then {
             $0.layer.cornerRadius = 15
@@ -467,9 +467,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         sticky!.isSelected = modText != nil
         sticky!.addTarget(self, action: #selector(self.changeState(_:)), for: .touchUpInside)
         
-        sticky!.heightAnchor |==| CGFloat(30)
+        sticky!.heightAnchor /==/ CGFloat(30)
         let widthS = sticky!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
-        sticky!.widthAnchor |==| widthS
+        sticky!.widthAnchor /==/ widthS
         
         let buttonBase = UIStackView().then {
             $0.accessibilityIdentifier = "Reply VC Buttons"
@@ -498,9 +498,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
 
         replyButtons!.addSubview(buttonBase)
-        buttonBase.heightAnchor |==| CGFloat(30)
-        buttonBase.edgeAnchors |==| replyButtons!.edgeAnchors
-        buttonBase.centerYAnchor |==| replyButtons!.centerYAnchor
+        buttonBase.heightAnchor /==/ CGFloat(30)
+        buttonBase.edgeAnchors /==/ replyButtons!.edgeAnchors
+        buttonBase.centerYAnchor /==/ replyButtons!.centerYAnchor
         replyButtons?.contentSize = CGSize.init(width: finalWidth, height: CGFloat(30))
         replyButtons?.alwaysBounceHorizontal = true
         replyButtons?.showsHorizontalScrollIndicator = false
@@ -514,7 +514,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         //do nothing
                         print(error)
                         DispatchQueue.main.async {
-                            buttonBase.widthAnchor |==| finalWidth
+                            buttonBase.widthAnchor /==/ finalWidth
                         }
                     case .success(let json):
                         if json is JSONArray {
@@ -556,8 +556,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                                 }
                                 flairs.addTarget(self, action: #selector(self.flairs(_:)), for: .touchUpInside)
                                 let widthF = flairs.currentTitle!.size(with: flairs.titleLabel!.font).width + CGFloat(45)
-                                flairs.widthAnchor |==| widthS
-                                buttonBase.widthAnchor |==| finalWidth + CGFloat(8) + widthF
+                                flairs.widthAnchor /==/ widthS
+                                buttonBase.widthAnchor /==/ finalWidth + CGFloat(8) + widthF
                                 buttonBase.addArrangedSubview(flairs)
                                 self.replyButtons?.contentSize = CGSize.init(width: finalWidth + CGFloat(8) + widthF, height: CGFloat(30))
                             }
@@ -566,10 +566,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
             } catch let error {
                 print(error)
-                buttonBase.widthAnchor |==| finalWidth
+                buttonBase.widthAnchor /==/ finalWidth
             }
         } else {
-            buttonBase.widthAnchor |==| finalWidth
+            buttonBase.widthAnchor /==/ finalWidth
         }
     }
     
@@ -610,10 +610,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         self.scrollView.backgroundColor = ColorUtil.theme.backgroundColor
         self.scrollView.isUserInteractionEnabled = true
         self.scrollView.contentInset = UIEdgeInsets.init(top: 8, left: 0, bottom: 0, right: 0)
-        self.scrollView.bottomAnchor |==| self.view.bottomAnchor - 64
-        self.scrollView.topAnchor |==| self.view.topAnchor
+        self.scrollView.bottomAnchor /==/ self.view.bottomAnchor - 64
+        self.scrollView.topAnchor /==/ self.view.topAnchor
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        self.scrollView.horizontalAnchors |==| self.view.horizontalAnchors
+        self.scrollView.horizontalAnchors /==/ self.view.horizontalAnchors
 
         let stack = UIStackView().then {
             $0.accessibilityIdentifier = "Reply Stack Vertical"
@@ -675,14 +675,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 
                 stack.addArrangedSubviews(text1, text3)
-                text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 
-                text3.heightAnchor |>=| CGFloat(70)
+                text3.heightAnchor />=/ CGFloat(70)
 
                 scrollView.addSubview(stack)
-                stack.widthAnchor |==| scrollView.widthAnchor
-                stack.verticalAnchors |==| scrollView.verticalAnchors
+                stack.widthAnchor /==/ scrollView.widthAnchor
+                stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
@@ -757,15 +757,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 }
 
                 stack.addArrangedSubviews(text1, text2, text3)
-                text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text1.heightAnchor |>=| CGFloat(70)
-                text2.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text2.heightAnchor |==| CGFloat(70)
-                text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text1.heightAnchor />=/ CGFloat(70)
+                text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text2.heightAnchor /==/ CGFloat(70)
+                text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 
                 scrollView.addSubview(stack)
-                stack.widthAnchor |==| scrollView.widthAnchor
-                stack.verticalAnchors |==| scrollView.verticalAnchors
+                stack.widthAnchor /==/ scrollView.widthAnchor
+                stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text1, text2, text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
@@ -858,39 +858,39 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     let height = linkCV.estimateHeight(false, true, np: false)
                     
                     stack.addArrangedSubviews(linkView, text1, text2, replyButtons!)
-                    replyButtons!.heightAnchor |==| CGFloat(30)
-                    replyButtons!.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                    replyButtons!.heightAnchor /==/ CGFloat(30)
+                    replyButtons!.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                     
-                    linkView.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                    linkView.heightAnchor |==| CGFloat(height)
+                    linkView.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                    linkView.heightAnchor /==/ CGFloat(height)
                     self.crosspostHeight = CGFloat(height)
 
-                    text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                    text1.heightAnchor |>=| CGFloat(70)
-                    text2.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                    text2.heightAnchor |==| CGFloat(70)
+                    text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                    text1.heightAnchor />=/ CGFloat(70)
+                    text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                    text2.heightAnchor /==/ CGFloat(70)
                     
                     scrollView.addSubview(stack)
-                    stack.widthAnchor |==| scrollView.widthAnchor
-                    stack.verticalAnchors |==| scrollView.verticalAnchors
+                    stack.widthAnchor /==/ scrollView.widthAnchor
+                    stack.verticalAnchors /==/ scrollView.verticalAnchors
                     
                     text = [text1, text2]
                     toolbar = ToolbarTextView.init(textView: text2, parent: self)
                 } else {
                     stack.addArrangedSubviews(text1, text2, replyButtons!, text3)
-                    replyButtons!.heightAnchor |==| CGFloat(30)
-                    replyButtons!.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                    text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                    text1.heightAnchor |>=| CGFloat(70)
-                    text2.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                    text2.heightAnchor |==| CGFloat(70)
-                    text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                    replyButtons!.heightAnchor /==/ CGFloat(30)
+                    replyButtons!.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                    text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                    text1.heightAnchor />=/ CGFloat(70)
+                    text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                    text2.heightAnchor /==/ CGFloat(70)
+                    text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                     
-                    text3.heightAnchor |>=| CGFloat(70)
+                    text3.heightAnchor />=/ CGFloat(70)
                     
                     scrollView.addSubview(stack)
-                    stack.widthAnchor |==| scrollView.widthAnchor
-                    stack.verticalAnchors |==| scrollView.verticalAnchors
+                    stack.widthAnchor /==/ scrollView.widthAnchor
+                    stack.verticalAnchors /==/ scrollView.verticalAnchors
                     
                     text = [text1, text2, text3]
                     toolbar = ToolbarTextView.init(textView: text3, parent: self)
@@ -898,17 +898,17 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             } else {
                 stack.addArrangedSubviews(text1, text2, text3)
                 text3.text = (toReplyTo as! RSubmission).body
-                text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text1.heightAnchor |>=| CGFloat(70)
-                text2.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text2.heightAnchor |==| CGFloat(70)
-                text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text1.heightAnchor />=/ CGFloat(70)
+                text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text2.heightAnchor /==/ CGFloat(70)
+                text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 
-                text3.heightAnchor |>=| CGFloat(70)
+                text3.heightAnchor />=/ CGFloat(70)
                 
                 scrollView.addSubview(stack)
-                stack.widthAnchor |==| scrollView.widthAnchor
-                stack.verticalAnchors |==| scrollView.verticalAnchors
+                stack.widthAnchor /==/ scrollView.widthAnchor
+                stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text1, text2, text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
@@ -971,19 +971,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 }
                 doButtons()
                 stack.addArrangedSubviews(text1, replyButtons!, text3)
-                replyButtons!.heightAnchor |==| CGFloat(30)
-                replyButtons!.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                replyButtons!.heightAnchor /==/ CGFloat(30)
+                replyButtons!.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
 
                 stack.addArrangedSubviews(text1, text3)
-                text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 
-                text3.heightAnchor |>=| CGFloat(70)
+                text3.heightAnchor />=/ CGFloat(70)
 //                text1.sizeToFitHeight()
                 
                 scrollView.addSubview(stack)
-                stack.widthAnchor |==| scrollView.widthAnchor
-                stack.verticalAnchors |==| scrollView.verticalAnchors
+                stack.widthAnchor /==/ scrollView.widthAnchor
+                stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
@@ -1008,15 +1008,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
                 doButtons()
                 stack.addArrangedSubviews(replyButtons!, text3)
-                replyButtons!.heightAnchor |==| CGFloat(30)
-                replyButtons!.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-                text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+                replyButtons!.heightAnchor /==/ CGFloat(30)
+                replyButtons!.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+                text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 
-                text3.heightAnchor |>=| CGFloat(70)
+                text3.heightAnchor />=/ CGFloat(70)
                 
                 scrollView.addSubview(stack)
-                stack.widthAnchor |==| scrollView.widthAnchor
-                stack.verticalAnchors |==| scrollView.verticalAnchors
+                stack.widthAnchor /==/ scrollView.widthAnchor
+                stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
@@ -1058,15 +1058,15 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             })
 
             stack.addArrangedSubviews(text1, text3)
-            text1.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
-            text1.heightAnchor |>=| CGFloat(70)
-            text3.horizontalAnchors |==| stack.horizontalAnchors + CGFloat(8)
+            text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
+            text1.heightAnchor />=/ CGFloat(70)
+            text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
 
-            text3.heightAnchor |>=| CGFloat(70)
+            text3.heightAnchor />=/ CGFloat(70)
 
             scrollView.addSubview(stack)
-            stack.widthAnchor |==| scrollView.widthAnchor
-            stack.verticalAnchors |==| scrollView.verticalAnchors
+            stack.widthAnchor /==/ scrollView.widthAnchor
+            stack.verticalAnchors /==/ scrollView.verticalAnchors
 
             text = [text1, text3]
             toolbar = ToolbarTextView.init(textView: text3, parent: self)

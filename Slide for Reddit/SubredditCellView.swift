@@ -78,18 +78,18 @@ class SubredditCellView: UITableViewCell {
 
     func configureLayout() {
         batch {
-            sideView.leftAnchor |==| contentView.leftAnchor + 16
-            sideView.sizeAnchors |==| CGSize.square(size: 30)
-            sideView.centerYAnchor |==| contentView.centerYAnchor
+            sideView.leftAnchor /==/ contentView.leftAnchor + 16
+            sideView.sizeAnchors /==/ CGSize.square(size: 30)
+            sideView.centerYAnchor /==/ contentView.centerYAnchor
 
-            pin.leftAnchor |==| sideView.rightAnchor + 6
-            pin.sizeAnchors |==| CGSize.square(size: 10)
-            pin.centerYAnchor |==| contentView.centerYAnchor
+            pin.leftAnchor /==/ sideView.rightAnchor + 6
+            pin.sizeAnchors /==/ CGSize.square(size: 10)
+            pin.centerYAnchor /==/ contentView.centerYAnchor
 
-            icon.edgeAnchors |==| sideView.edgeAnchors
+            icon.edgeAnchors /==/ sideView.edgeAnchors
 
-            title.leftAnchor |==| pin.rightAnchor + 2
-            title.centerYAnchor |==| contentView.centerYAnchor
+            title.leftAnchor /==/ pin.rightAnchor + 2
+            title.centerYAnchor /==/ contentView.centerYAnchor
         }
     }
 
@@ -242,8 +242,8 @@ class SubredditCellView: UITableViewCell {
                 loader = UIActivityIndicatorView()
                 self.contentView.addSubview(loader!)
                 loader!.tintColor = ColorUtil.theme.fontColor
-                loader!.sizeAnchors |==| CGSize.square(size: 30)
-                loader!.centerAnchors |==| self.contentView.centerAnchors
+                loader!.sizeAnchors /==/ CGSize.square(size: 30)
+                loader!.centerAnchors /==/ self.contentView.centerAnchors
             }
             loader!.startAnimating()
         } else if complete && (results == nil || results!.count == 0) {
@@ -257,7 +257,7 @@ class SubredditCellView: UITableViewCell {
             
             self.contentView.addSubview(failedLabel!)
             failedLabel?.sizeToFit()
-            failedLabel!.centerAnchors |==| self.contentView.centerAnchors
+            failedLabel!.centerAnchors /==/ self.contentView.centerAnchors
         } else {
             failedLabel?.removeFromSuperview()
             failedLabel = nil
@@ -274,7 +274,7 @@ class SubredditCellView: UITableViewCell {
                 subName.font = UIFont.boldSystemFont(ofSize: 14)
                 subName.textColor = ColorUtil.theme.fontColor
                 
-                subDot.sizeAnchors |==| CGSize.square(size: 25)
+                subDot.sizeAnchors /==/ CGSize.square(size: 25)
                 subDot.layer.cornerRadius = (25 / 2)
                 subDot.clipsToBounds = true
                 textView.textColor = ColorUtil.theme.fontColor
@@ -294,9 +294,9 @@ class SubredditCellView: UITableViewCell {
                     } else {
                         submissionView.addSubviews(thumbView, shadowView)
                         
-                        thumbView.edgeAnchors |==| submissionView.edgeAnchors
+                        thumbView.edgeAnchors /==/ submissionView.edgeAnchors
 
-                        shadowView.edgeAnchors |==| thumbView.edgeAnchors
+                        shadowView.edgeAnchors /==/ thumbView.edgeAnchors
                         thumbView.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.bannerUrl), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                         thumbView.alpha = 0.7
                         textView.textColor = .white
@@ -306,14 +306,14 @@ class SubredditCellView: UITableViewCell {
                 
                 submissionView.addSubviews(textView, subDot, subName)
 
-                subDot.leftAnchor |==| submissionView.leftAnchor + 8
-                subName.leftAnchor |==| subDot.rightAnchor + 4
-                subName.centerYAnchor |==| subDot.centerYAnchor
-                subDot.topAnchor |==| submissionView.topAnchor + 8
+                subDot.leftAnchor /==/ submissionView.leftAnchor + 8
+                subName.leftAnchor /==/ subDot.rightAnchor + 4
+                subName.centerYAnchor /==/ subDot.centerYAnchor
+                subDot.topAnchor /==/ submissionView.topAnchor + 8
                 
-                textView.horizontalAnchors |==| submissionView.horizontalAnchors + 8
-                textView.topAnchor |==| subDot.bottomAnchor + 8
-                textView.bottomAnchor |<=| submissionView.bottomAnchor - 8
+                textView.horizontalAnchors /==/ submissionView.horizontalAnchors + 8
+                textView.topAnchor /==/ subDot.bottomAnchor + 8
+                textView.bottomAnchor /<=/ submissionView.bottomAnchor - 8
                 
                 textView.numberOfLines = 0
                 textView.lineBreakMode = .byTruncatingTail
@@ -325,8 +325,8 @@ class SubredditCellView: UITableViewCell {
                 submissionView.backgroundColor = ColorUtil.theme.foregroundColor
                 submissionView.clipsToBounds = true
                 submissionView.layer.cornerRadius = 5
-                submissionView.heightAnchor |==| 150
-                submissionView.widthAnchor |==| 200
+                submissionView.heightAnchor /==/ 150
+                submissionView.widthAnchor /==/ 200
                 
                 submissionView.addTapGestureRecognizer {
                     VCPresenter.openRedditLink(submission.permalink, nav?.navigationController, nav)
@@ -334,16 +334,16 @@ class SubredditCellView: UITableViewCell {
                 contentView.addArrangedSubview(submissionView)
             }
             
-            contentView.heightAnchor |==| 150
-            contentView.widthAnchor |==| CGFloat((results?.count ?? 0) * 208)
+            contentView.heightAnchor /==/ 150
+            contentView.widthAnchor /==/ CGFloat((results?.count ?? 0) * 208)
             
             scroll!.addSubview(contentView)
             scroll!.contentSize = CGSize(width: (results?.count ?? 0) * 208, height: 150)
             
             self.contentView.addSubview(scroll!)
-            scroll!.horizontalAnchors |==| self.contentView.horizontalAnchors + 8
-            scroll!.verticalAnchors |==| self.contentView.verticalAnchors + 4
-            scroll!.heightAnchor |==| 150
+            scroll!.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
+            scroll!.verticalAnchors /==/ self.contentView.verticalAnchors + 4
+            scroll!.heightAnchor /==/ 150
             
             if nav is SubredditToolbarSearchViewController {
                 (nav as! SubredditToolbarSearchViewController).gestureRecognizer.require(toFail: scroll!.panGestureRecognizer)

@@ -26,53 +26,53 @@ final class ThumbnailLinkCellView: LinkCellView {
             let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
             let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
             if !SettingValues.actionBarMode.isFull() {
-                thumbImageContainer.bottomAnchor |<=| innerView.bottomAnchor - ctwelve
+                thumbImageContainer.bottomAnchor /<=/ innerView.bottomAnchor - ctwelve
             } else {
-                thumbImageContainer.bottomAnchor |<=| box.topAnchor - ceight
+                thumbImageContainer.bottomAnchor /<=/ box.topAnchor - ceight
             }
 
             // Thumbnail sizing
-            thumbImageContainer.topAnchor |==| innerView.topAnchor + ctwelve
+            thumbImageContainer.topAnchor /==/ innerView.topAnchor + ctwelve
             if SettingValues.leftThumbnail {
                 if SettingValues.actionBarMode == .SIDE {
-                    thumbImageContainer.leftAnchor |==| sideButtons.rightAnchor + ceight
+                    thumbImageContainer.leftAnchor /==/ sideButtons.rightAnchor + ceight
                 } else {
-                    thumbImageContainer.leftAnchor |==| innerView.leftAnchor + ctwelve
+                    thumbImageContainer.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 }
             } else {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
-                    thumbImageContainer.rightAnchor |==| sideButtons.leftAnchor - ceight
+                    thumbImageContainer.rightAnchor /==/ sideButtons.leftAnchor - ceight
                 } else {
-                    thumbImageContainer.rightAnchor |==| innerView.rightAnchor - ctwelve
+                    thumbImageContainer.rightAnchor /==/ innerView.rightAnchor - ctwelve
                 }
             }
 
             let thumbSize: CGFloat = (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
-            thumbImageContainer.widthAnchor |==| thumbSize
-            thumbImageContainer.heightAnchor |==| thumbSize
+            thumbImageContainer.widthAnchor /==/ thumbSize
+            thumbImageContainer.heightAnchor /==/ thumbSize
             if SettingValues.actionBarMode == .SIDE {
-                sideButtons.topAnchor |==| innerView.topAnchor + ctwelve
-                title.leftAnchor |==| (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ceight)
-                title.rightAnchor |==| (SettingValues.leftThumbnail ? innerView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+                sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
+                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ceight)
+                title.rightAnchor /==/ (SettingValues.leftThumbnail ? innerView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             } else if SettingValues.actionBarMode == .SIDE_RIGHT {
-                sideButtons.topAnchor |==| innerView.topAnchor + ctwelve
-                title.leftAnchor |==| (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : innerView.leftAnchor + ctwelve)
-                title.rightAnchor |==| (SettingValues.leftThumbnail ? sideButtons.leftAnchor - ceight : thumbImageContainer.leftAnchor - ceight)
+                sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
+                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : innerView.leftAnchor + ctwelve)
+                title.rightAnchor /==/ (SettingValues.leftThumbnail ? sideButtons.leftAnchor - ceight : thumbImageContainer.leftAnchor - ceight)
             } else {
-                title.leftAnchor |==| (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : innerView.leftAnchor + ctwelve)
-                title.rightAnchor |==| (SettingValues.leftThumbnail ? innerView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : innerView.leftAnchor + ctwelve)
+                title.rightAnchor /==/ (SettingValues.leftThumbnail ? innerView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             }
-            title.topAnchor |==| innerView.topAnchor + (ctwelve - 5)
+            title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
             if !SettingValues.actionBarMode.isFull() {
-                title.bottomAnchor |<=| innerView.bottomAnchor - ceight
+                title.bottomAnchor /<=/ innerView.bottomAnchor - ceight
             } else {
-                title.bottomAnchor |>=| box.topAnchor - ceight
+                title.bottomAnchor />=/ box.topAnchor - ceight
             }
             
-            subicon.topAnchor |==| title.topAnchor
-            subicon.leftAnchor |==| title.leftAnchor
-            subicon.widthAnchor |==| 24
-            subicon.heightAnchor |==| 24
+            subicon.topAnchor /==/ title.topAnchor
+            subicon.leftAnchor /==/ title.leftAnchor
+            subicon.widthAnchor /==/ 24
+            subicon.heightAnchor /==/ 24
         }
     }
 

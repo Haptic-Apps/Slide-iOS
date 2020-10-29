@@ -136,16 +136,16 @@ class BottomActionCell: UITableViewCell {
 
     func layoutViews() {
         self.contentView.addSubviews(background, title, icon)
-        background.verticalAnchors |==| self.contentView.verticalAnchors + 4
-        background.horizontalAnchors |==| self.contentView.horizontalAnchors + 8
-        title.leftAnchor |==| background.leftAnchor + 16
-        title.verticalAnchors |==| background.verticalAnchors
-        title.centerYAnchor |==| background.centerYAnchor
+        background.verticalAnchors /==/ self.contentView.verticalAnchors + 4
+        background.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
+        title.leftAnchor /==/ background.leftAnchor + 16
+        title.verticalAnchors /==/ background.verticalAnchors
+        title.centerYAnchor /==/ background.centerYAnchor
         
-        icon.leftAnchor |==| title.rightAnchor + 16
-        icon.rightAnchor |==| background.rightAnchor - 16
-        icon.centerYAnchor |==| background.centerYAnchor
-        icon.heightAnchor |==| 44
+        icon.leftAnchor /==/ title.rightAnchor + 16
+        icon.rightAnchor /==/ background.rightAnchor - 16
+        icon.centerYAnchor /==/ background.centerYAnchor
+        icon.heightAnchor /==/ 44
         
         self.selectionStyle = .none
     }
@@ -352,11 +352,11 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         backgroundView.addGestureRecognizer(tapGesture)
         self.tableView = UITableView()
         self.view.addSubview(tableView)
-        backgroundView.edgeAnchors |==| view.edgeAnchors
+        backgroundView.edgeAnchors /==/ view.edgeAnchors
 
-        self.tableView.centerXAnchor |==| self.view.centerXAnchor
-        self.tableView.widthAnchor |==| min(self.view.frame.size.width, 450)
-        self.tableView.bottomAnchor |==| self.view.bottomAnchor + 20
+        self.tableView.centerXAnchor /==/ self.view.centerXAnchor
+        self.tableView.widthAnchor /==/ min(self.view.frame.size.width, 450)
+        self.tableView.bottomAnchor /==/ self.view.bottomAnchor + 20
         self.tableView.bounces = false
         self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
         self.tableView.layer.cornerRadius = 15
@@ -378,7 +378,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         if height < maxHeight {
             tableView.isScrollEnabled = false
         }
-        self.tableView.heightAnchor |==| height
+        self.tableView.heightAnchor /==/ height
         stylize()
         self.tableView.reloadData()
         interactionController = DragDownDismissInteraction(viewController: self)
@@ -450,10 +450,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         let close = UIImageView(image: UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
         close.contentMode = .center
         toReturn.addSubview(close)
-        close.centerYAnchor |==| toReturn.centerYAnchor
-        close.rightAnchor |==| toReturn.rightAnchor - 16
-        close.heightAnchor |==| 30
-        close.widthAnchor |==| 30
+        close.centerYAnchor /==/ toReturn.centerYAnchor
+        close.rightAnchor /==/ toReturn.rightAnchor - 16
+        close.heightAnchor /==/ 30
+        close.widthAnchor /==/ 30
         close.addTapGestureRecognizer {
             self.dismiss(animated: true, completion: nil)
         }
@@ -466,10 +466,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             image.layer.cornerRadius = 7
             image.clipsToBounds = true
             toReturn.addSubviews(image, label)
-            image.leftAnchor |==| toReturn.leftAnchor + 12
-            image.centerYAnchor |==| toReturn.centerYAnchor
-            image.heightAnchor |==| 45
-            image.widthAnchor |==| 45
+            image.leftAnchor /==/ toReturn.leftAnchor + 12
+            image.centerYAnchor /==/ toReturn.centerYAnchor
+            image.heightAnchor /==/ 45
+            image.widthAnchor /==/ 45
             image.contentMode = .scaleAspectFill
             image.isAccessibilityElement = false
             if #available(iOS 11.0, *) {
@@ -492,36 +492,36 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             } else {
                 image.image = LinkCellImageCache.web
             }
-            label.leftAnchor |==| image.rightAnchor + 8
-            label.rightAnchor |==| close.leftAnchor - 8
-            label.verticalAnchors |==| toReturn.verticalAnchors
+            label.leftAnchor /==/ image.rightAnchor + 8
+            label.rightAnchor /==/ close.leftAnchor - 8
+            label.verticalAnchors /==/ toReturn.verticalAnchors
         } else if extraView != nil {
             toReturn.addSubviews(extraView!, label)
-            label.leftAnchor |==| toReturn.leftAnchor + 16
-            label.rightAnchor |==| close.leftAnchor - 8
-            label.topAnchor |==| toReturn.topAnchor + 8
-            label.heightAnchor |==| 40
+            label.leftAnchor /==/ toReturn.leftAnchor + 16
+            label.rightAnchor /==/ close.leftAnchor - 8
+            label.topAnchor /==/ toReturn.topAnchor + 8
+            label.heightAnchor /==/ 40
 
             toReturn.isUserInteractionEnabled = true
-            extraView!.leftAnchor |==| toReturn.leftAnchor + 16
-            extraView!.heightAnchor |==| 30
-            extraView!.rightAnchor |==| toReturn.rightAnchor - 16
-            extraView!.topAnchor |==| label.bottomAnchor + 8
-            extraView!.bottomAnchor |==| toReturn.bottomAnchor - 8
+            extraView!.leftAnchor /==/ toReturn.leftAnchor + 16
+            extraView!.heightAnchor /==/ 30
+            extraView!.rightAnchor /==/ toReturn.rightAnchor - 16
+            extraView!.topAnchor /==/ label.bottomAnchor + 8
+            extraView!.bottomAnchor /==/ toReturn.bottomAnchor - 8
         } else {
             toReturn.addSubview(label)
-            label.leftAnchor |==| toReturn.leftAnchor + 16
-            label.rightAnchor |==| close.leftAnchor - 8
-            label.verticalAnchors |==| toReturn.verticalAnchors
+            label.leftAnchor /==/ toReturn.leftAnchor + 16
+            label.rightAnchor /==/ close.leftAnchor - 8
+            label.verticalAnchors /==/ toReturn.verticalAnchors
         }
         
         let bar = UIView().then {
             $0.backgroundColor = .clear // ColorUtil.theme.fontColor.withAlphaComponent(0.25)
         }
         toReturn.addSubview(bar)
-        bar.horizontalAnchors |==| toReturn.horizontalAnchors
-        bar.bottomAnchor |==| toReturn.bottomAnchor
-        bar.heightAnchor |==| 1
+        bar.horizontalAnchors /==/ toReturn.horizontalAnchors
+        bar.bottomAnchor /==/ toReturn.bottomAnchor
+        bar.heightAnchor /==/ 1
         
         if textFields.isEmpty {
             return toReturn
@@ -531,17 +531,17 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
                 $0.backgroundColor = ColorUtil.theme.backgroundColor
             }
             finalView.addArrangedSubview(toReturn)
-            toReturn.heightAnchor |==| (subtitle.isEmpty ? 55 : 80)
-            toReturn.horizontalAnchors |==| finalView.horizontalAnchors
+            toReturn.heightAnchor /==/ (subtitle.isEmpty ? 55 : 80)
+            toReturn.horizontalAnchors /==/ finalView.horizontalAnchors
             for field in textFields {
                 finalView.addArrangedSubview(field)
-                field.horizontalAnchors |==| finalView.horizontalAnchors + 8
-                field.heightAnchor |==| 50
+                field.horizontalAnchors /==/ finalView.horizontalAnchors + 8
+                field.heightAnchor /==/ 50
             }
             let space = UIView()
             finalView.addArrangedSubview(space)
-            space.heightAnchor |==| 8
-            space.horizontalAnchors |==| finalView.horizontalAnchors
+            space.heightAnchor /==/ 8
+            space.horizontalAnchors /==/ finalView.horizontalAnchors
             return finalView
         }
     }

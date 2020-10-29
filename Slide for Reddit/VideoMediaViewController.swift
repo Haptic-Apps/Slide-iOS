@@ -388,22 +388,22 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func configureLayout() {
         
-        bottomButtons.horizontalAnchors |==| gradientView.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.topAnchor |==| gradientView.topAnchor + 20
-        bottomButtons.bottomAnchor |==| gradientView.safeBottomAnchor - 8
-        gradientView.horizontalAnchors |==| view.horizontalAnchors
-        gradientView.bottomAnchor |==| view.bottomAnchor
+        bottomButtons.horizontalAnchors /==/ gradientView.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.topAnchor /==/ gradientView.topAnchor + 20
+        bottomButtons.bottomAnchor /==/ gradientView.safeBottomAnchor - 8
+        gradientView.horizontalAnchors /==/ view.horizontalAnchors
+        gradientView.bottomAnchor /==/ view.bottomAnchor
 
-        scrubber.horizontalAnchors |==| view.safeHorizontalAnchors + 8
-        scrubber.topAnchor |==| view.safeTopAnchor + 8
-        scrubber.bottomAnchor |==| gradientView.topAnchor - 4
+        scrubber.horizontalAnchors /==/ view.safeHorizontalAnchors + 8
+        scrubber.topAnchor /==/ view.safeTopAnchor + 8
+        scrubber.bottomAnchor /==/ gradientView.topAnchor - 4
         
-        scrubber.playButton.centerAnchors |==| self.videoView.centerAnchors
+        scrubber.playButton.centerAnchors /==/ self.videoView.centerAnchors
 
-        rewindImageView.centerYAnchor |==| view.centerYAnchor
-        fastForwardImageView.centerYAnchor |==| view.centerYAnchor
-        rewindImageView.leadingAnchor |==| view.safeLeadingAnchor + 30
-        fastForwardImageView.trailingAnchor |==| view.safeTrailingAnchor - 30
+        rewindImageView.centerYAnchor /==/ view.centerYAnchor
+        fastForwardImageView.centerYAnchor /==/ view.centerYAnchor
+        rewindImageView.leadingAnchor /==/ view.safeLeadingAnchor + 30
+        fastForwardImageView.trailingAnchor /==/ view.safeTrailingAnchor - 30
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {

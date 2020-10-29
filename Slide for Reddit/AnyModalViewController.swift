@@ -620,23 +620,23 @@ class AnyModalViewController: UIViewController {
     }
     
     func configureLayout() {
-        bottomButtons.horizontalAnchors |==| view.safeHorizontalAnchors + CGFloat(8)
-        bottomButtons.bottomAnchor |==| view.safeBottomAnchor - CGFloat(8)
+        bottomButtons.horizontalAnchors /==/ view.safeHorizontalAnchors + CGFloat(8)
+        bottomButtons.bottomAnchor /==/ view.safeBottomAnchor - CGFloat(8)
         
-        scrubber.horizontalAnchors |==| view.safeHorizontalAnchors + 8
-        scrubber.topAnchor |==| view.safeTopAnchor + 8
-        scrubber.bottomAnchor |==| bottomButtons.topAnchor - 4
+        scrubber.horizontalAnchors /==/ view.safeHorizontalAnchors + 8
+        scrubber.topAnchor /==/ view.safeTopAnchor + 8
+        scrubber.bottomAnchor /==/ bottomButtons.topAnchor - 4
 
-        scrubber.playButton.centerAnchors |==| self.videoView.centerAnchors
+        scrubber.playButton.centerAnchors /==/ self.videoView.centerAnchors
 
-        rewindImageView.centerYAnchor |==| view.centerYAnchor
-        fastForwardImageView.centerYAnchor |==| view.centerYAnchor
-        rewindImageView.leadingAnchor |==| view.safeLeadingAnchor + 30
-        fastForwardImageView.trailingAnchor |==| view.safeTrailingAnchor - 30
+        rewindImageView.centerYAnchor /==/ view.centerYAnchor
+        fastForwardImageView.centerYAnchor /==/ view.centerYAnchor
+        rewindImageView.leadingAnchor /==/ view.safeLeadingAnchor + 30
+        fastForwardImageView.trailingAnchor /==/ view.safeTrailingAnchor - 30
 
-        closeButton.sizeAnchors |==| .square(size: 26)
-        closeButton.topAnchor |==| self.view.safeTopAnchor + 8
-        closeButton.leftAnchor |==| self.view.safeLeftAnchor + 12
+        closeButton.sizeAnchors /==/ .square(size: 26)
+        closeButton.topAnchor /==/ self.view.safeTopAnchor + 8
+        closeButton.leftAnchor /==/ self.view.safeLeftAnchor + 12
 
     }
     

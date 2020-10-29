@@ -93,9 +93,9 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.topAnchor |==| contentView.topAnchor + CGFloat(8)
-        text.bottomAnchor |<=| contentView.bottomAnchor + CGFloat(8)
-        text.rightAnchor |==| contentView.rightAnchor - CGFloat(8)
+        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
+        text.rightAnchor /==/ contentView.rightAnchor - CGFloat(8)
         
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
@@ -125,11 +125,11 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text.removeConstraints(lsC)
         if message.subject.hasPrefix("re:") {
             lsC = batch {
-                self.text.leftAnchor |==| self.contentView.leftAnchor + 38
+                self.text.leftAnchor /==/ self.contentView.leftAnchor + 38
             }
         } else {
             lsC = batch {
-                self.text.leftAnchor |==| self.contentView.leftAnchor + 8
+                self.text.leftAnchor /==/ self.contentView.leftAnchor + 8
             }
         }
     }

@@ -141,17 +141,17 @@ class ThemeCellView: UITableViewCell {
     
     func configureLayout() {
         batch {
-            body.leftAnchor |==| contentView.leftAnchor + 8
-            body.rightAnchor |==| contentView.rightAnchor - 8
-            body.topAnchor |==| contentView.topAnchor + 8
-            body.bottomAnchor |==| contentView.bottomAnchor - 8
+            body.leftAnchor /==/ contentView.leftAnchor + 8
+            body.rightAnchor /==/ contentView.rightAnchor - 8
+            body.topAnchor /==/ contentView.topAnchor + 8
+            body.bottomAnchor /==/ contentView.bottomAnchor - 8
             
-            icon.leftAnchor |==| body.leftAnchor + 2
-            icon.sizeAnchors |==| CGSize.square(size: 60)
-            icon.centerYAnchor |==| body.centerYAnchor
+            icon.leftAnchor /==/ body.leftAnchor + 2
+            icon.sizeAnchors /==/ CGSize.square(size: 60)
+            icon.centerYAnchor /==/ body.centerYAnchor
             
-            title.leftAnchor |==| icon.rightAnchor
-            title.centerYAnchor |==| body.centerYAnchor
+            title.leftAnchor /==/ icon.rightAnchor
+            title.centerYAnchor /==/ body.centerYAnchor
         }
     }
     

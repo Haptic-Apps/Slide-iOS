@@ -22,7 +22,7 @@ extension UIView {
         container.addSubview(self)
         
         batch {
-            let constraints = self.edgeAnchors |==| container.edgeAnchors + padding
+            let constraints = self.edgeAnchors /==/ container.edgeAnchors + padding
             constraints.bottom.priority = UILayoutPriority.required - 1
             constraints.trailing.priority = UILayoutPriority.required - 1
         }
@@ -47,7 +47,7 @@ extension UIView {
     
     func horizontalSpace(_ space: CGFloat) -> UIView {
         return UIView().then {
-            $0.widthAnchor |==| space
+            $0.widthAnchor /==/ space
         }
     }
     
@@ -179,7 +179,7 @@ extension UIView {
         switch border {
             
         case .left:
-            lineView.leftAnchor |==| leftAnchor - 8
+            lineView.leftAnchor /==/ leftAnchor - 8
             lineView.topAnchor.constraint(equalTo: topAnchor).isActive = true
             lineView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
             lineView.widthAnchor.constraint(equalToConstant: weight).isActive = true

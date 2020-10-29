@@ -155,36 +155,36 @@ extension ProfileInfoViewController {
     
     func setupConstraints() {
         
-        backgroundView.edgeAnchors |==| view.edgeAnchors
+        backgroundView.edgeAnchors /==/ view.edgeAnchors
         
         if #available(iOS 11, *) {
-            closeButton.topAnchor |==| view.safeTopAnchor
-            closeButton.leftAnchor |==| view.safeLeftAnchor
+            closeButton.topAnchor /==/ view.safeTopAnchor
+            closeButton.leftAnchor /==/ view.safeLeftAnchor
             
         } else {
-            closeButton.topAnchor |==| view.safeTopAnchor + 24
-            closeButton.leftAnchor |==| view.safeLeftAnchor
+            closeButton.topAnchor /==/ view.safeTopAnchor + 24
+            closeButton.leftAnchor /==/ view.safeLeftAnchor
         }
                 
-        contentView.horizontalAnchors |==| view.horizontalAnchors
-        contentView.bottomAnchor |==| view.bottomAnchor
+        contentView.horizontalAnchors /==/ view.horizontalAnchors
+        contentView.bottomAnchor /==/ view.bottomAnchor
         
-        accountImageView.leftAnchor |==| contentView.safeLeftAnchor + 20
-        accountImageView.centerYAnchor |==| contentView.topAnchor
-        accountImageView.sizeAnchors |==| CGSize.square(size: 100)
+        accountImageView.leftAnchor /==/ contentView.safeLeftAnchor + 20
+        accountImageView.centerYAnchor /==/ contentView.topAnchor
+        accountImageView.sizeAnchors /==/ CGSize.square(size: 100)
         
-        accountNameLabel.topAnchor |==| contentView.topAnchor + 8
-        accountNameLabel.leftAnchor |==| accountImageView.rightAnchor + 20
-        accountNameLabel.rightAnchor |==| contentView.rightAnchor - 20
+        accountNameLabel.topAnchor /==/ contentView.topAnchor + 8
+        accountNameLabel.leftAnchor /==/ accountImageView.rightAnchor + 20
+        accountNameLabel.rightAnchor /==/ contentView.rightAnchor - 20
         
-        accountAgeLabel.leftAnchor |==| accountNameLabel.leftAnchor
-        accountAgeLabel.topAnchor |==| accountNameLabel.bottomAnchor
+        accountAgeLabel.leftAnchor /==/ accountNameLabel.leftAnchor
+        accountAgeLabel.topAnchor /==/ accountNameLabel.bottomAnchor
         
-        header.topAnchor |==| accountAgeLabel.bottomAnchor + 22
-        header.horizontalAnchors |==| contentView.safeHorizontalAnchors + 20
-        header.bottomAnchor |==| contentView.safeBottomAnchor - 16
+        header.topAnchor /==/ accountAgeLabel.bottomAnchor + 22
+        header.horizontalAnchors /==/ contentView.safeHorizontalAnchors + 20
+        header.bottomAnchor /==/ contentView.safeBottomAnchor - 16
         
-        spinner.centerAnchors |==| header.centerAnchors
+        spinner.centerAnchors /==/ header.centerAnchors
     }
     
     func setupActions() {
@@ -208,14 +208,14 @@ extension ProfileInfoViewController {
         baseView.addSubview(more)
         baseView.addSubview(subtitle)
         
-        more.horizontalAnchors |==| baseView.horizontalAnchors + 10
-        more.heightAnchor |==| 50
-        more.topAnchor |==| baseView.topAnchor
-        more.widthAnchor |==| 50
-        subtitle.heightAnchor |==| 15
-        subtitle.horizontalAnchors |==| baseView.horizontalAnchors
-        subtitle.topAnchor |==| more.bottomAnchor + 5
-        subtitle.widthAnchor |==| 70
+        more.horizontalAnchors /==/ baseView.horizontalAnchors + 10
+        more.heightAnchor /==/ 50
+        more.topAnchor /==/ baseView.topAnchor
+        more.widthAnchor /==/ 50
+        subtitle.heightAnchor /==/ 15
+        subtitle.horizontalAnchors /==/ baseView.horizontalAnchors
+        subtitle.topAnchor /==/ more.bottomAnchor + 5
+        subtitle.widthAnchor /==/ 70
         
         baseView.isUserInteractionEnabled = true
         return baseView
@@ -232,7 +232,7 @@ extension ProfileInfoViewController {
                     DispatchQueue.main.async {
                         for trophy in trophies {
                             let b = self.generateButtons(trophy: trophy)
-                            b.sizeAnchors |==| CGSize(width: 70, height: 70)
+                            b.sizeAnchors /==/ CGSize(width: 70, height: 70)
                             b.addTapGestureRecognizer(action: {
                                 if trophy.url != nil {
                                     var trophyURL = trophy.url!.absoluteString
@@ -243,7 +243,7 @@ extension ProfileInfoViewController {
                                 }
                             })
                             self.header.trophyArea.addSubview(b)
-                            b.leftAnchor |==| self.header.trophyArea.leftAnchor + CGFloat(i * 75)
+                            b.leftAnchor /==/ self.header.trophyArea.leftAnchor + CGFloat(i * 75)
                             i += 1
                         }
                         if trophies.isEmpty {
@@ -557,22 +557,22 @@ class ProfileHeaderView: UIView {
     }
     
     func setupAnchors() {
-        infoStack.topAnchor |==| topAnchor
-        infoStack.horizontalAnchors |==| horizontalAnchors
+        infoStack.topAnchor /==/ topAnchor
+        infoStack.horizontalAnchors /==/ horizontalAnchors
         
-        trophyArea.topAnchor |==| infoStack.bottomAnchor + 25
-        trophyArea.heightAnchor |==| 70
-        trophyArea.horizontalAnchors |==| horizontalAnchors + 8
+        trophyArea.topAnchor /==/ infoStack.bottomAnchor + 25
+        trophyArea.heightAnchor /==/ 70
+        trophyArea.horizontalAnchors /==/ horizontalAnchors + 8
         
-        cellStack.topAnchor |==| trophyArea.bottomAnchor + 26
-        cellStack.horizontalAnchors |==| horizontalAnchors
+        cellStack.topAnchor /==/ trophyArea.bottomAnchor + 26
+        cellStack.horizontalAnchors /==/ horizontalAnchors
         
-        messageCell.heightAnchor |==| 50
-        friendCell.heightAnchor |==| 50
-        tagCell.heightAnchor |==| 50
-        colorCell.heightAnchor |==| 50
+        messageCell.heightAnchor /==/ 50
+        friendCell.heightAnchor /==/ 50
+        tagCell.heightAnchor /==/ 50
+        colorCell.heightAnchor /==/ 50
         
-        cellStack.bottomAnchor |==| bottomAnchor
+        cellStack.bottomAnchor /==/ bottomAnchor
     }
     
     func setupActions() {

@@ -774,8 +774,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 clearCell.addSubview(activity)
                 activity.startAnimating()
                 
-                activity.rightAnchor |==| clearCell.rightAnchor - 16
-                activity.centerYAnchor |==| clearCell.centerYAnchor
+                activity.rightAnchor /==/ clearCell.rightAnchor - 16
+                activity.centerYAnchor /==/ clearCell.centerYAnchor
 
                 DispatchQueue.global(qos: .background).async { [weak self] in
                     guard let self = self else { return }

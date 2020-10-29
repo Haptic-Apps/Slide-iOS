@@ -232,7 +232,7 @@ class SettingsGestures: BubbleSettingTableViewController {
             view.removeFromSuperview()
         }
         commentCell.contentView.addSubview(label)
-        label.edgeAnchors |==| commentCell.edgeAnchors + 8
+        label.edgeAnchors /==/ commentCell.edgeAnchors + 8
         label.attributedText = getText()
         label.numberOfLines = 0
         label.sizeToFit()
@@ -525,8 +525,8 @@ public class GesturePreviewCell: InsetCell {
             view.image = nil
             view.alpha = 0.5
         }
-        view.heightAnchor |==| 100
-        view.widthAnchor |==| 75
+        view.heightAnchor /==/ 100
+        view.widthAnchor /==/ 75
         
         return view
     }
@@ -545,8 +545,8 @@ public class GesturePreviewCell: InsetCell {
             view.image = nil
             view.alpha = 0.5
         }
-        view.heightAnchor |==| 100
-        view.widthAnchor |==| 75
+        view.heightAnchor /==/ 100
+        view.widthAnchor /==/ 75
         
         return view
     }
@@ -579,21 +579,21 @@ public class GesturePreviewCell: InsetCell {
     
     func configureLayout() {
         batch {
-            left.leftAnchor |==| contentView.leftAnchor + 8
-            body.leftAnchor |==| left.rightAnchor + 4
-            body.rightAnchor |==| right.leftAnchor - 4
-            right.rightAnchor |==| contentView.rightAnchor - 8
+            left.leftAnchor /==/ contentView.leftAnchor + 8
+            body.leftAnchor /==/ left.rightAnchor + 4
+            body.rightAnchor /==/ right.leftAnchor - 4
+            right.rightAnchor /==/ contentView.rightAnchor - 8
             
-            left.heightAnchor |==| 100
-            right.heightAnchor |==| 100
-            body.heightAnchor |==| 12
+            left.heightAnchor /==/ 100
+            right.heightAnchor /==/ 100
+            body.heightAnchor /==/ 12
             
-            body.centerYAnchor |==| contentView.centerYAnchor
-            left.topAnchor |==| contentView.topAnchor + 4
-            right.topAnchor |==| contentView.topAnchor + 4
+            body.centerYAnchor /==/ contentView.centerYAnchor
+            left.topAnchor /==/ contentView.topAnchor + 4
+            right.topAnchor /==/ contentView.topAnchor + 4
             
-            left.bottomAnchor |==| contentView.bottomAnchor - 4
-            right.bottomAnchor |==| contentView.bottomAnchor - 4
+            left.bottomAnchor /==/ contentView.bottomAnchor - 4
+            right.bottomAnchor /==/ contentView.bottomAnchor - 4
         }
     }
 }

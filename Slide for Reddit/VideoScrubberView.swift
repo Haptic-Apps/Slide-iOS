@@ -84,32 +84,32 @@ class VideoScrubberView: UIView {
         
         self.addSubview(playButton)
         self.addSubview(timeTotalLabel)
-        slider.rightAnchor |==| self.rightAnchor - 8
-        slider.heightAnchor |==| 24
-        slider.bottomAnchor |==| self.bottomAnchor - 4
-        slider.leftAnchor |==| timeTotalLabel.rightAnchor + 8
+        slider.rightAnchor /==/ self.rightAnchor - 8
+        slider.heightAnchor /==/ 24
+        slider.bottomAnchor /==/ self.bottomAnchor - 4
+        slider.leftAnchor /==/ timeTotalLabel.rightAnchor + 8
         
         //timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
         //timeElapsedLabel.textAlignment = .center
         //timeElapsedLabel.textColor = UIColor.white
         //self.addSubview(timeElapsedLabel)
-        //timeElapsedLabel.centerYAnchor |==| slider.centerYAnchor
-        //timeElapsedLabel.leftAnchor |>=| slider.leftAnchor ~ .high
-//        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor |==| CGFloat(slider.thumbCenterX - 16) ~ .low
+        //timeElapsedLabel.centerYAnchor /==/ slider.centerYAnchor
+        //timeElapsedLabel.leftAnchor />=/ slider.leftAnchor ~ .high
+//        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor /==/ CGFloat(slider.thumbCenterX - 16) ~ .low
 //        slider
 
         timeTotalLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: UIFont.Weight(rawValue: 10))
         timeTotalLabel.textAlignment = .center
         timeTotalLabel.textColor = UIColor.white
 
-        timeTotalLabel.centerYAnchor |==| slider.centerYAnchor + 1
-        timeTotalLabel.leftAnchor |==| self.leftAnchor + 8
+        timeTotalLabel.centerYAnchor /==/ slider.centerYAnchor + 1
+        timeTotalLabel.leftAnchor /==/ self.leftAnchor + 8
 
         playButton.setImage(UIImage(sfString: SFSymbol.pauseFill, overrideString: "pause")?.getCopy(withSize: CGSize.square(size: 20)), for: .normal)
         playButton.tintColor = UIColor.white
         playButton.addTarget(self, action: #selector(playButtonTapped(_:)), for: .touchUpInside)
 
-        playButton.sizeAnchors |==| .square(size: 60)
+        playButton.sizeAnchors /==/ .square(size: 60)
         playButton.clipsToBounds = true
         playButton.layer.cornerRadius = 30
         playButton.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -127,7 +127,7 @@ class VideoScrubberView: UIView {
         blurView.clipsToBounds = true
         blurView.layer.cornerRadius = 30
         //self.insertSubview(blurView, at: 0)
-       // blurView.edgeAnchors |==| playButton.edgeAnchors
+       // blurView.edgeAnchors /==/ playButton.edgeAnchors
        // self.bringSubview(toFront: playButton)
     }
     

@@ -91,9 +91,9 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
         self.contentView.addSubview(text)
         
-        text.topAnchor |==| contentView.topAnchor + CGFloat(8)
-        text.bottomAnchor |<=| contentView.bottomAnchor + CGFloat(8)
-        text.horizontalAnchors |==| contentView.horizontalAnchors + CGFloat(8)
+        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
+        text.horizontalAnchors /==/ contentView.horizontalAnchors + CGFloat(8)
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     

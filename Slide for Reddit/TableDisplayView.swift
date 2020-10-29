@@ -184,8 +184,8 @@ class TableDisplayView: UIScrollView {
                 if y % 2 != 0 {
                     label.backgroundColor = ColorUtil.theme.foregroundColor
                 }
-                label.widthAnchor |==| columnWidths[x]// + 100
-                label.heightAnchor |==| rowHeights[y]
+                label.widthAnchor /==/ columnWidths[x]// + 100
+                label.heightAnchor /==/ rowHeights[y]
                 rowStack.addArrangedSubview(label)
             }
             baseStackView.addArrangedSubview(rowStack)
@@ -193,7 +193,7 @@ class TableDisplayView: UIScrollView {
 
         addSubview(baseStackView)
         contentInset = UIEdgeInsets.init(top: 0, left: 8, bottom: 0, right: 8)
-        baseStackView.edgeAnchors |==| edgeAnchors
+        baseStackView.edgeAnchors /==/ edgeAnchors
         contentSize = CGSize.init(width: globalWidth, height: globalHeight)
     }
 

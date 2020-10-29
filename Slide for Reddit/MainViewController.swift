@@ -132,8 +132,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             
             readLaterBadge = BadgeSwift()
             readLater.addSubview(readLaterBadge!)
-            readLaterBadge!.centerXAnchor |==| readLater.centerXAnchor
-            readLaterBadge!.centerYAnchor |==| readLater.centerYAnchor - 2
+            readLaterBadge!.centerXAnchor /==/ readLater.centerXAnchor
+            readLaterBadge!.centerYAnchor /==/ readLater.centerYAnchor - 2
             
             readLaterBadge!.text = "\(count)"
             readLaterBadge!.insets = CGSize.zero
@@ -484,9 +484,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             }
             
             label.addSubview(sideView)
-            sideView.sizeAnchors |==| CGSize.square(size: 30)
-            sideView.centerYAnchor |==| label.centerYAnchor
-            sideView.leftAnchor |==| label.leftAnchor
+            sideView.sizeAnchors /==/ CGSize.square(size: 30)
+            sideView.centerYAnchor /==/ label.centerYAnchor
+            sideView.leftAnchor /==/ label.leftAnchor
 
             sideView.layer.cornerRadius = 15
             sideView.clipsToBounds = true
@@ -610,7 +610,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         account.contentMode = .scaleAspectFill
         account.addTarget(self, action: #selector(self.showCurrentAccountMenu(_:)), for: UIControl.Event.touchUpInside)
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
-        account.sizeAnchors |==| CGSize.square(size: 30)
+        account.sizeAnchors /==/ CGSize.square(size: 30)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
