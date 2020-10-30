@@ -2338,7 +2338,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
-                self.showBody(width: self.innerView.frame.size.width - 35)
+                self.showBody(width: self.innerView.frame.size.width - 24)
             })
         }
         
@@ -2449,7 +2449,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {
-                            self.showBody(width: self.innerView.frame.size.width - 35)
+                            self.showBody(width: self.innerView.frame.size.width - 24)
                         }
                     }
                 }}
@@ -2759,13 +2759,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if !full {
                 if thumb {
                     estimatedUsableWidth -= thumbheight //is the same as the width
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //between edge and thumb
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
                 } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //12 padding on either side
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
                 }
             } else {
-                estimatedUsableWidth -= (35) //12 padding on either side
+                estimatedUsableWidth -= (24) //12 padding on either side
                 if thumb {
                     fullHeightExtras += 45 + 12 + 12
                 } else {
@@ -2849,10 +2849,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !full {
             if thumb {
                 estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //between edge and thumb
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between thumb and label
             } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 35) //12 padding on either side
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
             }
         } else {
             fullHeightExtras += 12
@@ -2878,7 +2878,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             estimatedUsableWidth -= 40
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
             if thumb {
-                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 35) //between edge and thumb no longer exists
+                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
             }
         }
@@ -3051,7 +3051,7 @@ extension UIView: MaterialView {
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOffset = CGSize(width: 0, height: elevation)
         self.layer.shadowRadius = CGFloat(elevation)
-        self.layer.shadowOpacity = 0.35
+        self.layer.shadowOpacity = 0.24
     }
 }
 extension UIGestureRecognizer {
