@@ -3344,8 +3344,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Rightpoint/Anchorage";
 			requirement = {
-				kind = revision;
-				revision = b1efc6fbbc84d838aab4a110f37dcddfd7b6be31;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.0;
 			};
 		};
 		B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */ = {
