@@ -1180,6 +1180,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !full {
             layoutForType()
             layoutForContent()
+            layoutIfNeeded()
         }
     }
     
@@ -1190,7 +1191,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         // Remove all constraints previously applied by this method
         NSLayoutConstraint.deactivate(constraintsForType)
         constraintsForType = []
-        layoutIfNeeded()
         // Deriving classes will populate constraintsForType in the override for this method.
     }
     
@@ -2725,7 +2725,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 paddingRight = 5
             }
             
-            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 35)
+            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 30) //5px is subtracted from the bottom
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)

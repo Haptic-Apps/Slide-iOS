@@ -1688,7 +1688,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             paddingRight = 5
         }
         
-        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 35)
+        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 30) //5px is subtracted from the bottom
         
         let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
         let textHeight = CGFloat(submission.isSelf ? 5 : 0)
