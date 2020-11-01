@@ -19,6 +19,11 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
     var internalGif = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var gfycatAPICell: UITableViewCell = InsetCell()
+    var gfycatAPI = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var internalImageCell: UITableViewCell = InsetCell()
     var internalImage = UISwitch().then {
@@ -174,6 +179,9 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         } else if changed == internalAlbum {
             SettingValues.internalAlbumView = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalAlbumView)
+        } else if changed == gfycatAPI {
+            SettingValues.gfycatAPI = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_gfycatAPI)
         } else if changed == internalYouTube {
             SettingValues.internalYouTube = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_internalYouTube)
@@ -208,6 +216,10 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         createCell(internalAlbumCell, internalAlbum, isOn: SettingValues.internalAlbumView, text: "Imgur Album viewer")
         createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Image viewer (Imgur, direct image links)")
         createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "YouTube viewer")
+        createCell(gfycatAPICell, gfycatAPI, isOn: SettingValues.gfycatAPI, text: "Load Gfycats through the Gfycat API")
+        gfycatAPICell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        gfycatAPICell.detailTextLabel?.numberOfLines = 0
+        gfycatAPICell.detailTextLabel?.text = "Using the Gfycat API will allow Gfycat videos with sound, but may take longer to download"
 
         self.tableView.tableFooterView = UIView()
 
@@ -222,7 +234,6 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         domainEnter.setImage(UIImage(), for: .search, state: .normal)
         domainEnter.autocapitalizationType = .none
         domainEnter.isTranslucent = false
-
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -295,6 +306,7 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
             case 1: return self.internalGifCell
             case 2: return self.internalAlbumCell
             case 3: return self.internalYouTubeCell
+            case 4: return self.gfycatAPICell
             default: fatalError("Unknown row in section 0")
             }
         case 2:
@@ -327,7 +339,7 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return browsers.count
-        case 1: return 4   // section 0 has 2 rows
+        case 1: return 5
         case 2: return PostFilter.openExternally.count
         default: fatalError("Unknown number of sections")
         }

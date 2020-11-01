@@ -1770,7 +1770,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     doLoadVideo()
                 } else {
                     self.videoCompletion = nil
-                    if let url = (!link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!)) ? URL.init(string: link!.videoPreview) : link!.url {
+                    if let url = (!link!.videoPreview.isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview) : link!.url {
                             self.preloadVideo(url)
                     }
                 }
@@ -2138,7 +2138,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 videoCompletion = {
                     self.playVideo()
                 }
-                if let url = (!link!.videoPreview.isEmpty() && !ContentType.isGfycat(uri: link!.url!)) ? URL.init(string: link!.videoPreview) : link!.url {
+                if let url = (!link!.videoPreview.isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview) : link!.url {
                         self.preloadVideo(url)
                 }
             }
@@ -2163,7 +2163,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
         strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
-        strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
+        //strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
 //                Is currently causing issues with not resuming after buffering
 //                if #available(iOS 10.0, *) {
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
@@ -2175,6 +2175,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else {
             strongSelf.videoView?.player?.isMuted = false
         }
+
         strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
         strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
         strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
@@ -2273,10 +2274,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let percentComplete = time / duration
             if currentItem.status == .readyToPlay && player.rate == 0 {
+                player.rate = 1
                 player.playImmediately(atRate: 1.0)
-            } else if lastTime == Float(CMTimeGetSeconds(player.currentTime())) && currentItem.isPlaybackLikelyToKeepUp && player.timeControlStatus == .playing && (percentComplete > 0.1 && percentComplete < 0.9) {
-                //There is a case where videos will freeze at a frame randomly(?) and seeking to current time fixes this... Check to see if we're buffering in case playback is frozen because of that, and make sure we're in the middle of a video
-                player.seek(to: player.currentTime())
             }
 
             let reachedEnd = (percentComplete >= 0.999 || (percentComplete >= 0.93 && lastTime == time))
@@ -2284,6 +2283,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 updateProgress(CGFloat(percentComplete), "\(getTimeString(Int(floor(1 + duration - time))))",
                     buffering: !currentItem.isPlaybackLikelyToKeepUp && !reachedEnd)
             }
+            
             if !handlingPlayerItemDidreachEnd && reachedEnd {
                 handlingPlayerItemDidreachEnd = true
                 self.playerItemDidreachEnd()
