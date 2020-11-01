@@ -22,7 +22,7 @@ final class BannerLinkCellView: LinkCellView {
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
-                title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
+                title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5) ~ .required
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
                     sideButtons.bottomAnchor /<=/ bannerImage.topAnchor - ceight
@@ -36,14 +36,14 @@ final class BannerLinkCellView: LinkCellView {
                 } else {
                     title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight
+                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight ~ .required
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 
                 if SettingValues.actionBarMode.isFull() {
-                    bannerImage.bottomAnchor /==/ box.topAnchor - ctwelve
+                    bannerImage.bottomAnchor /==/ box.topAnchor - ctwelve ~ .required
                 } else {
-                    bannerImage.bottomAnchor /==/ innerView.bottomAnchor - ctwelve
+                    bannerImage.bottomAnchor /==/ innerView.bottomAnchor - ctwelve ~ .required
                 }
             } else {
                 // Image goes above title
@@ -58,13 +58,13 @@ final class BannerLinkCellView: LinkCellView {
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight
+                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight ~ .required
                 } else {
-                    title.bottomAnchor /==/ box.topAnchor - ceight
+                    title.bottomAnchor /==/ box.topAnchor - ceight ~ .required
                 }
                 
-                bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding
-                bannerImage.bottomAnchor /==/ title.topAnchor - ceight
+                bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding ~ .required
+                bannerImage.bottomAnchor /==/ title.topAnchor - ceight ~ .required
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
                     sideButtons.topAnchor /==/ bannerImage.bottomAnchor + ceight

@@ -197,7 +197,11 @@ class RealmDataWrapper {
                 if award["icon_url"] != nil && award["count"] != nil {
                     let name = award["name"] as? String ?? ""
                     if name != "Silver" && name != "Gold" && name != "Platinum" {
-                        rSubmission.awards.append("\(award["icon_url"]!)*\(award["count"]!)")
+                        if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                            rSubmission.awards.append("\(url.unescapeHTML)*\(award["count"] as? Int ?? 0)")
+                        } else {
+                            rSubmission.awards.append("\(award["icon_url"] as? String ?? "")*\(award["count"] as? Int ?? 0)")
+                        }
                     }
                 }
             }
@@ -335,7 +339,11 @@ class RealmDataWrapper {
                 if award["icon_url"] != nil && award["count"] != nil {
                     let name = award["name"] as? String ?? ""
                     if name != "Silver" && name != "Gold" && name != "Platinum" {
-                        rSubmission.awards.append("\(award["icon_url"]!)*\(award["count"]!)")
+                        if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                            rSubmission.awards.append("\(url.unescapeHTML)*\(award["count"] as? Int ?? 0)")
+                        } else {
+                            rSubmission.awards.append("\(award["icon_url"] as? String ?? "")*\(award["count"] as? Int ?? 0)")
+                        }
                     }
                 }
             }

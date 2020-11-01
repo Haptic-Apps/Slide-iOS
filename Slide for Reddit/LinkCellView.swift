@@ -239,10 +239,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             rightmargin = 5
         }
 
-        innerView.leftAnchor /==/ contentView.leftAnchor + leftmargin
-        innerView.rightAnchor /==/ contentView.rightAnchor - rightmargin
-        innerView.topAnchor /==/ contentView.topAnchor + topmargin
-        innerView.bottomAnchor /==/ contentView.bottomAnchor - bottommargin
+        innerView.leftAnchor /==/ contentView.leftAnchor + leftmargin ~ .required
+        innerView.rightAnchor /==/ contentView.rightAnchor - rightmargin ~ .required
+        innerView.topAnchor /==/ contentView.topAnchor + topmargin ~ .required
+        innerView.bottomAnchor /==/ contentView.bottomAnchor - bottommargin ~ .required
         
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
