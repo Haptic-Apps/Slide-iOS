@@ -388,7 +388,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if !dataSource.hasContent() {
             self.autoplayHandler.autoplayOnce(self.tableView)
         }
-        if parentController == nil {
+        if parentController == nil && !swipeBackAdded {
             if SettingValues.submissionGestureMode != .FULL {
                 setupSwipeGesture()
             }
@@ -3007,7 +3007,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                 return
             }
             
-            if recognizer.location(in: cell).x < cell.innerView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
+            if recognizer.location(in: cell).x < cell.contentView.bounds.width / 2 && SettingValues.submissionGestureMode.shouldPage() {
                 recognizer.cancel()
                 return
             }

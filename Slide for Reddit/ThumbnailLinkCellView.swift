@@ -26,24 +26,24 @@ final class ThumbnailLinkCellView: LinkCellView {
             let ceight = SettingValues.postViewMode == .COMPACT ? CGFloat(4) : CGFloat(8)
             let ctwelve = SettingValues.postViewMode == .COMPACT ? CGFloat(8) : CGFloat(12)
             if !SettingValues.actionBarMode.isFull() {
-                thumbImageContainer.bottomAnchor /<=/ innerView.bottomAnchor - ctwelve
+                thumbImageContainer.bottomAnchor /<=/ contentView.bottomAnchor - ctwelve
             } else {
                 thumbImageContainer.bottomAnchor /<=/ box.topAnchor - ceight
             }
 
             // Thumbnail sizing
-            thumbImageContainer.topAnchor /==/ innerView.topAnchor + ctwelve
+            thumbImageContainer.topAnchor /==/ contentView.topAnchor + ctwelve
             if SettingValues.leftThumbnail {
                 if SettingValues.actionBarMode == .SIDE {
                     thumbImageContainer.leftAnchor /==/ sideButtons.rightAnchor + ceight
                 } else {
-                    thumbImageContainer.leftAnchor /==/ innerView.leftAnchor + ctwelve
+                    thumbImageContainer.leftAnchor /==/ contentView.leftAnchor + ctwelve
                 }
             } else {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     thumbImageContainer.rightAnchor /==/ sideButtons.leftAnchor - ceight
                 } else {
-                    thumbImageContainer.rightAnchor /==/ innerView.rightAnchor - ctwelve
+                    thumbImageContainer.rightAnchor /==/ contentView.rightAnchor - ctwelve
                 }
             }
 
@@ -51,20 +51,20 @@ final class ThumbnailLinkCellView: LinkCellView {
             thumbImageContainer.widthAnchor /==/ thumbSize
             thumbImageContainer.heightAnchor /==/ thumbSize
             if SettingValues.actionBarMode == .SIDE {
-                sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
+                sideButtons.topAnchor /==/ contentView.topAnchor + ctwelve
                 title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : sideButtons.rightAnchor + ceight)
-                title.rightAnchor /==/ (SettingValues.leftThumbnail ? innerView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+                title.rightAnchor /==/ (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             } else if SettingValues.actionBarMode == .SIDE_RIGHT {
-                sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
-                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : innerView.leftAnchor + ctwelve)
+                sideButtons.topAnchor /==/ contentView.topAnchor + ctwelve
+                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
                 title.rightAnchor /==/ (SettingValues.leftThumbnail ? sideButtons.leftAnchor - ceight : thumbImageContainer.leftAnchor - ceight)
             } else {
-                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : innerView.leftAnchor + ctwelve)
-                title.rightAnchor /==/ (SettingValues.leftThumbnail ? innerView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
+                title.leftAnchor /==/ (SettingValues.leftThumbnail ? thumbImageContainer.rightAnchor + ceight : contentView.leftAnchor + ctwelve)
+                title.rightAnchor /==/ (SettingValues.leftThumbnail ? contentView.rightAnchor - ctwelve : thumbImageContainer.leftAnchor - ceight)
             }
-            title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
+            title.topAnchor /==/ contentView.topAnchor + (ctwelve - 5)
             if !SettingValues.actionBarMode.isFull() {
-                title.bottomAnchor /<=/ innerView.bottomAnchor - ceight
+                title.bottomAnchor /<=/ contentView.bottomAnchor - ceight
             } else {
                 title.bottomAnchor />=/ box.topAnchor - ceight
             }

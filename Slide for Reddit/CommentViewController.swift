@@ -1694,9 +1694,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         self.finishedPush = true
         
-        if SettingValues.commentGesturesMode != .FULL {
+        if SettingValues.commentGesturesMode != .FULL && !swipeBackAdded {
             if let parent = parent as? PagingCommentViewController {
-                if parent.submissionDataSource.contentIDs[parent.startIndex] == self.submission?.getId() {
+                if parent.submissionDataSource.content[parent.startIndex].getId() == self.submission?.getId() {
                     setupSwipeGesture()
                 }
             } else {
@@ -3262,27 +3262,35 @@ extension CommentViewController: UIGestureRecognizerDelegate {
 
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController, !swipeBackAdded {
-            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
-            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
-                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            setupSwipeWithTarget(fullWidthBackGestureRecognizer, interactivePopGestureRecognizer: interactivePopGestureRecognizer, targets: targets)
+        } else if !(parent is ColorMuxPagingViewController) && !swipeBackAdded {
+            if let interactivePopGestureRecognizer = self.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
+                setupSwipeWithTarget(fullWidthBackGestureRecognizer, interactivePopGestureRecognizer: interactivePopGestureRecognizer, targets: targets)
             }
-            if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-                navGesture.require(toFail: fullWidthBackGestureRecognizer)
-            }
-            fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
-            for view in parent?.view.subviews ?? [] {
-                if view is UIScrollView {
-                    (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
-                }
-            }
+        }
+    }
 
-            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
-            fullWidthBackGestureRecognizer.delegate = self
-            //parent.requireFailureOf(fullWidthBackGestureRecognizer)
-            view?.addGestureRecognizer(fullWidthBackGestureRecognizer)
-            if #available(iOS 13.4, *) {
-                fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
+    func setupSwipeWithTarget(_ fullWidthBackGestureRecognizer: UIPanGestureRecognizer, interactivePopGestureRecognizer: UIGestureRecognizer, targets: Any?) {
+        fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+            fullWidthBackGestureRecognizer.require(toFail: navGesture)
+        }
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+            navGesture.require(toFail: fullWidthBackGestureRecognizer)
+        }
+        fullWidthBackGestureRecognizer.require(toFail: interactivePopGestureRecognizer)
+        for view in parent?.view.subviews ?? [] {
+            if view is UIScrollView {
+                (view as! UIScrollView).panGestureRecognizer.require(toFail: fullWidthBackGestureRecognizer)
             }
+        }
+
+        fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+        fullWidthBackGestureRecognizer.delegate = self
+        //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+        view?.addGestureRecognizer(fullWidthBackGestureRecognizer)
+        if #available(iOS 13.4, *) {
+            fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
         }
     }
 
