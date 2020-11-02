@@ -73,7 +73,7 @@ final class BannerLinkCellView: LinkCellView {
                 }
             }
 
-            subicon.topAnchor /==/ title.topAnchor
+            subicon.topAnchor /==/ title.topAnchor 
             subicon.leftAnchor /==/ title.leftAnchor
             subicon.widthAnchor /==/ 24
             subicon.heightAnchor /==/ 24

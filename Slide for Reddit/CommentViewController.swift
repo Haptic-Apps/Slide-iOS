@@ -1694,8 +1694,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         self.finishedPush = true
         
-        if SettingValues.commentGesturesMode != .FULL && !(parent is PagingCommentViewController) {
-            setupSwipeGesture()
+        if SettingValues.commentGesturesMode != .FULL {
+            if let parent = parent as? PagingCommentViewController {
+                if parent.submissionDataSource.contentIDs[parent.startIndex] == self.submission?.getId() {
+                    setupSwipeGesture()
+                }
+            } else {
+                setupSwipeGesture()
+            }
         }
     }
  

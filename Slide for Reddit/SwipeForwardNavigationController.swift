@@ -165,9 +165,12 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
             shouldBegin = viewControllers.count > 1
             
             if gestureRecognizer == fullWidthBackGestureRecognizer {
-                let translation = fullWidthBackGestureRecognizer.translation(in: view)
+                let velocity = fullWidthBackGestureRecognizer.velocity(in: view)
 
-                if abs(translation.x) < abs(translation.y) {
+                let rad = atan(velocity.y / velocity.x)
+                let deg = rad * 180 / CGFloat.pi
+
+                if abs(deg) > 20 { //Only accept if the angle of the gesture is above 20 degrees (horizontal)
                     shouldBegin = false
                 }
             }

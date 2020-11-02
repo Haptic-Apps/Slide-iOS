@@ -173,6 +173,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var sideDownvote: UIButton!
     var sideScore: UILabel!
     
+    var setElevation = false
+    
     var infoBox: UIStackView!
     var force: ForceTouchGestureRecognizer?
 
@@ -1823,6 +1825,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
                 self.bannerImage.heightAnchor /==/ self.submissionHeight ~ .low
+                self.bannerImage.verticalCompressionResistancePriority = .defaultLow
             }
         } else {
             bannerImage.image = nil
@@ -2678,7 +2681,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         super.layoutSubviews()
 
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode && !setElevation {
+            setElevation = true
             self.innerView.elevate(elevation: 2)
         }
     }

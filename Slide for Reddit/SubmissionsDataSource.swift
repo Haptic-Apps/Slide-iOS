@@ -287,6 +287,4 @@ class SubmissionsDataSource {
     func loadMore() {
         getData(reload: false)
     }
-
 }
-

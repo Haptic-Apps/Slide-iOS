@@ -2924,19 +2924,27 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         }
         fullWidthBackGestureRecognizer = UIPanGestureRecognizer()
         if let interactivePopGestureRecognizer = parent?.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets"), parent is ColorMuxPagingViewController {
-            fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
-            fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
-            if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
-                fullWidthBackGestureRecognizer.require(toFail: navGesture)
+            setupSwipeWithTarget(fullWidthBackGestureRecognizer as! UIPanGestureRecognizer, targets: targets)
+        } else if !(parent is ColorMuxPagingViewController) {
+            if let interactivePopGestureRecognizer = self.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
+                setupSwipeWithTarget(fullWidthBackGestureRecognizer as! UIPanGestureRecognizer, targets: targets)
             }
-            if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
-                navGesture.require(toFail: fullWidthBackGestureRecognizer)
-            }
-            swipeBackAdded = true
-            fullWidthBackGestureRecognizer.delegate = self
-            //parent.requireFailureOf(fullWidthBackGestureRecognizer)
-            tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
         }
+    }
+    
+    func setupSwipeWithTarget(_ fullWidthBackGestureRecognizer: UIPanGestureRecognizer, targets: Any?) {
+        fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
+        fullWidthBackGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
+        if let navGesture = self.navigationController?.interactivePopGestureRecognizer {
+            fullWidthBackGestureRecognizer.require(toFail: navGesture)
+        }
+        if let navGesture = (self.navigationController as? SwipeForwardNavigationController)?.fullWidthBackGestureRecognizer {
+            navGesture.require(toFail: fullWidthBackGestureRecognizer)
+        }
+        swipeBackAdded = true
+        fullWidthBackGestureRecognizer.delegate = self
+        //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+        tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
