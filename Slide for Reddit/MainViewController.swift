@@ -627,32 +627,34 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
-        if !SettingValues.doneVersion() {
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                let viewController = OnboardingViewController()
-                viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
-                let newParent = TapBehindModalViewController.init(rootViewController: viewController)
-                newParent.navigationBar.shadowImage = UIImage()
-                newParent.navigationBar.isTranslucent = false
-                newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+        if !SettingValues.done6() || !SettingValues.doneVersion() {
+            if !SettingValues.done6() {
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
+                    let viewController = OnboardingViewController()
+                    viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+                    let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+                    newParent.navigationBar.shadowImage = UIImage()
+                    newParent.navigationBar.isTranslucent = false
+                    newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
 
-                newParent.navigationBar.shadowImage = UIImage()
-                newParent.navigationBar.isTranslucent = false
+                    newParent.navigationBar.shadowImage = UIImage()
+                    newParent.navigationBar.isTranslucent = false
 
-                let button = UIButtonWithContext.init(type: .custom)
-                button.parentController = newParent
-                button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-                button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-                button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
-                button.addTarget(self, action: #selector(self.handleCloseNav(controller:)), for: .touchUpInside)
+                    let button = UIButtonWithContext.init(type: .custom)
+                    button.parentController = newParent
+                    button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+                    button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
+                    button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+                    button.addTarget(self, action: #selector(self.handleCloseNav(controller:)), for: .touchUpInside)
 
-                let barButton = UIBarButtonItem.init(customView: button)
-                barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
-                newParent.modalPresentationStyle = .pageSheet
+                    let barButton = UIBarButtonItem.init(customView: button)
+                    barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
+                    newParent.modalPresentationStyle = .pageSheet
 
-                viewController.navigationItem.rightBarButtonItems = [barButton]
+                    viewController.navigationItem.rightBarButtonItems = [barButton]
 
-                self.present(newParent, animated: true, completion: nil)
+                    self.present(newParent, animated: true, completion: nil)
+                }
             }
 
             let session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -663,7 +665,8 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         //Ignore this
                         break
                     case .success(let listing):
-                        
+                        let settings = UserDefaults.standard
+
                         let submissions = listing.children.compactMap({ $0 as? Link })
                         if submissions.count < 2 {
                             return
@@ -693,13 +696,17 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         }
                         
                         if !storedTitle.isEmpty && !storedLink.isEmpty {
-                            let settings = UserDefaults.standard
-                            settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
+                            
                             settings.set(storedTitle, forKey: "vtitle")
                             settings.set(storedLink, forKey: "vlink")
-                            /* disable for now DispatchQueue.main.async {
-                                SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
-                            }*/
+                            if SettingValues.done6() && !SettingValues.doneVersion() {
+                                DispatchQueue.main.async {
+                                    SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
+                                }
+                            }
+                            settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
+                        } else {
+                            settings.set(true, forKey: Bundle.main.releaseVersionNumber!)
                         }
                     }
                 })

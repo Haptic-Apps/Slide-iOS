@@ -673,9 +673,14 @@ class SettingValues {
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
     }
 
-    public static func doneVersion() -> Bool {
+    public static func done6() -> Bool {
         let settings = UserDefaults.standard
         return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil || settings.object(forKey: Bundle.main.releaseVersionNumber ?? "0") != nil
+    }
+    
+    public static func doneVersion() -> Bool {
+        let settings = UserDefaults.standard
+        return settings.object(forKey: Bundle.main.releaseVersionNumber ?? "") != nil
     }
 
     public static func firstEnter() -> Bool {
