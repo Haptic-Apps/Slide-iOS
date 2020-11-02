@@ -16,21 +16,9 @@ import SDCAlertView
 import StoreKit
 import UIKit
 import WatchConnectivity
-#if canImport(WidgetKit)
-import WidgetKit
-#endif
 
 class MainViewController: ColorMuxPagingViewController, UINavigationControllerDelegate, ReadLaterDelegate {
-
     //MARK: - Variables
-    /*
-    Corresponds to USR_DOMAIN in info.plist, which derives its value
-    from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
-    */
-    func USR_DOMAIN() -> String {
-       return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
-    }
-
     var isReload = false
     var readLaterBadge: BadgeSwift?
     public static var current: String = ""
@@ -78,7 +66,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     var currentIndex = 0
     
-    public static var isOffline = false
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
     
@@ -114,13 +101,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     //MARK: - Shared functions
     func didUpdate() {
-        let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
-        suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
-        suite?.synchronize()
-        if #available(iOS 14, *) {
-            WidgetCenter.shared.reloadTimelines(ofKind: "Current_Account")
-        }
-        
         let count = ReadLater.readLaterIDs.count
         if count > 0 {
             let readLater = UIButton.init(type: .custom)
@@ -187,10 +167,9 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func checkSubs() {
-        let currentAccount = AccountController.currentName
         if let session = (UIApplication.shared.delegate as! AppDelegate).session {
             Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
-                if AccountController.isLoggedIn && currentAccount == AccountController.currentName { //Ensure the user did not switch accounts before applying subs
+                if AccountController.isLoggedIn {
                     var allSubs = [String]()
                     allSubs.append(contentsOf: newSubs.map { $0.displayName })
                     allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName })
@@ -202,7 +181,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             finalSubs.append(sub)
                         }
                     }
-                    Subscriptions.set(name: currentAccount, subs: finalSubs, completion: {
+                    Subscriptions.set(name: AccountController.currentName, subs: finalSubs, completion: {
                     })
                 }
             })
@@ -272,14 +251,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                         }
                         DispatchQueue.main.async {
                             if diff > 0 {
-                                let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
-                                suite?.setValue(AccountController.current?.inboxCount ?? 0, forKey: "inbox")
-                                suite?.synchronize()
-                                
-                                if #available(iOS 14, *) {
-                                    WidgetCenter.shared.reloadTimelines(ofKind: "Current_Account")
-                                }
-                                
                                 BannerUtil.makeBanner(text: "\(diff) new message\(diff > 1 ? "s" : "")!", seconds: 5, context: self, top: true, callback: {
                                     () in
                                     let inbox = InboxViewController.init()
@@ -588,23 +559,10 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
         if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
-            account.sd_setImage(with: imageUrl, for: .normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil, progress: nil) { (image, _, _, _) in
-                if #available(iOS 14.0, *) {
-                    let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
-                    suite?.setValue(AccountController.currentName, forKey: "current_account")
-                    suite?.setValue(AccountController.current?.inboxCount ?? 0, forKey: "inbox")
-                    suite?.setValue((AccountController.current?.commentKarma ?? 0) + (AccountController.current?.linkKarma ?? 0), forKey: "karma")
-                                        
-                    if let data = image?.pngData() {
-                        suite?.setValue(data, forKey: "profile_icon")
-                    }
-                    suite?.synchronize()
-                }
-            }
+            account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
         } else {
             account.setImage(accountImage, for: UIControl.State.normal)
         }
-        
         account.layer.cornerRadius = 5
         account.clipsToBounds = true
         account.contentMode = .scaleAspectFill
@@ -620,10 +578,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             self.accountB.customView?.addInteraction(interaction)
         }
         didUpdate()
-    }
-
-    @objc public func handleCloseNav(controller: UIButtonWithContext) {
-        controller.parentController?.dismiss(animated: true, completion: nil)
     }
 
     func checkForUpdate() {
@@ -644,7 +598,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
                 button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
                 button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
-                button.addTarget(self, action: #selector(self.handleCloseNav(controller:)), for: .touchUpInside)
+                button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
 
                 let barButton = UIBarButtonItem.init(customView: button)
                 barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
@@ -725,13 +679,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func getSubredditVC() -> SingleSubredditViewController? {
-        if finalSubs.count < currentIndex || finalSubs.isEmpty {
-            return (viewControllers?.count ?? 0) == 0 ? nil : viewControllers?.first as? SingleSubredditViewController
-        }
-        let currentSub = finalSubs[currentIndex]
-        return viewControllers?
-            .compactMap({ $0 as? SingleSubredditViewController })
-            .first(where: { $0.sub == currentSub })
+        return viewControllers?.count ?? 0 == 0 ? nil : viewControllers?[0] as? SingleSubredditViewController
     }
     func shadowbox() {
         getSubredditVC()?.shadowboxMode()
@@ -794,7 +742,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
                     ColorUtil.matchTraitCollection()
                 }
             } else {

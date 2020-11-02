@@ -426,7 +426,7 @@ class SettingValues {
         case .ALWAYS:
             return true
         case .WIFI:
-            return LinkCellView.checkWiFi()
+            return NetworkMonitor.shared.online
         case .NEVER:
             return false
         case .TAP:
@@ -1061,7 +1061,7 @@ class SettingValues {
     }
 
     public enum NavigationHeaderActions: String {
-        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .READ_LATER, .SAVED, .UPVOTED, .HISTORY, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
+        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .SAVED, .UPVOTED, .HISTORY, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
 
         case HOME = "home"
         case POPULAR = "popular"
@@ -1074,10 +1074,9 @@ class SettingValues {
         case COLLECTIONS = "collections"
         case CREATE_MULTI = "create_multi"
         case TRENDING = "trending"
-        case READ_LATER = "readlater"
-
+        
         public static func getMenuNone() -> [NavigationHeaderActions] {
-            let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "readlater", "saved", "collections"]
+            let menu = UserDefaults.standard.stringArray(forKey: "headerMenu") ?? ["home", "random", "saved", "collections", "create_multi"]
             var toReturn = [NavigationHeaderActions]()
             for item in menu {
                 let action = NavigationHeaderActions(rawValue: item) ?? .HOME
@@ -1103,8 +1102,6 @@ class SettingValues {
                 return "Home"
             case .POPULAR:
                 return "Popular"
-            case .READ_LATER:
-                return "Read later"
             case .RANDOM:
                 return "Random"
             case .SAVED:
@@ -1135,8 +1132,6 @@ class SettingValues {
                 return UIImage(sfString: SFSymbol.flameFill, overrideString: "upvote")!.menuIcon()
             case .RANDOM:
                 return UIImage(sfString: SFSymbol.shuffle, overrideString: "sync")!.menuIcon()
-            case .READ_LATER:
-                return UIImage(sfString: SFSymbol.bookFill, overrideString: "bookmark")!.menuIcon()
             case .SAVED:
                 return UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()
             case .UPVOTED:

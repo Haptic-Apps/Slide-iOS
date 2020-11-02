@@ -29,7 +29,6 @@ struct Favorite_Subreddits: Widget {
         }
         .configurationDisplayName("Subreddit")
         .description("Quick links to your favorite Subreddit.")
-        .supportedFamilies([WidgetFamily.systemMedium, WidgetFamily.systemLarge])
     }
 }
 
@@ -94,9 +93,11 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"]), colorData: getColorData(["all", "frontpage", "popular", "slide_ios"])))
+            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
+                .previewContext(WidgetPreviewContext(family: .systemSmall))
+            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
                 .previewContext(WidgetPreviewContext(family: .systemMedium))
-            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"]), colorData: getColorData(["all", "frontpage", "popular", "slide_ios"])))
+            Favorite_SubredditsEntryView(entry: SubredditEntry(date: Date(), subreddits: ["all", "frontpage", "popular", "slide_ios"], imageData: getPlaceholderData(["all", "frontpage", "popular", "slide_ios"])))
                 .previewContext(WidgetPreviewContext(family: .systemLarge))
         }
     }
@@ -124,19 +125,6 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
                     toReturn[item] = Data()
                 }
             }
-        }
-        return toReturn
-    }
-    
-    static func getColorData(_ subs: [String]) -> [String: UIColor] {
-        let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
-        var toReturn = [String: UIColor]()
-        for item in subs {
-            var color: UIColor?
-            if let hex = shared?.string(forKey: "color\(item.lowercased().replacingOccurrences(of: "/", with: ""))"), !hex.isEmpty {
-                color = UIColor(hexString: hex)
-            }
-            toReturn[item] = color
         }
         return toReturn
     }
@@ -208,15 +196,15 @@ private struct SmallWidgetView: View {
 
 private struct MediumWidgetView: View {
     var entry: SubredditsProvider.Entry
-    @Environment(\.widgetFamily) var widgetFamily
+
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(getSubs().chunked(into: 2), id: \.self) { subreddits in
+            ForEach(entry.subreddits.chunked(into: 2), id: \.self) { subreddits in
                 HStack(alignment: .top, spacing: 8) {
                     ForEach(subreddits, id: \.self) { key in
-                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key, color: entry.colorData[key, default: nil])
+                        SubredditView(imageData: entry.imageData[key] ?? Data(), title: key)
                             .cornerRadius(15)
                     }
                 }
@@ -224,14 +212,7 @@ private struct MediumWidgetView: View {
         }
         .padding(8)
     }
-    
-    func getSubs() -> [String] {
-        var subs = entry.subreddits
-        if widgetFamily != .systemLarge {
-            subs = Array(subs[0..<min(subs.count, 4)])
-        }
-        return subs
-    }
+
 }
 
 // MARK: - Component Views
@@ -239,8 +220,7 @@ private struct MediumWidgetView: View {
 private struct SubredditView: View {
     var imageData: Data
     var title: String
-    var color: UIColor?
-    
+
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     @ViewBuilder
@@ -275,7 +255,7 @@ private struct SubredditView: View {
             }
         }
         .padding(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-        .background(Color(color != nil ? color! : UIImage(data: imageData)?.averageColor ?? getSchemeColor()).opacity(0.8))
+        .background(Color(UIImage(data: imageData)?.averageColor ?? getSchemeColor()).opacity(0.8))
     }
 
     func getSchemeColor() -> UIColor {

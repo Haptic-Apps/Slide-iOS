@@ -398,7 +398,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if indexPath.section == 1 && indexPath.row == 2 {
             let alertController = DragDownAlertMenu(title: "Button bar mode", subtitle: "Sets the layout for the submission buttons", icon: nil)
             
-            alertController.addAction(title: "Right aligned button bar", icon: UIImage(sfString: SFSymbol.handPointRightFill, overrideString: "code")!.menuIcon()) {
+            alertController.addAction(title: "Full-sized button bar", icon: UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")!.menuIcon()) {
                 UserDefaults.standard.set("full", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL
                 UserDefaults.standard.synchronize()
@@ -410,7 +410,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Left aligned button bar", icon: UIImage(sfString: SFSymbol.handPointLeftFill, overrideString: "code")!.menuIcon()) {
+            alertController.addAction(title: "Left-aligned full-sized button bar", icon: UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")!.menuIcon()) {
                 UserDefaults.standard.set("left", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .FULL_LEFT
                 UserDefaults.standard.synchronize()
@@ -422,7 +422,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Vote buttons on left side", icon: UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()) {
+            alertController.addAction(title: "Left-side vote buttons", icon: UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()) {
                 UserDefaults.standard.set("side", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE
                 UserDefaults.standard.synchronize()
@@ -434,7 +434,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "Vote buttons on right side", icon: UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
+            alertController.addAction(title: "Right-side vote buttons", icon: UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
                 UserDefaults.standard.set("right", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .SIDE_RIGHT
                 UserDefaults.standard.synchronize()
@@ -447,7 +447,7 @@ class SettingsLayout: BubbleSettingTableViewController {
 
             }
 
-            alertController.addAction(title: "Disable buttons", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
+            alertController.addAction(title: "Hide button bar", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 UserDefaults.standard.set("none", forKey: SettingValues.pref_actionbarMode)
                 SettingValues.actionBarMode = .NONE
                 UserDefaults.standard.synchronize()
@@ -483,18 +483,18 @@ class SettingsLayout: BubbleSettingTableViewController {
         headers = ["", "Display", "Information line", "Thumbnails", "Advanced"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
-        self.title = "Card layout"
+        self.title = "Submission layout"
         
         createCell(selftextCell, selftext, isOn: SettingValues.showFirstParagraph, text: "Show selftext preview")
         createCell(thumbInfoCell, thumbInfo, isOn: SettingValues.thumbTag, text: "Show link type on thumbnail")
 
-        createCell(cardModeCell, isOn: false, text: "View type")
+        createCell(cardModeCell, isOn: false, text: "Card type")
         cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(imageCell, isOn: false, text: "Image size")
+        createCell(imageCell, isOn: false, text: "Image mode")
         imageCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
@@ -506,7 +506,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
-        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text post preview images")
+        createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text-post images")
         hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show image previews on text-only posts"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
@@ -519,7 +519,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Post score in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
-        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title post details")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title above submission information")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Domain in title")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")

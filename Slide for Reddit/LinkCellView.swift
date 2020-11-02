@@ -1648,8 +1648,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumb = true
             big = false
         }
-        let checkWifi = LinkCellView.checkWiFi()
-        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && checkWifi)
+//        let checkWifi = LinkCellView.checkWiFi()
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online)
         if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf {
             big = false
@@ -1675,7 +1675,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
         }
         
-        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && checkWifi) {
+        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online) {
             big = false
             thumb = false
         }
@@ -2069,24 +2069,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var currentType: CurrentType = .none
-    static var checkedWifi = false
-    static var cachedCheckWifi = false
-    
-    public static func checkWiFi() -> Bool {
-        if !checkedWifi {
-            checkedWifi = true
-            let networkStatus = Reachability().connectionStatus()
-            switch networkStatus {
-            case .Unknown, .Offline:
-                cachedCheckWifi = false
-            case .Online(.WWAN):
-                cachedCheckWifi = false
-            case .Online(.WiFi):
-                cachedCheckWifi = true
-            }
-        }
-        return cachedCheckWifi
-    }
     
     var videoURL: URL?
     weak var videoTask: URLSessionDataTask?
@@ -2180,31 +2162,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
         strongSelf.updater?.isPaused = false
     }
-    
-    public static var cachedInternet: Bool?
-    public static func checkInternet() -> Bool {
-        if LinkCellView.cachedInternet != nil {
-            return LinkCellView.cachedInternet!
-        }
-        let networkStatus = Reachability().connectionStatus()
-        switch networkStatus {
-        case .Unknown, .Offline:
-            LinkCellView.cachedInternet = false
-        case .Online(.WWAN):
-            LinkCellView.cachedInternet = true
-        case .Online(.WiFi):
-            LinkCellView.cachedInternet = true
-        }
-        return LinkCellView.cachedInternet!
-    }
-    
+
     @objc func showMore() {
         timer!.invalidate()
         if longBlocking {
             self.longBlocking = false
             return
         }
-        if !self.cancelled && LinkCellView.checkInternet() && parentViewController?.presentedViewController == nil {
+        if !self.cancelled && NetworkMonitor.shared.online && parentViewController?.presentedViewController == nil {
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()
             } else if SettingValues.hapticFeedback {
@@ -2951,14 +2916,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.progressDot.isHidden = false
         } else if self.videoView.player != nil && self.videoView.player?.currentItem != nil && self.videoView.player!.currentItem!.presentationSize.width != 0 {
             let upvoted = ActionStates.getVoteDirection(s: link!) == VoteDirection.up
-            let controller = AnyModalViewController(cellView: self, full ? nil : {[weak self] in
-                if let strongSelf = self {
-                    strongSelf.doOpenComment()
-                }
-            }, upvoteCallback: {[weak self] in
-                if let strongSelf = self {
-                    strongSelf.upvote()
-                }
+            let controller = AnyModalViewController(cellView: self, full ? nil : { [weak self] in
+                self?.doOpenComment()
+            }, upvoteCallback: { [weak self] in
+                self?.upvote()
             }, isUpvoted: upvoted, failure: nil)
             updater?.isPaused = true
             let postContentTransitioningDelegate = PostContentPresentationManager()
@@ -3132,7 +3093,7 @@ class PostActionsManager {
     var submission: RSubmission
 
     private lazy var networkActionsArePossible: Bool = {
-        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+        return AccountController.isLoggedIn && NetworkMonitor.shared.online
     }()
 
     var isSaveEnabled: Bool {

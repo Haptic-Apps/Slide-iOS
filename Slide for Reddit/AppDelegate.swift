@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/22/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import AVKit
 import BiometricAuthentication
@@ -134,6 +133,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var launchedURL: URL?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Starts Monitoring of Network Connection
+        NetworkMonitor.shared.startNetworkMonitoring()
         if #available(iOS 13.0, *) { return true } else {
             let window = UIWindow(frame: UIScreen.main.bounds)
             self.window = window
@@ -259,7 +260,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             print("file myData.plist already exits at path.")
         }
-
         session = Session()
         History.seenTimes = NSMutableDictionary.init(contentsOfFile: seenFile!)!
         History.commentCounts = NSMutableDictionary.init(contentsOfFile: commentsFile!)!
@@ -1017,6 +1017,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     func didEnterBackground() {
         totalBackground = true
+        NetworkMonitor.shared.stopNetworkMonitoring()
         History.seenTimes.write(toFile: seenFile!, atomically: true)
         History.commentCounts.write(toFile: commentsFile!, atomically: true)
         ReadLater.readLaterIDs.write(toFile: readLaterFile!, atomically: true)

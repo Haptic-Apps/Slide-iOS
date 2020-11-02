@@ -47,7 +47,7 @@ class AutoplayScrollViewHandler {
         delegate.lastYUsed = currentY
         delegate.lastY = currentY
 
-        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && NetworkMonitor.shared.online) {
             let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
             
             let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
@@ -101,7 +101,7 @@ class AutoplayScrollViewHandler {
             return
         }
 
-        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && LinkCellView.cachedCheckWifi) {
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && NetworkMonitor.shared.online) {
             let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
                     
             let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in

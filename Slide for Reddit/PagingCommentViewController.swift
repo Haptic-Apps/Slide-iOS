@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 7/23/17.
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
-
 import Foundation
 import reddift
 
@@ -18,7 +17,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         return SettingValues.fullyHideNavbar
     }
     
-    var offline = false
     var reloadCallback: (() -> Void)?
 
     public init(submissionDataSource: SubmissionsDataSource, currentIndex: Int, reloadCallback: @escaping () -> Void) {
@@ -41,7 +39,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                                    direction: .forward,
                                    animated: true,
                                    completion: nil)
-            vc.refresh(vc)
+            vc.refreshComments(vc)
         }
     }
     
@@ -91,8 +89,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
             firstViewController = PagingCommentViewController.savedComment!
         } else {
-            let comment = CommentViewController.init(submission: sub, single: false)
-            comment.offline = offline
+            let comment = CommentViewController.init(submission: sub)
             firstViewController = comment
         }
         first = false
@@ -136,7 +133,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         if !(self.viewControllers!.first! is ClearVC) {
             PagingCommentViewController.savedComment = self.viewControllers!.first as? CommentViewController
             if !PagingCommentViewController.savedComment!.loaded {
-                PagingCommentViewController.savedComment!.refresh(pageViewController)
+                PagingCommentViewController.savedComment!.refreshComments(pageViewController)
             }
 
         }
@@ -186,7 +183,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             previousIndex -= 1
         }
 
-        let comment = CommentViewController(submission: submissionDataSource.content[ startIndex + previousIndex], single: false)
+        let comment = CommentViewController(submission: submissionDataSource.content[ startIndex + previousIndex])
         return comment
     }
     
@@ -207,7 +204,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
 
         if !(viewController as! CommentViewController).loaded {
-            (viewController as! CommentViewController).refresh(viewController)
+            (viewController as! CommentViewController).refreshComments(viewController)
         }
         
         var nextIndex = viewControllerIndex + 1
@@ -225,13 +222,13 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             nextIndex += 1
         }
 
-        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex], single: false)
+        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex])
         if nextIndex == 0 {
             comment.setupSwipeGesture()
         }
         return comment
     }
-    
+
 }
 
 class ClearVC: UIViewController {

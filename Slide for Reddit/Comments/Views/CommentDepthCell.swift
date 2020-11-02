@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/31/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import AudioToolbox
 import RealmSwift
@@ -723,16 +722,16 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if comment == nil {
             return
         }
-        
-        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (parent?.offline ?? false) {
+
+        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (!NetworkMonitor.shared.online) {
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
             replyButton.isHidden = true
         }
-        if !comment!.canMod || (parent?.offline ?? false) {
+        if !comment!.canMod || (!NetworkMonitor.shared.online) {
             modButton.isHidden = true
         }
-        if comment!.author != AccountController.currentName || (parent?.offline ?? false) {
+        if comment!.author != AccountController.currentName || (!NetworkMonitor.shared.online) {
             editButton.isHidden = true
             deleteButton.isHidden = true
         }
@@ -1058,7 +1057,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func doMenu() {
-        more(parent!)
+        commentInfoMenu(parent!)
     }
 
     @objc func menu(_ s: AnyObject) {
@@ -1245,7 +1244,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    func more(_ par: CommentViewController) {
+    func commentInfoMenu(_ par: CommentViewController) {
         if comment == nil {
             return
         }
@@ -1642,7 +1641,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.depth = depth
         self.oldDepth = depth
         if depth - 1 > 0 {
-            sideWidth = SettingValues.wideIndicators ? 8 : 4 
+            sideWidth = SettingValues.wideIndicators ? 8 : 4
             marginTop = 1
             let i22 = depth - 2
             if i22 % 5 == 0 {
@@ -1664,7 +1663,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             sideWidth = 0
         }
         
-        if commentBody.ignoreHeight {            
+        if commentBody.ignoreHeight {
             commentBody.estimatedWidth = width - CGFloat(12) - CGFloat(sideWidth) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth - 1)) - CGFloat(SettingValues.wideIndicators ? 4 : 0)
             title.preferredMaxLayoutWidth = commentBody.estimatedWidth
         }
@@ -1936,7 +1935,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if let url = attr.result.url {
                 return (url, title.bounds)
             }
-
         }
         return nil
         */
@@ -2079,7 +2077,6 @@ class UIShortTapGestureRecognizer: UITapGestureRecognizer {
         
     }
 }
-
 extension CommentDepthCell: ForceTouchGestureDelegate {
     func touchStarted() {
         parentPresentedTextView = TextDisplayStackView(fontSize: 12, submission: false, color: ColorUtil.theme.fontColor, delegate: self, width: UIScreen.main.bounds.size.width * 0.8)
@@ -2222,7 +2219,7 @@ class CommentActionsManager {
     var comment: RComment
 
     private lazy var networkActionsArePossible: Bool = {
-        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+        return AccountController.isLoggedIn && NetworkMonitor.shared.online
     }()
 
     var isOwnComment: Bool {
@@ -2287,23 +2284,23 @@ extension Array {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
 
 @available(iOS 13.0, *)
@@ -2325,7 +2322,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                             self.parent!.menuId = comment!.getIdentifier()
                             self.parent!.tableView.reloadData()
                             if !SettingValues.pinToolbar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
-                                self.parent!.hideUI(inHeader: true)
+                                self.parent!.hideNavigationBars(inHeader: true)
                             }
 
                             self.parent!.goToCell(i: index)

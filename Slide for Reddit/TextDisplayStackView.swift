@@ -326,6 +326,7 @@ public class TextDisplayStackView: UIStackView {
                     }
                     firstTextView.horizontalAnchors /==/ horizontalAnchors
                 }
+                firstTextView.horizontalAnchors == horizontalAnchors
             }
 
         }

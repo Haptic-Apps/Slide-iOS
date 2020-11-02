@@ -158,29 +158,7 @@ public class VCPresenter {
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
-            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
-            newParent.navigationBar.shadowImage = UIImage()
-            newParent.navigationBar.isTranslucent = false
-            newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
-
-            newParent.navigationBar.shadowImage = UIImage()
-            newParent.navigationBar.isTranslucent = false
-
-            let button = UIButtonWithContext.init(type: .custom)
-            button.parentController = newParent
-            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon(), for: UIControl.State.normal)
-            button.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
-            button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
-
-            let barButton = UIBarButtonItem.init(customView: button)
-            barButton.customView?.frame = CGRect.init(x: 0, y: 0, width: 40, height: 40)
-            newParent.modalPresentationStyle = .pageSheet
-
-            viewController.navigationItem.rightBarButtonItems = [barButton]
-
-            parentViewController.present(newParent, animated: true, completion: nil)
+            presentModally(viewController: viewController, parentViewController, nil)
             return true
         }
         return false
@@ -253,25 +231,8 @@ public class VCPresenter {
                 activity.becomeCurrent()
             }
         }
-        if let presented = recursivePresented(parentVC) {
-            showVC(viewController: vc, popupIfPossible: true, parentNavigationController: presented.navigationController, parentViewController: presented)
-        } else {
-            showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
-        }
-    }
-    
-    static func recursivePresented(_ viewController: UIViewController?) -> UIViewController? {
-        var currentParent = viewController
-        
-        while currentParent != nil {
-            if currentParent?.presentedViewController != nil {
-                currentParent = currentParent?.presentedViewController
-            } else {
-                return currentParent
-            }
-        }
-        
-        return currentParent
+        showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentNav, parentViewController: parentVC)
+
     }
 }
 

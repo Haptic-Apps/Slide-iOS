@@ -10,39 +10,32 @@ import Anchorage
 import reddift
 import UIKit
 
-private struct AlternateIcon {
-    let id: String
-    let title: String
-    var contributor: String?
-}
-
 class SettingsIcon: BubbleSettingTableViewController {
-    private let iconSections: [(id: String, title: String, iconRows: [AlternateIcon])] = [
+    let iconSections: [(id: String, title: String, iconRows: [(id: String, title: String)])] = [
         ("premium", "Premium icons", [
-            AlternateIcon(id: "retroapple", title: "Retro"),
-            AlternateIcon(id: "tronteal", title: "Tron"),
-            AlternateIcon(id: "pink", title: "Pink"),
-            AlternateIcon(id: "black", title: "Black"),
+            ("retroapple", "Retro"),
+            ("tronteal", "Tron"),
+            ("pink", "Pink"),
+            ("black", "Black"),
         ]),
         ("community", "Community icons", [
-            AlternateIcon(id: "cottoncandy", title: "Cotton Candy"),
-            AlternateIcon(id: "outrun", title: "Outrun"),
-            AlternateIcon(id: "blackwhite", title: "Black and White", contributor: "Baselt95"),
-            AlternateIcon(id: "pride", title: "Trans Pride", contributor: "Username-blank"),
-            AlternateIcon(id: "space", title: "Space", contributor: "hilabius"),
-            AlternateIcon(id: "stars", title: "Starry night", contributor: "TyShark"),
-            AlternateIcon(id: "ghost", title: "Ghost"),
-            AlternateIcon(id: "mint", title: "Mint", contributor: "Baselt95"),
-            AlternateIcon(id: "garbage", title: "Garbage", contributor: "SandwichEconomist"),
+            ("cottoncandy", "Cotton Candy"),
+            ("outrun", "Outrun"),
+            ("blackwhite", "Black and White u/Baselt95"),
+            ("pride", "Trans Pride u/Username-blank"),
+            ("space", "Space u/hilabius"),
+            ("stars", "Starry night u/TyShark"),
+            ("ghost", "Ghost"),
+            ("mint", "Mint u/Baselt95"),
         ]),
         ("basic", "Basic icons", [
-            AlternateIcon(id: "default", title: "Standard"),
-            AlternateIcon(id: "red", title: "Red"),
-            AlternateIcon(id: "yellow", title: "Yellow"),
-            AlternateIcon(id: "green", title: "Green"),
-            AlternateIcon(id: "lightblue", title: "Light Blue"),
-            AlternateIcon(id: "blue", title: "Blue"),
-            AlternateIcon(id: "purple", title: "Purple"),
+            ("red", "Red"),
+            ("default", "Standard"),
+            ("yellow", "Yellow"),
+            ("green", "Green"),
+            ("lightblue", "Light Blue"),
+            ("blue", "Blue"),
+            ("purple", "Purple"),
         ]),
     ]
     
@@ -65,12 +58,10 @@ class SettingsIcon: BubbleSettingTableViewController {
         super.loadView()
         
         headers = iconSections.map({ $0.title })
-        view.backgroundColor = ColorUtil.theme.backgroundColor
-        title = "App icon"
+        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.title = "App icon"
 
-        tableView.tableFooterView = UIView()
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 200
+        self.tableView.tableFooterView = UIView()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -85,8 +76,12 @@ class SettingsIcon: BubbleSettingTableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "icon") as! IconCell
         let iconSection = iconSections[indexPath.section]
         let iconRow = iconSection.iconRows[indexPath.row]
-
-        cell.configure(with: iconRow)
+        
+        cell.title.text = iconRow.title
+        cell.iconView.image = iconRow.id == "default"
+            ? UIImage(named: "AppIcon")
+            : UIImage(named: "ic_" + iconRow.id)
+        
         return cell
     }
     
@@ -117,21 +112,11 @@ class SettingsIcon: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return iconSections[section].iconRows.count + (section == 1 ? 1 : 0)
     }
-
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
-    }
 }
 
-private class IconCell: InsetCell {
-    private var titleLabel = UILabel()
-    private var contributorLabel = UILabel()
-    private var iconView = UIImageView()
-
-    private var textStack = UIStackView().then {
-        $0.axis = .vertical
-    }
-    
+public class IconCell: InsetCell {
+    var title = UILabel()
+    var iconView = UIImageView()
     override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -184,5 +169,6 @@ private class IconCell: InsetCell {
         iconView.image = icon.id == "default"
             ? UIImage(named: "AppIcon")
             : UIImage(named: "ic_" + icon.id)
+
     }
 }
