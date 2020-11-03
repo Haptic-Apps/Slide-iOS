@@ -40,15 +40,18 @@ class TrendingViewController: UITableViewController {
                     if let searches = json["trending_searches"].array {
                         for searchLinkJSON in searches {
                             var searchItem = TrendingItem()
-                            let linkData = searchLinkJSON["results"]["data"]["children"].array?[0]["data"]
-                            
-                            searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
-                            searchItem.title = linkData?["title"].stringValue ?? ""
-                            searchItem.subreddit = linkData?["subreddit"].stringValue ?? ""
-                            searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
-                            searchItem.searchTerm = searchLinkJSON["query_string"].stringValue ?? ""
-                            searchItem.searchTitle = searchLinkJSON["display_string"].stringValue ?? ""
-                            self.trendingSearches.append(searchItem)
+                            var results = searchLinkJSON["results"]["data"]["children"].array
+                            if results != nil && results?.count ?? 0 > 0 {
+                                let linkData = results?[0]["data"]
+                                
+                                searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
+                                searchItem.title = linkData?["title"].stringValue ?? ""
+                                searchItem.subreddit = linkData?["subreddit"].stringValue ?? ""
+                                searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
+                                searchItem.searchTerm = searchLinkJSON["query_string"].stringValue ?? ""
+                                searchItem.searchTitle = searchLinkJSON["display_string"].stringValue ?? ""
+                                self.trendingSearches.append(searchItem)
+                            }
                         }
                         DispatchQueue.main.async {
                             self.tableView.reloadData()

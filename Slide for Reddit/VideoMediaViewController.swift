@@ -642,48 +642,84 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func downloadRedditAudio(_ videoLocation: String) {
         let key = getKeyFromURL()
-        var toLoadAudio = self.data.baseURL!.absoluteString
-        toLoadAudio = toLoadAudio.substring(0, length: toLoadAudio.lastIndexOf("/") ?? toLoadAudio.length)
-        toLoadAudio += "/DASH_audio.mp4"
+        var toLoadAudioBase = self.data.baseURL!.absoluteString
+        toLoadAudioBase = toLoadAudioBase.substring(0, length: toLoadAudioBase.lastIndexOf("/") ?? toLoadAudioBase.length)
+        
+        let toLoadAudio = "\(toLoadAudioBase)/DASH_audio.mp4"
         let finalUrl = URL.init(fileURLWithPath: key)
         let localUrlV = URL.init(fileURLWithPath: videoLocation)
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
-        self.request = Alamofire.download(toLoadAudio, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+        Alamofire.request(toLoadAudio).responseString { (response) in
+            if response.response?.statusCode == 200 { //Audio exists, let's get it
+                self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
+                    if (response.error as NSError?)?.code == NSURLErrorCancelled { //Cancelled, exit
+                        return
+                    }
+                    if response.response!.statusCode != 200 { //Shouldn't be here
+                        self.doCopyAndPlay(localUrlV, to: finalUrl)
+                    } else { //no errors, merge audio and video
+                        self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
+                            DispatchQueue.main.async {
+                                self.playVideo()
+                            }
+                        }
+                    }
+
+                }
+            } else if response.response?.statusCode ?? 0 > 400 { //Might exist elsewhere
+                Alamofire.request("\(toLoadAudioBase)/audio").responseString { (response) in
+                    if response.response?.statusCode == 200 { //Audio exists, let's get it
+                        self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
+                            if (response.error as NSError?)?.code == NSURLErrorCancelled { //Cancelled, exit
+                                return
+                            }
+                            if response.response!.statusCode != 200 { //Shouldn't be here
+                                self.doCopyAndPlay(localUrlV, to: finalUrl)
+                            } else { //no errors, merge audio and video
+                                self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
+                                    DispatchQueue.main.async {
+                                        self.playVideo()
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        self.doCopyAndPlay(localUrlV, to: finalUrl)
+                    }
+                }
+            } else {
+                self.doCopyAndPlay(localUrlV, to: finalUrl)
+            }
+        }
+    }
+    
+    func doCopyAndPlay(_ localUrlV: URL, to finalUrl: URL) {
+        do {
+            try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
+            DispatchQueue.main.async {
+                self.playVideo()
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.playVideo()
+            }
+        }
+    }
+    
+    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (DownloadResponse<Data>) -> Void) {
+        self.request = Alamofire.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {
                 self.updateProgress(CGFloat(progress.fractionCompleted), "")
             }
-            }
-        .responseData { response2 in
-                if (response2.error as NSError?)?.code == NSURLErrorCancelled {
-                    return
-                }
-                if response2.response!.statusCode != 200 {
-                    do {
-                        try FileManager.init().copyItem(at: localUrlV, to: finalUrl)
-                        DispatchQueue.main.async {
-                            self.playVideo()
-                        }
-                    } catch {
-                        DispatchQueue.main.async {
-                            self.playVideo()
-                        }
-                    }
-                } else { //no errors
-                    print("Loading from " + localUrlV.absoluteString)
-                    print("Audio is " + localUrlAudio.absoluteString)
-
-                    self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
-                        DispatchQueue.main.async {
-                            self.playVideo()
-                        }
-                    }
-                }
+        }
+        .responseData { response in
+            callback(response)
         }
     }
-
+    
     func playVideo(_ url: String = "") {
         //Prevent video from stopping system background audio
         DispatchQueue.global(qos: .background).async {
@@ -987,7 +1023,17 @@ extension VideoMediaViewController {
     
     func getKeyFromURL() -> String {
         let disallowedChars = CharacterSet.urlPathAllowed.inverted
-        var key = self.data.baseURL!.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
+        var key = ""
+        
+        if let strongURL = self.data.baseURL, var components = URLComponents(string: strongURL.absoluteString) {
+            components.query = nil
+            key = components.url?.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") ?? strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") //Get rid of params, and all non-filename characters
+        } else if let strongURL = self.data.baseURL {
+            key = strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
+        } else {
+            key = "temporaryvideo.mp4"
+        }
+
         key = key.replacingOccurrences(of: ":", with: "")
         key = key.replacingOccurrences(of: "/", with: "")
         key = key.replacingOccurrences(of: ".gifv", with: ".mp4")

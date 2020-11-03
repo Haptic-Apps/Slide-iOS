@@ -43,8 +43,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
     }
     
-    var firstPage = true
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -103,7 +101,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                            direction: .forward,
                            animated: false,
                            completion: {(_) in
-                            firstViewController.setupSwipeGesture()
                            })
     }
     
@@ -144,9 +141,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             if submissionDataSource.content[item].getId() == id {
                 break
             }
-        }
-        if currentIndex == 0 {
-            (self.viewControllers?.first as? CommentViewController)?.setupSwipeGesture()
         }
         
         if currentIndex + startIndex == submissionDataSource.content.count - 2 {
@@ -222,10 +216,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             nextIndex += 1
         }
 
-        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex])
-        if nextIndex == 0 {
-            comment.setupSwipeGesture()
-        }
+        let comment = CommentViewController(submission: submissionDataSource.content[startIndex + nextIndex], single: false)
         return comment
     }
 

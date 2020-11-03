@@ -142,6 +142,7 @@ class SettingValues {
     public static let pref_disableMulticolumnCollections = "DISABLE_MULTICOLUMN_COLLECTIONS"
     public static let pref_disableSubredditPopupIpad = "DISABLE_SUB_POPUP_IPAD"
     public static let pref_portraitMultiColumnCount = "MULTICOLUMN_COUNT_PORTRAIT"
+    public static let pref_gfycatAPI = "USE_GFYCAT_API"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -280,6 +281,7 @@ class SettingValues {
     public static var disablePopupIpad = false
     public static var disableMulticolumnCollections = false
     public static var disableSubredditPopupIpad = false
+    public static var gfycatAPI = true
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -568,6 +570,7 @@ class SettingValues {
         SettingValues.disable13Popup = false //REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
+        SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
         SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)
@@ -670,9 +673,14 @@ class SettingValues {
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
     }
 
-    public static func doneVersion() -> Bool {
+    public static func done6() -> Bool {
         let settings = UserDefaults.standard
         return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil || settings.object(forKey: Bundle.main.releaseVersionNumber ?? "0") != nil
+    }
+    
+    public static func doneVersion() -> Bool {
+        let settings = UserDefaults.standard
+        return settings.object(forKey: Bundle.main.releaseVersionNumber ?? "") != nil
     }
 
     public static func firstEnter() -> Bool {

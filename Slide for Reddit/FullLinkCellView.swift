@@ -31,18 +31,18 @@ final class FullLinkCellView: LinkCellView {
         constraintsForType = batch {
             textView.bottomAnchor /==/ infoBox.topAnchor - (ctwelve / 2)
             infoBox.bottomAnchor />=/ box.topAnchor - (ctwelve / 2)
-            infoBox.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
+            infoBox.horizontalAnchors /==/ contentView.horizontalAnchors + ctwelve
             textView.topAnchor /==/ title.bottomAnchor + ceight
-            textView.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
-            title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
-            title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
+            textView.horizontalAnchors /==/ contentView.horizontalAnchors + ctwelve
+            title.topAnchor /==/ contentView.topAnchor + (ctwelve - 5)
+            title.horizontalAnchors /==/ contentView.horizontalAnchors + ctwelve
 
             if big {
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
                 title.bottomAnchor /<=/ bannerImage.topAnchor - ceight
                 
-                bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
+                bannerImage.horizontalAnchors /==/ contentView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve
                 if thumb {
                     infoContainer.isHidden = false
@@ -68,7 +68,7 @@ final class FullLinkCellView: LinkCellView {
                 
                 // Thumbnail sizing
                 thumbImageContainer.topAnchor /==/ title.bottomAnchor + ctwelve
-                thumbImageContainer.leftAnchor /==/ innerView.leftAnchor + ctwelve
+                thumbImageContainer.leftAnchor /==/ contentView.leftAnchor + ctwelve
                 infoContainer.heightAnchor /==/ CGFloat(75)
                 infoContainer.isHidden = false
 
@@ -78,7 +78,7 @@ final class FullLinkCellView: LinkCellView {
                 
                 infoContainer.leftAnchor /==/ thumbImageContainer.rightAnchor + bannerPadding
                 infoContainer.verticalAnchors /==/ thumbImageContainer.verticalAnchors
-                infoContainer.rightAnchor /==/ innerView.rightAnchor - bannerPadding
+                infoContainer.rightAnchor /==/ contentView.rightAnchor - bannerPadding
             }
         }
         layoutForContent()
