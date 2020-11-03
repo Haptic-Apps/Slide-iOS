@@ -6,8 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
-		<string>iCloud.$(USR_DOMAIN).redditslide</string>
-		<string>iCloud.$(USR_DOMAIN).redditslide-debug</string>
+		<string>iCloud..redditslide-debug</string>
+		<string>iCloud.JosiahAgosto.me.redditslide</string>
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>

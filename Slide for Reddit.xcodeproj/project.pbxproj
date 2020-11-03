@@ -79,6 +79,22 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
+		BDFC34BC2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AB2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift */; };
+		BDFC34BD2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AC2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift */; };
+		BDFC34BE2551209A001EE42A /* CommentViewController+ReplyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AD2551209A001EE42A /* CommentViewController+ReplyDelegate.swift */; };
+		BDFC34BF2551209A001EE42A /* CommentViewController+UIScrollViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AE2551209A001EE42A /* CommentViewController+UIScrollViewDelegate.swift */; };
+		BDFC34C02551209A001EE42A /* CommentViewController+Thing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AF2551209A001EE42A /* CommentViewController+Thing.swift */; };
+		BDFC34C12551209A001EE42A /* CommentViewController+UIGestureRecognizerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B02551209A001EE42A /* CommentViewController+UIGestureRecognizerDelegate.swift */; };
+		BDFC34C22551209A001EE42A /* CommentViewController+UISearchBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B12551209A001EE42A /* CommentViewController+UISearchBarDelegate.swift */; };
+		BDFC34C32551209A001EE42A /* CommentViewController+TTTAttributedCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B22551209A001EE42A /* CommentViewController+TTTAttributedCellDelegate.swift */; };
+		BDFC34C42551209A001EE42A /* CommentViewController+UITableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B32551209A001EE42A /* CommentViewController+UITableViewDelegate.swift */; };
+		BDFC34C52551209A001EE42A /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B42551209A001EE42A /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift */; };
+		BDFC34C62551209A001EE42A /* CommentViewController+TapBehindModalViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B52551209A001EE42A /* CommentViewController+TapBehindModalViewControllerDelegate.swift */; };
+		BDFC34C72551209A001EE42A /* CommentViewController+UITableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B62551209A001EE42A /* CommentViewController+UITableViewDataSource.swift */; };
+		BDFC34C82551209A001EE42A /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B72551209A001EE42A /* CommentViewController.swift */; };
+		BDFC34C92551209A001EE42A /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B92551209A001EE42A /* CommentCellView.swift */; };
+		BDFC34CB2551209A001EE42A /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34BB2551209A001EE42A /* CommentDepthCell.swift */; };
+		BDFC359E2551F27E001EE42A /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC359D2551F27E001EE42A /* ParentCommentViewController.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
 		BE0334AF25294B8400B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
@@ -229,8 +245,6 @@
 		BE3E5C151E16BA2200749C0C /* AlbumJSONBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C121E16BA2200749C0C /* AlbumJSONBase.swift */; };
 		BE3E5C171E16BC1A00749C0C /* String+util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C161E16BC1A00749C0C /* String+util.swift */; };
 		BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C181E16BC3900749C0C /* StringHTML+util.swift */; };
-		BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */; };
-		BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3E5C201E18227500749C0C /* CommentDepthCell.swift */; };
 		BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42B6F220CE01BD00607A54 /* IAPHandler.swift */; };
 		BE47AF71225C574700A61FB0 /* ManageMultireddit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */; };
 		BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE51BE6420C7386A00DFFD8B /* StoreKit.framework */; };
@@ -253,7 +267,6 @@
 		BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439E81E201AEE008BB63B /* Subscriptions.swift */; };
 		BE7439EB1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EA1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift */; };
 		BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439EC1E201C22008BB63B /* SubredditCellView.swift */; };
-		BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F21E20C9BD008BB63B /* CommentCellView.swift */; };
 		BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F41E2162A8008BB63B /* AccountController.swift */; };
 		BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7439F81E21A59C008BB63B /* ActionStates.swift */; };
 		BE762C9522A2FF7200B29757 /* DraftFindReturnViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */; };
@@ -545,6 +558,22 @@
 		B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
+		BDFC34AB2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIViewControllerPreviewingDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34AC2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UINavigationControllerDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34AD2551209A001EE42A /* CommentViewController+ReplyDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+ReplyDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34AE2551209A001EE42A /* CommentViewController+UIScrollViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIScrollViewDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34AF2551209A001EE42A /* CommentViewController+Thing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+Thing.swift"; sourceTree = "<group>"; };
+		BDFC34B02551209A001EE42A /* CommentViewController+UIGestureRecognizerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIGestureRecognizerDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34B12551209A001EE42A /* CommentViewController+UISearchBarDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UISearchBarDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34B22551209A001EE42A /* CommentViewController+TTTAttributedCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+TTTAttributedCellDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34B32551209A001EE42A /* CommentViewController+UITableViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34B42551209A001EE42A /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34B52551209A001EE42A /* CommentViewController+TapBehindModalViewControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+TapBehindModalViewControllerDelegate.swift"; sourceTree = "<group>"; };
+		BDFC34B62551209A001EE42A /* CommentViewController+UITableViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UITableViewDataSource.swift"; sourceTree = "<group>"; };
+		BDFC34B72551209A001EE42A /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
+		BDFC34B92551209A001EE42A /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
+		BDFC34BB2551209A001EE42A /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
+		BDFC359D2551F27E001EE42A /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
 		BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetConfigIntent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -699,8 +728,6 @@
 		BE3E5C121E16BA2200749C0C /* AlbumJSONBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumJSONBase.swift; sourceTree = "<group>"; };
 		BE3E5C161E16BC1A00749C0C /* String+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+util.swift"; sourceTree = "<group>"; };
 		BE3E5C181E16BC3900749C0C /* StringHTML+util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "StringHTML+util.swift"; sourceTree = "<group>"; };
-		BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentViewController.swift; sourceTree = "<group>"; };
-		BE3E5C201E18227500749C0C /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
 		BE42B6F220CE01BD00607A54 /* IAPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHandler.swift; sourceTree = "<group>"; };
 		BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageMultireddit.swift; sourceTree = "<group>"; };
 		BE51BE6420C7386A00DFFD8B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -724,7 +751,6 @@
 		BE7439E81E201AEE008BB63B /* Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
 		BE7439EA1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditToolbarSearchViewController.swift; sourceTree = "<group>"; };
 		BE7439EC1E201C22008BB63B /* SubredditCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditCellView.swift; sourceTree = "<group>"; };
-		BE7439F21E20C9BD008BB63B /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
 		BE7439F41E2162A8008BB63B /* AccountController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountController.swift; sourceTree = "<group>"; };
 		BE7439F81E21A59C008BB63B /* ActionStates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionStates.swift; sourceTree = "<group>"; };
 		BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftFindReturnViewController.swift; sourceTree = "<group>"; };
@@ -1067,6 +1093,44 @@
 			path = Widgets;
 			sourceTree = "<group>";
 		};
+		BDFC34A92551209A001EE42A /* Comments */ = {
+			isa = PBXGroup;
+			children = (
+				BDFC34B72551209A001EE42A /* CommentViewController.swift */,
+				BDFC34AA2551209A001EE42A /* Extensions */,
+				BDFC34B82551209A001EE42A /* Views */,
+			);
+			path = Comments;
+			sourceTree = "<group>";
+		};
+		BDFC34AA2551209A001EE42A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BDFC34AB2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift */,
+				BDFC34AC2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift */,
+				BDFC34AD2551209A001EE42A /* CommentViewController+ReplyDelegate.swift */,
+				BDFC34AE2551209A001EE42A /* CommentViewController+UIScrollViewDelegate.swift */,
+				BDFC34AF2551209A001EE42A /* CommentViewController+Thing.swift */,
+				BDFC34B02551209A001EE42A /* CommentViewController+UIGestureRecognizerDelegate.swift */,
+				BDFC34B12551209A001EE42A /* CommentViewController+UISearchBarDelegate.swift */,
+				BDFC34B22551209A001EE42A /* CommentViewController+TTTAttributedCellDelegate.swift */,
+				BDFC34B32551209A001EE42A /* CommentViewController+UITableViewDelegate.swift */,
+				BDFC34B42551209A001EE42A /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift */,
+				BDFC34B52551209A001EE42A /* CommentViewController+TapBehindModalViewControllerDelegate.swift */,
+				BDFC34B62551209A001EE42A /* CommentViewController+UITableViewDataSource.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		BDFC34B82551209A001EE42A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BDFC34B92551209A001EE42A /* CommentCellView.swift */,
+				BDFC34BB2551209A001EE42A /* CommentDepthCell.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		BE0334AD25294B8400B8C6B6 /* WidgetConfigIntent */ = {
 			isa = PBXGroup;
 			children = (
@@ -1377,8 +1441,6 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
-				BE9BFF0F25182D6900C9F7EC /* Onboarding */,
-				B4EE03E62513C0C50080E315 /* Slide for Reddit-Bridging-Header.h */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
@@ -1397,10 +1459,8 @@
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
-				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
-				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
+				BDFC34A92551209A001EE42A /* Comments */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
-				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
 				BE780B671E35276600DAA1EB /* ContentUtilities */,
@@ -1413,6 +1473,7 @@
 				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
 				0965260320E1688400EA53BE /* Extensions */,
 				BE3521641E3D22B000C30B8D /* Fonts */,
+				09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */,
 				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
 				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
 				BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */,
@@ -1447,7 +1508,10 @@
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
 				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
 				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
+				BE9BFF0F25182D6900C9F7EC /* Onboarding */,
 				BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */,
+				BE1D574624E4A7CB00F3B712 /* PagingTitleCollectionView.swift */,
+				BDFC359D2551F27E001EE42A /* ParentCommentViewController.swift */,
 				BE5466261FB93F46007ADD22 /* PlaceholderViewController.swift */,
 				0984BE552114D1CD0091C2E1 /* Presentation */,
 				BE6EA6E51E1DA5CE00E9E709 /* ProfileContributionLoader.swift */,
@@ -1470,15 +1534,17 @@
 				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
 				BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */,
 				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
+				B4EE03E62513C0C50080E315 /* Slide for Reddit-Bridging-Header.h */,
 				BEE9385320CF31C80021BE80 /* Slide for Reddit.entitlements */,
 				BE25CADD24C4E3FB00736CA5 /* SplitMainViewController.swift */,
 				BE3E5C161E16BC1A00749C0C /* String+util.swift */,
-				09BBDBF521F977F900FC8BF9 /* FontSelectionTableViewController.swift */,
 				BE3E5C181E16BC3900749C0C /* StringHTML+util.swift */,
 				BE93DED024CE550800464B64 /* subcolors.plist */,
+				BED396A824F2C5FF003922D5 /* SubmissionsDataSource.swift */,
 				BE7439EC1E201C22008BB63B /* SubredditCellView.swift */,
 				BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */,
 				BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */,
+				BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */,
 				BE7439EA1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift */,
 				BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */,
 				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
@@ -1486,13 +1552,10 @@
 				BE7360A01FB9089B00CA32AD /* TapBehindModalViewController.swift */,
 				B776BA78CCE4C75BD7FC5DA3 /* ToolbarTextView.swift */,
 				BE15FE742163D03900288D86 /* TopLockViewController.swift */,
+				BE836477254A3A8B00677F8A /* TrendingViewController.swift */,
 				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
-				BE1D574624E4A7CB00F3B712 /* PagingTitleCollectionView.swift */,
-				BED396A824F2C5FF003922D5 /* SubmissionsDataSource.swift */,
 				BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */,
-				BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */,
-				BE836477254A3A8B00677F8A /* TrendingViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -1788,7 +1851,6 @@
 					};
 					BE8FCA031E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -1808,21 +1870,18 @@
 					};
 					BE8FCA171E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE8FCA221E0C46090063B8EF = {
 						CreatedOnToolsVersion = 8.2;
-						DevelopmentTeam = FTT89576VQ;
 						LastSwiftMigration = 1100;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
 					BE99C9F32378AC91007911E2 = {
 						CreatedOnToolsVersion = 11.2.1;
-						DevelopmentTeam = 68GVUVA6AU;
 						ProvisioningStyle = Automatic;
 						TestTargetID = BE8FCA031E0C46090063B8EF;
 					};
@@ -2044,7 +2103,7 @@
 		};
 		0991C18B2108CDC600B6BA16 /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -2052,7 +2111,7 @@
 			name = "Run SwiftLint";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "${PODS_ROOT}/SwiftLint/swiftlint\n";
 		};
@@ -2254,12 +2313,15 @@
 				BEBE0C71222330010044FF55 /* SettingsPostMenu.swift in Sources */,
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
+				BDFC34C22551209A001EE42A /* CommentViewController+UISearchBarDelegate.swift in Sources */,
 				BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */,
 				BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */,
 				BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */,
 				BE3E5C0C1E160D7000749C0C /* ColorUtil.swift in Sources */,
+				BDFC34C32551209A001EE42A /* CommentViewController+TTTAttributedCellDelegate.swift in Sources */,
 				BEEA03CD20E1B53E007A8928 /* HapticUtility.swift in Sources */,
 				BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */,
+				BDFC34C12551209A001EE42A /* CommentViewController+UIGestureRecognizerDelegate.swift in Sources */,
 				BE9456001F32DD310097EEF0 /* AlbumViewController.swift in Sources */,
 				BEB81A5E214315D1007E326B /* AutoplayBannerLinkCellView.swift in Sources */,
 				BE9BFDC824F7198200D74167 /* WrappingHeaderFlowLayout.swift in Sources */,
@@ -2275,16 +2337,20 @@
 				BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */,
 				BE3E5C131E16BA2200749C0C /* AlbumData.swift in Sources */,
 				09B51D052114E22C00BCB745 /* PostContentPresentationController.swift in Sources */,
+				BDFC34C72551209A001EE42A /* CommentViewController+UITableViewDataSource.swift in Sources */,
 				0984BE502114C4D50091C2E1 /* SlideInPresentationManager.swift in Sources */,
 				BE3B74372107A5F400658DE9 /* AsyncAlertImagePickerViewController.swift in Sources */,
+				BDFC34C62551209A001EE42A /* CommentViewController+TapBehindModalViewControllerDelegate.swift in Sources */,
 				BE9BFF1C25182D8700C9F7EC /* OnboardingViewController.swift in Sources */,
 				BE6EA6C41E1C1DCE00E9E709 /* GfycatJSONBase.swift in Sources */,
+				BDFC34CB2551209A001EE42A /* CommentDepthCell.swift in Sources */,
 				BE17EE172219FD7B0043185B /* SettingsDonate.swift in Sources */,
 				0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */,
 				BE6EA6E61E1DA5CE00E9E709 /* ProfileContributionLoader.swift in Sources */,
 				BE2B89F61E246CA60053D493 /* GMColor.swift in Sources */,
 				BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */,
 				0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */,
+				BDFC34C02551209A001EE42A /* CommentViewController+Thing.swift in Sources */,
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
 				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,
@@ -2307,8 +2373,8 @@
 				098B5A4D20EFC6E200FE201B /* UIViewController+Extensions.swift in Sources */,
 				BE292569213C5730006B5130 /* LocalKeystore.swift in Sources */,
 				BE2DEAAE1E2682A800FBF0B5 /* SettingsGeneral.swift in Sources */,
+				BDFC34C42551209A001EE42A /* CommentViewController+UITableViewDelegate.swift in Sources */,
 				BE6EA6CD1E1C1E9400E9E709 /* StremableMp4.swift in Sources */,
-				BE3E5C1D1E177B2C00749C0C /* CommentViewController.swift in Sources */,
 				BE1DA5C6220803BB001C7DB4 /* UIAlert+Extensions.swift in Sources */,
 				BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */,
 				BE7439EB1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift in Sources */,
@@ -2317,10 +2383,11 @@
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
 				BEBE0C6F222199DA0044FF55 /* IAPHandlerTip.swift in Sources */,
 				BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */,
+				BDFC34BE2551209A001EE42A /* CommentViewController+ReplyDelegate.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */,
-				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
 				BE7A2D3E22AD99600005F74F /* DragDownAlertMenu.swift in Sources */,
+				BDFC34BD2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
 				0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */,
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
@@ -2345,8 +2412,10 @@
 				BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */,
 				BED396A924F2C5FF003922D5 /* SubmissionsDataSource.swift in Sources */,
 				BEB7BADA23A05F2500E39593 /* InsetTransitioningDelegate.swift in Sources */,
+				BDFC359E2551F27E001EE42A /* ParentCommentViewController.swift in Sources */,
 				BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */,
 				BED76E651E3A9576008E7717 /* RealmDataWrappers.swift in Sources */,
+				BDFC34BC2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift in Sources */,
 				BE3E5C191E16BC3900749C0C /* StringHTML+util.swift in Sources */,
 				BE17A2522160127C002C6CE6 /* ReadLaterViewController.swift in Sources */,
 				BE7439E91E201AEE008BB63B /* Subscriptions.swift in Sources */,
@@ -2378,6 +2447,7 @@
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
 				BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */,
+				BDFC34C52551209A001EE42A /* CommentViewController+LinkCellViewDelegate+SubmissionMoreDelegate.swift in Sources */,
 				BEB2B2391E35D64F00BF761C /* MessageCellView.swift in Sources */,
 				BEB2B2371E35D48000BF761C /* InboxViewController.swift in Sources */,
 				BEE206F81F1CFC96008BB5F1 /* SettingsHistory.swift in Sources */,
@@ -2397,6 +2467,7 @@
 				BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */,
 				BE1DA3981E26ADEA00EC0A04 /* SearchContributionLoader.swift in Sources */,
 				BE6EA6DD1E1C211200E9E709 /* GfycatCheck.swift in Sources */,
+				BDFC34C92551209A001EE42A /* CommentCellView.swift in Sources */,
 				BE1D574724E4A7CB00F3B712 /* PagingTitleCollectionView.swift in Sources */,
 				BEE5BF6C1E12C92F00E3C9AE /* DateFormatter+util.swift in Sources */,
 				BE25CADE24C4E3FB00736CA5 /* SplitMainViewController.swift in Sources */,
@@ -2405,7 +2476,6 @@
 				BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */,
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,
-				BE7439F31E20C9BE008BB63B /* CommentCellView.swift in Sources */,
 				BE8630111E2EDFB2004F0E1F /* SettingsContentFilters.swift in Sources */,
 				BE15FE752163D03900288D86 /* TopLockViewController.swift in Sources */,
 				BE36886220E5709300987320 /* FullLinkCellView.swift in Sources */,
@@ -2414,7 +2484,9 @@
 				09F411D320F3F20200D23A42 /* EmbeddableMediaViewController.swift in Sources */,
 				BEB81A6021432C6C007E326B /* AnyModalViewController.swift in Sources */,
 				BEE10FC61F25078F00A72CE5 /* PagingCommentViewController.swift in Sources */,
+				BDFC34BF2551209A001EE42A /* CommentViewController+UIScrollViewDelegate.swift in Sources */,
 				0984BE532114CEA50091C2E1 /* SlideInPresentationController.swift in Sources */,
+				BDFC34C82551209A001EE42A /* CommentViewController.swift in Sources */,
 				BE7AF57A1F3655F50003B24B /* SwipeDownModalVC.swift in Sources */,
 				BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */,
 				BEAD1F75251424CB0096A216 /* SubredditThemeEditViewController.swift in Sources */,
@@ -2605,7 +2677,7 @@
 				MARKETING_VERSION = 6.0.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).WidgetConfigIntent";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.WidgetConfigIntent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2639,7 +2711,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgetconfigintent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgetconfigintent";
+				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide Wildcard 2020";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2667,14 +2739,14 @@
 				MARKETING_VERSION = 6.0.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2732,13 +2804,13 @@
 				MARKETING_VERSION = 6.0.8;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.watchkitapp.watchkitextension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide.watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2800,7 +2872,7 @@
 				MARKETING_VERSION = 6.0.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
+				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2833,7 +2905,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "ccrama.me.redditslide.bundledOpen-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledOpen-in-Slide";
+				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide Wildcard 2020";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2897,7 +2969,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
 				USR_DISPLAY_NAME = "Slide Debug";
 				USR_DOMAIN = ccrama.me;
 				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).Slide-debug.watchkitapp.watchkitextension";
@@ -2990,7 +3062,7 @@
 					"\"reddift\"",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
@@ -3031,7 +3103,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide";
+				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide 2020";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -3065,7 +3137,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 68GVUVA6AU;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3105,7 +3177,7 @@
 			baseConfigurationReference = 3A8827A415FF9E81FEE6ABA8 /* Pods-Slide for RedditUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				DEVELOPMENT_TEAM = 68GVUVA6AU;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				INFOPLIST_FILE = "Slide for RedditUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3128,7 +3200,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 68GVUVA6AU;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
@@ -3156,7 +3228,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 68GVUVA6AU;
+				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Screenshot Automation/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
@@ -3202,7 +3274,7 @@
 				MARKETING_VERSION = 6.0.9;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).widgets";
+				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -3238,7 +3310,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgets 1599951103";
+				PROVISIONING_PROFILE_SPECIFIER = "Reddit For Slide Widgets 2020";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
