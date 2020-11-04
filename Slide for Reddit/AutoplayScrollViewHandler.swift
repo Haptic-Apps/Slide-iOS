@@ -47,56 +47,52 @@ class AutoplayScrollViewHandler {
         delegate.lastYUsed = currentY
         delegate.lastY = currentY
 
-        if #available(iOS 12.0, *) {
-            if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && NetworkMonitor.shared.online) {
-                let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
-                
-                let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
-                    // Collect just cells that are autoplay video
-                    if let cell = delegate.getTableView().cellForItem(at: index) as? LinkCellView {
-                        return (index, cell)
-                    } else {
-                        return nil
-                    }
-                }.sorted { (item1, item2) -> Bool in
-                    delegate.isScrollingDown ? item1.index.row > item2.index.row : item1.index.row < item2.index.row
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && Constants.shared.isNetworkOnline) {
+            let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
+            
+            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = delegate.getTableView().cellForItem(at: index) as? LinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
                 }
-                
-                for currentIndex in delegate.currentPlayingIndex {
-                    if let currentCell = delegate.getTableView().cellForItem(at: currentIndex) as? LinkCellView, currentCell is AutoplayBannerLinkCellView || currentCell is GalleryLinkCellView {
-                        let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
-                        //print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
-                        if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 && currentCell.videoView.player != nil {
-                            currentCell.endVideos()
-                        }
-                    }
-                }
-                
-                var chosenPlayItems = [(index: IndexPath, cell: LinkCellView)]()
-                for item in mapping {
-                    if item.cell is AutoplayBannerLinkCellView || item.cell is GalleryLinkCellView {
-                        let videoViewCenter = item.cell.videoView.convert(item.cell.videoView.bounds, to: nil)
-                        if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 {
-                            continue
-                        }
-                        chosenPlayItems.append(item)
-                    }
-                }
-                
-                for item in chosenPlayItems {
-                    if !delegate.currentPlayingIndex.contains(where: { (index2) -> Bool in
-                        return item.index.row == index2.row
-                    }) {
-                        item.cell.doLoadVideo()
-                    }
-                }
-                
-                delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
-                    return item.index
-                })
+            }.sorted { (item1, item2) -> Bool in
+                delegate.isScrollingDown ? item1.index.row > item2.index.row : item1.index.row < item2.index.row
             }
-        } else {
-            // Fallback on earlier versions
+            
+            for currentIndex in delegate.currentPlayingIndex {
+                if let currentCell = delegate.getTableView().cellForItem(at: currentIndex) as? LinkCellView, currentCell is AutoplayBannerLinkCellView || currentCell is GalleryLinkCellView {
+                    let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
+                    //print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
+                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 && currentCell.videoView.player != nil {
+                        currentCell.endVideos()
+                    }
+                }
+            }
+            
+            var chosenPlayItems = [(index: IndexPath, cell: LinkCellView)]()
+            for item in mapping {
+                if item.cell is AutoplayBannerLinkCellView || item.cell is GalleryLinkCellView {
+                    let videoViewCenter = item.cell.videoView.convert(item.cell.videoView.bounds, to: nil)
+                    if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 {
+                        continue
+                    }
+                    chosenPlayItems.append(item)
+                }
+            }
+            
+            for item in chosenPlayItems {
+                if !delegate.currentPlayingIndex.contains(where: { (index2) -> Bool in
+                    return item.index.row == index2.row
+                }) {
+                    item.cell.doLoadVideo()
+                }
+            }
+            
+            delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
+                return item.index
+            })
         }
     }
     
@@ -104,43 +100,40 @@ class AutoplayScrollViewHandler {
         guard let delegate = self.delegate else {
             return
         }
-        if #available(iOS 12.0, *) {
-            if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && NetworkMonitor.shared.online) {
-                let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
-                        
-                let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
-                    // Collect just cells that are autoplay video
-                    if let cell = delegate.getTableView().cellForItem(at: index) as? LinkCellView {
-                        return (index, cell)
-                    } else {
-                        return nil
-                    }
-                }.sorted { (item1, item2) -> Bool in
-                    delegate.isScrollingDown ? item1.index.row > item2.index.row : item1.index.row < item2.index.row
+        if SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && Constants.shared.isNetworkOnline) {
+            let visibleVideoIndices = delegate.getTableView().indexPathsForVisibleItems
+                    
+            let mapping: [(index: IndexPath, cell: LinkCellView)] = visibleVideoIndices.compactMap { index in
+                // Collect just cells that are autoplay video
+                if let cell = delegate.getTableView().cellForItem(at: index) as? LinkCellView {
+                    return (index, cell)
+                } else {
+                    return nil
                 }
-                            
-                var chosenPlayItems = [(index: IndexPath, cell: LinkCellView)]()
-                for item in mapping {
-                    if item.cell is AutoplayBannerLinkCellView {
-                        chosenPlayItems.append(item)
-                    }
-                }
-                
-                for item in chosenPlayItems {
-                    if !delegate.currentPlayingIndex.contains(where: { (index2) -> Bool in
-                        return item.index.row == index2.row
-                    }) {
-                        (item.cell as! AutoplayBannerLinkCellView).doLoadVideo()
-                    }
-                }
-                
-                delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
-                    return item.index
-                })
+            }.sorted { (item1, item2) -> Bool in
+                delegate.isScrollingDown ? item1.index.row > item2.index.row : item1.index.row < item2.index.row
             }
-        } else {
-            // fallback here
+                        
+            var chosenPlayItems = [(index: IndexPath, cell: LinkCellView)]()
+            for item in mapping {
+                if item.cell is AutoplayBannerLinkCellView {
+                    chosenPlayItems.append(item)
+                }
+            }
+            
+            for item in chosenPlayItems {
+                if !delegate.currentPlayingIndex.contains(where: { (index2) -> Bool in
+                    return item.index.row == index2.row
+                }) {
+                    (item.cell as! AutoplayBannerLinkCellView).doLoadVideo()
+                }
+            }
+            
+            delegate.currentPlayingIndex = chosenPlayItems.map({ (item) -> IndexPath in
+                return item.index
+            })
         }
+        
     }
 
 }

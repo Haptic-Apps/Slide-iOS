@@ -79,6 +79,7 @@
 		B776BD2C5BBC647BF29E06F8 /* CustomAnimateUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */; };
 		B776BD48651556FF298BF3EB /* TableDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BDC00CB0E0C8961A71A3 /* TableDisplayView.swift */; };
 		B776BF494A7A822D5DB4B5BC /* ColorMuxPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776B21CFB79FA354C296037 /* ColorMuxPagingViewController.swift */; };
+		BD0487C425525BD900CAF3D9 /* FallbackNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0487C325525BD900CAF3D9 /* FallbackNetworkMonitor.swift */; };
 		BDFC34BC2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AB2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift */; };
 		BDFC34BD2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AC2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift */; };
 		BDFC34BE2551209A001EE42A /* CommentViewController+ReplyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34AD2551209A001EE42A /* CommentViewController+ReplyDelegate.swift */; };
@@ -219,7 +220,6 @@
 		BE2E9F0823492B4300FE07B4 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2E9F0723492B4300FE07B4 /* CloudKit.framework */; };
 		BE2F3BEA253D37EF00FB21EC /* UIResponder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3BE9253D37EF00FB21EC /* UIResponder+Extensions.swift */; };
 		BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */; };
-		BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F571EF886D9003C1B28 /* Reachability.swift */; };
 		BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */; };
 		BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */; };
 		BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */; };
@@ -560,6 +560,7 @@
 		B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAlbum.swift; sourceTree = "<group>"; };
 		B776BF86D3E6B5AC2EEEDE63 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		B776BFA91C6E10E78077FCE0 /* AutoCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCache.swift; sourceTree = "<group>"; };
+		BD0487C325525BD900CAF3D9 /* FallbackNetworkMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FallbackNetworkMonitor.swift; sourceTree = "<group>"; };
 		BDFC34AB2551209A001EE42A /* CommentViewController+UIViewControllerPreviewingDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UIViewControllerPreviewingDelegate.swift"; sourceTree = "<group>"; };
 		BDFC34AC2551209A001EE42A /* CommentViewController+UINavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+UINavigationControllerDelegate.swift"; sourceTree = "<group>"; };
 		BDFC34AD2551209A001EE42A /* CommentViewController+ReplyDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CommentViewController+ReplyDelegate.swift"; sourceTree = "<group>"; };
@@ -704,7 +705,6 @@
 		BE2E9F0723492B4300FE07B4 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		BE2F3BE9253D37EF00FB21EC /* UIResponder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Extensions.swift"; sourceTree = "<group>"; };
 		BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsLayout.swift; sourceTree = "<group>"; };
-		BE2F3F571EF886D9003C1B28 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsData.swift; sourceTree = "<group>"; };
 		BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsContent.swift; sourceTree = "<group>"; };
 		BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
@@ -1139,6 +1139,7 @@
 			isa = PBXGroup;
 			children = (
 				BDFC36C825522CF2001EE42A /* NetworkMonitor.swift */,
+				BD0487C325525BD900CAF3D9 /* FallbackNetworkMonitor.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -1540,7 +1541,6 @@
 				BEC4A1A3232E98CF00EE5114 /* ProfileInfoViewController.swift */,
 				BE6EA6E71E1DA86100E9E709 /* ProfileViewController.swift */,
 				323EFB2721434781005157FA /* ProgressBarView.swift */,
-				BE2F3F571EF886D9003C1B28 /* Reachability.swift */,
 				BE17A24D215FFE76002C6CE6 /* readlater.plist */,
 				BE17A24F215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift */,
 				BE17A2512160127C002C6CE6 /* ReadLaterViewController.swift */,
@@ -2464,7 +2464,6 @@
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
-				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,
@@ -2480,6 +2479,7 @@
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
 				BE42B6F320CE01BD00607A54 /* IAPHandler.swift in Sources */,
+				BD0487C425525BD900CAF3D9 /* FallbackNetworkMonitor.swift in Sources */,
 				09B51D072114E80000BCB745 /* PostContentPresentationAnimator.swift in Sources */,
 				BE6EA6CA1E1C1E9400E9E709 /* Files.swift in Sources */,
 				BE7439F91E21A59C008BB63B /* ActionStates.swift in Sources */,

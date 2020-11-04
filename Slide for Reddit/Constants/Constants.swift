@@ -18,7 +18,8 @@ class Constants {
             print("12.0+")
             return NetworkMonitor.shared.online
         } else {
-            return false
+            print("-12.0")
+            return FallbackNetworkMonitor.shared.isReachabilityOnline
         }
     }
     

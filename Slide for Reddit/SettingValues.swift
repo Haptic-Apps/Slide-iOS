@@ -428,12 +428,7 @@ class SettingValues {
         case .ALWAYS:
             return true
         case .WIFI:
-            if #available(iOS 12.0, *) {
-                return NetworkMonitor.shared.online
-            } else {
-                // Fallback on earlier versions
-                return false
-            }
+            return Constants.shared.isNetworkOnline
         case .NEVER:
             return false
         case .TAP:

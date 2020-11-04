@@ -1529,454 +1529,446 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var shouldLoadVideo = false
     
     private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
-        if #available(iOS 12.0, *) {
-            if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
-                self.endVideos()
-                do {
-                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                } catch {
-                    NSLog(error.localizedDescription)
-                }
+        if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
+            self.endVideos()
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            } catch {
+                NSLog(error.localizedDescription)
             }
-            
-            self.linkClicked = false
+        }
+        
+        self.linkClicked = false
 
-            self.full = self is FullLinkCellView
-            self.parentViewController = parent
-            self.link = submission
-            if navViewController == nil && nav != nil {
-                navViewController = nav
-            }
+        self.full = self is FullLinkCellView
+        self.parentViewController = parent
+        self.link = submission
+        if navViewController == nil && nav != nil {
+            navViewController = nav
+        }
 
-            self.shouldLoadVideo = false
-            self.loadedImage = nil
-            lq = false
+        self.shouldLoadVideo = false
+        self.loadedImage = nil
+        lq = false
 
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-            comments.textColor = ColorUtil.theme.navIconColor
-            title.textColor = ColorUtil.theme.navIconColor
+        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        comments.textColor = ColorUtil.theme.navIconColor
+        title.textColor = ColorUtil.theme.navIconColor
 
-            activeSet = true
+        activeSet = true
 
-            defer {
-                refreshAccessibility(submission: submission)
-            }
+        defer {
+            refreshAccessibility(submission: submission)
+        }
 
-            let actions = PostActionsManager(submission: submission)
+        let actions = PostActionsManager(submission: submission)
 
-            func setVisibility(_ view: UIView, _ visible: Bool) {
-                view.isHidden = !visible
-                view.isUserInteractionEnabled = visible
-            }
+        func setVisibility(_ view: UIView, _ visible: Bool) {
+            view.isHidden = !visible
+            view.isUserInteractionEnabled = visible
+        }
 
-            setVisibility(upvote, actions.isVotingPossible)
-            setVisibility(downvote, actions.isVotingPossible)
-            setVisibility(hide, actions.isHideEnabled && !full)
-            setVisibility(readLater, actions.isReadLaterEnabled)
-            setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
-            setVisibility(reply, actions.isReplyPossible && full)
-            setVisibility(menu, actions.isMenuEnabled)
-            setVisibility(share, actions.isShareEnabled)
-            setVisibility(edit, actions.isEditPossible && full)
-            setVisibility(mod, actions.isModPossible)
+        setVisibility(upvote, actions.isVotingPossible)
+        setVisibility(downvote, actions.isVotingPossible)
+        setVisibility(hide, actions.isHideEnabled && !full)
+        setVisibility(readLater, actions.isReadLaterEnabled)
+        setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
+        setVisibility(reply, actions.isReplyPossible && full)
+        setVisibility(menu, actions.isMenuEnabled)
+        setVisibility(share, actions.isShareEnabled)
+        setVisibility(edit, actions.isEditPossible && full)
+        setVisibility(mod, actions.isModPossible)
 
-            thumb = submission.thumbnail
-            big = submission.banner
-            
-            submissionHeight = CGFloat(submission.height)
-            
-            type = test && SettingValues.linkAlwaysThumbnail && !(self is GalleryLinkCellView) ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
-            
-            if embedded && !submission.isSelf {
-                type = .LINK
-            }
-            
-            if submission.isSelf {
-                type = .SELF
-            }
-            
-            if SettingValues.postImageMode == .THUMBNAIL && !full {
-                big = false
-                thumb = true
-            }
-            
-            let fullImage = ContentType.fullImage(t: type)
-            let shouldAutoplay = SettingValues.shouldAutoPlay()
-            let halfScreen = UIScreen.main.bounds.height / 2
-            
-            let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && shouldAutoplay
+        thumb = submission.thumbnail
+        big = submission.banner
+        
+        submissionHeight = CGFloat(submission.height)
+        
+        type = test && SettingValues.linkAlwaysThumbnail && !(self is GalleryLinkCellView) ? ContentType.CType.LINK : ContentType.getContentType(baseUrl: submission.url)
+        
+        if embedded && !submission.isSelf {
+            type = .LINK
+        }
+        
+        if submission.isSelf {
+            type = .SELF
+        }
+        
+        if SettingValues.postImageMode == .THUMBNAIL && !full {
+            big = false
+            thumb = true
+        }
+        
+        let fullImage = ContentType.fullImage(t: type)
+        let shouldAutoplay = SettingValues.shouldAutoPlay()
+        let halfScreen = UIScreen.main.bounds.height / 2
+        
+        let overrideFull = ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && shouldAutoplay
 
-            if !fullImage && submissionHeight < 75 {
-                big = false
-                thumb = true
-            } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) && !overrideFull {
-                submissionHeight = test ? 150 : 200
-            } else if big {
-                let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (full ? 10 : 0))
-                if (!full && SettingValues.postImageMode == .SHORT_IMAGE && !(self is AutoplayBannerLinkCellView)) && !overrideFull {
-                    submissionHeight = test ? 200 : (h > halfScreen ? halfScreen : h)
-                } else {
-                    if h == 0 {
-                        submissionHeight = test ? 150 : 200
-                    } else {
-                        submissionHeight = h
-                    }
-                }
-            }
-            
-            if !SettingValues.actionBarMode.isFull() && !full {
-                buttons.isHidden = true
-                box.isHidden = true
-            }
-            
-            if (type == .SELF && SettingValues.hideImageSelftext) || type == .SELF && full {
-                big = false
-                thumb = false
-            }
-            
-            if submissionHeight < 75 {
-                thumb = true
-                big = false
-            }
-            
-            let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online)
-            
-            if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
-                || SettingValues.noImages && submission.isSelf {
-                big = false
-                thumb = false
-            }
-            
-            if big || !submission.thumbnail {
-                thumb = false
-            }
-            
-            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
-                big = false
-                thumb = true
-            }
-            
-            if type == .LINK && SettingValues.linkAlwaysThumbnail && !test {
-                thumb = true
-                big = false
-            }
-            
-            if embedded {
-                thumb = true
-                big = false
-            }
-            
-            if #available(iOS 12.0, *) {
-                if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online) {
-                    big = false
-                    thumb = false
-                }
+        if !fullImage && submissionHeight < 75 {
+            big = false
+            thumb = true
+        } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) && !overrideFull {
+            submissionHeight = test ? 150 : 200
+        } else if big {
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (full ? 10 : 0))
+            if (!full && SettingValues.postImageMode == .SHORT_IMAGE && !(self is AutoplayBannerLinkCellView)) && !overrideFull {
+                submissionHeight = test ? 200 : (h > halfScreen ? halfScreen : h)
             } else {
-                // Fallback on earlier versions
-            }
-            
-            if thumb && type == .SELF {
-                thumb = false
-            }
-            
-            if (thumb || big) && submission.spoiler {
-                thumb = true
-                big = false
-            }
-            
-            if full && big {
-                let bannerPadding = CGFloat(5)
-                submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (bannerPadding * 2))
-            }
-            
-            if self is GalleryLinkCellView {
-                big = true
-                thumb = false
-            }
-            
-            for view in self.bannerImage.superview?.subviews ?? [] {
-                if view.tag == 2000 { //TODO - tags are bad
-                    view.removeFromSuperview()
+                if h == 0 {
+                    submissionHeight = test ? 150 : 200
+                } else {
+                    submissionHeight = h
                 }
             }
+        }
+        
+        if !SettingValues.actionBarMode.isFull() && !full {
+            buttons.isHidden = true
+            box.isHidden = true
+        }
+        
+        if (type == .SELF && SettingValues.hideImageSelftext) || type == .SELF && full {
+            big = false
+            thumb = false
+        }
+        
+        if submissionHeight < 75 {
+            thumb = true
+            big = false
+        }
+        
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline)
+        
+        if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
+            || SettingValues.noImages && submission.isSelf {
+            big = false
+            thumb = false
+        }
+        
+        if big || !submission.thumbnail {
+            thumb = false
+        }
+        
+        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
+            big = false
+            thumb = true
+        }
+        
+        if type == .LINK && SettingValues.linkAlwaysThumbnail && !test {
+            thumb = true
+            big = false
+        }
+        
+        if embedded {
+            thumb = true
+            big = false
+        }
+        
+        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) {
+            big = false
+            thumb = false
+        }
+        
+        if thumb && type == .SELF {
+            thumb = false
+        }
+        
+        if (thumb || big) && submission.spoiler {
+            thumb = true
+            big = false
+        }
+        
+        if full && big {
+            let bannerPadding = CGFloat(5)
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (bannerPadding * 2))
+        }
+        
+        if self is GalleryLinkCellView {
+            big = true
+            thumb = false
+        }
+        
+        for view in self.bannerImage.superview?.subviews ?? [] {
+            if view.tag == 2000 { //TODO - tags are bad
+                view.removeFromSuperview()
+            }
+        }
 
-            if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
-                thumb = true
-                thumbText.isHidden = true
-                if submission.nsfw {
-                    thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
-                    thumbText.isHidden = false
-                    thumbText.text = type.rawValue.uppercased()
-                } else if submission.spoiler {
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
+            thumb = true
+            thumbText.isHidden = true
+            if submission.nsfw {
+                thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
+                thumbText.isHidden = false
+                thumbText.text = type.rawValue.uppercased()
+            } else if submission.spoiler {
+                thumbImage.image = LinkCellImageCache.spoiler
+            } else if type == .REDDIT {
+                thumbImage.image = LinkCellImageCache.reddit
+            } else {
+                thumbImage.image = LinkCellImageCache.web
+            }
+        } else if thumb && !big {
+            thumbText.isHidden = true
+            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
+                thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
+                thumbText.isHidden = false
+                thumbText.text = type.rawValue.uppercased()
+            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
+                if submission.spoiler {
                     thumbImage.image = LinkCellImageCache.spoiler
                 } else if type == .REDDIT {
                     thumbImage.image = LinkCellImageCache.reddit
                 } else {
                     thumbImage.image = LinkCellImageCache.web
                 }
-            } else if thumb && !big {
-                thumbText.isHidden = true
-                if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
-                    thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
-                    thumbText.isHidden = false
-                    thumbText.text = type.rawValue.uppercased()
-                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
-                    if submission.spoiler {
-                        thumbImage.image = LinkCellImageCache.spoiler
-                    } else if type == .REDDIT {
-                        thumbImage.image = LinkCellImageCache.reddit
-                    } else {
-                        thumbImage.image = LinkCellImageCache.web
-                    }
-                } else {
-                    thumbText.isHidden = false
-                    thumbText.text = type.rawValue.uppercased()
-                    thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
-                }
             } else {
-                thumbImage.image = nil
-                thumbText.isHidden = true
-                self.thumbImage.frame.size.width = 0
+                thumbText.isHidden = false
+                thumbText.text = type.rawValue.uppercased()
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
             }
-            
-            if !SettingValues.thumbTag || full {
-                thumbText.isHidden = true
-            }
-            
-            if full {
-                self.thumbText.isHidden = true
-            }
-            
-            if big {
-                bannerImage.isHidden = false
-                self.endVideos()
-                bannerImage.alpha = 1
-                var videoOverride = false
-                if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay) || self is GalleryLinkCellView) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
-                    videoView?.isHidden = false
-                    topVideoView?.isHidden = false
-                    sound.isHidden = true
-                    self.timeView.isHidden = true
-                    self.updateProgress(-1, "", buffering: false)
-                    self.contentView.bringSubviewToFront(topVideoView!)
-                    self.shouldLoadVideo = true
-                    if full {
-                        self.videoCompletion = nil
-                        doLoadVideo()
-                    } else {
-                        self.videoCompletion = nil
-                        if let url = (!link!.videoPreview.isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview) : link!.url {
-                                self.preloadVideo(url)
-                        }
+        } else {
+            thumbImage.image = nil
+            thumbText.isHidden = true
+            self.thumbImage.frame.size.width = 0
+        }
+        
+        if !SettingValues.thumbTag || full {
+            thumbText.isHidden = true
+        }
+        
+        if full {
+            self.thumbText.isHidden = true
+        }
+        
+        if big {
+            bannerImage.isHidden = false
+            self.endVideos()
+            bannerImage.alpha = 1
+            var videoOverride = false
+            if ContentType.displayVideo(t: type) && type != .VIDEO && (self is AutoplayBannerLinkCellView || (self is FullLinkCellView && shouldAutoplay) || self is GalleryLinkCellView) && (SettingValues.autoPlayMode == .ALWAYS || (SettingValues.autoPlayMode == .WIFI && shouldAutoplay)) {
+                videoView?.isHidden = false
+                topVideoView?.isHidden = false
+                sound.isHidden = true
+                self.timeView.isHidden = true
+                self.updateProgress(-1, "", buffering: false)
+                self.contentView.bringSubviewToFront(topVideoView!)
+                self.shouldLoadVideo = true
+                if full {
+                    self.videoCompletion = nil
+                    doLoadVideo()
+                } else {
+                    self.videoCompletion = nil
+                    if let url = (!link!.videoPreview.isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview) : link!.url {
+                            self.preloadVideo(url)
                     }
-                    videoOverride = true
-                } else if self is FullLinkCellView || self is GalleryLinkCellView {
-                    self.videoView.isHidden = true
-                    self.topVideoView.isHidden = true
-                    self.timeView.isHidden = true
-                    self.progressDot.isHidden = true
                 }
-                
-                if (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay)) {
-                    videoView?.isHidden = false
-                    topVideoView?.isHidden = false
-                    sound.isHidden = true
-                    self.updateProgress(-1, "", buffering: false)
-                    self.contentView.bringSubviewToFront(topVideoView!)
-                    self.playView.isHidden = false
-                    self.progressDot.isHidden = true
-                    self.timeView.isHidden = true
-                    self.spinner.isHidden = true
-                    videoOverride = true
-                }
-                
-                let imageSize = CGSize.init(width: submission.width == 0 ? 400 : submission.width, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) && !((self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay))) ? 200 : (submission.height == 0 ? 275 : submission.height))
-                
-                aspect = imageSize.width / imageSize.height
+                videoOverride = true
+            } else if self is FullLinkCellView || self is GalleryLinkCellView {
+                self.videoView.isHidden = true
+                self.topVideoView.isHidden = true
+                self.timeView.isHidden = true
+                self.progressDot.isHidden = true
+            }
+            
+            if (self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay)) {
+                videoView?.isHidden = false
+                topVideoView?.isHidden = false
+                sound.isHidden = true
+                self.updateProgress(-1, "", buffering: false)
+                self.contentView.bringSubviewToFront(topVideoView!)
+                self.playView.isHidden = false
+                self.progressDot.isHidden = true
+                self.timeView.isHidden = true
+                self.spinner.isHidden = true
+                videoOverride = true
+            }
+            
+            let imageSize = CGSize.init(width: submission.width == 0 ? 400 : submission.width, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) && !((self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay))) ? 200 : (submission.height == 0 ? 275 : submission.height))
+            
+            aspect = imageSize.width / imageSize.height
+            if aspect == 0 || aspect > 10000 || aspect.isNaN {
+                aspect = 1
+            }
+            if !videoOverride && ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
+                aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
                 }
-                if !videoOverride && ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
-                    aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
-                    if aspect == 0 || aspect > 10000 || aspect.isNaN {
-                        aspect = 1
-                    }
-                    
-                    submissionHeight = test ? 150 : 200
-                }
-                bannerImage.isUserInteractionEnabled = true
+                
+                submissionHeight = test ? 150 : 200
+            }
+            bannerImage.isUserInteractionEnabled = true
 
-                // Pulse the background color of the banner image until it loads
-                lq = shouldShowLq
-                if submission.bannerUrl == "" || submission.width == 0 {
-                    bannerImage.image = LinkCellImageCache.webBig
-                } else {
-                    let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
-                    loadedImage = bannerImageUrl
-                    bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
-                }
-                NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
-                self.bannerHeightConstraint = batch {
-                    self.bannerImage.heightAnchor /==/ self.submissionHeight ~ .low
-                    self.bannerImage.verticalCompressionResistancePriority = .defaultLow
-                }
+            // Pulse the background color of the banner image until it loads
+            lq = shouldShowLq
+            if submission.bannerUrl == "" || submission.width == 0 {
+                bannerImage.image = LinkCellImageCache.webBig
             } else {
-                bannerImage.image = nil
-                if self is FullLinkCellView {
-                    self.videoView.isHidden = true
-                    self.topVideoView.isHidden = true
-                    self.timeView.isHidden = true
-                    self.progressDot.isHidden = true
-                }
+                let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
+                loadedImage = bannerImageUrl
+                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
             }
-            
-            if !full && !test && !embedded {
-                aspectWidth = self.contentView.frame.size.width
-            }
-            
-            let mo = History.commentsSince(s: submission)
-            comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
-            
-            if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
-                parent.registerForPreviewing(with: self, sourceView: self.contentView)
-                registered = true
-            } else if SettingValues.submissionActionForceTouch != .NONE && force == nil {
-                force = ForceTouchGestureRecognizer()
-                force?.addTarget(self, action: #selector(self.do3dTouch(_:)))
-                force?.cancelsTouchesInView = false
-                self.contentView.addGestureRecognizer(force!)
-            }
-            
-            refresh(np: np)
-            refreshTitle(np: np)
-
-            if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) || (full && thumb && type != .SELF) {
-                infoContainer.isHidden = false
-                var text = ""
-                switch type {
-                case .ALBUM:
-                    text = ("Album")
-                case .REDDIT_GALLERY:
-                    text = ("Gallery")
-                case .EXTERNAL:
-                    text = "External Link"
-                case .LINK, .EMBEDDED, .NONE:
-                    text = "Link"
-                case .DEVIANTART:
-                    text = "Deviantart"
-                case .TUMBLR:
-                    text = "Tumblr"
-                case .XKCD:
-                    text = ("XKCD")
-                case .GIF:
-                    if submission.domain == "v.redd.it" {
-                        text = "Reddit Video"
-                    } else {
-                        text = ("GIF")
-                    }
-                case .IMGUR:
-                    text = ("Imgur")
-                case .VIDEO:
-                    text = "YouTube"
-                case .STREAMABLE:
-                    text = "Streamable"
-                case .VID_ME:
-                    text = ("Vid.me")
-                case .REDDIT:
-                    text = ("Reddit content")
-                default:
-                    text = "Link"
-                }
-                
-                if SettingValues.smallerTag && !full {
-                    infoContainer.isHidden = true
-                    tagbody.isHidden = false
-                    taglabel.text = " \(text.uppercased()) "
-                } else {
-                    tagbody.isHidden = true
-                    let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
-                    finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
-                    info.attributedText = finalText
-                }
-                
-            } else {
-                infoContainer.isHidden = true
-                tagbody.isHidden = true
-            }
-            
-            if submission.isCrosspost && full && !crosspostDone {
-                crosspostDone = true
-                let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
-                let popup = UILabel()
-                outer.backgroundColor = ColorUtil.theme.backgroundColor
-                popup.textAlignment = .left
-                popup.isUserInteractionEnabled = true
-                
-                popup.numberOfLines = 2
-                
-                outer.elevate(elevation: 2)
-                outer.layer.cornerRadius = 5
-                outer.clipsToBounds = true
-                
-                let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
-                outer.addSubviews(icon, popup)
-                icon.leftAnchor /==/ outer.leftAnchor + CGFloat(8)
-                icon.centerYAnchor /==/ outer.centerYAnchor
-                icon.widthAnchor /==/ 40
-                icon.contentMode = .center
-
-                popup.leftAnchor /==/ icon.rightAnchor + CGFloat(8)
-                popup.verticalAnchors /==/ outer.verticalAnchors
-                popup.rightAnchor /==/ outer.rightAnchor - CGFloat(8)
-                
-                infoBox.spacing = 4
-                
-                let colorF = ColorUtil.theme.fontColor
-                
-                let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
-                
-                let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-                let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
-                if color != ColorUtil.baseColor {
-                    boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
-                }
-                
-                let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                
-                let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
-                
-                /* Maybe enable this later
-                 let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
-                 if AccountController.currentName == submission.author {
-                 authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
-                 } else if userColor != ColorUtil.baseColor {
-                 authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
-                 }*/
-                
-                endString.append(authorString)
-                boldString.append(endString)
-                
-                outer.addTapGestureRecognizer {
-                    VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
-                }
-                popup.attributedText = boldString
-                
-                popup.numberOfLines = 0
-                
-                infoBox.spacing = 4
-                infoBox.addArrangedSubview(outer)
-                
-                outer.horizontalAnchors /==/ infoBox.horizontalAnchors
-                outer.heightAnchor /==/ 48
-            }
-
-           // TODO: - maybe? self.innerView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
-            if full {
-                self.setNeedsLayout()
-                self.layoutForType()
+            NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
+            self.bannerHeightConstraint = batch {
+                self.bannerImage.heightAnchor /==/ self.submissionHeight ~ .low
+                self.bannerImage.verticalCompressionResistancePriority = .defaultLow
             }
         } else {
-            // fallback
+            bannerImage.image = nil
+            if self is FullLinkCellView {
+                self.videoView.isHidden = true
+                self.topVideoView.isHidden = true
+                self.timeView.isHidden = true
+                self.progressDot.isHidden = true
+            }
+        }
+        
+        if !full && !test && !embedded {
+            aspectWidth = self.contentView.frame.size.width
+        }
+        
+        let mo = History.commentsSince(s: submission)
+        comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
+        
+        if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
+            parent.registerForPreviewing(with: self, sourceView: self.contentView)
+            registered = true
+        } else if SettingValues.submissionActionForceTouch != .NONE && force == nil {
+            force = ForceTouchGestureRecognizer()
+            force?.addTarget(self, action: #selector(self.do3dTouch(_:)))
+            force?.cancelsTouchesInView = false
+            self.contentView.addGestureRecognizer(force!)
+        }
+        
+        refresh(np: np)
+        refreshTitle(np: np)
+
+        if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) || (full && thumb && type != .SELF) {
+            infoContainer.isHidden = false
+            var text = ""
+            switch type {
+            case .ALBUM:
+                text = ("Album")
+            case .REDDIT_GALLERY:
+                text = ("Gallery")
+            case .EXTERNAL:
+                text = "External Link"
+            case .LINK, .EMBEDDED, .NONE:
+                text = "Link"
+            case .DEVIANTART:
+                text = "Deviantart"
+            case .TUMBLR:
+                text = "Tumblr"
+            case .XKCD:
+                text = ("XKCD")
+            case .GIF:
+                if submission.domain == "v.redd.it" {
+                    text = "Reddit Video"
+                } else {
+                    text = ("GIF")
+                }
+            case .IMGUR:
+                text = ("Imgur")
+            case .VIDEO:
+                text = "YouTube"
+            case .STREAMABLE:
+                text = "Streamable"
+            case .VID_ME:
+                text = ("Vid.me")
+            case .REDDIT:
+                text = ("Reddit content")
+            default:
+                text = "Link"
+            }
+            
+            if SettingValues.smallerTag && !full {
+                infoContainer.isHidden = true
+                tagbody.isHidden = false
+                taglabel.text = " \(text.uppercased()) "
+            } else {
+                tagbody.isHidden = true
+                let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
+                finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
+                info.attributedText = finalText
+            }
+            
+        } else {
+            infoContainer.isHidden = true
+            tagbody.isHidden = true
+        }
+        
+        if submission.isCrosspost && full && !crosspostDone {
+            crosspostDone = true
+            let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
+            let popup = UILabel()
+            outer.backgroundColor = ColorUtil.theme.backgroundColor
+            popup.textAlignment = .left
+            popup.isUserInteractionEnabled = true
+            
+            popup.numberOfLines = 2
+            
+            outer.elevate(elevation: 2)
+            outer.layer.cornerRadius = 5
+            outer.clipsToBounds = true
+            
+            let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+            outer.addSubviews(icon, popup)
+            icon.leftAnchor /==/ outer.leftAnchor + CGFloat(8)
+            icon.centerYAnchor /==/ outer.centerYAnchor
+            icon.widthAnchor /==/ 40
+            icon.contentMode = .center
+
+            popup.leftAnchor /==/ icon.rightAnchor + CGFloat(8)
+            popup.verticalAnchors /==/ outer.verticalAnchors
+            popup.rightAnchor /==/ outer.rightAnchor - CGFloat(8)
+            
+            infoBox.spacing = 4
+            
+            let colorF = ColorUtil.theme.fontColor
+            
+            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
+            
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
+            if color != ColorUtil.baseColor {
+                boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
+            }
+            
+            let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            
+            /* Maybe enable this later
+             let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
+             if AccountController.currentName == submission.author {
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             } else if userColor != ColorUtil.baseColor {
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             }*/
+            
+            endString.append(authorString)
+            boldString.append(endString)
+            
+            outer.addTapGestureRecognizer {
+                VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
+            }
+            popup.attributedText = boldString
+            
+            popup.numberOfLines = 0
+            
+            infoBox.spacing = 4
+            infoBox.addArrangedSubview(outer)
+            
+            outer.horizontalAnchors /==/ infoBox.horizontalAnchors
+            outer.heightAnchor /==/ 48
+        }
+
+       // TODO: - maybe? self.innerView.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
+        if full {
+            self.setNeedsLayout()
+            self.layoutForType()
         }
     }
 
@@ -2162,30 +2154,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         strongSelf.updater?.isPaused = false
     }
     
-    public static var cachedInternet: Bool?
-    public static func checkInternet() -> Bool {
-        if LinkCellView.cachedInternet != nil {
-            return LinkCellView.cachedInternet!
-        }
-        let networkStatus = Reachability().connectionStatus()
-        switch networkStatus {
-        case .Unknown, .Offline:
-            LinkCellView.cachedInternet = false
-        case .Online(.WWAN):
-            LinkCellView.cachedInternet = true
-        case .Online(.WiFi):
-            LinkCellView.cachedInternet = true
-        }
-        return LinkCellView.cachedInternet!
-    }
-    
     @objc func showMore() {
         timer!.invalidate()
         if longBlocking {
             self.longBlocking = false
             return
         }
-        if !self.cancelled && LinkCellView.checkInternet() && parentViewController?.presentedViewController == nil {
+        if !self.cancelled && Constants.shared.isNetworkOnline && parentViewController?.presentedViewController == nil {
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()
             } else if SettingValues.hapticFeedback {
@@ -3113,7 +3088,7 @@ class PostActionsManager {
     var submission: RSubmission
 
     private lazy var networkActionsArePossible: Bool = {
-        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+        return AccountController.isLoggedIn && Constants.shared.isNetworkOnline
     }()
 
     var isSaveEnabled: Bool {
