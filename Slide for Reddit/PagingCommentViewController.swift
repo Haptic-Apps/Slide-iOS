@@ -90,7 +90,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
             firstViewController = PagingCommentViewController.savedComment!
         } else {
             let comment = CommentViewController.init(submission: sub, single: false)
-            comment.offline = offline
             firstViewController = comment
         }
         first = false

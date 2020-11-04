@@ -723,17 +723,21 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (parent?.offline ?? false) {
-            upvoteButton.isHidden = true
-            downvoteButton.isHidden = true
-            replyButton.isHidden = true
-        }
-        if !comment!.canMod || (parent?.offline ?? false) {
-            modButton.isHidden = true
-        }
-        if comment!.author != AccountController.currentName || (parent?.offline ?? false) {
-            editButton.isHidden = true
-            deleteButton.isHidden = true
+        if #available(iOS 12.0, *) {
+            if !AccountController.isLoggedIn || comment!.archived || parent!.np || !NetworkMonitor.shared.online {
+                upvoteButton.isHidden = true
+                downvoteButton.isHidden = true
+                replyButton.isHidden = true
+            }
+            if !comment!.canMod || !NetworkMonitor.shared.online {
+                modButton.isHidden = true
+            }
+            if comment!.author != AccountController.currentName || !NetworkMonitor.shared.online {
+                editButton.isHidden = true
+                deleteButton.isHidden = true
+            }
+        } else {
+            // Fallback on earlier versions
         }
         parent!.menuCell = self
         menu.isHidden = false

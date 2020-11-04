@@ -95,6 +95,8 @@
 		BDFC34C92551209A001EE42A /* CommentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34B92551209A001EE42A /* CommentCellView.swift */; };
 		BDFC34CB2551209A001EE42A /* CommentDepthCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC34BB2551209A001EE42A /* CommentDepthCell.swift */; };
 		BDFC359E2551F27E001EE42A /* ParentCommentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC359D2551F27E001EE42A /* ParentCommentViewController.swift */; };
+		BDFC36C925522CF3001EE42A /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC36C825522CF2001EE42A /* NetworkMonitor.swift */; };
+		BDFC36D625522D8A001EE42A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFC36D425522D8A001EE42A /* Constants.swift */; };
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
 		BE0334AF25294B8400B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
@@ -574,6 +576,8 @@
 		BDFC34B92551209A001EE42A /* CommentCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentCellView.swift; sourceTree = "<group>"; };
 		BDFC34BB2551209A001EE42A /* CommentDepthCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommentDepthCell.swift; sourceTree = "<group>"; };
 		BDFC359D2551F27E001EE42A /* ParentCommentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentCommentViewController.swift; sourceTree = "<group>"; };
+		BDFC36C825522CF2001EE42A /* NetworkMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		BDFC36D425522D8A001EE42A /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		BE02B252240C9F5400C457BC /* CommentsRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsRowController.swift; sourceTree = "<group>"; };
 		BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRepliesController.swift; sourceTree = "<group>"; };
 		BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetConfigIntent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1131,6 +1135,22 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		BDFC36C725522CF2001EE42A /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				BDFC36C825522CF2001EE42A /* NetworkMonitor.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		BDFC36D225522D8A001EE42A /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				BDFC36D425522D8A001EE42A /* Constants.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
 		BE0334AD25294B8400B8C6B6 /* WidgetConfigIntent */ = {
 			isa = PBXGroup;
 			children = (
@@ -1441,6 +1461,7 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
+				BDFC36D225522D8A001EE42A /* Constants */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
@@ -1507,6 +1528,7 @@
 				B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */,
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
 				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
+				BDFC36C725522CF2001EE42A /* Networking */,
 				BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */,
 				BE9BFF0F25182D6900C9F7EC /* Onboarding */,
 				BEE10FC51F25078F00A72CE5 /* PagingCommentViewController.swift */,
@@ -2313,6 +2335,7 @@
 				BEEA03CF20E2A411007A8928 /* BannerUtil.swift in Sources */,
 				BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */,
 				BDFC34C22551209A001EE42A /* CommentViewController+UISearchBarDelegate.swift in Sources */,
+				BDFC36D625522D8A001EE42A /* Constants.swift in Sources */,
 				BEB81A66214457ED007E326B /* FriendsContributionLoader.swift in Sources */,
 				BE9428EA20C46B5600E1A33A /* PostActions.swift in Sources */,
 				BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */,
@@ -2509,6 +2532,7 @@
 				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
 				BEC4A1A4232E98CF00EE5114 /* ProfileInfoViewController.swift in Sources */,
 				B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */,
+				BDFC36C925522CF3001EE42A /* NetworkMonitor.swift in Sources */,
 				B776BC55CA329427879F17B4 /* ModMailContributionLoader.swift in Sources */,
 				B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */,
 				09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */,

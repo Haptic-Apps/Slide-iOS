@@ -18,8 +18,6 @@ import YYText
 class CommentViewController: MediaViewController {
     // MARK: - Properties / References
     var version = 0
-    var online: Bool = true
-    var offline: Bool = false
 
     var menuCell: CommentDepthCell?
     var menuId: String?
@@ -346,6 +344,7 @@ class CommentViewController: MediaViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onlineStatusChanged(_:)), name: .online, object: nil)
 
         headerCell = FullLinkCellView()
         headerCell!.del = self
@@ -894,6 +893,22 @@ class CommentViewController: MediaViewController {
         return self
     }
     
+    // MARK: - Network Change Actions
+    @objc private func onlineStatusChanged(_ notification: Notification) {
+        if let online = notification.userInfo?["online"] as? Bool {
+            switch online {
+                case true:
+                    DispatchQueue.main.async {
+                        self.refreshComments(self)
+                        self.updateToolbar()
+                    }
+                case false:
+                    loadOffline()
+            }
+        }
+    }
+    
+    
     // MARK: - Offline Functions
     /// Loads cached data for offline use.
     func loadOffline() {
@@ -1225,10 +1240,14 @@ class CommentViewController: MediaViewController {
             if name.contains("t3_") {
                 name = name.replacingOccurrences(of: "t3_", with: "")
             }
-            if !online {
-                self.loadOffline()
+            if #available(iOS 12.0, *) {
+                if !NetworkMonitor.shared.online {
+                    self.loadOffline()
+                } else {
+                    self.retrieveCommentsFromPost(with: name, and: link)
+                }
             } else {
-                self.retrieveCommentsFromPost(with: name, and: link)
+                // Fallback on earlier versions
             }
         }
     }
@@ -1359,58 +1378,77 @@ class CommentViewController: MediaViewController {
         - selector: UIButton?
      */
     @objc func sortCommentsAction(_ selector: UIButton?) {
-        if online {
-            let isDefault = UISwitch()
-            isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
-            let defaultLabel = UILabel()
-            defaultLabel.text = "Default for sub"
-            let group = UIView()
-            group.isUserInteractionEnabled = true
-            group.addSubviews(isDefault, defaultLabel)
-            defaultLabel.textColor = ColorUtil.accentColorForSub(sub: self.sub)
-            defaultLabel.centerYAnchor /==/ group.centerYAnchor
-            isDefault.leftAnchor /==/ group.leftAnchor
-            isDefault.centerYAnchor /==/ group.centerYAnchor
-            defaultLabel.leftAnchor /==/ isDefault.rightAnchor + 10
-            defaultLabel.rightAnchor /==/ group.rightAnchor
-
-            let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
-            
-            for c in CommentSort.cases {
-                if c == .suggested {
-                    continue
-                }
-                var sortIcon = UIImage()
+        if #available(iOS 12.0, *) {
+            if NetworkMonitor.shared.online {
+                let isDefault = UISwitch()
+                isDefault.onTintColor = ColorUtil.accentColorForSub(sub: self.sub)
+                let defaultLabel = UILabel()
+                defaultLabel.text = "Default for sub"
+                let group = UIView()
+                group.isUserInteractionEnabled = true
+                group.addSubviews(isDefault, defaultLabel)
+                defaultLabel.textColor = ColorUtil.accentColorForSub(sub: self.sub)
+                defaultLabel.centerYAnchor /==/ group.centerYAnchor
+                isDefault.leftAnchor /==/ group.leftAnchor
+                isDefault.centerYAnchor /==/ group.centerYAnchor
+                defaultLabel.leftAnchor /==/ isDefault.rightAnchor + 10
+                defaultLabel.rightAnchor /==/ group.rightAnchor
                 
-                if c == .controversial {
-                    actionSheetController.addAction(title: "Sort by Live", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
-                        self.loadLiveComments()
+                let actionSheetController = DragDownAlertMenu(title: "Comment sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: submission?.subreddit ?? ""), full: true)
+                
+                for c in CommentSort.cases {
+                    if c == .suggested {
+                        continue
+                    }
+                    var sortIcon = UIImage()
+                    
+                    if c == .controversial {
+                        actionSheetController.addAction(title: "Sort by Live", icon: UIImage(sfString: SFSymbol.playFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: live) {
+                            self.loadLiveComments()
+                        }
+                    }
+                    
+                    switch c {
+                        case .suggested, .confidence:
+                            sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                        case .hot:
+                            sortIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                        case .controversial:
+                            sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                        case .new:
+                            sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                        case .old:
+                            sortIcon = UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                        case .top:
+                            sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                        default:
+                            sortIcon = UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
+                    }
+                    
+                    actionSheetController.addAction(title: c.description, icon: sortIcon, primary: sort == c) {
+                        self.sort = c
+                        self.reset = true
+                        self.live = false
+                        if isDefault.isOn {
+                            SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: c)
+                        }
+                        self.activityIndicator.removeFromSuperview()
+                        let barButton = UIBarButtonItem(customView: self.activityIndicator)
+                        self.navigationItem.rightBarButtonItems = [barButton]
+                        self.activityIndicator.startAnimating()
+                        
+                        self.doSortImage(self.sortButton)
+                        
+                        self.refreshComments(self)
                     }
                 }
                 
-                switch c {
-                case .suggested, .confidence:
-                    sortIcon = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                case .hot:
-                    sortIcon = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                case .controversial:
-                    sortIcon = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                case .new:
-                    sortIcon = UIImage(sfString: SFSymbol.tagFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                case .old:
-                    sortIcon = UIImage(sfString: SFSymbol.clockFill, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                case .top:
-                    sortIcon = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                default:
-                    sortIcon = UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage()
-                }
-                
-                actionSheetController.addAction(title: c.description, icon: sortIcon, primary: sort == c) {
-                    self.sort = c
+                actionSheetController.addAction(title: "Q&A", icon: UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: sort == .qa) {
+                    self.sort = .qa
                     self.reset = true
                     self.live = false
                     if isDefault.isOn {
-                        SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: c)
+                        SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: .qa)
                     }
                     self.activityIndicator.removeFromSuperview()
                     let barButton = UIBarButtonItem(customView: self.activityIndicator)
@@ -1418,29 +1456,14 @@ class CommentViewController: MediaViewController {
                     self.activityIndicator.startAnimating()
                     
                     self.doSortImage(self.sortButton)
-
+                    
                     self.refreshComments(self)
                 }
-            }
-
-            actionSheetController.addAction(title: "Q&A", icon: UIImage(sfString: SFSymbol.questionmark, overrideString: "ic_sort_white")?.navIcon() ?? UIImage(), primary: sort == .qa) {
-                self.sort = .qa
-                self.reset = true
-                self.live = false
-                if isDefault.isOn {
-                    SettingValues.setCommentSorting(forSubreddit: self.sub, commentSorting: .qa)
-                }
-                self.activityIndicator.removeFromSuperview()
-                let barButton = UIBarButtonItem(customView: self.activityIndicator)
-                self.navigationItem.rightBarButtonItems = [barButton]
-                self.activityIndicator.startAnimating()
                 
-                self.doSortImage(self.sortButton)
-
-                self.refreshComments(self)
+                actionSheetController.show(self)
             }
-            
-            actionSheetController.show(self)
+        } else {
+            // Fallback on earlier versions
         }
     }
    
@@ -1664,42 +1687,46 @@ class CommentViewController: MediaViewController {
         - sender: AnyObject
      */
     @objc func showOptionsMenu(_ sender: AnyObject) {
-        if online {
-            let link = submission!
-
-            let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)
-
-            alertController.addAction(title: "Refresh comments", icon: UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")!.menuIcon()) {
-                self.reset = true
-                self.refreshComments(self)
-            }
-
-            alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
-                self.reply(self.headerCell)
-            }
-
-            alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()) {
-                VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
-            }
-
-            alertController.addAction(title: "View related submissions", icon: UIImage(sfString: SFSymbol.squareStackFill, overrideString: "size")!.menuIcon()) {
-                let related = RelatedViewController.init(thing: self.submission!)
-                VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
-            }
-
-            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
-                Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
-            }
-
-            alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
-                if self.allCollapsed {
-                    self.expandAll()
-                } else {
-                    self.collapseAll()
+        if #available(iOS 12.0, *) {
+            if NetworkMonitor.shared.online {
+                let link = submission!
+                
+                let alertController = DragDownAlertMenu(title: "Comment actions", subtitle: self.submission?.title ?? "", icon: self.submission?.thumbnailUrl)
+                
+                alertController.addAction(title: "Refresh comments", icon: UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "sync")!.menuIcon()) {
+                    self.reset = true
+                    self.refreshComments(self)
                 }
+                
+                alertController.addAction(title: "Reply to submission", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
+                    self.reply(self.headerCell)
+                }
+                
+                alertController.addAction(title: "Go to r/\(link.subreddit)", icon: UIImage(sfString: .rCircleFill, overrideString: "subs")!.menuIcon()) {
+                    VCPresenter.openRedditLink("www.reddit.com/r/\(link.subreddit)", self.navigationController, self)
+                }
+                
+                alertController.addAction(title: "View related submissions", icon: UIImage(sfString: SFSymbol.squareStackFill, overrideString: "size")!.menuIcon()) {
+                    let related = RelatedViewController.init(thing: self.submission!)
+                    VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+                }
+                
+                alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
+                    Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
+                }
+                
+                alertController.addAction(title: allCollapsed ? "Expand child comments" : "Collapse child comments", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
+                    if self.allCollapsed {
+                        self.expandAll()
+                    } else {
+                        self.collapseAll()
+                    }
+                }
+                
+                alertController.show(self)
             }
-            
-            alertController.show(self)
+        } else {
+            // Fallback on earlier versions
         }
     }
 

@@ -192,65 +192,69 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
 
     func loadContent() {
-        let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
-        let imageURL: URL
-        if let lqURL = data.lqURL, !SettingValues.loadContentHQ && shouldShowLq && !forceHD {
-            imageURL = lqURL
-            viewInHDButton.isHidden = false
-        } else {
-            if ContentType.isImgurLink(uri: data.baseURL!) {
-                let urlString = "\(data.baseURL!).png"
-                imageURL = URL.init(string: urlString)!
+        if #available(iOS 12.0, *) {
+            let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && NetworkMonitor.shared.online)
+            let imageURL: URL
+            if let lqURL = data.lqURL, !SettingValues.loadContentHQ && shouldShowLq && !forceHD {
+                imageURL = lqURL
+                viewInHDButton.isHidden = false
             } else {
-                imageURL = data.baseURL!
-            }
-            viewInHDButton.isHidden = true
-        }
-
-        setProgressViewVisible(true)
-
-        loadImage(imageURL: imageURL) { [weak self] (image, isPreview, finalSize) in
-            if let strongSelf = self {
-                if strongSelf.imageView.image != nil, !isPreview {
-                    // If replacing a preview with a full-quality image,
-                    // only replace the image (don't redo layout).
-                    // This lets us invisibly swap in-place.
-                    strongSelf.imageView.image = image
-                } else if !(isPreview && finalSize == .zero) {
-                    if let size = finalSize, finalSize != CGSize.zero {
-                        strongSelf.imageView.image = image
-                        let maxFrame = strongSelf.view.frame.size
-                        var newSize = maxFrame
-
-                        let minWidth = maxFrame.width / size.width
-                        let minHeight = maxFrame.height / size.height
-                        
-                        if minHeight < minWidth {
-                            newSize.width = newSize.height / size.height * size.width
-                        } else if minWidth < minHeight {
-                            newSize.height = newSize.width / size.width * size.height
-                        }
-
-                        var newFrame = strongSelf.imageView.frame
-                        newFrame.size = size
-                        strongSelf.imageView.frame = newFrame
-                        strongSelf.scrollView.contentSize = size
-                        strongSelf.overrideSize = size
-                    } else {
-                        strongSelf.imageView.contentMode = .scaleAspectFit
-                        strongSelf.imageView.image = image
-                        strongSelf.imageView.sizeToFit()
-                        strongSelf.scrollView.contentSize = image.size
-                        strongSelf.view.setNeedsLayout()
-                    }
-                    
-                    strongSelf.imageView.setNeedsLayout()
+                if ContentType.isImgurLink(uri: data.baseURL!) {
+                    let urlString = "\(data.baseURL!).png"
+                    imageURL = URL.init(string: urlString)!
+                } else {
+                    imageURL = data.baseURL!
                 }
-                // Update UI
-                strongSelf.setProgressViewVisible(false)
-                strongSelf.downloadButton.isHidden = false
-                strongSelf.size.isHidden = true
+                viewInHDButton.isHidden = true
             }
+        
+            setProgressViewVisible(true)
+
+            loadImage(imageURL: imageURL) { [weak self] (image, isPreview, finalSize) in
+                if let strongSelf = self {
+                    if strongSelf.imageView.image != nil, !isPreview {
+                        // If replacing a preview with a full-quality image,
+                        // only replace the image (don't redo layout).
+                        // This lets us invisibly swap in-place.
+                        strongSelf.imageView.image = image
+                    } else if !(isPreview && finalSize == .zero) {
+                        if let size = finalSize, finalSize != CGSize.zero {
+                            strongSelf.imageView.image = image
+                            let maxFrame = strongSelf.view.frame.size
+                            var newSize = maxFrame
+
+                            let minWidth = maxFrame.width / size.width
+                            let minHeight = maxFrame.height / size.height
+                            
+                            if minHeight < minWidth {
+                                newSize.width = newSize.height / size.height * size.width
+                            } else if minWidth < minHeight {
+                                newSize.height = newSize.width / size.width * size.height
+                            }
+
+                            var newFrame = strongSelf.imageView.frame
+                            newFrame.size = size
+                            strongSelf.imageView.frame = newFrame
+                            strongSelf.scrollView.contentSize = size
+                            strongSelf.overrideSize = size
+                        } else {
+                            strongSelf.imageView.contentMode = .scaleAspectFit
+                            strongSelf.imageView.image = image
+                            strongSelf.imageView.sizeToFit()
+                            strongSelf.scrollView.contentSize = image.size
+                            strongSelf.view.setNeedsLayout()
+                        }
+                        
+                        strongSelf.imageView.setNeedsLayout()
+                    }
+                    // Update UI
+                    strongSelf.setProgressViewVisible(false)
+                    strongSelf.downloadButton.isHidden = false
+                    strongSelf.size.isHidden = true
+                }
+            }
+        } else {
+            // Fallback on earlier versions
         }
     }
 
@@ -310,7 +314,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 })
         }
     }
-
 }
 
 // MARK: - Actions

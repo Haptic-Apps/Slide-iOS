@@ -78,15 +78,21 @@ extension CommentViewController: LinkCellViewDelegate, SubmissionMoreDelegate {
     
     /// Displays more info and presents alert.
     func more(_ cell: LinkCellView) {
-        if online {
-            PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: 0)
+        if #available(iOS 12.0, *) {
+            if NetworkMonitor.shared.online {
+                PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: 0)
+            }
         }
     }
     
     /// Sets a reply from user.
     @objc func reply(_ cell: LinkCellView) {
-        if online {
-            VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, delegate: self)), parentVC: self)
+        if #available(iOS 12.0, *) {
+            if NetworkMonitor.shared.online {
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(submission: cell.link!, sub: cell.link!.subreddit, delegate: self)), parentVC: self)
+            }
+        } else {
+            // Fallback on earlier versions
         }
     }
 
@@ -97,20 +103,24 @@ extension CommentViewController: LinkCellViewDelegate, SubmissionMoreDelegate {
     
     /// Deletes a selected comment.
     func deleteSelf(_ cell: LinkCellView) {
-        if online {
-            do {
-                try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (_) in
-                    DispatchQueue.main.async {
-                        if (self.navigationController?.modalPresentationStyle ?? .formSheet) == .formSheet {
-                            self.navigationController?.dismiss(animated: true)
-                        } else {
-                            self.navigationController?.popViewController(animated: true)
+        if #available(iOS 12.0, *) {
+            if NetworkMonitor.shared.online {
+                do {
+                    try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (_) in
+                        DispatchQueue.main.async {
+                            if (self.navigationController?.modalPresentationStyle ?? .formSheet) == .formSheet {
+                                self.navigationController?.dismiss(animated: true)
+                            } else {
+                                self.navigationController?.popViewController(animated: true)
+                            }
                         }
-                    }
-                })
-            } catch {
-
+                    })
+                } catch {
+                    
+                }
             }
+        } else {
+            // Fallback on earlier versions
         }
     }
     
