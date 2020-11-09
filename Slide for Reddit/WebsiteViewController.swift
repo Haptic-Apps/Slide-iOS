@@ -285,7 +285,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         if completionFound {
             return
         }
-        var shared = HTTPCookieStorage.shared
+        let shared = HTTPCookieStorage.shared
         shared.cookies?.forEach({ (cookie) in
             if cookie.name == "reddit_session" {
                 completion()
