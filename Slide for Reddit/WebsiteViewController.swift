@@ -188,15 +188,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         webView.navigationDelegate = self
         webView.allowsBackForwardNavigationGestures = false
-        webView.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
-        webView.configuration.preferences.setValue(true, forKey: "allowFileAccessFromFileURLs")
-        webView.configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
-
-        //let source = "function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); } window.console.log = captureLog; $( document ).ajaxSend(function( event, request, settings )  {callNativeApp (settings.data);});function callNativeApp (data) {try {webkit.messageHandlers.callbackHandler.postMessage(data);}catch(err) {console.log('The native context does not exist yet');}}"
-        //let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-        //webView.configuration.userContentController.addUserScript(script)
-        // register the bridge script that listens for the output
-        //webView.configuration.userContentController.add(self, name: "logHandler")
 
         self.view.addSubview(webView)
         webView.edgeAnchors /==/ self.view.edgeAnchors
@@ -260,26 +251,24 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             myProgressView.progress = Float(webView.estimatedProgress)
             if webView.estimatedProgress > 0.98 {
                 myProgressView.isHidden = true
-                if needsReload {
+                if needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
                     needsReload = false
                     webView.alpha = 0
                     webView.superview?.backgroundColor = ColorUtil.theme.backgroundColor
-                    let pending = UIAlertController(title: "Creating New User", message: nil, preferredStyle: .Alert)
+                    let pending = UIAlertController(title: "Syncing with Reddit...", message: nil, preferredStyle: .alert)
 
-                    //create an activity indicator
                     let indicator = UIActivityIndicatorView(frame: pending.view.bounds)
                     indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-                    //add the activity indicator as a subview of the alert controller's view
                     pending.view.addSubview(indicator)
-                    indicator.isUserInteractionEnabled = false // required otherwise if there buttons in the UIAlertController you will not be able to press them
+                    indicator.isUserInteractionEnabled = false
                     indicator.startAnimating()
 
-                    self.presentViewController(pending, animated: true, completion: nil)
+                    self.present(pending, animated: true, completion: nil)
 
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
                         pending.dismiss(animated: false, completion: nil)
-                        self.dismiss(animated: true) { [weak self] in
+                        self.dismiss(animated: true) { [weak self] in //Dismiss self and run callback
                             self?.reloadCallback?()
                         }
                     }
@@ -362,19 +351,23 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
         if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8), bodyString.contains("id_token"), let base = savedChallengeURL { //Response from Apple login
             var params = queryDictionaryForQueryString(query: bodyString)
-            params["csrf_token"] = csrfToken
+            params["csrf_token"] = csrfToken //Used stored csrfToken
             params["check_existing_user"] = true
             params["create_user"] = true
-            print(params)
+
             do {
                 if #available(iOS 13.0, *) {
+                    //Let Reddit create new reddit_session Cookie from data returned from Apple Login
                     let jsonData = try JSONSerialization.data(withJSONObject: params, options: .withoutEscapingSlashes)
                     Alamofire.request("https://www.reddit.com/account/identity_provider_login", method: .post, parameters: [:], encoding: String(data: jsonData, encoding: .utf8)!, headers: nil).responseJSON { (response) in
                         switch response.result {
                         case .success(let JSON):
                             let token = (JSON as? [String: Any])?["token"] as? String ?? ""
+                            //New token generated, new reddit_session Cookie should exist now
                             print("TOKEN IS \(token)")
-                            self.webView.load(URLRequest(url: URL(string: self.savedChallengeURL ?? "")!))
+                            
+                            //Force reload page
+                            self.webView.load(URLRequest(url: URL(string: base)!))
                             self.needsReload = true
                         case .failure(let error):
                             print(error)
@@ -391,7 +384,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             return
         }
         
-
         if !blocking11 {
             if url == nil || !(isAd(url: url!)) {
                 
@@ -408,6 +400,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         
     }
     
+    //Force save Cookies
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         guard
             let response = navigationResponse.response as? HTTPURLResponse,
@@ -441,10 +434,12 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         return dictionary
     }
     
+    //Get user csrf token for Alamofire, which will be used to authorize next
     @objc func loginWithApple() {
         Alamofire.request("https://www.reddit.com/account/login/?mobile_ui=on&experiment_mweb_sso_login_link=enabled&experiment_mweb_google_onetap=onetap_auto&experiment_mweb_am_refactoring=enabled", method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).response { (response) in
             
             if let data = response.data, let stringBody = String(data: data, encoding: .utf8) {
+                //Get token out of body HTML
                 let split = stringBody.substring((stringBody.indexOf("csrf_token\" value=\"") ?? 0) + 19, length: 50)
                 let secondSplit = split.substring(0, length: split.indexOf("\"") ?? 0)
                 self.csrfToken = secondSplit
@@ -454,6 +449,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         }
     }
 
+    //Prompts Sign in with Apple screen using Reddit's auth parameters
     @objc func promptLoginScreen() {
         let queryItems = [
             URLQueryItem(name: "client_id", value: "com.reddit.RedditAppleSSO"),
