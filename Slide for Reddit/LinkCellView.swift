@@ -3477,11 +3477,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
             
-            if let baseUrl = self.videoURL ?? self.link?.url, let parent = self.parentViewController { //todo enable this
+            if let baseUrl = self.videoURL ?? self.link?.url ?? URL(string: self.link?.videoPreview ?? ""), let parent = self.parentViewController {
                 var finalUrl = baseUrl
-                if VideoMediaViewController.VideoType.fromPath(baseUrl.absoluteString) == .REDDIT {
-                    finalUrl = URL(string: self.link!.videoMP4) ?? baseUrl
-                }
                 children.append(UIAction(title: "Save Video", image: UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "save")!.menuIcon()) { _ in
                     VideoMediaDownloader(urlToLoad: finalUrl).getVideoWithCompletion(completion: { (fileURL) in
                         if fileURL != nil {
