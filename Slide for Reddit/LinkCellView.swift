@@ -59,7 +59,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
             let shareItems: Array = [url]
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            activityViewController.popoverPresentationController?.sourceView = self.innerView
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         }
         
@@ -112,8 +112,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [bannerImage?.image] : [url], applicationActivities: nil)
         if let presenter = activityViewController.popoverPresentationController {
-            presenter.sourceView = self.contentView
-            presenter.sourceRect = self.contentView.bounds
+            presenter.sourceView = self.innerView
+            presenter.sourceRect = self.innerView.bounds
         }
         self.parentViewController?.present(activityViewController, animated: true, completion: nil)
     }
@@ -171,6 +171,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var sideUpvote: UIButton!
     var sideDownvote: UIButton!
     var sideScore: UILabel!
+    var innerView = UIView()
     
     var setElevation = false
     
@@ -213,7 +214,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var videoID: String = ""
 
     var accessibilityView: UIView {
-        return full ? contentView : self
+        return full ? innerView : self
     }
     
     override init(frame: CGRect) {
@@ -226,6 +227,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func configureView() {
+        if full {
+            self.contentView.addSubview(innerView)
+        } else {
+            self.addSubview(innerView)
+        }
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true
@@ -494,9 +500,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if self is FullLinkCellView {
-            contentView.addSubviews(bannerImage, thumbImageContainer, title, subicon, textView, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, textView, infoContainer, tagbody)
         } else {
-            contentView.addSubviews(bannerImage, thumbImageContainer, title, subicon, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, infoContainer, tagbody)
         }
         
         if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
@@ -538,9 +544,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             topVideoView.addSubviews(progressDot, spinner, sound, timeView)
             
-            contentView.addSubviews(videoView, topVideoView)
-            contentView.bringSubviewToFront(videoView)
-            contentView.bringSubviewToFront(topVideoView)
+            innerView.addSubviews(videoView, topVideoView)
+            innerView.bringSubviewToFront(videoView)
+            innerView.bringSubviewToFront(topVideoView)
             
             playView = UIImageView().then {
                     $0.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
@@ -550,7 +556,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             topVideoView.addSubview(playView)
         }
         
-        contentView.layer.masksToBounds = true
+        innerView.layer.masksToBounds = true
         
         if SettingValues.actionBarMode.isFull() || full || self is GalleryLinkCellView {
             self.box = UIStackView().then {
@@ -560,7 +566,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             box.addArrangedSubviews(submissionicon, horizontalSpace(2), score, horizontalSpace(8), commenticon, horizontalSpace(2), comments)
-            self.contentView.addSubview(box)
+            self.innerView.addSubview(box)
             
             self.buttons = UIStackView().then {
                 $0.accessibilityIdentifier = "Button Stack Horizontal"
@@ -574,14 +580,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 buttons.addArrangedSubviews(edit, reply, readLater, save, hide, upvote, downvote, mod, share, menu)
             }
-            self.contentView.addSubview(buttons)
+            self.innerView.addSubview(buttons)
         } else {
             buttons = UIStackView()
             box = UIStackView()
         }
         
         if full {
-            self.contentView.addSubview(infoBox)
+            self.innerView.addSubview(infoBox)
         }
         
         if SettingValues.actionBarMode.isSide() && !full {
@@ -594,7 +600,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             sideButtons.addArrangedSubviews(sideUpvote, sideScore, sideDownvote)
             sideScore.textAlignment = .center
-            self.contentView.addSubview(sideButtons)
+            self.innerView.addSubview(sideButtons)
         } else {
             sideButtons = UIStackView()
         }
@@ -639,7 +645,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if dtap == nil && SettingValues.submissionActionDoubleTap != .NONE {
                 dtap = UIShortTapGestureRecognizer.init(target: self, action: #selector(self.doDTap(_:)))
                 dtap!.numberOfTapsRequired = 2
-                self.contentView.addGestureRecognizer(dtap!)
+                self.innerView.addGestureRecognizer(dtap!)
             }
             
             if !full {
@@ -654,7 +660,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             if #available(iOS 13, *) {
                 let interaction = UIContextMenuInteraction(delegate: self)
-                self.contentView.addInteraction(interaction)
+                self.innerView.addInteraction(interaction)
             }
 
             if longPress == nil {
@@ -688,7 +694,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 longPress!.require(toFail: long2)
                 longPress!.require(toFail: long3)
                 longPress!.require(toFail: long4)
-                self.contentView.addGestureRecognizer(longPress!)
+                self.innerView.addGestureRecognizer(longPress!)
             }
             addTouch = true
         }
@@ -772,8 +778,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             dragCancelled = false
             direction = 0
             originalLocation = sender.location(in: self).x
-            originalPos = self.contentView.frame.origin.x
-            diff = self.contentView.frame.width - originalLocation
+            originalPos = self.innerView.frame.origin.x
+            diff = self.innerView.frame.width - originalLocation
             typeImage = UIImageView().then {
                 $0.accessibilityIdentifier = "Action type"
                 $0.layer.cornerRadius = 22.5
@@ -792,22 +798,22 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if sender.state != .ended && sender.state != .began && sender.state != .cancelled {
             guard previousProgress != 1 else { return }
             let posx = sender.location(in: self).x
-            if direction == -1 && self.contentView.frame.origin.x > originalPos {
+            if direction == -1 && self.innerView.frame.origin.x > originalPos {
                 if SettingValues.submissionGestureMode == .HALF || SettingValues.submissionGestureMode == .HALF_FULL {
                     return
                 }
                 if getFirstAction(left: false) != .NONE {
                     direction = 0
-                    diff = self.contentView.frame.width - originalLocation
+                    diff = self.innerView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     tiConstraints = batch {
                         typeImage.leftAnchor /==/ self.leftAnchor + 4
                     }
                 }
-            } else if direction == 1 && self.contentView.frame.origin.x < originalPos {
+            } else if direction == 1 && self.innerView.frame.origin.x < originalPos {
                 if getFirstAction(left: true) != .NONE {
                     direction = 0
-                    diff = self.contentView.frame.width - originalLocation
+                    diff = self.innerView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     
                     //TODO: Bug here, this is triggering on first left-to-right swipe for some reason, doesn't affect comments
@@ -821,7 +827,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 if xVelocity > 0 {
                     direction = 1
                     print("Direction change to 1")
-                    diff = self.contentView.frame.width - diff
+                    diff = self.innerView.frame.width - diff
                     action = getFirstAction(left: true)
                     if action == .NONE {
                         sender.cancel()
@@ -836,7 +842,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     print("Direction change to -1")
                     direction = -1
                     action = getFirstAction(left: false)
-                    diff = self.contentView.frame.width - originalLocation
+                    diff = self.innerView.frame.width - originalLocation
 
                     if action == .NONE {
                         sender.cancel()
@@ -850,9 +856,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
             }
             
-            let currentTranslation = direction == -1 ? 0 - (self.contentView.bounds.size.width - posx - diff) : posx - diff
+            let currentTranslation = direction == -1 ? 0 - (self.innerView.bounds.size.width - posx - diff) : posx - diff
             
-            self.contentView.frame.origin.x = posx - originalLocation
+            self.innerView.frame.origin.x = posx - originalLocation
             if (direction == -1 && SettingValues.submissionActionLeft == .NONE) || (direction == 1 && SettingValues.submissionActionRight == .NONE) {
                 dragCancelled = true
                 sender.cancel()
@@ -876,7 +882,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 typeImage.widthAnchor /==/ 45
             }
             
-            let progress = Float(min(abs(currentTranslation) / (self.contentView.bounds.width), 1))
+            let progress = Float(min(abs(currentTranslation) / (self.innerView.bounds.width), 1))
             print(progress)
             if progress > 0.1 && previousProgress <= 0.1 {
                 typeImage.alpha = 0
@@ -947,7 +953,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.typeImage.alpha = 0
                 self.backgroundColor = ColorUtil.theme.backgroundColor
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-                self.contentView.frame.origin.x = self.originalPos
+                self.innerView.frame.origin.x = self.originalPos
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
                 self.typeImage = nil
@@ -962,7 +968,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
-                self.contentView.frame.origin.x = self.originalPos
+                self.innerView.frame.origin.x = self.originalPos
                 self.backgroundColor = ColorUtil.theme.backgroundColor
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
@@ -1116,36 +1122,36 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 radius = 15
             }
             
-            if !full {
-                self.contentView.translatesAutoresizingMaskIntoConstraints = false
-                self.contentView.leftAnchor == self.leftAnchor + leftmargin ~ .required
-                self.contentView.topAnchor == self.topAnchor + topmargin ~ .required
-                self.contentView.rightAnchor == self.rightAnchor - rightmargin ~ .required
-                self.contentView.bottomAnchor == self.bottomAnchor - bottommargin ~ .required
+            if full {
+                self.innerView.edgeAnchors == self.contentView.edgeAnchors
+            } else {
+                self.innerView.leftAnchor == self.leftAnchor + leftmargin ~ .required
+                self.innerView.topAnchor == self.topAnchor + topmargin ~ .required
+                self.innerView.rightAnchor == self.rightAnchor - rightmargin ~ .required
+                self.innerView.bottomAnchor == self.bottomAnchor - bottommargin ~ .required
             }
 
             if !SettingValues.flatMode {
-                self.contentView.layer.cornerRadius = CGFloat(radius)
-                self.contentView.clipsToBounds = false
+                self.innerView.layer.cornerRadius = CGFloat(radius)
+                self.innerView.clipsToBounds = false
             }
             
             if SettingValues.actionBarMode.isFull() || full || self is GalleryLinkCellView {
-                
                 if SettingValues.actionBarMode == .FULL_LEFT {
-                    box.rightAnchor /==/ contentView.rightAnchor - ctwelve
+                    box.rightAnchor /==/ innerView.rightAnchor - ctwelve
                     box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                     box.heightAnchor /==/ CGFloat(24)
                     buttons.heightAnchor /==/ CGFloat(35)
-                    buttons.leftAnchor /==/ contentView.leftAnchor + ctwelve
-                    buttons.bottomAnchor /==/ contentView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    buttons.leftAnchor /==/ innerView.leftAnchor + ctwelve
+                    buttons.bottomAnchor /==/ innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
                     box.centerYAnchor /==/ buttons.centerYAnchor + 3
                 } else {
-                    box.leftAnchor /==/ contentView.leftAnchor + ctwelve
+                    box.leftAnchor /==/ innerView.leftAnchor + ctwelve
                     box.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                     box.heightAnchor /==/ CGFloat(24)
                     buttons.heightAnchor /==/ CGFloat(35)
-                    buttons.rightAnchor /==/ contentView.rightAnchor - ctwelve
-                    buttons.bottomAnchor /==/ contentView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    buttons.rightAnchor /==/ innerView.rightAnchor - ctwelve
+                    buttons.bottomAnchor /==/ innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
                     box.centerYAnchor /==/ buttons.centerYAnchor + 3
                 }
                 for view in buttons.subviews {
@@ -1154,9 +1160,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 buttons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if SettingValues.actionBarMode.isSide() {
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
-                    sideButtons.rightAnchor /==/ contentView.rightAnchor - ceight
+                    sideButtons.rightAnchor /==/ innerView.rightAnchor - ceight
                 } else {
-                    sideButtons.leftAnchor /==/ contentView.leftAnchor + ceight
+                    sideButtons.leftAnchor /==/ innerView.leftAnchor + ceight
                 }
                 sideScore.widthAnchor /==/ CGFloat(40)
                 sideButtons.widthAnchor /==/ CGFloat(40)
@@ -1253,7 +1259,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             topVideoView?.isHidden = false
             sound.isHidden = true
             self.updateProgress(-1, "", buffering: false)
-            self.contentView.bringSubviewToFront(topVideoView!)
+            self.innerView.bringSubviewToFront(topVideoView!)
             self.progressDot.isHidden = true
             self.timeView.isHidden = true
             if wasPlayingAudio {
@@ -1418,12 +1424,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         typeImage.image = UIImage(named: SettingValues.submissionActionDoubleTap.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
         typeImage.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
-        contentView.addSubviews(typeImage, overView)
-        contentView.bringSubviewToFront(overView)
-        contentView.bringSubviewToFront(typeImage)
+        innerView.addSubviews(typeImage, overView)
+        innerView.bringSubviewToFront(overView)
+        innerView.bringSubviewToFront(typeImage)
         overView.backgroundColor = SettingValues.submissionActionDoubleTap.getColor()
-        overView.edgeAnchors /==/ self.contentView.edgeAnchors
-        typeImage.centerAnchors /==/ self.contentView.centerAnchors
+        overView.edgeAnchors /==/ self.innerView.edgeAnchors
+        typeImage.centerAnchors /==/ self.innerView.centerAnchors
         typeImage.heightAnchor /==/ 45
         typeImage.widthAnchor /==/ 45
         UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
@@ -1468,8 +1474,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         case .SHARE:
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.link!.url ?? URL(string: self.link!.permalink)!], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
-                presenter.sourceView = self.contentView
-                presenter.sourceRect = self.contentView.bounds
+                presenter.sourceView = self.innerView
+                presenter.sourceRect = self.innerView.bounds
             }
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         default:
@@ -1508,8 +1514,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         case .SHARE:
             let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [self.link!.url ?? URL(string: self.link!.permalink)!], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
-                presenter.sourceView = self.contentView
-                presenter.sourceRect = self.contentView.bounds
+                presenter.sourceView = self.innerView
+                presenter.sourceRect = self.innerView.bounds
             }
             self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         default:
@@ -1550,7 +1556,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.loadedImage = nil
         lq = false
 
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
         comments.textColor = ColorUtil.theme.navIconColor
         title.textColor = ColorUtil.theme.navIconColor
 
@@ -1610,7 +1616,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) && !overrideFull {
             submissionHeight = test ? 150 : 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (full ? 10 : 0))
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - (full ? 10 : 0))
             if (!full && SettingValues.postImageMode == .SHORT_IMAGE && !(self is AutoplayBannerLinkCellView)) && !overrideFull {
                 submissionHeight = test ? 200 : (h > halfScreen ? halfScreen : h)
             } else {
@@ -1679,7 +1685,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if full && big {
             let bannerPadding = CGFloat(5)
-            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - (bannerPadding * 2))
+            submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height), imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - (bannerPadding * 2))
         }
         
         if self is GalleryLinkCellView {
@@ -1751,7 +1757,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 sound.isHidden = true
                 self.timeView.isHidden = true
                 self.updateProgress(-1, "", buffering: false)
-                self.contentView.bringSubviewToFront(topVideoView!)
+                self.innerView.bringSubviewToFront(topVideoView!)
                 self.shouldLoadVideo = true
                 if full {
                     self.videoCompletion = nil
@@ -1775,7 +1781,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 topVideoView?.isHidden = false
                 sound.isHidden = true
                 self.updateProgress(-1, "", buffering: false)
-                self.contentView.bringSubviewToFront(topVideoView!)
+                self.innerView.bringSubviewToFront(topVideoView!)
                 self.playView.isHidden = false
                 self.progressDot.isHidden = true
                 self.timeView.isHidden = true
@@ -1790,7 +1796,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 aspect = 1
             }
             if !videoOverride && ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) {
-                aspect = (full ? aspectWidth : self.contentView.frame.size.width) / (test ? 150 : 200)
+                aspect = (full ? aspectWidth : self.innerView.frame.size.width) / (test ? 150 : 200)
                 if aspect == 0 || aspect > 10000 || aspect.isNaN {
                     aspect = 1
                 }
@@ -1806,7 +1812,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
                 loadedImage = bannerImageUrl
-                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (contentView.frame.size.width == 0 ? CGFloat(submission.width) : contentView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
+                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
             }
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
@@ -1824,20 +1830,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if !full && !test && !embedded {
-            aspectWidth = self.contentView.frame.size.width
+            aspectWidth = self.innerView.frame.size.width
         }
         
         let mo = History.commentsSince(s: submission)
         comments.text = " \(submission.commentCount)" + (mo > 0 ? "(+\(mo))" : "")
         
         if !registered && !full && SettingValues.submissionActionForceTouch == .NONE {
-            parent.registerForPreviewing(with: self, sourceView: self.contentView)
+            parent.registerForPreviewing(with: self, sourceView: self.innerView)
             registered = true
         } else if SettingValues.submissionActionForceTouch != .NONE && force == nil {
             force = ForceTouchGestureRecognizer()
             force?.addTarget(self, action: #selector(self.do3dTouch(_:)))
             force?.cancelsTouchesInView = false
-            self.contentView.addGestureRecognizer(force!)
+            self.innerView.addGestureRecognizer(force!)
         }
         
         refresh(np: np)
@@ -2327,7 +2333,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
                 self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
-                self.showBody(width: self.contentView.frame.size.width - 24)
+                self.showBody(width: self.innerView.frame.size.width - 24)
             })
         }
         
@@ -2438,7 +2444,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {
-                            self.showBody(width: self.contentView.frame.size.width - 24)
+                            self.showBody(width: self.innerView.frame.size.width - 24)
                         }
                     }
                 }}
@@ -2669,7 +2675,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode && !setElevation {
             setElevation = true
-            self.contentView.elevate(elevation: 2)
+            self.innerView.elevate(elevation: 2)
         }
     }
     
@@ -3239,7 +3245,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         
-        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(interaction.location(in: self.contentView)) {
+        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(interaction.location(in: self.innerView)) {
             let location = interaction.location(in: self.textView)
             
             if self.textView.firstTextView.frame.contains(location) {
@@ -3253,11 +3259,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 }
             }
             return UITargetedPreview(view: self.textView, parameters: parameters)
-        } else if videoView != nil && !videoView.isHidden && videoView.frame.contains(interaction.location(in: self.contentView)) {
+        } else if videoView != nil && !videoView.isHidden && videoView.frame.contains(interaction.location(in: self.innerView)) {
             return UITargetedPreview(view: self.videoView, parameters: parameters)
-        } else if bannerImage != nil && !bannerImage.isHidden && bannerImage.frame.contains(interaction.location(in: self.contentView)) {
+        } else if bannerImage != nil && !bannerImage.isHidden && bannerImage.frame.contains(interaction.location(in: self.innerView)) {
             return UITargetedPreview(view: self.bannerImage, parameters: parameters)
-        } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.contentView)) {
+        } else if thumbImageContainer != nil && thumbImageContainer.frame.contains(interaction.location(in: self.innerView)) {
             return UITargetedPreview(view: self.thumbImageContainer, parameters: parameters)
         } else {
             return UITargetedPreview(view: self.save, parameters: parameters)
@@ -3299,13 +3305,13 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        let saveArea = self.contentView.convert(location, to: self.buttons)
+        let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
-            let innerPoint = self.contentView.convert(location, to: self.textView)
+            let innerPoint = self.innerView.convert(location, to: self.textView)
             if self.textView.firstTextView.frame.contains(innerPoint) {
                 return getConfigurationForTextView(self.textView.firstTextView, innerPoint)
             } else if self.textView.overflow.frame.contains(innerPoint) {
-                let innerLocation = self.contentView.convert(innerPoint, to: self.textView.overflow)
+                let innerLocation = self.innerView.convert(innerPoint, to: self.textView.overflow)
                 print(innerLocation)
                 for view in self.textView.overflow.subviews {
                     if view.frame.contains(innerLocation) && view is YYLabel {
@@ -3371,10 +3377,10 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
                 let shareItems: Array = [url]
                 let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = self.contentView
+                activityViewController.popoverPresentationController?.sourceView = self.innerView
                 if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = self.contentView
-                    presenter.sourceRect = self.contentView.bounds
+                    presenter.sourceView = self.innerView
+                    presenter.sourceRect = self.innerView.bounds
                 }
                 self.parentViewController?.present(activityViewController, animated: true, completion: nil)
             })

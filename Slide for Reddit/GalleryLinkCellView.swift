@@ -22,13 +22,13 @@ final class GalleryLinkCellView: LinkCellView {
         constraintsForType = batch {
             bannerImage.isHidden = false
             // Image goes above title
-            title.horizontalAnchors /==/ contentView.horizontalAnchors + ctwelve
+            title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             
             title.bottomAnchor /==/ box.topAnchor - ceight
             
-            bannerImage.topAnchor /==/ contentView.topAnchor + bannerPadding
+            bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding
             bannerImage.bottomAnchor /==/ title.topAnchor - ceight
-            bannerImage.horizontalAnchors /==/ contentView.horizontalAnchors + bannerPadding
+            bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
             
             subicon.topAnchor /==/ title.topAnchor
             subicon.leftAnchor /==/ title.leftAnchor
