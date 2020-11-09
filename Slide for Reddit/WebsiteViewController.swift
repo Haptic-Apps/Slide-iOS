@@ -21,6 +21,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var register: Bool
     var blocking11 = false
     var needsReload = false
+    var completionFound = false
     var csrfToken = ""
     
     var savedChallengeURL: String? //Used for login with Apple
@@ -265,17 +266,40 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                     indicator.startAnimating()
 
                     self.present(pending, animated: true, completion: nil)
+                    
+                    checkCookiesUntilCompletion {
+                        self.completionFound = true
 
-                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 3) {
+                        self.webView.reload()
+                        self.webView.alpha = 1
                         pending.dismiss(animated: false, completion: nil)
-                        self.dismiss(animated: true) { [weak self] in //Dismiss self and run callback
-                            self?.reloadCallback?()
-                        }
                     }
                 }
             } else {
                 myProgressView.isHidden = false
             }
+        }
+    }
+    
+    func checkCookiesUntilCompletion(tries: Int = 0, _ completion: @escaping () -> Void) {
+        if completionFound {
+            return
+        }
+        var shared = HTTPCookieStorage.shared
+        shared.cookies?.forEach({ (cookie) in
+            if cookie.name == "reddit_session" {
+                completion()
+                return
+            }
+        })
+        
+        if tries == 6 {
+            completion()
+            return
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.checkCookiesUntilCompletion(tries: tries + 1, completion)
         }
     }
     
