@@ -158,6 +158,11 @@ class AccountController {
                 else { throw ReddiftError.canNotCreateURLRequestForOAuth2Page as NSError }
             let vc: UIViewController
             let web = WebsiteViewController(url: authorizationURL, subreddit: "")
+            web.reloadCallback = {
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+                    AccountController.addAccount(context: context, register: false)
+                }
+            }
             web.register = register
             vc = web
             VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: nil, parentViewController: context)

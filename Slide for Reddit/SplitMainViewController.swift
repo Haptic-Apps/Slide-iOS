@@ -846,6 +846,13 @@ extension SplitMainViewController: NavigationHomeDelegate {
         }
         
         optionMenu.addAction(title: "Add a new account", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
+            let dataStore = WKWebsiteDataStore.default()
+            dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+                dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
+                                     for: records.filter { !$0.displayName.isEmpty },
+                                     completionHandler: {})
+            }
+
             self.navigation(homeViewController, didRequestNewAccount: ())
         }
         

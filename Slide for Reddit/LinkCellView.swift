@@ -226,7 +226,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func configureView() {
-
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true
@@ -1119,10 +1118,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             if !full {
                 self.contentView.translatesAutoresizingMaskIntoConstraints = false
-                self.contentView.leftAnchor == self.leftAnchor + leftmargin
-                self.contentView.topAnchor == self.topAnchor + topmargin
-                self.contentView.rightAnchor == self.rightAnchor - rightmargin
-                self.contentView.bottomAnchor == self.bottomAnchor - bottommargin
+                self.contentView.leftAnchor == self.leftAnchor + leftmargin ~ .required
+                self.contentView.topAnchor == self.topAnchor + topmargin ~ .required
+                self.contentView.rightAnchor == self.rightAnchor - rightmargin ~ .required
+                self.contentView.bottomAnchor == self.bottomAnchor - bottommargin ~ .required
             }
 
             if !SettingValues.flatMode {
