@@ -172,8 +172,8 @@ class SettingValues {
 
     public static var browser = "firefox"
     public static var subredditBar = true
-    public static var totallyCollapse = true
-    public static var fullyHideNavbar = true
+    public static var hideBottomBar = true
+    public static var hideStatusBar = true
     public static var hiddenFAB = true
     public static var upvotePercentage = true
     public static var defaultSorting = LinkSortType.hot
@@ -199,7 +199,7 @@ class SettingValues {
     public static var nameScrubbing = true
     public static var muteYouTube = true
     public static var autoCache = false
-    public static var pinToolbar = false
+    public static var dontHideTopBar = false
     public static var hapticFeedback = true
     public static var wideIndicators = false
     public static var blackShadowbox = false
@@ -585,8 +585,8 @@ class SettingValues {
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
         SettingValues.notifications = settings.bool(forKey: SettingValues.pref_notifications)
-        SettingValues.totallyCollapse = settings.bool(forKey: SettingValues.pref_totallyCollapse)
-        SettingValues.fullyHideNavbar = settings.bool(forKey: SettingValues.pref_fullyHideNavbar)
+        SettingValues.hideBottomBar = settings.bool(forKey: SettingValues.pref_totallyCollapse)
+        SettingValues.hideStatusBar = settings.bool(forKey: SettingValues.pref_fullyHideNavbar)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)
         SettingValues.disableColor = settings.bool(forKey: SettingValues.pref_disableColor)
@@ -607,7 +607,7 @@ class SettingValues {
         SettingValues.nameScrubbing = settings.bool(forKey: SettingValues.pref_nameScrubbing)
         SettingValues.hiddenFAB = settings.bool(forKey: SettingValues.pref_hiddenFAB)
         SettingValues.isPro = settings.bool(forKey: SettingValues.pref_pro)
-        SettingValues.pinToolbar = settings.bool(forKey: SettingValues.pref_pinToolbar)
+        SettingValues.dontHideTopBar = settings.bool(forKey: SettingValues.pref_pinToolbar)
         SettingValues.autoKeyboard = settings.object(forKey: SettingValues.pref_autoKeyboard) == nil ? true : settings.bool(forKey: SettingValues.pref_autoKeyboard)
         SettingValues.linkAlwaysThumbnail = settings.object(forKey: SettingValues.pref_linkAlwaysThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_linkAlwaysThumbnail)
         SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)

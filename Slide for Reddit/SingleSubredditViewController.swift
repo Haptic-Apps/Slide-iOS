@@ -46,7 +46,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
+        return SettingValues.hideStatusBar
     }
     
     var autoplayHandler: AutoplayScrollViewHandler!
@@ -271,7 +271,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
             inHeadView = UIView().then {
                 $0.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
-                if SettingValues.fullyHideNavbar {
+                if SettingValues.hideStatusBar {
                     $0.backgroundColor = .clear
                 }
             }
@@ -450,7 +450,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
                 
-        inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
+        inHeadView?.removeFromSuperview()
         fab?.removeFromSuperview()
         
         if cancelRotationOffset == nil {
@@ -460,9 +460,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         var indexPathRect = CGRect(x: tableView.contentOffset.x, y: tableView.contentOffset.y, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
         let indexToPin = self.tableView.indexPathForItem(at: CGPoint(x: indexPathRect.width / (CGFloat(flowLayout.numberOfColumns) * 2), y: indexPathRect.midY))
         
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            self.splitViewController?.preferredDisplayMode = .secondaryOnly
-        }
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -523,11 +520,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     var lastCenter = CGPoint.zero
     func didScrollExtras(_ currentY: CGFloat) {
-        if !SettingValues.pinToolbar {
+        if !SettingValues.dontHideTopBar {
             if currentY > lastYUsed && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(self.tableView.contentOffset.y >= (self.tableView.contentSize.height - self.tableView.frame.size.height)) {
                     hideUI(inHeader: true)
-                } else if fab != nil && !fab!.isHidden && !isHiding {
+                } else if fab != nil && !fab!.isHidden && !isHiding && SettingValues.hideBottomBar {
                     UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
                         self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
                     }, completion: { _ in
@@ -556,21 +553,26 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     func hideUI(inHeader: Bool) {
         isHiding = true
-        self.fabHelper?.isUserInteractionEnabled = false
         
         if navbarEnabled {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
         }
                 
-        UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
-            self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
-        }, completion: { _ in
-            self.fab?.isHidden = true
+        if SettingValues.hideBottomBar {
+            self.fabHelper?.isUserInteractionEnabled = false
+
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseInOut, animations: {
+                self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
+            }, completion: { _ in
+                self.fab?.isHidden = true
+                self.isHiding = false
+            })
+        } else {
             self.isHiding = false
-        })
+        }
         
         if single || parent is SplitMainViewController {
-            if SettingValues.totallyCollapse {
+            if SettingValues.hideBottomBar {
                 self.navigationController?.setToolbarHidden(true, animated: true)
             }
 
@@ -613,7 +615,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             parentController!.doToolbarOffset()
         }
         
-        if self.fab?.superview != nil {
+        if self.fab?.superview != nil && SettingValues.hideBottomBar {
             self.fab?.isHidden = false
             self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
             
@@ -650,7 +652,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func show(_ animated: Bool = true) {
         if fab != nil && (fab!.isHidden || fab!.superview == nil) {
-            if animated {
+            if animated && SettingValues.hideBottomBar {
                 if fab!.superview == nil {
                     //if single {
                         self.navigationController?.toolbar.addSubview(fab!)
@@ -927,7 +929,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     func reloadNeedingColor() {
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
         inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
-        if SettingValues.fullyHideNavbar {
+        if SettingValues.hideStatusBar {
             inHeadView?.backgroundColor = .clear
         }
 

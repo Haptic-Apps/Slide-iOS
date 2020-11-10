@@ -43,6 +43,7 @@ class AnyModalViewController: UIViewController {
     
     var sliderBeingUsed: Bool = false
     var wasPlayingWhenPaused: Bool = false
+    var shouldHandleStart: Bool = true
     
     var baseURL: URL?
     var urlToLoad: URL?
@@ -920,7 +921,7 @@ extension AnyModalViewController {
             if !handlingPlayerItemDidreachEnd {
                 let percentComplete = time / duration
                 if let currentItem = player.currentItem {
-                    if currentItem.status == .readyToPlay && player.rate == 0 {
+                    if currentItem.status == .readyToPlay && player.rate == 0 && self.shouldHandleStart {
                         player.playImmediately(atRate: 1.0)
                     }
                 }
@@ -995,6 +996,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
     
     func togglePlaying() {
         self.handleShowUI()
+        self.shouldHandleStart = false
         if let player = videoView.player {
             if player.rate != 0 {
                 player.pause()
