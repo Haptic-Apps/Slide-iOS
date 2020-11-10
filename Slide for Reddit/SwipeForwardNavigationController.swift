@@ -259,25 +259,47 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
         if #available(iOS 14, *) {
             not14 = false
         }
+        
+        return self //Disable left sidebar
 
-        if UIDevice.current.userInterfaceIdiom == .phone || not14 {
-            var main: UIViewController?
-            for viewController in viewControllers {
-                if viewController is MainViewController {
-                    main = viewController
-                }
+        /*if UIDevice.current.userInterfaceIdiom == .phone || not14 {
+            guard let primaryNavigation = primaryViewController as? UINavigationController else {
+              return nil
             }
-            for viewController in pushableViewControllers {
-                if viewController is MainViewController {
-                    main = viewController
+            
+            return decomposeStackForTransitionToRegular(primaryNavigation)
+
+        }
+        return nil*/
+    }
+    
+    /* Unused
+    func decomposeStackForTransitionToRegular(_ navigationController: UINavigationController) -> UIViewController? {
+        var main: UIViewController?
+        var newViewControllers = [UIViewController]()
+        
+        for viewController in navigationController.viewControllers.reversed() { //viewControllers is LIFO, reverse it
+            if viewController is MainViewController {
+                let newNav = SwipeForwardNavigationController(rootViewController: viewController)
+                for previousVC in newViewControllers.reversed() { //put back in LIFO
+                    newNav.pushViewController(previousVC, animated: false)
                 }
-            }
-            if let main = main {
-                return SwipeForwardNavigationController(rootViewController: main)
+                return newNav
+            } else {
+                newViewControllers.append(viewController)
             }
         }
+        
+        for viewController in pushableViewControllers {
+            if viewController is MainViewController {
+                main = viewController
+            }
+        }
+        if let main = main {
+            return SwipeForwardNavigationController(rootViewController: main)
+        }
         return nil
-    }
+    } */
 }
 
 extension SwipeForwardNavigationController: UINavigationControllerDelegate {

@@ -54,7 +54,7 @@ class SplitMainViewController: MainViewController {
     override func colorChanged(_ color: UIColor) {
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
         inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : color
-        if SettingValues.fullyHideNavbar {
+        if SettingValues.hideStatusBar {
             inHeadView.backgroundColor = .clear
         }
     }
@@ -212,9 +212,10 @@ class SplitMainViewController: MainViewController {
         }
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
+        self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
-        if SettingValues.subredditBar {
+        let landscape = self.view.frame.size.width > self.view.frame.size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
+        if SettingValues.subredditBar && !landscape {
             self.view.addSubview(inHeadView)
         }
         
@@ -273,7 +274,12 @@ class SplitMainViewController: MainViewController {
         inHeadView.removeFromSuperview()
 
         doButtons()
+        handleToolbars()
         super.viewWillTransition(to: size, with: coordinator)
+        if SettingValues.subredditBar {
+            setupTabBar(finalSubs)
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             self.setupTabBar(self.finalSubs)
             self.getSubredditVC()?.showUI(false)
@@ -320,7 +326,7 @@ class SplitMainViewController: MainViewController {
         doLeftItem()
 
         self.setupBaseBarColors(ColorUtil.getColorForSub(sub: vc.sub, true))
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
+        self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : ColorUtil.getColorForSub(sub: vc.sub, true)
 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.layoutIfNeeded()
@@ -354,7 +360,7 @@ class SplitMainViewController: MainViewController {
         //self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.hidesBarsWhenVerticallyCompact = false
-        self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
+        self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
         
         var subChanged = false
         if finalSubs.count != Subscriptions.subreddits.count {
@@ -1040,7 +1046,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     }
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in
@@ -1075,7 +1081,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in

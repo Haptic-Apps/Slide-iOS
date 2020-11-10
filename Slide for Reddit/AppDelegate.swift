@@ -1337,6 +1337,6 @@ class NoHomebarSplitViewController: UISplitViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
+        return SettingValues.hideStatusBar
     }
 }

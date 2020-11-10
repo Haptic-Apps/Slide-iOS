@@ -82,10 +82,10 @@ class SettingsGeneral: BubbleSettingTableViewController {
             SettingValues.autoKeyboard = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_autoKeyboard)
         } else if changed == totallyCollapseSwitch {
-            SettingValues.totallyCollapse = changed.isOn
+            SettingValues.hideBottomBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_totallyCollapse)
         } else if changed == fullyHideNavbarSwitch {
-            SettingValues.fullyHideNavbar = changed.isOn
+            SettingValues.hideStatusBar = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_fullyHideNavbar)
         } else if changed == alwaysShowHeaderSwitch {
             SettingValues.alwaysShowHeader = changed.isOn
@@ -127,10 +127,10 @@ class SettingsGeneral: BubbleSettingTableViewController {
                 }
             }
         } else if changed == pinToolbarSwitch {
-            SettingValues.pinToolbar = !changed.isOn
+            SettingValues.dontHideTopBar = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_pinToolbar)
             SubredditReorderViewController.changed = true
-            if SettingValues.pinToolbar {
+            if SettingValues.dontHideTopBar {
                 self.totallyCollapse.contentView.alpha = 0.5
                 self.totallyCollapse.isUserInteractionEnabled = false
                 self.fullyHideNavbar.contentView.alpha = 0.5
@@ -181,12 +181,12 @@ class SettingsGeneral: BubbleSettingTableViewController {
         buttonType.accessoryView = UIImageView(image: SettingValues.fabType.getPhoto()?.navIcon())
         
         createCell(scrubUsername, scrubUsernameSwitch, isOn: SettingValues.nameScrubbing, text: "Username Scrubbing")
-        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.pinToolbar, text: "Hide top bars on scroll")
+        createCell(pinToolbar, pinToolbarSwitch, isOn: !SettingValues.dontHideTopBar, text: "Hide top bars on scroll")
        // createCell(matchSilence, matchSilenceSwitch, isOn: SettingValues.matchSilence, text: "Let iOS handle audio focus")
         createCell(autoKeyboard, autoKeyboardSwitch, isOn: SettingValues.autoKeyboard, text: "Open keyboard with bottom drawer")
         createCell(showPages, showPagesSwitch, isOn: SettingValues.showPages, text: "Show page separators when loading more submissions")
-        createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.totallyCollapse, text: "Hide bottom bars on scroll")
-        createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.fullyHideNavbar, text: "Hide status bar on scroll")
+        createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.hideBottomBar, text: "Hide bottom bars on scroll")
+        createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.hideStatusBar, text: "Hide status bar on scroll")
         createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Show subreddit header")
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
         self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.theme.fontColor
@@ -252,7 +252,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
             self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
         }
         
-        if SettingValues.pinToolbar {
+        if SettingValues.dontHideTopBar {
             self.totallyCollapse.contentView.alpha = 0.5
             self.totallyCollapse.isUserInteractionEnabled = false
             self.fullyHideNavbar.contentView.alpha = 0.5
