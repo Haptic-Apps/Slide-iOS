@@ -59,7 +59,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
+        return SettingValues.hideStatusBar
     }
 
     func textChanged(_ string: String) {
@@ -583,7 +583,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         if submission != nil {
-            self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
+            self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
@@ -2560,25 +2560,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        
+        if UIDevice.current.userInterfaceIdiom == .phone { //On rotation, this will either be at the top or in the nav stack above MainVC. Either way, this gesture should be disabled
+            self.splitViewController?.presentsWithGesture = false
+        }
 
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 if let header = self.tableView.tableHeaderView {
                     var frame = header.frame
-                    var leftInset: CGFloat = 0
-                    var rightInset: CGFloat = 0
 
-                    if #available(iOS 11.0, *) {
-                        leftInset = self.tableView.safeAreaInsets.left
-                        rightInset = self.tableView.safeAreaInsets.right
-                        frame.origin.x = leftInset
-                    } else {
-                        // Fallback on earlier versions
-                    }
+                    self.headerCell!.aspectWidth = size.width
 
-                    self.headerCell!.aspectWidth = size.width - (leftInset + rightInset)
-
-                    frame.size.width = size.width - (leftInset + rightInset)
+                    frame.size.width = size.width
                     frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
 
                     self.headerCell!.contentView.frame = frame
@@ -2606,7 +2600,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             currentY = lastY
         }
         
-        if !SettingValues.pinToolbar && !isReply && !isSearch {
+        if !SettingValues.dontHideTopBar && !isReply && !isSearch {
             if currentY <= (tableView.tableHeaderView?.frame.size.height ?? 20) + 64 + 10 {
                 liveView?.removeFromSuperview()
                 liveView = nil
@@ -2634,7 +2628,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if !isGoingDown {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
-            if SettingValues.totallyCollapse {
+            if SettingValues.hideBottomBar {
                 (self.navigationController)?.setToolbarHidden(true, animated: true)
             }
         }

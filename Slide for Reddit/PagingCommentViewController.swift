@@ -15,7 +15,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var startIndex: Int
 
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
+        return SettingValues.hideStatusBar
     }
     
     var offline = false

@@ -2324,7 +2324,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                         if comment is RComment && (comment as! RComment).getIdentifier().contains(context) {
                             self.parent!.menuId = comment!.getIdentifier()
                             self.parent!.tableView.reloadData()
-                            if !SettingValues.pinToolbar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
+                            if !SettingValues.dontHideTopBar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
                                 self.parent!.hideUI(inHeader: true)
                             }
 

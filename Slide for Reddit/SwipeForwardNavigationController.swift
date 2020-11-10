@@ -261,20 +261,39 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
         }
 
         if UIDevice.current.userInterfaceIdiom == .phone || not14 {
-            var main: UIViewController?
-            for viewController in viewControllers {
-                if viewController is MainViewController {
-                    main = viewController
+            guard let primaryNavigation = primaryViewController as? UINavigationController else {
+              return nil
+            }
+            
+            return decomposeStackForTransitionToRegular(primaryNavigation)
+
+        }
+        return nil
+    }
+    
+    func decomposeStackForTransitionToRegular(_ navigationController: UINavigationController) -> UIViewController? {
+        var main: UIViewController?
+        var newViewControllers = [UIViewController]()
+        
+        for viewController in navigationController.viewControllers.reversed() { //viewControllers is LIFO, reverse it
+            if viewController is MainViewController {
+                let newNav = SwipeForwardNavigationController(rootViewController: viewController)
+                for previousVC in newViewControllers.reversed() { //put back in LIFO
+                    newNav.pushViewController(previousVC, animated: false)
                 }
+                return newNav
+            } else {
+                newViewControllers.append(viewController)
             }
-            for viewController in pushableViewControllers {
-                if viewController is MainViewController {
-                    main = viewController
-                }
+        }
+        
+        for viewController in pushableViewControllers {
+            if viewController is MainViewController {
+                main = viewController
             }
-            if let main = main {
-                return SwipeForwardNavigationController(rootViewController: main)
-            }
+        }
+        if let main = main {
+            return SwipeForwardNavigationController(rootViewController: main)
         }
         return nil
     }
