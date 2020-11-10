@@ -6,6 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Alamofire
 import Anchorage
 import reddift
 import SafariServices
@@ -19,6 +20,12 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var sub: String
     var register: Bool
     var blocking11 = false
+    var needsReload = false
+    var completionFound = false
+    var csrfToken = ""
+    
+    var savedChallengeURL: String? //Used for login with Apple
+    public var reloadCallback: (() -> Void)?
     
     init(url: URL, subreddit: String) {
         self.url = url
@@ -43,7 +50,13 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
             navigationItem.rightBarButtonItems = [sortB, navB]
         }
+        
         updateToolbar()
+        webView.getCookies() { data in
+              print("=========================================")
+              print(data)
+        }
+
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
         navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
@@ -239,9 +252,54 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             myProgressView.progress = Float(webView.estimatedProgress)
             if webView.estimatedProgress > 0.98 {
                 myProgressView.isHidden = true
+                if needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
+                    needsReload = false
+                    webView.alpha = 0
+                    webView.superview?.backgroundColor = ColorUtil.theme.backgroundColor
+                    let pending = UIAlertController(title: "Syncing with Reddit...", message: nil, preferredStyle: .alert)
+
+                    let indicator = UIActivityIndicatorView(frame: pending.view.bounds)
+                    indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+                    pending.view.addSubview(indicator)
+                    indicator.isUserInteractionEnabled = false
+                    indicator.startAnimating()
+
+                    self.present(pending, animated: true, completion: nil)
+                    
+                    checkCookiesUntilCompletion {
+                        self.completionFound = true
+
+                        self.webView.reload()
+                        self.webView.alpha = 1
+                        pending.dismiss(animated: false, completion: nil)
+                    }
+                }
             } else {
                 myProgressView.isHidden = false
             }
+        }
+    }
+    
+    func checkCookiesUntilCompletion(tries: Int = 0, _ completion: @escaping () -> Void) {
+        if completionFound {
+            return
+        }
+        let shared = HTTPCookieStorage.shared
+        shared.cookies?.forEach({ (cookie) in
+            if cookie.name == "reddit_session" {
+                completion()
+                return
+            }
+        })
+        
+        if tries == 6 {
+            completion()
+            return
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            self.checkCookiesUntilCompletion(tries: tries + 1, completion)
         }
     }
     
@@ -304,19 +362,52 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                     })
                 }
             } else if (url?.absoluteString ?? "").contains("reddit.com/api/v1/authorize") {
+
                 if self.title != "Log in" {
                     self.title = "Log in"
-                    self.navigationItem.rightBarButtonItems = []
-                    let dataStore = WKWebsiteDataStore.default()
-                    dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-                        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
-                                             for: records.filter { $0.displayName.contains("reddit") },
-                                             completionHandler: {})
-                    }
+                    self.navigationController?.setToolbarHidden(true, animated: false)
+                    self.savedChallengeURL = url?.absoluteString
+                    let button = UIBarButtonItem(title: "Log in with Apple", style: UIBarButtonItem.Style.plain, target: self, action: #selector(loginWithApple))
+                    self.navigationItem.rightBarButtonItems = [button]
                 }
             }
         }
 
+        if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8), bodyString.contains("id_token"), let base = savedChallengeURL { //Response from Apple login
+            var params = queryDictionaryForQueryString(query: bodyString)
+            params["csrf_token"] = csrfToken //Used stored csrfToken
+            params["check_existing_user"] = true
+            params["create_user"] = true
+
+            do {
+                if #available(iOS 13.0, *) {
+                    //Let Reddit create new reddit_session Cookie from data returned from Apple Login
+                    let jsonData = try JSONSerialization.data(withJSONObject: params, options: .withoutEscapingSlashes)
+                    Alamofire.request("https://www.reddit.com/account/identity_provider_login", method: .post, parameters: [:], encoding: String(data: jsonData, encoding: .utf8)!, headers: nil).responseJSON { (response) in
+                        switch response.result {
+                        case .success(let JSON):
+                            let token = (JSON as? [String: Any])?["token"] as? String ?? ""
+                            //New token generated, new reddit_session Cookie should exist now
+                            print("TOKEN IS \(token)")
+                            
+                            //Force reload page
+                            self.webView.load(URLRequest(url: URL(string: base)!))
+                            self.needsReload = true
+                        case .failure(let error):
+                            print(error)
+                        }
+                    }
+                } else {
+                    // Fallback on earlier versions
+                }
+            } catch {
+                
+            }
+
+            decisionHandler(WKNavigationActionPolicy.cancel)
+            return
+        }
+        
         if !blocking11 {
             if url == nil || !(isAd(url: url!)) {
                 
@@ -330,6 +421,77 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             decisionHandler(WKNavigationActionPolicy.allow)
         }
         updateToolbar()
+        
+    }
+    
+    //Force save Cookies
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        guard
+            let response = navigationResponse.response as? HTTPURLResponse,
+            let url = navigationResponse.response.url
+        else {
+            decisionHandler(.cancel)
+            return
+        }
+
+        if let headerFields = response.allHeaderFields as? [String: String] {
+            let cookies = HTTPCookie.cookies(withResponseHeaderFields: headerFields, for: url)
+            cookies.forEach { (cookie) in
+                 HTTPCookieStorage.shared.setCookie(cookie)
+            }
+        }
+
+        decisionHandler(.allow)
+    }
+    
+    func queryDictionaryForQueryString(query: String) -> [String: Any] {
+        var dictionary = [String: String]()
+
+        query.components(separatedBy: "&").forEach {
+            let componants = $0.components(separatedBy: "=")
+            guard let name = componants[0].removingPercentEncoding, let value = componants[1].removingPercentEncoding else {
+                return
+            }
+            dictionary[name] = value
+        }
+
+        return dictionary
+    }
+    
+    //Get user csrf token for Alamofire, which will be used to authorize next
+    @objc func loginWithApple() {
+        Alamofire.request("https://www.reddit.com/account/login/?mobile_ui=on&experiment_mweb_sso_login_link=enabled&experiment_mweb_google_onetap=onetap_auto&experiment_mweb_am_refactoring=enabled", method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).response { (response) in
+            
+            if let data = response.data, let stringBody = String(data: data, encoding: .utf8) {
+                //Get token out of body HTML
+                let split = stringBody.substring((stringBody.indexOf("csrf_token\" value=\"") ?? 0) + 19, length: 50)
+                let secondSplit = split.substring(0, length: split.indexOf("\"") ?? 0)
+                self.csrfToken = secondSplit
+            }
+            
+            self.promptLoginScreen()
+        }
+    }
+
+    //Prompts Sign in with Apple screen using Reddit's auth parameters
+    @objc func promptLoginScreen() {
+        let queryItems = [
+            URLQueryItem(name: "client_id", value: "com.reddit.RedditAppleSSO"),
+            URLQueryItem(name: "redirect_uri", value: "https://www.reddit.com"),
+            URLQueryItem(name: "response_type", value: "code id_token"),
+            URLQueryItem(name: "scope", value: "email"),
+            URLQueryItem(name: "response_mode", value: "form_post")
+        ]
+
+        var urlComps = URLComponents(string: "https://appleid.apple.com/auth/authorize")!
+        urlComps.queryItems = queryItems
+
+        guard let authURL = urlComps.url else {
+            return
+        }
+
+        let myURLRequest: URLRequest = URLRequest(url: authURL)
+        webView.load(myURLRequest)
     }
 
     func isAd(url: URL) -> Bool {
@@ -362,9 +524,10 @@ extension WKWebView {
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
             if error == nil {
                 if result != nil {
-                    resultString = "\(error.debugDescription)"
+                    resultString = result as! String
                 }
             } else {
+                resultString = "\(error.debugDescription)"
             }
             finished = true
         })
@@ -373,9 +536,63 @@ extension WKWebView {
         }
         return resultString
     }
+
+    //From https://stackoverflow.com/a/54573361/3697225
+    func cleanAllCookies() {
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+            }
+        }
+    }
+
+    func refreshCookies() {
+        self.configuration.processPool = WKProcessPool()
+    }
+
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+}
+
+extension WebsiteViewController: WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == "logHandler" {
+            print("LOG: \(message.body)")
+        }
+    }
+}
+
+extension WKWebView {
+
+    private var httpCookieStore: WKHTTPCookieStore  { return WKWebsiteDataStore.default().httpCookieStore }
+
+    func getCookies(for domain: String? = nil, completion: @escaping ([String : Any])->())  {
+        var cookieDict = [String : AnyObject]()
+        httpCookieStore.getAllCookies { cookies in
+            for cookie in cookies {
+                if let domain = domain {
+                    if cookie.domain.contains(domain) {
+                        cookieDict[cookie.name] = cookie.properties as AnyObject?
+                    }
+                } else {
+                    cookieDict[cookie.name] = cookie.properties as AnyObject?
+                }
+            }
+            completion(cookieDict)
+        }
+    }
+}
+extension String: ParameterEncoding {
+
+    public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+        var request = try urlRequest.asURLRequest()
+        request.httpBody = data(using: .utf8, allowLossyConversion: false)
+        return request
+    }
+
 }
