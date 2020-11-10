@@ -658,10 +658,11 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                     if let subs = json["data"]["children"].array {
                         for sub in subs {
                             if sub["kind"].string == "t5", let subName = sub["data"]["display_name"].string {
-                                if let icon = sub["data"]["icon_img"].stringValue, let communityIcon = sub["data"]["community_icon"].stringValue, let keyColor = sub["data"]["key_color"].stringValue {
-                                    Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
-                                    Subscriptions.subColors[subName.lowercased()] = keyColor
-                                }
+                                let icon = sub["data"]["icon_img"].stringValue
+                                let communityIcon = sub["data"]["community_icon"].stringValue
+                                let keyColor = sub["data"]["key_color"].stringValue
+                                Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
+                                Subscriptions.subColors[subName.lowercased()] = keyColor
                                 if self.suggestions.contains(subName) {
                                     continue
                                 }

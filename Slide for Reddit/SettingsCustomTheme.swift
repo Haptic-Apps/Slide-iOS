@@ -65,10 +65,10 @@ class SettingsCustomTheme: UITableViewController {
             if !colors.isEmpty {
                 let split = colors.split("#")
                 print(colors)
-                foregroundColor = UIColor(hex: split[2])
-                backgroundColor = UIColor(hex: split[3])
-                fontColor = UIColor(hex: split[4])
-                navIconColor = UIColor(hex: split[5])
+                foregroundColor = UIColor(hexString: split[2])
+                backgroundColor = UIColor(hexString: split[3])
+                fontColor = UIColor(hexString: split[4])
+                navIconColor = UIColor(hexString: split[5])
                 statusbarEnabled = Bool(split[8])!
                 doToolbar(navIconColor)
                 isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()

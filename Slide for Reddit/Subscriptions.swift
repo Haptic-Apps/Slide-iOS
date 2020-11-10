@@ -42,7 +42,7 @@ class Subscriptions {
     
     public static func color(for sub: String) -> UIColor? {
         if let color = subColors.object(forKey: sub.lowercased()) as? String, color != "" {
-            return UIColor(hex: color)
+            return UIColor(hexString: color)
         }
         return nil
     }

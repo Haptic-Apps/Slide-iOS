@@ -159,23 +159,23 @@ class ThemeCellView: UITableViewCell {
         let colors = UserDefaults.standard.string(forKey: string)!.removingPercentEncoding!
         let split = colors.split("#")
         
-        title.textColor = UIColor(hex: split[4])
+        title.textColor = UIColor(hexString: split[4])
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
-        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
-        body.backgroundColor = UIColor(hex: split[2])
+        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hexString: split[5]))
+        body.backgroundColor = UIColor(hexString: split[2])
         self.backgroundColor = ColorUtil.theme.backgroundColor
-        self.tintColor = UIColor(hex: split[5])
+        self.tintColor = UIColor(hexString: split[5])
     }
     
     func setTheme(colors: String) {
         let split = colors.split("#")
         
-        title.textColor = UIColor(hex: split[4])
+        title.textColor = UIColor(hexString: split[4])
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
-        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hex: split[5]))
-        body.backgroundColor = UIColor(hex: split[2])
+        icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hexString: split[5]))
+        body.backgroundColor = UIColor(hexString: split[2])
         self.backgroundColor = ColorUtil.theme.backgroundColor
-        self.tintColor = UIColor(hex: split[5])
+        self.tintColor = UIColor(hexString: split[5])
     }
     
     func setTheme(theme: ColorUtil.Theme) {
