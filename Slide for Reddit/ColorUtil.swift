@@ -290,7 +290,7 @@ public class ColorUtil {
             let themeData = UserDefaults.standard.string(forKey: theme)!.removingPercentEncoding!
             let split = themeData.split("#")
             let title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
-            themes.append(Theme(title: title, displayName: title, foregroundColor: UIColor(hex: split[2]), backgroundColor: UIColor(hex: split[3]), navIconColor: UIColor(hex: split[5]), fontColor: UIColor(hex: split[4]), isLight: Bool(split[8])!, isCustom: true))
+            themes.append(Theme(title: title, displayName: title, foregroundColor: UIColor(hexString: split[2]), backgroundColor: UIColor(hexString: split[3]), navIconColor: UIColor(hexString: split[5]), fontColor: UIColor(hexString: split[4]), isLight: Bool(split[8])!, isCustom: true))
         }
     }
 

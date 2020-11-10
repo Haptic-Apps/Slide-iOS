@@ -502,7 +502,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         loaded = true
         DispatchQueue.main.async {
             if filter {
-                self.baseData.content = PostFilter.filter(self.baseData.content, previous: [], baseSubreddit: (self.baseData is SearchContributionLoader ? (self.baseData as! SearchContributionLoader).sub : "all"))
+                self.baseData.content = PostFilter.filter(self.baseData.content, previous: [], baseSubreddit: (self.baseData is SearchContributionLoader ? (self.baseData as! SearchContributionLoader).sub : "NO_SUBREDDIT"))
             }
             // If there is no data after loading, show the empty state view.
             if self.baseData.content.count == 0 {
