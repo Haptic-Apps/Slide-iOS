@@ -179,43 +179,43 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             self.setDepthColors(colorArray)
         }
 
-        alertController.addAction(title: "Space", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: UIColor(hex: "BF3436"))) {
+        alertController.addAction(title: "Space", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: UIColor(hexString: "BF3436"))) {
             var colorArray = [UIColor]()
-            colorArray.append(UIColor(hex: "EF6040"))
-            colorArray.append(UIColor(hex: "BF3436"))
-            colorArray.append(UIColor(hex: "6C2032"))
-            colorArray.append(UIColor(hex: "662132"))
-            colorArray.append(UIColor(hex: "20151D"))
+            colorArray.append(UIColor(hexString: "EF6040"))
+            colorArray.append(UIColor(hexString: "BF3436"))
+            colorArray.append(UIColor(hexString: "6C2032"))
+            colorArray.append(UIColor(hexString: "662132"))
+            colorArray.append(UIColor(hexString: "20151D"))
             self.setDepthColors(colorArray)
         }
 
         alertController.addAction(title: "Candy", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())) {
             var colorArray = [UIColor]()
-            colorArray.append(UIColor(hex: "E83F6F"))
-            colorArray.append(UIColor(hex: "FF7B00"))
-            colorArray.append(UIColor(hex: "FFBF00"))
-            colorArray.append(UIColor(hex: "32936F"))
-            colorArray.append(UIColor(hex: "2274A5"))
+            colorArray.append(UIColor(hexString: "E83F6F"))
+            colorArray.append(UIColor(hexString: "FF7B00"))
+            colorArray.append(UIColor(hexString: "FFBF00"))
+            colorArray.append(UIColor(hexString: "32936F"))
+            colorArray.append(UIColor(hexString: "2274A5"))
             self.setDepthColors(colorArray)
         }
 
         alertController.addAction(title: "Spice", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())) {
             var colorArray = [UIColor]()
-            colorArray.append(UIColor(hex: "4F000B"))
-            colorArray.append(UIColor(hex: "720026"))
-            colorArray.append(UIColor(hex: "CE4257"))
-            colorArray.append(UIColor(hex: "CE4257"))
-            colorArray.append(UIColor(hex: "FF9B54"))
+            colorArray.append(UIColor(hexString: "4F000B"))
+            colorArray.append(UIColor(hexString: "720026"))
+            colorArray.append(UIColor(hexString: "CE4257"))
+            colorArray.append(UIColor(hexString: "CE4257"))
+            colorArray.append(UIColor(hexString: "FF9B54"))
             self.setDepthColors(colorArray)
         }
 
         alertController.addAction(title: "Bright", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: GMColor.blue500Color())) {
             var colorArray = [UIColor]()
-            colorArray.append(UIColor(hex: "FFBE0B"))
-            colorArray.append(UIColor(hex: "FB5607"))
-            colorArray.append(UIColor(hex: "FF006E"))
-            colorArray.append(UIColor(hex: "8338EC"))
-            colorArray.append(UIColor(hex: "3A86FF"))
+            colorArray.append(UIColor(hexString: "FFBE0B"))
+            colorArray.append(UIColor(hexString: "FB5607"))
+            colorArray.append(UIColor(hexString: "FF006E"))
+            colorArray.append(UIColor(hexString: "8338EC"))
+            colorArray.append(UIColor(hexString: "3A86FF"))
             self.setDepthColors(colorArray)
         }
 

@@ -1833,7 +1833,11 @@ class CommentViewController: MediaViewController {
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                if PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(comment.author) == .orderedSame}) {
+                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                } else {
+                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                }
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
@@ -2539,7 +2543,7 @@ class CommentViewController: MediaViewController {
                             }
                             realPosition += 1
                         }
-                        self.text[cell.comment!.getIdentifier()] = NSAttributedString(string: "[deleted]")
+                        self.text[cell.comment!.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[deleted]</b></p>", fontSize: 16, submission: false, accentColor: self.color ?? ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                         self.doArrays()
                         self.tableView.reloadData()
                     }
