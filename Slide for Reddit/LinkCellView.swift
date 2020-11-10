@@ -2725,7 +2725,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
-                        
+            
+            let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
+            
             if thumb {
                 imageHeight = thumbheight
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
@@ -2798,9 +2800,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.textLayout = layout
             let textSize = layout.textBoundingSize
             
-            textView.estimatedWidth = estimatedUsableWidth
-            let textHeight = (!hasText || !full) ? CGFloat(0) : TextDisplayStackView.estimateHeight(fontSize: textView.fontSize, submission: true, width: estimatedUsableWidth, titleString: NSAttributedString(), htmlString: link?.htmlBody ?? "")
-
             let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5)
             estimatedHeight = totalHeight
         }

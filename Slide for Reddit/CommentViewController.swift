@@ -951,10 +951,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                     if let tableHeaderView = self.headerCell {
                                         var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
-                                        // Add safe area insets to left and right if available
-                                        if #available(iOS 11.0, *) {
-                                            frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
-                                        }
                                         if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                                             tableHeaderView.frame = frame
                                             tableHeaderView.layoutIfNeeded()
@@ -977,10 +973,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     }
 
                                     var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
-                                    // Add safe area insets to left and right if available
-                                    if #available(iOS 11.0, *) {
-                                        frame = frame.insetBy(dx: max(self.view.safeAreaInsets.left, self.view.safeAreaInsets.right), dy: 0)
-                                    }
                                     
                                     self.headerCell!.contentView.frame = frame
                                     self.headerCell!.contentView.layoutIfNeeded()
@@ -1535,10 +1527,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
 
             var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
-            // Add safe area insets to left and right if available
-            if #available(iOS 11.0, *) {
-                frame = frame.insetBy(dx: max(view.safeAreaInsets.left, view.safeAreaInsets.right), dy: 0)
-            }
 
             if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
                 headerCell.contentView.frame = frame
@@ -2568,18 +2556,35 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
                 if let header = self.tableView.tableHeaderView {
-                    var frame = header.frame
+                    var newWidth = size.width
+                    
+                    //There is a bug on iOS 14 that sends the view to the split first, which is 1/3 the full width. Detect this by checking if width * inverse (0.33) == physical screen height, with small margin of error for rounding errors
+                    if abs((size.width * (1 / 0.33)) - UIScreen.main.bounds.height) < 10 && UIDevice.current.userInterfaceIdiom == .phone {
+                        newWidth = UIScreen.main.bounds.height
+                    } else if abs((size.width * (1 / 0.33)) - UIScreen.main.bounds.width) < 10 && UIDevice.current.userInterfaceIdiom == .phone {
+                        newWidth = UIScreen.main.bounds.width
+                    }
 
-                    self.headerCell!.aspectWidth = size.width
+                    self.headerCell?.aspectWidth = newWidth
+                    self.headerCell?.refreshLink(self.submission!, np: self.np)
+                    if self.submission!.isSelf {
+                        self.headerCell?.showBody(width: newWidth - 24)
+                    }
 
-                    frame.size.width = size.width
-                    frame.size.height = self.headerCell!.estimateHeight(true, true, np: self.np)
+                    let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
+                    
+                    if let contentView = self.headerCell?.contentView {
+                        contentView.frame = frame
+                        contentView.layoutIfNeeded()
+                        let view = UIView(frame: contentView.frame)
+                        view.addSubview(contentView)
+                        self.tableView.tableHeaderView = view
+                        self.setupFullSwipeView(self.tableView.tableHeaderView)
+                    }
 
-                    self.headerCell!.contentView.frame = frame
-                    self.tableView.tableHeaderView!.frame = frame
-                    //self.tableView.reloadData(with: .none)
                     self.doHeadView(size)
                     self.view.setNeedsLayout()
+                    self.tableView.reloadData()
                 }
             }, completion: nil)
     }
