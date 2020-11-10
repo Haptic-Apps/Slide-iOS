@@ -158,7 +158,7 @@ class CommentViewController: MediaViewController {
     var activityIndicator = UIActivityIndicatorView()
     
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
+        return SettingValues.hideStatusBar
     }
 
     override var navigationItem: UINavigationItem {
@@ -821,7 +821,7 @@ class CommentViewController: MediaViewController {
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         if submission != nil {
-            self.inHeadView.backgroundColor = SettingValues.fullyHideNavbar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
+            self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
@@ -2639,7 +2639,7 @@ class CommentViewController: MediaViewController {
         if !isGoingDown {
             (navigationController)?.setNavigationBarHidden(true, animated: true)
             
-            if SettingValues.totallyCollapse {
+            if SettingValues.hideBottomBar {
                 (self.navigationController)?.setToolbarHidden(true, animated: true)
             }
         }

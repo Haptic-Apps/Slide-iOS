@@ -61,7 +61,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public static var first = true
 
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.fullyHideNavbar
+        return SettingValues.hideStatusBar
     }
     
     var statusbarHeight: CGFloat {

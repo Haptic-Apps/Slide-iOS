@@ -200,6 +200,7 @@ class NavigationHomeViewController: UIViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        self.inHeadView.removeFromSuperview()
         self.view.endEditing(true)
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -218,8 +219,10 @@ class NavigationHomeViewController: UIViewController {
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
-        
-        self.view.addSubview(inHeadView)
+        let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        if !landscape {
+            self.view.addSubview(inHeadView)
+        }
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
@@ -1238,7 +1241,7 @@ extension CurrentAccountHeaderView {
                 UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
-                    if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE {
+                    if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
                         UIView.animate(withDuration: 0.5, animations: { () -> Void in
                             self.parent?.splitViewController?.preferredDisplayMode = .primaryHidden
                         }, completion: { (_) in
