@@ -407,7 +407,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             tableView.reloadData()
         }
     }
-    
+        
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         

@@ -152,5 +152,4 @@ class WrappingFlowLayout: UICollectionViewLayout {
         }
         return layoutAttributes
     }
-
 }
