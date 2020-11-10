@@ -365,10 +365,19 @@ struct SubredditLoader {
                 }
                 return true
             }
-            let subredditUrl = URL(string: apiUrl)!
+            
+            var subsString = ""
+            for item in filteredSubs {
+                if subsString.count > 2500 { //Max header length on Reddit is around 2500 chars
+                    break
+                }
+                if subsString != "" {
+                    subsString += "+"
+                }
+                subsString += item
+            }
+            let subredditUrl = URL(string: "https://reddit.com/r/\(subsString).json?limit=7&raw_json=1")!
             var request = URLRequest(url: subredditUrl)
-            request.httpMethod = "POST"
-            request.httpBody = "sr=\(filteredSubs.joined(separator: "+"))".data(using: .utf8)
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {
                     completion(.failure(error!))

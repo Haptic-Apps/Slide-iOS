@@ -22,54 +22,54 @@ final class BannerLinkCellView: LinkCellView {
             bannerImage.isHidden = false
             if SettingValues.postViewMode == .CENTER {
                 // Image goes between title and buttons
-                title.topAnchor /==/ contentView.topAnchor + (ctwelve - 5) ~ .required
+                title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5) ~ .required
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
-                    sideButtons.topAnchor /==/ contentView.topAnchor + ctwelve
+                    sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
                     sideButtons.bottomAnchor /<=/ bannerImage.topAnchor - ceight
                     title.rightAnchor /==/ sideButtons.leftAnchor - ceight
-                    title.leftAnchor /==/ contentView.leftAnchor + ctwelve
+                    title.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 } else if SettingValues.actionBarMode == .SIDE {
-                    sideButtons.topAnchor /==/ contentView.topAnchor + ctwelve
+                    sideButtons.topAnchor /==/ innerView.topAnchor + ctwelve
                     sideButtons.bottomAnchor /<=/ bannerImage.topAnchor - ceight
                     title.leftAnchor /==/ sideButtons.rightAnchor + ceight
-                    title.rightAnchor /==/ contentView.rightAnchor - ctwelve
+                    title.rightAnchor /==/ innerView.rightAnchor - ctwelve
                 } else {
-                    title.horizontalAnchors /==/ contentView.horizontalAnchors + ctwelve
+                    title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
                 title.bottomAnchor /<=/ bannerImage.topAnchor - ceight ~ .required
 
-                bannerImage.horizontalAnchors /==/ contentView.horizontalAnchors + bannerPadding
+                bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 
                 if SettingValues.actionBarMode.isFull() {
                     bannerImage.bottomAnchor /==/ box.topAnchor - ctwelve ~ .required
                 } else {
-                    bannerImage.bottomAnchor /==/ contentView.bottomAnchor - ctwelve ~ .required
+                    bannerImage.bottomAnchor /==/ innerView.bottomAnchor - ctwelve ~ .required
                 }
             } else {
                 // Image goes above title
                 if SettingValues.actionBarMode == .SIDE_RIGHT {
                     title.rightAnchor /==/ sideButtons.leftAnchor - ceight
-                    title.leftAnchor /==/ contentView.leftAnchor + ctwelve
+                    title.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 } else if SettingValues.actionBarMode == .SIDE {
                     title.leftAnchor /==/ sideButtons.rightAnchor + ceight
-                    title.rightAnchor /==/ contentView.rightAnchor - ctwelve
+                    title.rightAnchor /==/ innerView.rightAnchor - ctwelve
                 } else {
-                    title.horizontalAnchors /==/ contentView.horizontalAnchors + ctwelve
+                    title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor /<=/ contentView.bottomAnchor - ceight ~ .required
+                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight ~ .required
                 } else {
                     title.bottomAnchor /==/ box.topAnchor - ceight ~ .required
                 }
                 
-                bannerImage.topAnchor /==/ contentView.topAnchor + bannerPadding ~ .required
+                bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding ~ .required
                 bannerImage.bottomAnchor /==/ title.topAnchor - ceight ~ .required
-                bannerImage.horizontalAnchors /==/ contentView.horizontalAnchors + bannerPadding
+                bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 if SettingValues.actionBarMode.isSide() {
                     sideButtons.topAnchor /==/ bannerImage.bottomAnchor + ceight
                     sideButtons.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-                    sideButtons.bottomAnchor /<=/ contentView.bottomAnchor - ceight
+                    sideButtons.bottomAnchor /<=/ innerView.bottomAnchor - ceight
                 }
             }
 

@@ -846,6 +846,8 @@ extension SplitMainViewController: NavigationHomeDelegate {
         }
         
         optionMenu.addAction(title: "Add a new account", icon: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon().getCopy(withColor: ColorUtil.baseColor)) {
+            HTTPCookieStorage.shared.cookies?.forEach(HTTPCookieStorage.shared.deleteCookie)
+
             self.navigation(homeViewController, didRequestNewAccount: ())
         }
         
