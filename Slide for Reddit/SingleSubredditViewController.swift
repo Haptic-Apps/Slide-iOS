@@ -448,10 +448,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var didScroll = true
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            self.splitViewController?.preferredDisplayMode = .secondaryOnly
-        }
-
         super.viewWillTransition(to: size, with: coordinator)
                 
         inHeadView?.removeFromSuperview()

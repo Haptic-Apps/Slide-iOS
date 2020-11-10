@@ -259,8 +259,10 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
         if #available(iOS 14, *) {
             not14 = false
         }
+        
+        return self //Disable left sidebar
 
-        if UIDevice.current.userInterfaceIdiom == .phone || not14 {
+        /*if UIDevice.current.userInterfaceIdiom == .phone || not14 {
             guard let primaryNavigation = primaryViewController as? UINavigationController else {
               return nil
             }
@@ -268,9 +270,10 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
             return decomposeStackForTransitionToRegular(primaryNavigation)
 
         }
-        return nil
+        return nil*/
     }
     
+    /* Unused
     func decomposeStackForTransitionToRegular(_ navigationController: UINavigationController) -> UIViewController? {
         var main: UIViewController?
         var newViewControllers = [UIViewController]()
@@ -296,7 +299,7 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
             return SwipeForwardNavigationController(rootViewController: main)
         }
         return nil
-    }
+    } */
 }
 
 extension SwipeForwardNavigationController: UINavigationControllerDelegate {
