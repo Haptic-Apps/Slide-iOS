@@ -1851,7 +1851,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                if PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(comment.author) == .orderedSame}) {
+                if PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) {
                     self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 } else {
                     self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
