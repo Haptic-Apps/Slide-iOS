@@ -1851,7 +1851,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                if PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(comment.author) == .orderedSame}) {
+                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                } else {
+                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                }
             } else {
                 let attr = NSMutableAttributedString(string: "more")
                 self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
@@ -2476,7 +2480,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             realPosition += 1
                         }
-                        self.text[cell.comment!.getIdentifier()] = NSAttributedString(string: "[deleted]")
+                        self.text[cell.comment!.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[deleted]</b></p>", fontSize: 16, submission: false, accentColor: self.color ?? ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                         self.doArrays()
                         self.tableView.reloadData()
                     }
@@ -2688,7 +2692,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let parentOP = parents[thing]
         if let cell = cell as? CommentDepthCell {
             let innerContent = content[thing]
-            if innerContent is RComment {
+            if let comment = innerContent as? RComment {
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)
                 if hiddenP {
@@ -2698,8 +2702,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if isSearching {
                     t = highlight(t)
                 }
-
-                cell.setComment(comment: innerContent as! RComment, depth: isSearching ? 0 : cDepth[thing] ?? 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath, width: self.tableView.frame.size.width)
+                
+                cell.setComment(comment: comment, depth: isSearching ? 0 : cDepth[thing] ?? 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: parentOP ?? "", depthColors: commentDepthColors, indexPath: indexPath, width: self.tableView.frame.size.width)
             } else {
                 cell.setMore(more: (innerContent as! RMore), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
             }
