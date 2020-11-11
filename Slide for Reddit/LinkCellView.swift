@@ -709,6 +709,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 longPress!.require(toFail: long4)
                 self.innerView.addGestureRecognizer(longPress!)
             }
+            
+            self.awardContainerView.addTapGestureRecognizer {
+                self.showAwardMenu()
+            }
             addTouch = true
         }
         
@@ -723,6 +727,34 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var previousProgress: Float!
     var dragCancelled = false
     var direction = 0
+    
+    func showAwardMenu() {
+        guard let link = link else { return }
+        let awardDict = link.awardsJSON.dictionaryValue()
+
+        var alertController = DragDownAlertMenu(title: "Post awards", subtitle: "", icon: nil)
+        var coinTotal = 0
+        
+        for raw in awardDict.values {
+            if let award = raw as? [String] {
+                coinTotal += Int(award[4]) ?? 0
+                alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[1], action: {() in
+                    let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[1])
+                    alertController.modalPresentationStyle = .overCurrentContext
+                    alertController.show(self.parentViewController!)
+                })
+            }
+        }
+        
+        alertController.subtitle = "\(coinTotal) coins spent"
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        alertController.show(parentViewController!)
+    }
     
     @objc func linkMenu(sender: AnyObject) {
         if parentViewController != nil && parentViewController?.presentedViewController == nil {
@@ -1429,7 +1461,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         awardView.subviews.forEach { (view) in
             view.removeFromSuperview()
         }
-        if let link = link, link.gilded {
+        if let link = link, link.gilded, to > 0 {
+            let awardDict = link.awardsJSON.dictionaryValue()
             awardView.isHidden = false
             if !emptyAwardAttrs.isEmpty {
                 awardView.removeConstraints(emptyAwardAttrs)
@@ -1447,26 +1480,30 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             var awardCount = link.platinum + link.silver + link.gold
             
-            for award in link.awards {
-                awardCount += Int(award.split("*")[1]) ?? 0
+            for raw in awardDict.values {
+                if let award = raw as? [String] {
+                    awardCount += Int(award[2]) ?? 0
+                }
             }
             
             var totalAwards = 0
             
-            for award in link.awards {
-                if totalAwards == to {
-                    break
-                }
-                
-                totalAwards += 1
+            for raw in awardDict.values {
+                if let award = raw as? [String] {
+                    if totalAwards == to {
+                        break
+                    }
+                    
+                    totalAwards += 1
 
-                let url = award.split("*")[0]
-                if let urlAsURL = URL(string: url) {
-                    let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-                    flairView.contentMode = .scaleAspectFit
-                    flairView.sd_setImage(with: urlAsURL)
-                    flairView.sizeAnchors == CGSize.square(size: 15)
-                    awardView.addArrangedSubview(flairView)
+                    let url = award[1]
+                    if let urlAsURL = URL(string: url) {
+                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                        flairView.contentMode = .scaleAspectFit
+                        flairView.sd_setImage(with: urlAsURL)
+                        flairView.sizeAnchors == CGSize.square(size: 15)
+                        awardView.addArrangedSubview(flairView)
+                    }
                 }
             }
             if link.platinum > 0 && totalAwards < to {
@@ -1521,10 +1558,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func refreshAwards() {
-        if SettingValues.collapseAwards {
-            setupAwardView(to: 3)
+        if SettingValues.hideAwards {
+            setupAwardView(to: 0)
         } else {
-            setupAwardView(to: 200) //Big enough number
+            setupAwardView(to: 3) //Big enough number
         }
     }
         

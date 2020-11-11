@@ -29,6 +29,15 @@ class AlertMenuAction: NSObject {
     }
 }
 
+class AlertMenuView: AlertMenuAction {
+    var icon_url: String
+    
+    init(title: String, icon: String, action: @escaping () -> Void) {
+        self.icon_url = icon
+        super.init(title: title, icon: nil, action: action)
+    }
+}
+
 class AlertMenuInputAction: AlertMenuAction {
     var exitOnAction: Bool
     var textRequired: Bool
@@ -103,6 +112,8 @@ class BottomActionCell: UITableViewCell {
             }
         } else if action.icon != nil {
             icon.image = action.icon
+        } else if let action = action as? AlertMenuView {
+            icon.sd_setImage(with: URL(string: action.icon_url), placeholderImage: UIImage(), completed: nil)
         }
         
         if !action.enabled {
@@ -142,7 +153,7 @@ class BottomActionCell: UITableViewCell {
         title.verticalAnchors /==/ background.verticalAnchors
         title.centerYAnchor /==/ background.centerYAnchor
         
-        icon.leftAnchor /==/ title.rightAnchor + 16
+        icon.leftAnchor />=/ title.rightAnchor + 16
         icon.rightAnchor /==/ background.rightAnchor - 16
         icon.centerYAnchor /==/ background.centerYAnchor
         icon.heightAnchor /==/ 44
@@ -253,6 +264,10 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     
     func addAction(title: String, icon: UIImage?, enabled: Bool = true, primary: Bool = true, action: @escaping () -> Void) {
         actions.append(AlertMenuAction(title: title, icon: icon, action: action, enabled: enabled, primary: primary))
+    }
+    
+    func addView(title: String, icon_url: String, action: @escaping () -> Void) {
+        actions.append(AlertMenuView(title: title, icon: icon_url, action: action))
     }
     
     func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputValue: String? = nil, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {

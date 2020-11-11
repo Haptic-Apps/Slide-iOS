@@ -140,7 +140,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
         } else if changed == hideAward {
-            SettingValues.collapseAwards = changed.isOn
+            SettingValues.hideAwards = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAwards)
         } else if changed == more {
             SettingValues.menuButton = changed.isOn
@@ -240,7 +240,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.width = 636
         fakesub.vote = false
 
-        link.contentView.removeFromSuperview()
+        link.innerView.removeFromSuperview()
         if SettingValues.postImageMode == .THUMBNAIL {
             link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         } else {
@@ -252,10 +252,10 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
-        link.contentView.heightAnchor /==/ link.estimateHeight(false, true, np: false)
-        link.contentView.widthAnchor /==/ min(self.tableView.frame.size.width, 350)
-        linkCell.contentView.addSubview(link.contentView)
-        link.contentView.centerAnchors /==/ linkCell.contentView.centerAnchors
+        link.innerView.heightAnchor /==/ link.estimateHeight(false, true, np: false)
+        link.innerView.widthAnchor /==/ min(self.tableView.frame.size.width, 350)
+        linkCell.contentView.addSubview(link.innerView)
+        link.innerView.centerAnchors /==/ linkCell.contentView.centerAnchors
         
         switch SettingValues.postViewMode {
         case .CARD:
@@ -513,7 +513,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Content type in title")
-        createCell(hideAwardCell, hideAward, isOn: SettingValues.collapseAwards, text: "Condense post award counts")
+        createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Hide Reddit awards line")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
