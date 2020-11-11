@@ -1433,6 +1433,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             awardView.isHidden = false
             if !emptyAwardAttrs.isEmpty {
                 awardView.removeConstraints(emptyAwardAttrs)
+                awardContainerView.removeConstraints(emptyAwardAttrs)
                 emptyAwardAttrs = []
             }
             if awardAttrs.isEmpty {
@@ -1502,15 +1503,16 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 awardView.addArrangedSubview(label)
             }
             awardView.addArrangedSubview(UIView()) //right spacer
-        } else {
+        } else if emptyAwardAttrs.isEmpty {
+            awardView.subviews.forEach { (view) in
+                view.removeFromSuperview()
+            }
             if !awardAttrs.isEmpty {
                 awardView.removeConstraints(awardAttrs)
+                awardContainerView.removeConstraints(awardAttrs)
                 awardAttrs = []
             }
             emptyAwardAttrs = batch {
-                awardView.subviews.forEach { (view) in
-                    view.removeFromSuperview()
-                }
                 awardView.heightAnchor == 0
                 awardContainerView.heightAnchor == 0
             }

@@ -40,7 +40,7 @@ final class TextLinkCellView: LinkCellView {
                 title.bottomAnchor /==/ awardContainerView.topAnchor - ctwelve / 2
                 awardContainerView.bottomAnchor /==/ innerView.bottomAnchor - ctwelve / 2
             } else {
-                title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2
+                title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2
                 awardContainerView.bottomAnchor /<=/ box.topAnchor - ceight / 2
             }
             
