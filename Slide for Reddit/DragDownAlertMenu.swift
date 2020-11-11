@@ -111,8 +111,10 @@ class BottomActionCell: UITableViewCell {
                 icon.image = action.icon!.getCopy(withColor: color!)
             }
         } else if action.icon != nil {
+            icon.contentMode = .center
             icon.image = action.icon
         } else if let action = action as? AlertMenuView {
+            icon.contentMode = .scaleAspectFit
             icon.sd_setImage(with: URL(string: action.icon_url), placeholderImage: UIImage(), completed: nil)
         }
         
@@ -577,8 +579,12 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
                 }
             }
         } else {
-            dismiss(animated: true) {
+            if selected is AlertMenuView {
                 selected.action()
+            } else {
+                dismiss(animated: true) {
+                    selected.action()
+                }
             }
         }
     }

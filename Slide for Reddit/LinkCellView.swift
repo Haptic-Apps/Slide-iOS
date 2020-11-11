@@ -732,16 +732,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         guard let link = link else { return }
         let awardDict = link.awardsJSON.dictionaryValue()
 
-        var alertController = DragDownAlertMenu(title: "Post awards", subtitle: "", icon: nil)
+        let alertController = DragDownAlertMenu(title: "Post awards", subtitle: "", icon: nil)
         var coinTotal = 0
         
-        for raw in awardDict.values {
+        let sortedValues = awardDict.values.sorted { (a, b) -> Bool in
+            let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
+            let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
+
+            return amountA > amountB
+        }
+
+        for raw in sortedValues {
             if let award = raw as? [String] {
                 coinTotal += Int(award[4]) ?? 0
                 alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[1], action: {() in
                     let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[1])
                     alertController.modalPresentationStyle = .overCurrentContext
-                    alertController.show(self.parentViewController!)
+                    if let window = UIApplication.shared.keyWindow, let modalVC = window.rootViewController?.presentedViewController {
+                        if let presented = modalVC.presentedViewController {
+                            alertController.show(presented)
+                        } else {
+                            alertController.show(modalVC)
+                        }
+                    } else if let window = UIApplication.shared.keyWindow, let root = window.rootViewController {
+                        alertController.show(root)
+                    }
                 })
             }
         }
@@ -1478,9 +1493,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     awardContainerView.heightAnchor == 23
                 }
             }
-            var awardCount = link.platinum + link.silver + link.gold
-            
-            for raw in awardDict.values {
+            var awardCount = 0
+            let values = awardDict.values
+            let sortedValues = values.sorted { (a, b) -> Bool in
+                let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
+                let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
+
+                return amountA > amountB
+            }
+            for raw in sortedValues {
                 if let award = raw as? [String] {
                     awardCount += Int(award[2]) ?? 0
                 }
@@ -1488,7 +1509,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             var totalAwards = 0
             
-            for raw in awardDict.values {
+            for raw in sortedValues {
                 if let award = raw as? [String] {
                     if totalAwards == to {
                         break
@@ -1506,31 +1527,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     }
                 }
             }
-            if link.platinum > 0 && totalAwards < to {
-                totalAwards += 1
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-                flairView.contentMode = .scaleAspectFit
-                flairView.image = UIImage(named: "platinum")?.getCopy(withSize: CGSize(width: 15, height: 15))
-                flairView.sizeAnchors == CGSize.square(size: 15)
-                awardView.addArrangedSubview(flairView)
-            }
-            
-            if link.gold > 0 && totalAwards < to {
-                totalAwards += 1
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-                flairView.contentMode = .scaleAspectFit
-                flairView.image = UIImage(named: "gold")?.getCopy(withSize: CGSize(width: 15, height: 15))
-                flairView.sizeAnchors == CGSize.square(size: 15)
-                awardView.addArrangedSubview(flairView)
-            }
-            if link.silver > 0 && totalAwards < to {
-                totalAwards += 1
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-                flairView.contentMode = .scaleAspectFit
-                flairView.image = UIImage(named: "silver")?.getCopy(withSize: CGSize(width: 15, height: 15))
-                flairView.sizeAnchors == CGSize.square(size: 15)
-                awardView.addArrangedSubview(flairView)
-            }
+
             if totalAwards == to {
                 let label = UILabel().then {
                     $0.font = UIFont.boldSystemFont(ofSize: 10)

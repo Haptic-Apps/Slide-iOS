@@ -197,18 +197,16 @@ class RealmDataWrapper {
             if let award = item as? JSONDictionary {
                 if award["icon_url"] != nil && award["count"] != nil {
                     let name = award["name"] as? String ?? ""
-                    if name != "Silver" && name != "Gold" && name != "Platinum" {
-                        var awardArray = [name]
-                        if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
-                            awardArray.append(url.unescapeHTML)
-                        } else {
-                            awardArray.append(award["icon_url"] as? String ?? "")
-                        }
-                        awardArray.append("\(award["count"] as? Int ?? 0)")
-                        awardArray.append(award["description"] as? String ?? "")
-                        awardArray.append("\(award["coin_price"] as? Int ?? 0)")
-                        jsonDict[name] = awardArray
+                    var awardArray = [name]
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
                     }
+                    awardArray.append("\(award["count"] as? Int ?? 0)")
+                    awardArray.append(award["description"] as? String ?? "")
+                    awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    jsonDict[name] = awardArray
                 }
             }
         }
@@ -345,18 +343,16 @@ class RealmDataWrapper {
             if let award = item as? JSONDictionary {
                 if award["icon_url"] != nil && award["count"] != nil {
                     let name = award["name"] as? String ?? ""
-                    if name != "Silver" && name != "Gold" && name != "Platinum" {
-                        var awardArray = [name]
-                        if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
-                            awardArray.append(url.unescapeHTML)
-                        } else {
-                            awardArray.append(award["icon_url"] as? String ?? "")
-                        }
-                        awardArray.append("\(award["count"] as? Int ?? 0)")
-                        awardArray.append(award["description"] as? String ?? "")
-                        awardArray.append("\(award["coin_price"] as? Int ?? 0)")
-                        jsonDict[name] = awardArray
+                    var awardArray = [name]
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
                     }
+                    awardArray.append("\(award["count"] as? Int ?? 0)")
+                    awardArray.append(award["description"] as? String ?? "")
+                    awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    jsonDict[name] = awardArray
                 }
             }
         }
