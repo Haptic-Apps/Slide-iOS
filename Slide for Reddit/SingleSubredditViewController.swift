@@ -1720,7 +1720,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 if SettingValues.actionBarMode.isFull() {
                     innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between label and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between buttons and bottom
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between label and bottom
                 }
             }
             if SettingValues.actionBarMode.isFull() {
@@ -1737,19 +1737,18 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between title and bottom
             }
         }
+        //thumb off by 12
+        //banner off by 4
         
         var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
         if thumb {
             estimatedUsableWidth -= thumbheight //is the same as the width
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between edge and thumb
             if !SettingValues.actionBarMode.isSide() {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //title label padding left
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //title label padding right
-            } else {
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //title label padding left
                 estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //title label padding right
             }
-        } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
+        } else if !SettingValues.actionBarMode.isSide() { //Not side
             estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 16 : 24) //title label padding
         }
 
@@ -1769,11 +1768,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if SettingValues.actionBarMode.isSide() {
             estimatedUsableWidth -= 40
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
-            if !thumb {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //title side padding
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons left margin
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons right margin with title
+            if thumb {
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //title side padding
             } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 16 : 24) //title side padding
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //title side padding
             }
         }
                 
@@ -1784,9 +1784,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
             var totalHeight = paddingTop + paddingBottom
             if thumb {
-                totalHeight += max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight)
+                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(textSize.height), imageHeight)
             } else {
-                totalHeight += max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight
+                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(textSize.height)) + imageHeight
             }
             
             totalHeight += innerPadding + actionbar + textHeight
@@ -1794,7 +1794,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 totalHeight += 5
             }
             
-            totalHeight += CGFloat(submission.gilded ? 23 : 0)
+            totalHeight += CGFloat(submission.gilded && !SettingValues.hideAwards ? 23 : 0)
             
             return CGSize(width: itemWidth, height: totalHeight)
         } else { //If layout is nil, just return a size that won't crash the app...

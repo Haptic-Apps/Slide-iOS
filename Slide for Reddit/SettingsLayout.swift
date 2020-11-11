@@ -519,7 +519,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Post score in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
-        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title post details")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Ppost details below title line")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Domain in title")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")
