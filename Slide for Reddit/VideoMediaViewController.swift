@@ -228,6 +228,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.2)
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
+            $0.contentMode = .scaleAspectFit
         }
         view.addSubview(rewindImageView)
 
@@ -236,6 +237,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             $0.backgroundColor = UIColor.black.withAlphaComponent(0.2)
             $0.layer.cornerRadius = 20
             $0.clipsToBounds = true
+            $0.contentMode = .scaleAspectFit
         }
         view.addSubview(fastForwardImageView)
 
@@ -971,6 +973,7 @@ extension VideoMediaViewController {
         newTime = max(newTime, 0) // Prevent seeking before beginning
         
         if isYoutubeView {
+            displayLink?.isPaused = true
             youtubeView.seek(toSeconds: newTime, allowSeekAhead: true)
             youtubeView.playVideo()
         } else {
@@ -1169,6 +1172,7 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
         case .paused:
             scrubber.setPlayButton()
         case .playing:
+            displayLink?.isPaused = false
             self.startTimerToHide(1)
             scrubber.setPauseButton()
         case .queued:
