@@ -36,7 +36,8 @@ final class BannerLinkCellView: LinkCellView {
                 } else {
                     title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight ~ .required
+                title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2 ~ .required
+                awardContainerView.bottomAnchor /<=/ bannerImage.topAnchor - ceight / 2 ~ .required
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 
@@ -58,9 +59,11 @@ final class BannerLinkCellView: LinkCellView {
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight ~ .required
+                    title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2 ~ .required
+                    awardContainerView.bottomAnchor /<=/ innerView.bottomAnchor - ceight / 2 ~ .required
                 } else {
-                    title.bottomAnchor /==/ box.topAnchor - ceight ~ .required
+                    title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2 ~ .required
+                    awardContainerView.bottomAnchor /==/ box.topAnchor - ceight / 2 ~ .required
                 }
                 
                 bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding ~ .required

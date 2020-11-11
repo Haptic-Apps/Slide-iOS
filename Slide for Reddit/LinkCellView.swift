@@ -296,7 +296,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText.horizontalAnchors /==/ self.thumbImage.horizontalAnchors - 2
         self.thumbText.heightAnchor /==/ 20
         self.thumbText.bottomAnchor /==/ self.thumbImage.bottomAnchor + 2
-        
+                
         self.bannerImage = UIImageView().then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = SettingValues.postImageMode == .SHORT_IMAGE && self is BannerLinkCellView ? .scaleAspectFit : .scaleAspectFill
@@ -488,6 +488,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.awardView = UIStackView().then {
             $0.axis = .horizontal
             $0.spacing = 2
+        }
+        
+        self.awardContainerView = UIView().then {
+            $0.accessibilityIdentifier = "Post Awards"
         }
         
         self.info = UILabel().then {
@@ -1180,6 +1184,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         }
         
+        self.awardContainerView.horizontalAnchors == self.title.horizontalAnchors
+
         if !full {
             layoutForType()
             layoutForContent()
@@ -1418,18 +1424,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var awardAttrs: [NSLayoutConstraint] = []
+    var emptyAwardAttrs: [NSLayoutConstraint] = []
     func setupAwardView(to: Int) {
         awardView.subviews.forEach { (view) in
             view.removeFromSuperview()
         }
-        if link.gilded {
+        if let link = link, link.gilded {
             awardView.isHidden = false
+            if !emptyAwardAttrs.isEmpty {
+                awardView.removeConstraints(emptyAwardAttrs)
+                emptyAwardAttrs = []
+            }
             if awardAttrs.isEmpty {
                 awardAttrs = batch {
-                    awardView.horizontalAnchors == awardContainerView.edgeAnchors
-                    awardView.topAnchor == awardContainerView + 4
+                    awardView.horizontalAnchors == awardContainerView.horizontalAnchors
+                    awardView.topAnchor == awardContainerView.topAnchor + 4
                     awardView.bottomAnchor == awardContainerView.bottomAnchor - 4
-                    awardView.heightAnchor == 15
+                    awardView.heightAnchor == 20
+                    awardContainerView.heightAnchor == 28
                 }
             }
             var awardCount = link.platinum + link.silver + link.gold
@@ -1449,45 +1461,50 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
                 let url = award.split("*")[0]
                 if let urlAsURL = URL(string: url) {
-                    let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                    let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                     flairView.contentMode = .scaleAspectFit
-                    flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
+                    flairView.sd_setImage(with: urlAsURL)
                     awardView.addArrangedSubview(flairView)
                 }
             }
-            if link.platinum > 0 && totalAwards < to + 1 {
+            if link.platinum > 0 && totalAwards < to {
                 totalAwards += 1
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                 flairView.contentMode = .scaleAspectFit
-                flairView.image = UIImage(named: "platinum")?.getCopy(withSize: CGSize(width: 15, height: 15))
+                flairView.image = UIImage(named: "platinum")?.getCopy(withSize: CGSize(width: 20, height: 20))
                 awardView.addArrangedSubview(flairView)
             }
             
-            if link.gold > 0 && totalAwards < to + 1 {
+            if link.gold > 0 && totalAwards < to {
                 totalAwards += 1
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                 flairView.contentMode = .scaleAspectFit
-                flairView.image = UIImage(named: "gold")?.getCopy(withSize: CGSize(width: 15, height: 15))
+                flairView.image = UIImage(named: "gold")?.getCopy(withSize: CGSize(width: 20, height: 20))
                 awardView.addArrangedSubview(flairView)
             }
-            if link.silver > 0 && totalAwards < to + 1 {
+            if link.silver > 0 && totalAwards < to {
                 totalAwards += 1
-                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
                 flairView.contentMode = .scaleAspectFit
-                flairView.image = UIImage(named: "silver")?.getCopy(withSize: CGSize(width: 15, height: 15))
+                flairView.image = UIImage(named: "silver")?.getCopy(withSize: CGSize(width: 20, height: 20))
                 awardView.addArrangedSubview(flairView)
             }
             if totalAwards == to {
                 let label = UILabel().then {
-                    $0.font = UIFont.systemFont(ofSize: 10)
+                    $0.font = UIFont.boldSystemFont(ofSize: 10)
                     $0.text = "+ \(awardCount) Awards"
                     $0.textColor = ColorUtil.theme.fontColor
                 }
                 awardView.addArrangedSubview(label)
             }
+            awardView.addArrangedSubview(UIView()) //right spacer
         } else {
             if !awardAttrs.isEmpty {
                 awardView.removeConstraints(awardAttrs)
+                awardAttrs = []
+                emptyAwardAttrs = batch {
+                    awardContainerView.heightAnchor == 0
+                }
             }
             awardView.isHidden = true
         }
@@ -2895,7 +2912,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.textLayout = layout
             let textSize = layout.textBoundingSize
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5)
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat(link?.gilded ?? false ? 28 : 0)
             estimatedHeight = totalHeight
         }
         return estimatedHeight

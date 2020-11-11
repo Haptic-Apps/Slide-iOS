@@ -32,7 +32,8 @@ final class FullLinkCellView: LinkCellView {
             textView.bottomAnchor /==/ infoBox.topAnchor - (ctwelve / 2)
             infoBox.bottomAnchor />=/ box.topAnchor - (ctwelve / 2)
             infoBox.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
-            textView.topAnchor /==/ title.bottomAnchor + ceight
+            textView.topAnchor /==/ awardContainerView.bottomAnchor + ceight / 2
+            awardContainerView.topAnchor /==/ title.bottomAnchor + ceight / 2
             textView.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
             title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
@@ -40,8 +41,9 @@ final class FullLinkCellView: LinkCellView {
             if big {
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
-                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight
-                
+                title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2
+                awardContainerView.bottomAnchor /<=/ bannerImage.topAnchor - ceight / 2
+
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve
                 if thumb {
@@ -67,7 +69,8 @@ final class FullLinkCellView: LinkCellView {
                 thumbImageContainer.bottomAnchor /<=/ infoBox.topAnchor - ceight
                 
                 // Thumbnail sizing
-                thumbImageContainer.topAnchor /==/ title.bottomAnchor + ctwelve
+                thumbImageContainer.topAnchor /==/ awardContainerView.bottomAnchor + ctwelve / 2
+                awardContainerView.topAnchor /==/ title.bottomAnchor + ctwelve / 2
                 thumbImageContainer.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 infoContainer.heightAnchor /==/ CGFloat(75)
                 infoContainer.isHidden = false

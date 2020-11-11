@@ -24,8 +24,9 @@ final class GalleryLinkCellView: LinkCellView {
             // Image goes above title
             title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             
-            title.bottomAnchor /==/ box.topAnchor - ceight
-            
+            title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2
+            awardContainerView.bottomAnchor /==/ box.topAnchor - ceight / 2
+
             bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding
             bannerImage.bottomAnchor /==/ title.topAnchor - ceight
             bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
