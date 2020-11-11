@@ -64,11 +64,11 @@ final class ThumbnailLinkCellView: LinkCellView {
             }
             title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
             if !SettingValues.actionBarMode.isFull() {
-                title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2
-                awardContainerView.bottomAnchor /==/ innerView.bottomAnchor - ceight / 2
+                title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2 ~ .required
+                awardContainerView.bottomAnchor /<=/ innerView.bottomAnchor - ceight / 2
             } else {
-                title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2
-                awardContainerView.bottomAnchor /==/ box.topAnchor - ceight / 2
+                title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2  ~ .required
+                awardContainerView.bottomAnchor /<=/ box.topAnchor - ceight / 2
             }
             
             subicon.topAnchor /==/ title.topAnchor
