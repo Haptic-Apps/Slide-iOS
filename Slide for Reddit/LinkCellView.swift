@@ -172,7 +172,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var sideDownvote: UIButton!
     var sideScore: UILabel!
     var innerView = UIView()
-    
+    var awardView: UIStackView!
+    var awardContainerView = UIView()
+
     var setElevation = false
     
     var infoBox: UIStackView!
@@ -483,6 +485,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         
+        self.awardView = UIStackView().then {
+            $0.axis = .horizontal
+            $0.spacing = 2
+        }
+        
         self.info = UILabel().then {
             $0.accessibilityIdentifier = "Banner Info"
             $0.numberOfLines = 2
@@ -500,10 +507,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if self is FullLinkCellView {
-            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, textView, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, textView, infoContainer, tagbody)
         } else {
-            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, infoContainer, tagbody)
         }
+        
+        self.awardContainerView.addSubview(awardView)
         
         if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
             self.videoView = VideoView().then {
@@ -1327,6 +1336,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         refreshTitle(np: np)
+        refreshAwards()
 
         if !full {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -1342,7 +1352,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         comments.text = " \(submission.commentCount)\(more > 0 ? " (+\(more))" : "")"
     }
     
-   // var titleAttrs: [NSLayoutConstraint] = []
     var oldBounds = CGSize.zero
     
     func refreshTitle(np: Bool = false, force: Bool = false) {
@@ -1367,6 +1376,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.heightAnchor /==/ bounds.textBoundingSize.height
         }*/
         //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
+        
         title.textVerticalAlignment = .top
         title.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
@@ -1404,6 +1414,90 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     }
                 }
             })
+        }
+    }
+    
+    var awardAttrs: [NSLayoutConstraint] = []
+    func setupAwardView(to: Int) {
+        awardView.subviews.forEach { (view) in
+            view.removeFromSuperview()
+        }
+        if link.gilded {
+            awardView.isHidden = false
+            if awardAttrs.isEmpty {
+                awardAttrs = batch {
+                    awardView.horizontalAnchors == awardContainerView.edgeAnchors
+                    awardView.topAnchor == awardContainerView + 4
+                    awardView.bottomAnchor == awardContainerView.bottomAnchor - 4
+                    awardView.heightAnchor == 15
+                }
+            }
+            var awardCount = link.platinum + link.silver + link.gold
+            
+            for award in link.awards {
+                awardCount += Int(award.split(":")[1]) ?? 0
+            }
+            
+            var totalAwards = 0
+            
+            for award in link.awards {
+                if totalAwards == to {
+                    break
+                }
+                
+                totalAwards += 1
+
+                let url = award.split("*")[0]
+                if let urlAsURL = URL(string: url) {
+                    let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                    flairView.contentMode = .scaleAspectFit
+                    flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
+                    awardView.addArrangedSubview(flairView)
+                }
+            }
+            if link.platinum > 0 && totalAwards < to + 1 {
+                totalAwards += 1
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                flairView.contentMode = .scaleAspectFit
+                flairView.image = UIImage(named: "platinum")?.getCopy(withSize: CGSize(width: 15, height: 15))
+                awardView.addArrangedSubview(flairView)
+            }
+            
+            if link.gold > 0 && totalAwards < to + 1 {
+                totalAwards += 1
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                flairView.contentMode = .scaleAspectFit
+                flairView.image = UIImage(named: "gold")?.getCopy(withSize: CGSize(width: 15, height: 15))
+                awardView.addArrangedSubview(flairView)
+            }
+            if link.silver > 0 && totalAwards < to + 1 {
+                totalAwards += 1
+                let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+                flairView.contentMode = .scaleAspectFit
+                flairView.image = UIImage(named: "silver")?.getCopy(withSize: CGSize(width: 15, height: 15))
+                awardView.addArrangedSubview(flairView)
+            }
+            if totalAwards == to {
+                let label = UILabel().then {
+                    $0.font = UIFont.systemFont(ofSize: 10)
+                    $0.text = "+ \(awardCount) Awards"
+                    $0.textColor = ColorUtil.theme.fontColor
+                }
+                awardView.addArrangedSubview(label)
+            }
+        } else {
+            if !awardAttrs.isEmpty {
+                awardView.removeConstraints(awardAttrs)
+            }
+            awardView.isHidden = true
+        }
+    }
+    
+    func refreshAwards() {
+        if SettingValues.collapseAwards {
+            setupAwardView(to: 3)
+        } else {
+            setupAwardView(to: 200) //Big enough number
         }
     }
         
@@ -1572,7 +1666,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             view.isHidden = !visible
             view.isUserInteractionEnabled = visible
         }
-
+        
         setVisibility(upvote, actions.isVotingPossible)
         setVisibility(downvote, actions.isVotingPossible)
         setVisibility(hide, actions.isHideEnabled && !full)
@@ -1848,6 +1942,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         refresh(np: np)
         refreshTitle(np: np)
+        refreshAwards()
 
         if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) || (full && thumb && type != .SELF) {
             infoContainer.isHidden = false

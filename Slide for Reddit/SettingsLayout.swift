@@ -140,7 +140,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             SettingValues.largerThumbnail = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_largerThumbnail)
         } else if changed == hideAward {
-            SettingValues.hideAwards = changed.isOn
+            SettingValues.collapseAwards = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAwards)
         } else if changed == more {
             SettingValues.menuButton = changed.isOn
@@ -513,7 +513,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Content type in title")
-        createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Condense post award counts")
+        createCell(hideAwardCell, hideAward, isOn: SettingValues.collapseAwards, text: "Condense post award counts")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")

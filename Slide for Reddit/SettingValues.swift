@@ -275,7 +275,7 @@ class SettingValues {
     public static var hideSeen = true
     public static var disable13Popup = true
     public static var thumbTag = true
-    public static var hideAwards = false
+    public static var collapseAwards = false
     public static var streamVideos = true
     public static var fullWidthHeaderCells = false
     public static var disablePopupIpad = false
@@ -613,7 +613,7 @@ class SettingValues {
         SettingValues.showPages = settings.bool(forKey: SettingValues.pref_showPages)
         SettingValues.disableBanner = settings.bool(forKey: SettingValues.pref_disableBanner)
         SettingValues.newIndicator = settings.bool(forKey: SettingValues.pref_newIndicator)
-        SettingValues.hideAwards = settings.bool(forKey: SettingValues.pref_hideAwards)
+        SettingValues.collapseAwards = settings.bool(forKey: SettingValues.pref_hideAwards)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

@@ -2344,7 +2344,7 @@ extension SingleSubredditViewController {
             self.refresh()
         }
 
-        alertController.addAction(title: "Gallery view", icon: UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")!.menuIcon()) {
+        alertController.addAction(title: "\(self.isGallery ? "Disable" : "Enable") Gallery view", icon: UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")!.menuIcon()) {
             self.galleryMode()
         }
 

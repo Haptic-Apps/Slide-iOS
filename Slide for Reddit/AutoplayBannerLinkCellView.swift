@@ -36,6 +36,7 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 } else {
                     title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
+                
                 title.bottomAnchor /<=/ bannerImage.topAnchor - ceight  ~ .required
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding

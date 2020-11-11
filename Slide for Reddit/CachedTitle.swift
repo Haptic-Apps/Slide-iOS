@@ -436,77 +436,6 @@ class CachedTitle {
             }
         }
 
-        let awardString = NSMutableAttributedString()
-        let awardPStyle = NSMutableParagraphStyle()
-        awardPStyle.minimumLineHeight = 20
-        if link.gilded {
-            let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            if SettingValues.hideAwards {
-                var awardCount = link.platinum + link.silver + link.gold
-                for award in link.awards {
-                    awardCount += Int(award.split(":")[1]) ?? 0
-                }
-                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                awardString.append(gild)
-                if awardCount > 1 {
-                    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(awardCount) ", attributes: [NSAttributedString.Key.paragraphStyle: awardPStyle, NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                    awardString.append(gilded)
-                }
-            } else {
-                for award in link.awards {
-                    let url = award.split("*")[0]
-                    let count = Int(award.split(":")[1]) ?? 0
-                    if let urlAsURL = URL(string: url) {
-                        if loadImages {
-                            let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                            flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
-                            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: CachedTitle.titleFont.pointSize * 0.75).size, alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-
-                            awardString.append(flairImage)
-                        } else {
-                            let flairView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: CachedTitle.titleFont.pointSize * 0.75).size, alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-
-                            awardString.append(flairImage)
-                        }
-                    }
-                    if count > 1 {
-                        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(link.gold) ", attributes: [NSAttributedString.Key.paragraphStyle: awardPStyle, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(gilded)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-                if link.platinum > 0 {
-                    let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                    awardString.append(gild)
-                    if link.platinum > 1 {
-                        let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(link.platinum) ", attributes: [NSAttributedString.Key.paragraphStyle: awardPStyle, NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(platinumed)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-                
-                if link.gold > 0 {
-                    let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                    awardString.append(gild)
-                    if link.gold > 1 {
-                        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(link.gold) ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(gilded)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-                if link.silver > 0 {
-                    let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                    awardString.append(gild)
-                    if link.silver > 1 {
-                        let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(link.silver) ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(silvered)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-            }
-        }
-
         let finalTitle = NSMutableAttributedString()
         if SettingValues.infoBelowTitle {
             if let mainTitle = titleStrings.mainTitle {
@@ -516,10 +445,6 @@ class CachedTitle {
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
                 finalTitle.append(infoLine)
-            }
-            if awardString.length > 0 {
-                finalTitle.append(NSAttributedString.init(string: "\n"))
-                finalTitle.append(awardString)
             }
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
@@ -533,10 +458,6 @@ class CachedTitle {
             finalTitle.append(NSAttributedString.init(string: "\n"))
             if let mainTitle = titleStrings.mainTitle {
                 finalTitle.append(mainTitle)
-            }
-            if awardString.length > 0 {
-                finalTitle.append(NSAttributedString.init(string: "\n"))
-                finalTitle.append(awardString)
             }
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
