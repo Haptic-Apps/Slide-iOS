@@ -225,18 +225,12 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         rewindImageView = UIImageView(image: UIImage(sfString: SFSymbol.backwardEndFill, overrideString: "rewind")?.getCopy(withSize: .square(size: 30), withColor: .white)).then {
             $0.alpha = 0
-            $0.backgroundColor = UIColor.black.withAlphaComponent(0.2)
-            $0.layer.cornerRadius = 20
-            $0.clipsToBounds = true
             $0.contentMode = .scaleAspectFit
         }
         view.addSubview(rewindImageView)
 
         fastForwardImageView = UIImageView(image: UIImage(sfString: SFSymbol.forwardEndFill, overrideString: "fast_forward")?.getCopy(withSize: .square(size: 30), withColor: .white)).then {
             $0.alpha = 0
-            $0.backgroundColor = UIColor.black.withAlphaComponent(0.2)
-            $0.layer.cornerRadius = 20
-            $0.clipsToBounds = true
             $0.contentMode = .scaleAspectFit
         }
         view.addSubview(fastForwardImageView)
@@ -406,6 +400,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         fastForwardImageView.centerYAnchor /==/ view.centerYAnchor
         rewindImageView.leadingAnchor /==/ view.safeLeadingAnchor + 30
         fastForwardImageView.trailingAnchor /==/ view.safeTrailingAnchor - 30
+        
+        fastForwardImageView.sizeAnchors == CGSize.square(size: 30)
+        rewindImageView.sizeAnchors == CGSize.square(size: 30)
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer) {
