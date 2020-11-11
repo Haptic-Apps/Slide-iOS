@@ -1128,7 +1128,14 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
         }
         DispatchQueue.global(qos: .background).async {
             do {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                if !SettingValues.muteYouTube {
+                    if SettingValues.modalVideosRespectHardwareMuteSwitch {
+                        try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
+                    } else {
+                        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                    }
+                }
+
                 try AVAudioSession.sharedInstance().setActive(true)
             } catch let error as NSError {
                 print(error)

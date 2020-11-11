@@ -128,6 +128,18 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 UIApplication.shared.openURL(link.url!)
             }
         } else {
+            if type == .VIDEO { //YouTube videos can't play at the same time as another AV Session video
+                if let subVC = self as? SingleSubredditViewController {
+                    for index in subVC.tableView.indexPathsForVisibleItems {
+                        if let cell = subVC.tableView.cellForItem(at: index) as? LinkCellView {
+                            cell.endVideos()
+                            subVC.currentPlayingIndex = subVC.currentPlayingIndex.filter({ (included) -> Bool in
+                                return included.row != index.row
+                            })
+                        }
+                    }
+                }
+            }
             if ContentType.isGif(uri: url) {
                 if !link.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
                     doShow(url: URL.init(string: link.videoPreview)!, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
