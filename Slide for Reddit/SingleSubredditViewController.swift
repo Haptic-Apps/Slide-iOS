@@ -1598,7 +1598,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else if big {
             didRatio = true
             let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !isGallery) ? CGFloat(10) : CGFloat(0)))
-            if (SettingValues.postImageMode == .SHORT_IMAGE) && (ContentType.displayVideo(t: type) && type != .VIDEO) {
+            if (SettingValues.postImageMode == .SHORT_IMAGE) && !(ContentType.displayVideo(t: type) && type != .VIDEO) {
                 submissionHeight = h > halfScreen ? halfScreen : h
             } else {
                 if h == 0 {
@@ -1760,6 +1760,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
+        
         var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
         
         if thumb {

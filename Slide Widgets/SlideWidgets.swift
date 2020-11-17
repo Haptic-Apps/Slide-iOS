@@ -352,18 +352,18 @@ struct SubredditLoader {
 
     static func fetch(subreddit: String, completion: @escaping (Result<SubredditPosts, Error>) -> Void) {
         var apiUrl = "https://reddit.com/r/\(subreddit).json?limit=7&raw_json=1"
-        if subreddit == "frontpage" {
+        if subreddit.lowercased() == "frontpage" {
             apiUrl = "https://reddit.com/.json?limit=7&raw_json=1"
         }
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
 
-        if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit == "frontpage"  {
-            let filteredSubs = subs.filter { (sub) -> Bool in
+        if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit == "frontpage" {
+            let filteredSubs = subs.map({ $0.lowercased() }).filter { (sub) -> Bool in
                 //XCode was complaining that this would take too long to type check on one line :/
                 if !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated" {
-                    return false
+                    return true
                 }
-                return true
+                return false
             }
             
             var subsString = ""
@@ -376,7 +376,8 @@ struct SubredditLoader {
                 }
                 subsString += item
             }
-            let subredditUrl = URL(string: "https://reddit.com/r/\(subsString).json?limit=7&raw_json=1")!
+            let subredditUrl = URL(string: "https://reddit.com/r/\(subsString)/hot.json?limit=7&raw_json=1")!
+            print("https://reddit.com/r/\(subsString)/hot.json?limit=7&raw_json=1")
             var request = URLRequest(url: subredditUrl)
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil else {

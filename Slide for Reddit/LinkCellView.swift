@@ -1086,7 +1086,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             spinner.stopAnimating()
         }
         
-        if timeView.isHidden {
+        if timeView.isHidden && playView.isHidden {
             timeView.isHidden = false
             progressDot.isHidden = false
             spinner.isHidden = false
