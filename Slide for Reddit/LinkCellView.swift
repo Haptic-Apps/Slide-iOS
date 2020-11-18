@@ -710,9 +710,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.innerView.addGestureRecognizer(longPress!)
             }
             
-            self.awardView.addTapGestureRecognizer {
-                self.showAwardMenu()
-            }
             addTouch = true
         }
         
@@ -1524,6 +1521,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         flairView.sd_setImage(with: urlAsURL)
                         flairView.sizeAnchors == CGSize.square(size: 15)
                         awardView.addArrangedSubview(flairView)
+                        flairView.addTapGestureRecognizer {
+                            self.showAwardMenu()
+                        }
                     }
                 }
             }
@@ -1534,6 +1534,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     $0.text = "\(awardCount) Awards"
                     $0.textColor = ColorUtil.theme.fontColor
                 }
+                label.addTapGestureRecognizer {
+                    self.showAwardMenu()
+                }
+
                 awardView.addArrangedSubview(label)
             }
             awardView.addArrangedSubview(UIView()) //right spacer

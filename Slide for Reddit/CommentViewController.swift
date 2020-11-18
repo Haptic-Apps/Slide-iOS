@@ -1430,8 +1430,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-                    ColorUtil.matchTraitCollection()
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { //Wait for 0.1 seconds. There is a race condition here that sets the theme twice on iPad
+                        if previousTraitCollection?.userInterfaceStyle != self.traitCollection.userInterfaceStyle {
+                            ColorUtil.matchTraitCollection()
+                        }
+                    }
                 }
             } else {
                 if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
