@@ -27,7 +27,7 @@
 		<key>Slide Widgets.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>43</integer>
+			<integer>45</integer>
 		</dict>
 		<key>Slide for Apple Watch (Notification).xcscheme</key>
 		<dict>
@@ -52,7 +52,7 @@
 		<key>WidgetConfigIntent.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>42</integer>
+			<integer>46</integer>
 		</dict>
 	</dict>
 </dict>
