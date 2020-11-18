@@ -193,7 +193,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 if AccountController.isLoggedIn && currentAccount == AccountController.currentName { //Ensure the user did not switch accounts before applying subs
                     var allSubs = [String]()
                     allSubs.append(contentsOf: newSubs.map { $0.displayName })
-                    allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName })
+                    allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName.replacingOccurrences(of: " ", with: "_") })
                     let currentSubs = Subscriptions.subreddits
                     var finalSubs = [String]()
                     finalSubs.append(contentsOf: allSubs)

@@ -735,14 +735,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             toReturn.append(sub.displayName)
                             Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
                             Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
-
-                            /* Not needed, we pull from the key color now
-                            if sub.keyColor.hexString() != "#FFFFFF" {
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
-                                if defaults.object(forKey: "color" + sub.displayName) == nil {
-                                    defaults.setColor(color: color, forKey: "color+" + sub.displayName)
-                                }
-                            }*/
                         }
                     }
                     if subredditController != nil {
@@ -764,21 +756,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     Subscriptions.getSubscriptionsFully(session: session!, completion: { (subs, multis) in
                         for sub in subs {
                             toReturn.append(sub.displayName)
-                            /*if sub.keyColor.hexString() != "#FFFFFF" {
-                                let color = ColorUtil.getClosestColor(hex: sub.keyColor.hexString())
-                                if defaults.object(forKey: "color" + sub.displayName) == nil {
-                                    defaults.setColor(color: color, forKey: "color+" + sub.displayName)
-                                }
-                            }*/
                         }
                         for m in multis {
-                            toReturn.append("/m/" + m.displayName)
-                            if !m.keyColor.isEmpty {
-                                let color = (UIColor.init(hexString: m.keyColor))
-                                if defaults.object(forKey: "color" + m.displayName) == nil {
-                                    defaults.setColor(color: color, forKey: "color+" + m.displayName)
-                                }
-                            }
+                            toReturn.append("/m/" + m.displayName.replacingOccurrences(of: " ", with: "_"))
                         }
                         
                         toReturn = toReturn.sorted {
