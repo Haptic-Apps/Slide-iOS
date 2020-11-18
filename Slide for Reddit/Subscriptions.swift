@@ -33,9 +33,6 @@ class Subscriptions {
     
     public static func icon(for sub: String) -> String? {
         var subString = sub.lowercased()
-        if subString.contains("/m/") {
-            subString = sub.replacingOccurrences(of: "/m/", with: "")
-        }
         if let icon = subIcons.object(forKey: subString) as? String, icon != "" {
             return icon
         }
@@ -219,8 +216,8 @@ class Subscriptions {
                     case .success(let multireddits):
                         for multi in multireddits {
                             toReturnMultis.append(multi)
-                            subIcons[multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.iconUrl
-                            subColors[multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.keyColor
+                            subIcons["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.iconUrl
+                            subColors["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.keyColor
                         }
                         completion(toReturn, toReturnMultis)
                     }
