@@ -286,10 +286,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.del = self
             
             (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "", np: false)
-            
-            c?.layer.shouldRasterize = true
-            c?.layer.rasterizationScale = UIScreen.main.scale
-            
+                        
             if self is ReadLaterViewController {
                 c?.readLater.isHidden = false
             }
@@ -298,27 +295,19 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         } else if thing is RFriend {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.setFriend(friend: (thing as! RFriend), parent: self)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         } else if thing is RMessage {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         } else {
             //Is mod log item
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
             c.setLogItem(logItem: (thing as! RModlogItem), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         }
         

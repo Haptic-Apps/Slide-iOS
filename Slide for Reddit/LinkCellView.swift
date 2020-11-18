@@ -152,24 +152,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var info: UILabel!
     var subicon: UIImageView!
     var textView: TextDisplayStackView!
-    var save: UIButton!
-    var menu: UIButton!
-    var upvote: UIButton!
-    var hide: UIButton!
-    var share: UIButton!
-    var edit: UIButton!
-    var reply: UIButton!
-    var downvote: UIButton!
-    var mod: UIButton!
-    var readLater: UIButton!
+    var save: UIImageView!
+    var menu: UIImageView!
+    var upvote: UIImageView!
+    var hide: UIImageView!
+    var share: UIImageView!
+    var edit: UIImageView!
+    var reply: UIImageView!
+    var downvote: UIImageView!
+    var mod: UIImageView!
+    var readLater: UIImageView!
     var commenticon: UIImageView!
     var submissionicon: UIImageView!
     weak var del: LinkCellViewDelegate?
     var taglabel: UILabel!
     var tagbody: UIView!
     var crosspost: UITableViewCell!
-    var sideUpvote: UIButton!
-    var sideDownvote: UIButton!
+    var sideUpvote: UIImageView!
+    var sideDownvote: UIImageView!
     var sideScore: UILabel!
     var innerView = UIView()
     var awardView: UIStackView!
@@ -229,6 +229,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func configureView() {
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
+            innerView = RoundedCornerView(radius: 15, cornerColor: ColorUtil.theme.foregroundColor)
+            self.innerView.backgroundColor = ColorUtil.theme.backgroundColor //The rounded corners code will take care of the foreground color
+        } else {
+            self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
+        }
+
         if full {
             self.contentView.addSubview(innerView)
         } else {
@@ -247,12 +254,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         
-        self.thumbImage = UIImageView().then {
+        self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image"
             $0.backgroundColor = UIColor.white
-            if !SettingValues.flatMode {
-                $0.layer.cornerRadius = 10
-            }
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
@@ -297,23 +301,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText.heightAnchor /==/ 20
         self.thumbText.bottomAnchor /==/ self.thumbImage.bottomAnchor + 2
                 
-        self.bannerImage = UIImageView().then {
+        self.bannerImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = SettingValues.postImageMode == .SHORT_IMAGE && self is BannerLinkCellView ? .scaleAspectFit : .scaleAspectFill
-            if !SettingValues.flatMode {
-                $0.layer.cornerRadius = 15
-            }
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
             $0.clipsToBounds = true
-            $0.backgroundColor = UIColor.white
+            $0.backgroundColor = ColorUtil.theme.backgroundColor
         }
         
         self.title = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.isOpaque = false
             $0.numberOfLines = 0
+            $0.clipsToBounds = true
+            $0.layer.isOpaque = true
+            $0.isOpaque = true
+            $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
             $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             $0.backgroundColor = ColorUtil.theme.foregroundColor
@@ -338,93 +342,105 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.axis = .vertical
         }
         
-        self.hide = UIButton(type: .custom).then {
+        self.hide = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Hide Button"
-            $0.setImage(LinkCellImageCache.hide, for: .normal)
+            $0.image = LinkCellImageCache.hide
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.reply = UIButton(type: .custom).then {
+        self.reply = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Reply Button"
-            $0.setImage(LinkCellImageCache.reply, for: .normal)
+            $0.image = LinkCellImageCache.reply
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.edit = UIButton(type: .custom).then {
+        self.edit = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Edit Button"
-            $0.setImage(LinkCellImageCache.edit, for: .normal)
+            $0.image = LinkCellImageCache.edit
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.save = UIButton(type: .custom).then {
+        self.save = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.menu = UIButton(type: .custom).then {
+        self.menu = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Post menu"
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.upvote = UIButton(type: .custom).then {
+        self.upvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.downvote = UIButton(type: .custom).then {
+        self.downvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.sideUpvote = UIButton(type: .custom).then {
+        self.sideUpvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.sideDownvote = UIButton(type: .custom).then {
+        self.sideDownvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
-        self.mod = UIButton(type: .custom).then {
+        self.mod = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Mod Button"
-            $0.setImage(LinkCellImageCache.mod, for: .normal)
+            $0.image = LinkCellImageCache.mod
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
-        self.share = UIButton(type: .custom).then {
+        self.share = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Share Button"
             $0.contentMode = .center
-            $0.setImage(LinkCellImageCache.share, for: .normal)
-            $0.isOpaque = false
+            $0.image = LinkCellImageCache.share
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
-        self.readLater = UIButton(type: .custom).then {
+        self.readLater = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Read Later Button"
-            $0.setImage(LinkCellImageCache.readLater, for: .normal)
+            $0.image = LinkCellImageCache.readLater
             $0.contentMode = .center
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
@@ -432,7 +448,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Comment Count Icon"
             $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
@@ -440,7 +456,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Score Icon"
             $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
@@ -448,7 +464,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
             $0.textColor = ColorUtil.theme.fontColor
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
@@ -457,7 +473,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 1
             $0.textAlignment = .center
             $0.textColor = ColorUtil.theme.fontColor
-            $0.isOpaque = false
+            $0.isOpaque = true
         }
         
         self.comments = UILabel().then {
@@ -465,7 +481,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.theme.fontColor
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
@@ -619,21 +635,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if !addTouch {
-            save.addTarget(self, action: #selector(LinkCellView.save(sender:)), for: .touchUpInside)
-            upvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-            if SettingValues.actionBarMode.isSide() {
-                sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-                sideDownvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
+            save.addTapGestureRecognizer {
+                self.save()
             }
-            reply.addTarget(self, action: #selector(LinkCellView.reply(sender:)), for: .touchUpInside)
-            downvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
-            mod.addTarget(self, action: #selector(LinkCellView.mod(sender:)), for: .touchUpInside)
-            readLater.addTarget(self, action: #selector(readLater(sender:)), for: .touchUpInside)
-            edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
-            hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
-            share.addTarget(self, action: #selector(LinkCellView.share(sender:)), for: .touchUpInside)
-            sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-            menu.addTarget(self, action: #selector(LinkCellView.more(sender:)), for: .touchUpInside)
+            upvote.addTapGestureRecognizer {
+                self.upvote()
+            }
+
+            if SettingValues.actionBarMode.isSide() {
+                sideUpvote.addTapGestureRecognizer {
+                    self.upvote()
+                }
+                sideDownvote.addTapGestureRecognizer {
+                    self.downvote()
+                }
+            }
+            
+            reply.addTapGestureRecognizer {
+                self.reply()
+            }
+            downvote.addTapGestureRecognizer {
+                self.downvote()
+            }
+            mod.addTapGestureRecognizer {
+                self.mod()
+            }
+            readLater.addTapGestureRecognizer {
+                self.readLater()
+            }
+            edit.addTapGestureRecognizer {
+                self.edit(sender: self.edit)
+            }
+            hide.addTapGestureRecognizer {
+                self.hide()
+            }
+            share.addTapGestureRecognizer {
+                self.share()
+            }
+            sideUpvote.addTapGestureRecognizer {
+                self.upvote()
+            }
+            menu.addTapGestureRecognizer {
+                self.more()
+            }
 
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             
@@ -1521,6 +1565,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         flairView.sd_setImage(with: urlAsURL)
                         flairView.sizeAnchors == CGSize.square(size: 15)
                         awardView.addArrangedSubview(flairView)
+                        flairView.backgroundColor = ColorUtil.theme.foregroundColor
+                        flairView.isOpaque = true
                         flairView.addTapGestureRecognizer {
                             self.showAwardMenu()
                         }
@@ -1532,6 +1578,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 let label = UILabel().then {
                     $0.font = UIFont.boldSystemFont(ofSize: 10)
                     $0.text = "\(awardCount) Awards"
+                    $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.textColor = ColorUtil.theme.fontColor
                 }
                 label.addTapGestureRecognizer {
@@ -1701,7 +1748,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 NSLog(error.localizedDescription)
             }
         }
-        
+            
         self.linkClicked = false
 
         self.full = self is FullLinkCellView
@@ -1715,7 +1762,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.loadedImage = nil
         lq = false
 
-        self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
+        if let round = innerView as? RoundedCornerView, let shadow = round.shadowLayer {
+            shadow.removeFromSuperlayer()
+            round.shadowLayer = nil
+        }
         comments.textColor = ColorUtil.theme.navIconColor
         title.textColor = ColorUtil.theme.navIconColor
 
@@ -2615,26 +2665,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func refresh(np: Bool = false) {
         let link = self.link!
 
-        upvote.setImage(LinkCellImageCache.upvote, for: .normal)
-        downvote.setImage(LinkCellImageCache.downvote, for: .normal)
-        sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
-        sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
-        share.setImage(LinkCellImageCache.share, for: .normal)
-        menu.setImage(LinkCellImageCache.menu, for: .normal)
+        upvote.image = LinkCellImageCache.upvote
+        downvote.image = LinkCellImageCache.downvote
+        sideUpvote.image = LinkCellImageCache.upvoteSmall
+        sideDownvote.image = LinkCellImageCache.downvoteSmall
+        share.image = LinkCellImageCache.share
+        menu.image = LinkCellImageCache.menu
 
-        save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
-        mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
-        readLater.setImage(ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater, for: .normal)
-        
+        save.image = ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save
+        mod.image = link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted
+        readLater.image = ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater
+
         var attrs: [NSAttributedString.Key: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
         case .down:
-            downvote.setImage(LinkCellImageCache.downvoteTinted, for: .normal)
-            sideDownvote.setImage(LinkCellImageCache.downvoteTintedSmall, for: .normal)
+            downvote.image = LinkCellImageCache.downvoteTinted
+            sideDownvote.image = LinkCellImageCache.downvoteTintedSmall
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         case .up:
-            upvote.setImage(LinkCellImageCache.upvoteTinted, for: .normal)
-            sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
+            upvote.image = LinkCellImageCache.upvoteTinted
+            sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.theme.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
@@ -2832,11 +2882,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         super.layoutSubviews()
-
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode && !setElevation {
-            setElevation = true
-            self.innerView.elevate(elevation: 2)
-        }
     }
     
     var registered: Bool = false
@@ -3254,6 +3299,7 @@ public extension UIImageView {
                         self.contentMode = .scaleAspectFit
                         let backView = UIImageView(image: self.image?.sd_blurredImage(withRadius: 15))
                         backView.contentMode = .scaleAspectFill
+                        backView.backgroundColor = ColorUtil.theme.backgroundColor
                         backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors /==/ self.edgeAnchors
@@ -3723,3 +3769,63 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
 }
 
+class RoundedCornerView: UIView {
+    var cornerRadius = 0 as CGFloat
+    var cornerColor: UIColor
+    init(radius: CGFloat, cornerColor: UIColor) {
+        self.cornerRadius = radius
+        self.cornerColor = cornerColor
+        super.init(frame: CGRect.zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func draw(_ rect: CGRect) {
+        let borderPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius)
+        cornerColor.set()
+        borderPath.fill()
+    }
+    
+    public var shadowLayer: CAShapeLayer!
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if shadowLayer == nil {
+            shadowLayer = CAShapeLayer()
+            shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
+            shadowLayer.fillColor = cornerColor.cgColor
+
+            shadowLayer.shadowPath = shadowLayer.path
+            
+            shadowLayer.shadowColor = UIColor.black.cgColor
+            shadowLayer.shadowOffset = CGSize(width: 0, height: 2)
+            shadowLayer.shadowRadius = CGFloat(2)
+            shadowLayer.shadowOpacity = 0.24
+
+            layer.insertSublayer(shadowLayer, at: 0)
+        }
+    }
+}
+
+class RoundedImageView: UIImageView {
+    var cornerRadius = 0 as CGFloat
+    var cornerColor: UIColor
+    init(radius: CGFloat, cornerColor: UIColor) {
+        self.cornerRadius = radius
+        self.cornerColor = cornerColor
+        super.init(frame: CGRect.zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func draw(_ rect: CGRect) {
+        let borderPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius)
+        cornerColor.set()
+        borderPath.fill()
+    }
+}
