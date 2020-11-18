@@ -740,6 +740,28 @@ class RMessage: Object {
     }
 }
 
+class RModlogItem: Object {
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    @objc dynamic var id = ""
+    @objc dynamic var mod = ""
+    @objc dynamic var targetBody = ""
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var subreddit = ""
+    @objc dynamic var targetTitle = ""
+    @objc dynamic var permalink = ""
+    @objc dynamic var details = ""
+    @objc dynamic var action = ""
+    @objc dynamic var targetAuthor = ""
+    @objc dynamic var subject = ""
+    
+    func getId() -> String {
+        return id
+    }
+}
+
 class RComment: Object {
     override class func primaryKey() -> String? {
         return "id"

@@ -861,7 +861,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void) {
-        let vc = ModerationViewController()
+        let vc = ModerationOverviewViewController()
         
         doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }

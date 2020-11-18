@@ -204,6 +204,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         self.tableView.register(CommentCellView.classForCoder(), forCellWithReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
+        self.tableView.register(ModlogCellView.classForCoder(), forCellWithReuseIdentifier: "modlog")
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
         
@@ -306,9 +307,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.layer.shouldRasterize = true
             c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
-        } else {
+        } else if thing is RMessage {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.layer.shouldRasterize = true
+            c.layer.rasterizationScale = UIScreen.main.scale
+            cell = c
+        } else {
+            //Is mod log item
+            let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
+            c.setLogItem(logItem: (thing as! RModlogItem), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             c.layer.shouldRasterize = true
             c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
@@ -344,7 +352,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is RFriend {
                 return CGSize(width: itemWidth, height: 70)
-            } else {
+            } else if thing is RMessage {
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message)
@@ -354,6 +362,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[message.id] = height + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
+            } else {
+                let logItem = thing as! RModlogItem
+                if estimatedHeights[logItem.id] == nil {
+                    let titleText = ModlogCellView.getTitleText(item: logItem)
+                    
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: logItem.targetTitle)
+                    
+                    estimatedHeights[logItem.id] = height + 20
+                }
+                return CGSize(width: itemWidth, height: estimatedHeights[logItem.id]!)
             }
         }
         return CGSize(width: itemWidth, height: 90)
