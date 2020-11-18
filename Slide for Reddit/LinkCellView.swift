@@ -710,7 +710,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.innerView.addGestureRecognizer(longPress!)
             }
             
-            self.awardContainerView.addTapGestureRecognizer {
+            self.awardView.addTapGestureRecognizer {
                 self.showAwardMenu()
             }
             addTouch = true
@@ -745,8 +745,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         for raw in sortedValues {
             if let award = raw as? [String] {
                 coinTotal += Int(award[4]) ?? 0
-                alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[1], action: {() in
-                    let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[1])
+                alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[5], action: {() in
+                    let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[5])
                     alertController.modalPresentationStyle = .overCurrentContext
                     if let window = UIApplication.shared.keyWindow, let modalVC = window.rootViewController?.presentedViewController {
                         if let presented = modalVC.presentedViewController {

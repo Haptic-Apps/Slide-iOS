@@ -206,6 +206,13 @@ class RealmDataWrapper {
                     awardArray.append("\(award["count"] as? Int ?? 0)")
                     awardArray.append(award["description"] as? String ?? "")
                     awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
                     jsonDict[name] = awardArray
                 }
             }
@@ -352,6 +359,13 @@ class RealmDataWrapper {
                     awardArray.append("\(award["count"] as? Int ?? 0)")
                     awardArray.append(award["description"] as? String ?? "")
                     awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
                     jsonDict[name] = awardArray
                 }
             }

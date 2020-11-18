@@ -159,7 +159,8 @@ class BottomActionCell: UITableViewCell {
         icon.rightAnchor /==/ background.rightAnchor - 16
         icon.centerYAnchor /==/ background.centerYAnchor
         icon.heightAnchor /==/ 44
-        
+        icon.widthAnchor /==/ 44
+
         self.selectionStyle = .none
     }
     
