@@ -143,7 +143,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
     var thumbText: UILabel!
-    var title: YYLabel!
+    var title: UITextView!
     var score: UILabel!
     var box: UIStackView!
     var sideButtons: UIStackView!
@@ -311,30 +311,23 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.backgroundColor = ColorUtil.theme.backgroundColor
         }
         
-        self.title = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        self.title = UITextView(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.numberOfLines = 0
             $0.clipsToBounds = true
+            $0.showsHorizontalScrollIndicator = false
+            $0.showsVerticalScrollIndicator = false
             $0.layer.isOpaque = true
             $0.isOpaque = true
+            $0.layoutManager.allowsNonContiguousLayout = false
+            $0.textContainer.lineFragmentPadding = 0
+            $0.isScrollEnabled = false
             $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
-            $0.lineBreakMode = .byWordWrapping
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+            $0.layoutManager.usesFontLeading = false
+            $0.contentInset = .zero
+            $0.contentInsetAdjustmentBehavior = .never
             $0.backgroundColor = ColorUtil.theme.foregroundColor
-            $0.textContainerInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
-            $0.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
-                    for attr in attrs {
-                        if attr.value is YYTextHighlight {
-                            if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                self.linkTapped(url: url, text: text.attributedSubstring(from: range).string)
-                                return
-                            }
-                        }
-                    }
-                })
-            }
-            $0.isUserInteractionEnabled = true
+            $0.isUserInteractionEnabled = false
         }
         
         self.infoBox = UIStackView().then {
@@ -531,6 +524,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else {
             innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, infoContainer, tagbody)
         }
+        
+        subicon.sizeAnchors /==/ CGSize.square(size: 24)
+        subicon.leftAnchor /==/ title.leftAnchor
+        subicon.topAnchor /==/ title.topAnchor
         
         self.awardContainerView.addSubview(awardView)
         
@@ -1453,62 +1450,27 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             return
         }
 
-        let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
+        let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full, textView: title)
+        subicon.isHidden = true
         
-        let bounds = self.estimateHeightSingle(full, np: np, attText: finalTitle)
-        if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
-            oldBounds = bounds.textBoundingSize
-            title.textLayout = bounds
-            title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-            title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
+        if (link.subreddit_icon != "" || Subscriptions.icon(for: link.subreddit) != nil) && SettingValues.subredditIcons && !full {
+            if Subscriptions.icon(for: link.subreddit) == nil {
+                Subscriptions.subIcons[link.subreddit.lowercased()] = link.subreddit_icon.unescapeHTML
+            }
+            if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
+                subicon.isHidden = false
+                subicon.sd_setImage(with: urlAsURL, placeholderImage: UIImage(), options: [], context: nil)
+                subicon.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
+            }
         }
-        // TODO setting to turn off, check for link being valid
-        //subicon.sd_setImage(with: URL(string: link.subreddit_icon), completed: nil)
         title.attributedText = finalTitle
+        title.layoutIfNeeded()
+        title.sizeToFit()
         /*title.removeConstraints(titleAttrs)
         titleAttrs = batch {
             title.heightAnchor /==/ bounds.textBoundingSize.height
         }*/
         //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
-        
-        title.textVerticalAlignment = .top
-        title.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
-                for attr in attrs {
-                    if attr.value is YYTextHighlight {
-                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                            self.linkTapped(url: url, text: "")
-                            return
-                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
-                            self.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
-                        }
-                    }
-                }
-            })
-        }
-        title.highlightLongPressAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                for attr in attrs {
-                    if let value = attr.value as? YYTextHighlight {
-                        if let profile = value.userInfo?["profile"] as? String {
-                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
-                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
-                                vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
-                                parent.present(vc, animated: true)
-                                if #available(iOS 10.0, *) {
-                                    HapticUtility.hapticActionStrong()
-                                }
-                            }
-                            return
-                        } else if let url = value.userInfo?["url"] as? URL {
-                            self.linkLongTapped(url: url)
-                            return
-                        }
-                    }
-                }
-            })
-        }
     }
     
     var awardAttrs: [NSLayoutConstraint] = []
@@ -3001,9 +2963,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: title.attributedText!)!
-            title.textLayout = layout
-            let textSize = layout.textBoundingSize
+            let layout = title.attributedText!.boundingRect(with: size, options: [], context: nil)
+            let textSize = layout.size
+            title.textContainer.size = layout.size
             
             let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat((link?.gilded ?? false) && !SettingValues.hideAwards ? 23 : 0)
             estimatedHeight = totalHeight

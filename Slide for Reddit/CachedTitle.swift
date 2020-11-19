@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SDWebImage
 import YYText
 
 struct Title {
@@ -388,10 +389,10 @@ class CachedTitle {
         return rect
     }
 
-    static func getTitleAttributedString(_ link: RSubmission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true) -> NSAttributedString {
+    static func getTitleAttributedString(_ link: RSubmission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true, textView: UITextView? = nil) -> NSAttributedString {
         let titleStrings = CachedTitle.getTitle(submission: link, full: full, force, white, gallery: gallery)
-        
-        let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: titleStrings.color] as [NSAttributedString.Key: Any]
+        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        let attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: titleStrings.color] as [NSAttributedString.Key: Any]
         
         let color = ColorUtil.getColorForSub(sub: link.subreddit)
 
@@ -402,15 +403,10 @@ class CachedTitle {
             }
             if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
                 if loadImages {
-                    let flairView = UIImageView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
-                    flairView.layer.cornerRadius = CGFloat(20 + SettingValues.postFontOffset) / 2
-                    flairView.layer.borderColor = color.cgColor
-                    flairView.backgroundColor = color
-                    flairView.layer.borderWidth = 0.5
-                    flairView.clipsToBounds = true
-                    flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
-                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize(width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset), alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-                    iconString.append(flairImage)
+                    var attachment = NSTextAttachment()
+                    attachment.image = UIImage()
+                    attachment.bounds = CGRect(x: 0, y: (titleFont.capHeight - 24) + 5, width: 24, height: 5)
+                    iconString.append(NSAttributedString(attachment: attachment))
                 } else {
                     let flairView = UIView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
                     let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize(width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset), alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
