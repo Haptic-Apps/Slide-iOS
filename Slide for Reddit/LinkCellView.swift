@@ -246,7 +246,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         accessibilityView.isAccessibilityElement = true
         accessibilityView.accessibilityTraits = UIAccessibilityTraits.link
         
-        self.thumbImageContainer = UIView().then {
+        self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
             if !SettingValues.flatMode {
@@ -2965,7 +2965,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
             let layout = title.attributedText!.boundingRect(with: size, options: [], context: nil)
             let textSize = layout.size
-            title.textContainer.size = layout.size
             
             let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat((link?.gilded ?? false) && !SettingValues.hideAwards ? 23 : 0)
             estimatedHeight = totalHeight
@@ -3259,16 +3258,15 @@ public extension UIImageView {
                 if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
                     if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) { //Aspect ratio of current image is less than
                         self.contentMode = .scaleAspectFit
-                        let backView = UIImageView(image: self.image?.sd_blurredImage(withRadius: 15))
+                        let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor)
+                        backView.image = self.image?.sd_blurredImage(withRadius: 15)
                         backView.contentMode = .scaleAspectFill
                         backView.backgroundColor = ColorUtil.theme.backgroundColor
                         backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors /==/ self.edgeAnchors
                         self.backgroundColor = .clear
-                        if !SettingValues.flatMode {
-                            backView.layer.cornerRadius = 15
-                        }
+                        
                         if #available(iOS 11.0, *) {
                             backView.accessibilityIgnoresInvertColors = true
                         }
@@ -3278,6 +3276,8 @@ public extension UIImageView {
                     } else {
                         self.contentMode = .scaleAspectFill //Otherwise, fill view
                     }
+                } else if let round = self as? RoundedImageView {
+                    round.setCornerRadius()
                 }
 
                 if cacheType == .none {
@@ -3772,9 +3772,38 @@ class RoundedCornerView: UIView {
     }
 }
 
+class RoundedImageViewShadow: RoundedImageView {
+    override func draw(_ rect: CGRect) {
+        let borderPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius)
+        cornerColor.set()
+        borderPath.fill()
+    }
+    
+    public var shadowLayer: CAShapeLayer!
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if shadowLayer == nil {
+            shadowLayer = CAShapeLayer()
+            shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
+            shadowLayer.fillColor = cornerColor.cgColor
+
+            shadowLayer.shadowPath = shadowLayer.path
+            
+            shadowLayer.shadowColor = UIColor.black.cgColor
+            shadowLayer.shadowOffset = CGSize(width: 0, height: 2)
+            shadowLayer.shadowRadius = CGFloat(2)
+            shadowLayer.shadowOpacity = 0.24
+            layer.insertSublayer(shadowLayer, at: 0)
+        }
+    }
+}
+
 class RoundedImageView: UIImageView {
     var cornerRadius = 0 as CGFloat
     var cornerColor: UIColor
+    var maskLayer: CAShapeLayer!
     init(radius: CGFloat, cornerColor: UIColor) {
         self.cornerRadius = radius
         self.cornerColor = cornerColor
@@ -3785,9 +3814,13 @@ class RoundedImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func draw(_ rect: CGRect) {
-        let borderPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius)
-        cornerColor.set()
-        borderPath.fill()
+    func setCornerRadius() {
+        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+        maskLayer?.removeFromSuperlayer()
+        maskLayer = CAShapeLayer()
+        maskLayer.frame = self.bounds
+        maskLayer.path = path.cgPath
+        self.layer.mask = maskLayer
+        self.layer.masksToBounds = true
     }
 }
