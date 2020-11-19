@@ -1451,18 +1451,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
 
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full, textView: title)
-        subicon.isHidden = true
-        
-        if (link.subreddit_icon != "" || Subscriptions.icon(for: link.subreddit) != nil) && SettingValues.subredditIcons && !full {
-            if Subscriptions.icon(for: link.subreddit) == nil {
-                Subscriptions.subIcons[link.subreddit.lowercased()] = link.subreddit_icon.unescapeHTML
-            }
-            if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
-                subicon.isHidden = false
-                subicon.sd_setImage(with: urlAsURL, placeholderImage: UIImage(), options: [], context: nil)
-                subicon.backgroundColor = ColorUtil.getColorForSub(sub: link.subreddit)
-            }
-        }
         title.attributedText = finalTitle
         title.layoutIfNeeded()
         title.sizeToFit()
@@ -2962,98 +2950,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 estimatedUsableWidth = 100
             }
             
-            let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-            let layout = title.attributedText!.boundingRect(with: size, options: [], context: nil)
-            let textSize = layout.size
+            let titleHeight = title.attributedText!.height(containerWidth: estimatedUsableWidth)
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat((link?.gilded ?? false) && !SettingValues.hideAwards ? 23 : 0)
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(titleHeight) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat((link?.gilded ?? false) && !SettingValues.hideAwards ? 23 : 0)
             estimatedHeight = totalHeight
         }
         return estimatedHeight
-    }
-    
-    func estimateHeightSingle(_ full: Bool, np: Bool, attText: NSAttributedString) -> YYTextLayout {
-        var paddingLeft = CGFloat(0)
-        var paddingRight = CGFloat(0)
-        var innerPadding = CGFloat(0)
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
-            paddingLeft = 5
-            paddingRight = 5
-        }
-        var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-        let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
-        
-        if thumb {
-            imageHeight = thumbheight
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between top and thumbnail
-            innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) //between label and bottom box
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
-        } else if big {
-            if SettingValues.postViewMode == .CENTER || full {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //between label
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between banner and box
-            } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
-            }
-            
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
-        } else {
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
-            innerPadding += 5 //between label and body
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
-        }
-        
-        var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
-        var fullHeightExtras = CGFloat(0)
-        
-        if !full {
-            if thumb {
-                estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between thumb and label
-            } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
-            }
-        } else {
-            fullHeightExtras += 12
-            estimatedUsableWidth -= (35) //12 padding on either side
-            if thumb {
-                fullHeightExtras += 45 + 12 + 12
-            } else {
-                fullHeightExtras += imageHeight
-            }
-            
-            if link!.archived || link!.locked || np {
-                fullHeightExtras += 56
-            }
-            
-            fullHeightExtras += 8
-            
-            if link!.isCrosspost {
-                fullHeightExtras += 56
-            }
-        }
-        
-        if SettingValues.actionBarMode.isSide() && !full {
-            estimatedUsableWidth -= 40
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
-            if thumb {
-                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
-            }
-        }
-        
-        //Temporary fix to iOS 14 crash
-        //TODO fix
-        if estimatedUsableWidth < 0 {
-            estimatedUsableWidth = 100
-        }
-        
-        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: attText)!
-        return layout
     }
     
     // TODO: - this
@@ -3822,5 +3724,16 @@ class RoundedImageView: UIImageView {
         maskLayer.path = path.cgPath
         self.layer.mask = maskLayer
         self.layer.masksToBounds = true
+    }
+}
+
+extension NSAttributedString {
+
+    func height(containerWidth: CGFloat) -> CGFloat {
+
+        let rect = self.boundingRect(with: CGSize.init(width: containerWidth, height: CGFloat.greatestFiniteMagnitude),
+                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                     context: nil)
+        return ceil(rect.size.height)
     }
 }

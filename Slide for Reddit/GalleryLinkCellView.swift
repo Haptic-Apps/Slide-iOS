@@ -68,7 +68,6 @@ final class GalleryLinkCellView: LinkCellView {
             }
 
         let attText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: full)
-        let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
         title.attributedText = attText
     }
     

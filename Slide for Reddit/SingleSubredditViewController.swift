@@ -1778,16 +1778,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
                 
-        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))
-        if let layout = layout {
-            let textSize = layout.textBoundingSize
-
+        let height = CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false).height(containerWidth: estimatedUsableWidth)
+        
+        if height < 100000 { //Make sure it's a valid height
             var totalHeight = paddingTop + paddingBottom
             if thumb {
-                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(textSize.height), imageHeight)
+                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(height), imageHeight)
             } else {
-                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(textSize.height)) + imageHeight
+                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(height)) + imageHeight
             }
             
             totalHeight += innerPadding + actionbar + textHeight

@@ -391,8 +391,9 @@ class CachedTitle {
 
     static func getTitleAttributedString(_ link: RSubmission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true, textView: UITextView? = nil) -> NSAttributedString {
         let titleStrings = CachedTitle.getTitle(submission: link, full: full, force, white, gallery: gallery)
+        var fontSize = 12 + CGFloat(SettingValues.postFontOffset)
         let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-        let attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: titleStrings.color] as [NSAttributedString.Key: Any]
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: titleStrings.color] as [NSAttributedString.Key: Any]
         
         let color = ColorUtil.getColorForSub(sub: link.subreddit)
 
@@ -403,14 +404,15 @@ class CachedTitle {
             }
             if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
                 if loadImages {
-                    var attachment = NSTextAttachment()
-                    attachment.image = UIImage()
-                    attachment.bounds = CGRect(x: 0, y: (titleFont.capHeight - 24) + 5, width: 24, height: 5)
+                    var attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
                     iconString.append(NSAttributedString(attachment: attachment))
+                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
                 } else {
-                    let flairView = UIView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
-                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize(width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset), alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-                    iconString.append(flairImage)
+                    var attachment = NSTextAttachment()
+                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                    iconString.append(NSAttributedString(attachment: attachment))
+                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
                 }
             }
             let tapString = NSMutableAttributedString(string: "  r/\(link.subreddit)", attributes: attrs)
@@ -440,7 +442,7 @@ class CachedTitle {
             finalTitle.append(NSAttributedString.init(string: "\n"))
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
-                finalTitle.append(infoLine)
+                finalTitle.append(NSAttributedString(string: infoLine.string, attributes: attrs))
             }
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
@@ -449,7 +451,7 @@ class CachedTitle {
         } else {
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
-                finalTitle.append(infoLine)
+                finalTitle.append(NSAttributedString(string: infoLine.string, attributes: attrs))
             }
             finalTitle.append(NSAttributedString.init(string: "\n"))
             if let mainTitle = titleStrings.mainTitle {
