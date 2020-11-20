@@ -131,10 +131,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 jump.addSubview(image)
                 image.edgeAnchors /==/ jump.edgeAnchors
-                jump.addTapGestureRecognizer {
+                jump.addTapGestureRecognizer { (_) in
                     self.goDown(self.jump)
                 }
-                jump.addLongTapGestureRecognizer {
+                jump.addLongTapGestureRecognizer { (_) in
                     self.goUp(self.jump)
                 }
             }
@@ -324,7 +324,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 $0.layer.cornerRadius = 20
                                                 $0.clipsToBounds = true
                                                 $0.textAlignment = .center
-                                                $0.addTapGestureRecognizer {
+                                                $0.addTapGestureRecognizer { (_) in
                                                     UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
                                                         self.tableView.contentOffset.y = (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64
                                                     }, completion: { (_) in
@@ -1118,7 +1118,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         label.accessibilityHint = "Opens the sub red it r \(sub)"
         label.accessibilityLabel = "Sub red it: r \(sub)"
 
-        label.addTapGestureRecognizer(action: {
+        label.addTapGestureRecognizer(action: { (_) in
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
         

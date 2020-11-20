@@ -206,7 +206,7 @@
 		BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */; };
 		BE2F3F5D1EF96877003C1B28 /* SettingsContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */; };
 		BE3144FF25663674004A908C /* AsyncTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3144FE25663674004A908C /* AsyncTextAttachment.swift */; };
-		BE314509256738FF004A908C /* BadgeLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE314508256738FF004A908C /* BadgeLayoutManager.swift */; };
+		BE314509256738FF004A908C /* TitleUITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE314508256738FF004A908C /* TitleUITextView.swift */; };
 		BE31454625674E03004A908C /* Proton in Frameworks */ = {isa = PBXBuildFile; productRef = BE31454525674E03004A908C /* Proton */; };
 		BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */; };
 		BE35216B1E3D22B000C30B8D /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521661E3D22B000C30B8D /* Roboto-Light.ttf */; };
@@ -683,7 +683,7 @@
 		BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsData.swift; sourceTree = "<group>"; };
 		BE2F3F5C1EF96877003C1B28 /* SettingsContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsContent.swift; sourceTree = "<group>"; };
 		BE3144FE25663674004A908C /* AsyncTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncTextAttachment.swift; sourceTree = "<group>"; };
-		BE314508256738FF004A908C /* BadgeLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeLayoutManager.swift; sourceTree = "<group>"; };
+		BE314508256738FF004A908C /* TitleUITextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleUITextView.swift; sourceTree = "<group>"; };
 		BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		BE3521661E3D22B000C30B8D /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
 		BE3521671E3D22B000C30B8D /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
@@ -1552,7 +1552,7 @@
 				BE36886120E5709300987320 /* FullLinkCellView.swift */,
 				BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */,
 				BE854972239310E300D51DDC /* GalleryLinkCellView.swift */,
-				BE314508256738FF004A908C /* BadgeLayoutManager.swift */,
+				BE314508256738FF004A908C /* TitleUITextView.swift */,
 			);
 			name = LinkCellViews;
 			sourceTree = "<group>";
@@ -2399,7 +2399,7 @@
 				BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */,
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
-				BE314509256738FF004A908C /* BadgeLayoutManager.swift in Sources */,
+				BE314509256738FF004A908C /* TitleUITextView.swift in Sources */,
 				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,

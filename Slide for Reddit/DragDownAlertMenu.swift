@@ -472,7 +472,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         close.rightAnchor /==/ toReturn.rightAnchor - 16
         close.heightAnchor /==/ 30
         close.widthAnchor /==/ 30
-        close.addTapGestureRecognizer {
+        close.addTapGestureRecognizer { (_) in
             self.dismiss(animated: true, completion: nil)
         }
         close.isAccessibilityElement = true

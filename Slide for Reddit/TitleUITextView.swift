@@ -11,6 +11,54 @@
 import UIKit
 import Foundation
 
+class TitleUITextView: UITextView {
+    var tapDelegate: TextDisplayStackViewDelegate
+    
+    init(delegate: TextDisplayStackViewDelegate, textContainer: NSTextContainer) {
+        self.tapDelegate = delegate
+        super.init(frame: .zero, textContainer: textContainer)
+        
+        self.addTapGestureRecognizer(delegate: self) { (sender) in
+            let tapPoint = sender.location(in: self)
+            let glyphIndex = self.layoutManager.glyphIndex(for: tapPoint, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
+            let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
+            if index < self.textStorage.length {
+                if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
+                    delegate.linkTapped(url: attributedURL, text: "")
+                }
+            }
+        }
+        
+        self.addLongTapGestureRecognizer(delegate: self) { (sender) in
+            let tapPoint = sender.location(in: self)
+            let glyphIndex = self.layoutManager.glyphIndex(for: tapPoint, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
+            let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
+            if index < self.textStorage.length {
+                if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
+                    delegate.linkLongTapped(url: attributedURL)
+                }
+            }
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension TitleUITextView: UIGestureRecognizerDelegate {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let glyphIndex = self.layoutManager.glyphIndex(for: point, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
+        let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
+        if index < self.textStorage.length {
+            if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
+                return true
+            }
+        }
+        return false
+    }
+}
+
 class BadgeLayoutManager: NSLayoutManager {
     override func drawBackground(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
         super.drawBackground(forGlyphRange: glyphsToShow, at: origin)
@@ -176,6 +224,7 @@ class BadgeLayoutManager: NSLayoutManager {
 
 extension NSAttributedString.Key {
     static let badgeColor: NSAttributedString.Key = .init("badgeColor")
+    static let urlAction: NSAttributedString.Key = .init("urlAction")
 }
 
 //

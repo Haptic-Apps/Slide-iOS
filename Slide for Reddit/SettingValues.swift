@@ -714,7 +714,7 @@ class SettingValues {
         detailViewController.comments.setTitle("Join the discussion!", for: UIControl.State.normal)
         detailViewController.comments.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
         detailViewController.comments.contentHorizontalAlignment = .left
-        detailViewController.comments.addTapGestureRecognizer {
+        detailViewController.comments.addTapGestureRecognizer { (_) in
             detailViewController.dismiss(animated: true) {
                 VCPresenter.openRedditLink(submission.permalink, parentVC.navigationController, parentVC)
             }

@@ -19,6 +19,7 @@ struct Title {
 }
 
 class CachedTitle {
+    static var AWARD_KEY = "https://ccrama.me/awards"
     static var titles: [String: Title] = [:]
     static var removed: [String] = []
     static var approved: [String] = []
@@ -164,8 +165,7 @@ class CachedTitle {
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author + (submission.cakeday ? " 🎂" : ""), small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
-        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.author)")!, "profile": submission.author])
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if submission.distinguished == "admin" {
@@ -177,8 +177,9 @@ class CachedTitle {
         } else if AccountController.currentName == submission.author {
             authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key.badgeColor:userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([NSAttributedString.Key.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         }
+        authorString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/u/\(submission.author)")!], range: NSRange(location: 0, length: authorString.length))
 
         endString.append(authorString)
         if SettingValues.domainInInfo && !full {
@@ -368,8 +369,7 @@ class CachedTitle {
 
         let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author + (submission.cakeday ? " 🎂" : ""), small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
-        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.author)")!, "profile": submission.author])
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if submission.distinguished == "admin" {
@@ -381,7 +381,7 @@ class CachedTitle {
         } else if AccountController.currentName == submission.author {
             authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key.badgeColor:userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([NSAttributedString.Key.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         }
 
         endString.append(authorString)
@@ -394,7 +394,6 @@ class CachedTitle {
             endString.append(tagString)
         }
         
-                
         let extraLine = NSMutableAttributedString()
                         
         return Title(mainTitle: attributedTitle, infoLine: endString, extraLine: extraLine, color: UIColor.white)
@@ -451,7 +450,8 @@ class CachedTitle {
                 }
             }
             let tapString = NSMutableAttributedString(string: "  r/\(link.subreddit)", attributes: attrs)
-            tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(link.subreddit)")!])
+            tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+
             iconString.append(tapString)
         } else {
             if color != ColorUtil.baseColor {
@@ -460,11 +460,11 @@ class CachedTitle {
                 let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: adjustedSize), NSAttributedString.Key.foregroundColor: color])
                 iconString = preString
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
-                tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(link.subreddit)")!])
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                 iconString.append(tapString)
             } else {
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
-                tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(link.subreddit)")!])
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                 iconString = tapString
             }
         }
@@ -553,8 +553,10 @@ class CachedTitle {
                     awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.baselineOffset: (((24 - fontSize) / 2) - (titleFont.descender / 2))]))
                 }
                 
+                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 0, length: awardLine.length)) //We will catch this URL later on
 
                 finalTitle.append(awardLine)
+                finalTitle.append(NSAttributedString(string: "")) //Stop tap from going to the end of the view width
             }
         }
         return finalTitle

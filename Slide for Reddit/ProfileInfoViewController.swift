@@ -233,7 +233,7 @@ extension ProfileInfoViewController {
                         for trophy in trophies {
                             let b = self.generateButtons(trophy: trophy)
                             b.sizeAnchors /==/ CGSize(width: 70, height: 70)
-                            b.addTapGestureRecognizer(action: {
+                            b.addTapGestureRecognizer(action: { _ in
                                 if trophy.url != nil {
                                     var trophyURL = trophy.url!.absoluteString
                                     if !trophyURL.contains("reddit.com") {
@@ -576,7 +576,7 @@ class ProfileHeaderView: UIView {
     }
     
     func setupActions() {
-        friendCell.addTapGestureRecognizer { [weak self] in
+        friendCell.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             if strongSelf.user?.isFriend ?? false {
                 strongSelf.delegate?.didRequestRemoveFriend()
@@ -584,15 +584,15 @@ class ProfileHeaderView: UIView {
                 strongSelf.delegate?.didRequestAddFriend()
             }
         }
-        messageCell.addTapGestureRecognizer { [weak self] in
+        messageCell.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.didRequestPrivateMessage()
         }
-        colorCell.addTapGestureRecognizer { [weak self] in
+        colorCell.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.didRequestSetColor()
         }
-        tagCell.addTapGestureRecognizer { [weak self] in
+        tagCell.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.didRequestEditTag()
         }

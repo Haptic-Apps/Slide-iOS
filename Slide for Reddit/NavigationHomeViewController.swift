@@ -1126,8 +1126,7 @@ extension CurrentAccountHeaderView {
             )
         }()
         
-        contentView.addTapGestureRecognizer {
-            [weak self] in
+        contentView.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf.parent!, didRequestProfilePageAtIndex: 0)
         }
@@ -1335,7 +1334,7 @@ class AccountShortcutsView: UIView {
             if !action.needsAccount() || AccountController.isLoggedIn {
                 cellStack.addArrangedSubview(UITableViewCell().then {
                     $0.configure(text: action.getTitle(), image: action.getImage())
-                    $0.addTapGestureRecognizer {
+                    $0.addTapGestureRecognizer { (_) in
                         if let delegate = self.delegate, let parent = self.parent {
                             delegate.navigation(parent, didRequestAction: action)
                         }
@@ -1350,7 +1349,7 @@ class AccountShortcutsView: UIView {
         
         cellStack.addArrangedSubview(UITableViewCell().then {
             $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
-            $0.addTapGestureRecognizer {
+            $0.addTapGestureRecognizer { (_) in
                 let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
                 for action in SettingValues.NavigationHeaderActions.cases {
                     if !action.needsAccount() || AccountController.isLoggedIn {

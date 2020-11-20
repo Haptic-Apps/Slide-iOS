@@ -225,7 +225,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.commentLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.commentLimit.backgroundColor = ColorUtil.theme.foregroundColor
         self.commentLimit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.commentLimit.contentView.addTapGestureRecognizer {
+        self.commentLimit.contentView.addTapGestureRecognizer { (_) in
             self.showCountMenu(false)
         }
 
@@ -234,7 +234,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.postLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.postLimit.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLimit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.postLimit.contentView.addTapGestureRecognizer {
+        self.postLimit.contentView.addTapGestureRecognizer { (_) in
             self.showCountMenu(true)
         }
 

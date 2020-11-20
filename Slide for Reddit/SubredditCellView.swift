@@ -328,7 +328,7 @@ class SubredditCellView: UITableViewCell {
                 submissionView.heightAnchor /==/ 150
                 submissionView.widthAnchor /==/ 200
                 
-                submissionView.addTapGestureRecognizer {
+                submissionView.addTapGestureRecognizer { (_) in
                     VCPresenter.openRedditLink(submission.permalink, nav?.navigationController, nav)
                 }
                 contentView.addArrangedSubview(submissionView)

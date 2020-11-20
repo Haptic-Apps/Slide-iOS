@@ -150,12 +150,12 @@ class SettingsFont: BubbleSettingTableViewController {
         submissionSize.textLabel?.text = "Font size"
 
         submissionWeight.textLabel?.text = "Font variant"
-        submissionWeight.addTapGestureRecognizer { [weak self] in
+        submissionWeight.addTapGestureRecognizer { [weak self] (_) in
             self?.weightCellWasTapped(submission: true)
         }
 
         submissionFont.textLabel?.text = "Font"
-        submissionFont.addTapGestureRecognizer { [weak self] in
+        submissionFont.addTapGestureRecognizer { [weak self] (_) in
             self?.submissionFontCellWasTapped()
         }
 
@@ -186,12 +186,12 @@ class SettingsFont: BubbleSettingTableViewController {
         slider.heightAnchor /==/ 60
         slider.bottomAnchor /==/ commentSize.contentView.bottomAnchor
         commentFont.textLabel?.text = "Font"
-        commentFont.addTapGestureRecognizer { [weak self] in
+        commentFont.addTapGestureRecognizer { [weak self] (_) in
             self?.commentFontCellWasTapped()
         }
 
         commentWeight.textLabel?.text = "Font variant"
-        commentWeight.addTapGestureRecognizer { [weak self] in
+        commentWeight.addTapGestureRecognizer { [weak self] (_) in
             self?.weightCellWasTapped(submission: false)
         }
 

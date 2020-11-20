@@ -356,10 +356,10 @@ public class TextDisplayStackView: UIStackView {
                    // TODO: - icon
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
                     $0.backgroundColor = UIColor.clear
-                    $0.addTapGestureRecognizer(action: {
+                    $0.addTapGestureRecognizer(action: { _ in
                         self.delegate.linkTapped(url: url, text: "")
                     })
-                    $0.addLongTapGestureRecognizer(action: {
+                    $0.addLongTapGestureRecognizer(action: { _ in
                         self.delegate.linkLongTapped(url: url)
                     })
                     counter += 1

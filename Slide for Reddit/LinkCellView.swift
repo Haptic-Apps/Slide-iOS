@@ -41,10 +41,12 @@ enum CurrentType {
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
     func linkTapped(url: URL, text: String) {
-        if !full {
+        linkClicked = true
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
             return
         }
-        linkClicked = true
+        
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
@@ -55,6 +57,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func linkLongTapped(url: URL) {
         longBlocking = true
         
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
+
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
         alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
@@ -318,7 +325,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         container.widthTracksTextView = true
         layout.addTextContainer(container)
 
-        self.title = UITextView(frame: .zero, textContainer: container).then {
+        self.title = TitleUITextView(delegate: self, textContainer: container).then {
             $0.accessibilityIdentifier = "Post Title"
             $0.clipsToBounds = false
             $0.textContainer.lineFragmentPadding = 0
@@ -327,6 +334,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.showsVerticalScrollIndicator = false
             $0.layer.isOpaque = true
             $0.isOpaque = true
+            $0.isSelectable = false
             $0.layoutManager.allowsNonContiguousLayout = false
             $0.isScrollEnabled = false
             $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
@@ -335,7 +343,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.contentInset = .zero
             $0.contentInsetAdjustmentBehavior = .never
             $0.backgroundColor = ColorUtil.theme.foregroundColor
-            $0.isUserInteractionEnabled = false
+            $0.isUserInteractionEnabled = true
         }
         
         self.infoBox = UIStackView().then {
@@ -610,47 +618,47 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if !addTouch {
-            save.addTapGestureRecognizer {
+            save.addTapGestureRecognizer { (_) in
                 self.save()
             }
-            upvote.addTapGestureRecognizer {
+            upvote.addTapGestureRecognizer { (_) in
                 self.upvote()
             }
 
             if SettingValues.actionBarMode.isSide() {
-                sideUpvote.addTapGestureRecognizer {
+                sideUpvote.addTapGestureRecognizer { (_) in
                     self.upvote()
                 }
-                sideDownvote.addTapGestureRecognizer {
+                sideDownvote.addTapGestureRecognizer { (_) in
                     self.downvote()
                 }
             }
             
-            reply.addTapGestureRecognizer {
+            reply.addTapGestureRecognizer { (_) in
                 self.reply()
             }
-            downvote.addTapGestureRecognizer {
+            downvote.addTapGestureRecognizer { (_) in
                 self.downvote()
             }
-            mod.addTapGestureRecognizer {
+            mod.addTapGestureRecognizer { (_) in
                 self.mod()
             }
-            readLater.addTapGestureRecognizer {
+            readLater.addTapGestureRecognizer { (_) in
                 self.readLater()
             }
-            edit.addTapGestureRecognizer {
+            edit.addTapGestureRecognizer { (_) in
                 self.edit(sender: self.edit)
             }
-            hide.addTapGestureRecognizer {
+            hide.addTapGestureRecognizer { (_) in
                 self.hide()
             }
-            share.addTapGestureRecognizer {
+            share.addTapGestureRecognizer { (_) in
                 self.share()
             }
-            sideUpvote.addTapGestureRecognizer {
+            sideUpvote.addTapGestureRecognizer { (_) in
                 self.upvote()
             }
-            menu.addTapGestureRecognizer {
+            menu.addTapGestureRecognizer { (_) in
                 self.more()
             }
 
@@ -1989,7 +1997,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             endString.append(authorString)
             boldString.append(endString)
             
-            outer.addTapGestureRecognizer {
+            outer.addTapGestureRecognizer { (_) in
                 VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
             }
             popup.attributedText = boldString
@@ -2635,7 +2643,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.horizontalAnchors /==/ infoBox.horizontalAnchors
                 outer.heightAnchor /==/ 48
                 
-                outer.addTapGestureRecognizer {
+                outer.addTapGestureRecognizer { (_) in
                     let shareItems: Array = [link.url]
                     let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems as [Any], applicationActivities: nil)
                     if let presenter = activityViewController.popoverPresentationController {

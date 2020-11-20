@@ -737,10 +737,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
             fabHelper = UIView(frame: self.fab!.frame)
-            fabHelper?.addTapGestureRecognizer(action: {
+            fabHelper?.addTapGestureRecognizer(action: { (_) in
                 self.doFabActions()
             })
-            fabHelper?.addLongTapGestureRecognizer(action: {
+            fabHelper?.addLongTapGestureRecognizer(action: { (_) in
                 self.changeFab()
             })
                         
@@ -763,7 +763,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }, completion: { [weak self] (_) in
                 guard let strongSelf = self else { return }
                 strongSelf.fab?.addTarget(strongSelf, action: #selector(strongSelf.doFabActions), for: .touchUpInside)
-                strongSelf.fab?.addLongTapGestureRecognizer {
+                strongSelf.fab?.addLongTapGestureRecognizer { (_) in
                     strongSelf.changeFab()
                 }
                 
@@ -2128,7 +2128,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         } else {
             self.emptyStateView.setText(title: "Nothing to see here!", message: "All posts were filtered while loading this subreddit. Check your global filters in Slide's Settings, or tap here to view this subreddit's content filters")
             self.emptyStateView.isHidden = false
-            self.emptyStateView.addTapGestureRecognizer {
+            self.emptyStateView.addTapGestureRecognizer { (_) in
                 self.filterContent(true)
             }
         }
@@ -3243,7 +3243,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
-        view.addTapGestureRecognizer(action: {
+        
+        view.addTapGestureRecognizer { (_) in
             self.del?.subscribeSingle(view)
             stack.removeArrangedSubview(view)
             var oldSize = scroll.contentSize
@@ -3251,7 +3252,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             stack.widthAnchor /==/ oldSize.width
             scroll.contentSize = oldSize
             view.removeFromSuperview()
-        })
+        }
 
         let widthS = CGFloat(30)
 
@@ -3268,9 +3269,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
-            $0.addTapGestureRecognizer(action: {
+            $0.addTapGestureRecognizer { (_) in
                 PostActions.showPostMenu(self.del!, sub: self.sub)
-            })
+            }
         }
         
         let widthS = CGFloat(30)
@@ -3288,9 +3289,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
-            $0.addTapGestureRecognizer(action: {
+            $0.addTapGestureRecognizer { (_) in
                 self.del?.doDisplaySidebar()
-            })
+            }
         }
         
         let widthS = CGFloat(30)
@@ -3325,7 +3326,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             sortTitle.leftAnchor /==/ sortImage.rightAnchor + 8
             sortTitle.centerYAnchor /==/ sortImage.centerYAnchor
             sortTitle.rightAnchor /==/ sort.rightAnchor
-            sort.addTapGestureRecognizer {
+            sort.addTapGestureRecognizer { (_) in
                 self.del?.showSortMenu(self)
             }
             sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
@@ -3353,9 +3354,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
                     $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
-                    $0.addTapGestureRecognizer(action: {
+                    $0.addTapGestureRecognizer { (_) in
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
-                    })
+                    }
                 }
                 
                 let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(45)

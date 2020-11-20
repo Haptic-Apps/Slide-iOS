@@ -173,7 +173,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
         updateAccessibility()
         searchBar.isUserInteractionEnabled = false
-        headerView.addTapGestureRecognizer {
+        headerView.addTapGestureRecognizer { (_) in
             if self.expanded {
                 self.collapse()
             } else {
