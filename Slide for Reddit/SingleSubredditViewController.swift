@@ -265,6 +265,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
 
@@ -359,6 +360,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
+        fullWidthBackGestureRecognizer?.isEnabled = true
+        cellGestureRecognizer?.isEnabled = true
         refreshControl.setValue(100, forKey: "_snappingHeight")
 
         if dataSource.loaded && dataSource.content.count > oldCount {
@@ -428,7 +431,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab?.removeFromSuperview()
             self.fab = nil
         }
-
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
                 do {
@@ -511,7 +513,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
+        fullWidthBackGestureRecognizer?.isEnabled = false
+        cellGestureRecognizer?.isEnabled = false
+
         if fab != nil {
             fab?.removeFromSuperview()
             fab = nil
@@ -2920,10 +2924,15 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
         } else if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            nav.interactivePushGestureRecognizer?.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }
         }
+        if let swipe = fullWidthBackGestureRecognizer {
+            swipe.require(toFail: cellGestureRecognizer)
+        }
+        
     }
         
     func setupSwipeGesture() {
@@ -2950,6 +2959,11 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             if let interactivePopGestureRecognizer = self.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
                 setupSwipeWithTarget(fullWidthBackGestureRecognizer as! UIPanGestureRecognizer, targets: targets)
             }
+        }
+        if let nav = navigationController as? SwipeForwardNavigationController {
+            let gesture = nav.fullWidthBackGestureRecognizer
+            nav.interactivePushGestureRecognizer?.require(toFail: fullWidthBackGestureRecognizer)
+            gesture.require(toFail: fullWidthBackGestureRecognizer)
         }
     }
     

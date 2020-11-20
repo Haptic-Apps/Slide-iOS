@@ -281,8 +281,10 @@ class CachedTitle {
                 extraLine.append(NSAttributedString.init(string: "\n"))
             }
             
-            let crosspost = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "crosspost")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.75)!
-
+            let crosspost = NSMutableAttributedString()
+            let crosspostImage = NSTextAttachment()
+            crosspostImage.image = UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: titleFont.pointSize), withColor: ColorUtil.theme.fontColor)
+            crosspost.append(NSAttributedString(attachment: crosspostImage))
             let finalText = NSMutableAttributedString.init(string: " Crossposted from ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             
             let attrs = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]

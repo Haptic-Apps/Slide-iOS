@@ -1665,6 +1665,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        fullWidthBackGestureRecognizer?.isEnabled = true
+        cellGestureRecognizer?.isEnabled = true
+
         refreshControl.setValue(100, forKey: "_snappingHeight")
 
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
@@ -2259,6 +2262,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         inHeadView.removeFromSuperview()
         headerCell.endVideos()
         
+        fullWidthBackGestureRecognizer?.isEnabled = false
+        cellGestureRecognizer?.isEnabled = false
+
         self.didDisappearCompletely = true
     }
 
@@ -3230,6 +3236,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            nav.interactivePushGestureRecognizer?.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }
@@ -3274,6 +3281,11 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if let interactivePopGestureRecognizer = self.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
                 setupSwipeWithTarget(fullWidthBackGestureRecognizer, interactivePopGestureRecognizer: interactivePopGestureRecognizer, targets: targets)
             }
+        }
+        if let nav = navigationController as? SwipeForwardNavigationController {
+            let gesture = nav.fullWidthBackGestureRecognizer
+            nav.interactivePushGestureRecognizer?.require(toFail: fullWidthBackGestureRecognizer)
+            gesture.require(toFail: fullWidthBackGestureRecognizer)
         }
     }
 
