@@ -41,8 +41,7 @@ final class FullLinkCellView: LinkCellView {
                 awardContainerView.topAnchor /==/ title.bottomAnchor + ceight / 2
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
-                title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2
-                awardContainerView.bottomAnchor /<=/ bannerImage.topAnchor - ceight / 2
+                title.bottomAnchor /==/ bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve
@@ -69,8 +68,7 @@ final class FullLinkCellView: LinkCellView {
                 thumbImageContainer.bottomAnchor /<=/ infoBox.topAnchor - ceight
                 
                 // Thumbnail sizing
-                thumbImageContainer.topAnchor /==/ awardContainerView.bottomAnchor + ctwelve / 2
-                awardContainerView.topAnchor /==/ title.bottomAnchor + ctwelve / 2
+                thumbImageContainer.topAnchor /==/ title.bottomAnchor + ctwelve
                 thumbImageContainer.leftAnchor /==/ innerView.leftAnchor + ctwelve
                 infoContainer.heightAnchor /==/ CGFloat(75)
                 infoContainer.isHidden = false
@@ -82,8 +80,6 @@ final class FullLinkCellView: LinkCellView {
                 infoContainer.leftAnchor /==/ thumbImageContainer.rightAnchor + bannerPadding
                 infoContainer.verticalAnchors /==/ thumbImageContainer.verticalAnchors
                 infoContainer.rightAnchor /==/ innerView.rightAnchor - bannerPadding
-            } else {
-                awardContainerView.topAnchor /==/ title.bottomAnchor + ceight / 2
             }
         }
         layoutForContent()

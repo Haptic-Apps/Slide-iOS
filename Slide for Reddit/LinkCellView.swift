@@ -9,8 +9,9 @@
 import Anchorage
 import AudioToolbox
 import AVKit
-import Photos
 import MaterialComponents
+import Photos
+import Proton
 import reddift
 import RLBAlertsPickers
 import SafariServices
@@ -311,15 +312,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.backgroundColor = ColorUtil.theme.backgroundColor
         }
         
-        self.title = UITextView(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.title = UITextView(frame: .zero, textContainer: container).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.clipsToBounds = true
+            $0.clipsToBounds = false
+            $0.textContainer.lineFragmentPadding = 0
+            $0.textContainerInset = .zero
             $0.showsHorizontalScrollIndicator = false
             $0.showsVerticalScrollIndicator = false
             $0.layer.isOpaque = true
             $0.isOpaque = true
             $0.layoutManager.allowsNonContiguousLayout = false
-            $0.textContainer.lineFragmentPadding = 0
             $0.isScrollEnabled = false
             $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
@@ -341,7 +351,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.hide
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.reply = UIImageView().then {
@@ -350,7 +359,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.reply
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.edit = UIImageView().then {
@@ -359,7 +367,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.edit
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.save = UIImageView().then {
@@ -367,7 +374,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.menu = UIImageView().then {
@@ -375,7 +381,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Post menu"
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.upvote = UIImageView().then {
@@ -383,7 +388,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.downvote = UIImageView().then {
@@ -391,7 +395,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideUpvote = UIImageView().then {
@@ -399,7 +402,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideDownvote = UIImageView().then {
@@ -407,7 +409,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.mod = UIImageView().then {
@@ -416,7 +417,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.mod
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
         self.share = UIImageView().then {
@@ -425,7 +425,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.contentMode = .center
             $0.image = LinkCellImageCache.share
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
 
         self.readLater = UIImageView().then {
@@ -434,7 +433,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.readLater
             $0.contentMode = .center
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
@@ -442,7 +440,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
@@ -450,7 +447,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.score = UILabel().then {
@@ -458,7 +454,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 1
             $0.textColor = ColorUtil.theme.fontColor
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
         self.sideScore = UILabel().then {
@@ -524,11 +519,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else {
             innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, infoContainer, tagbody)
         }
-        
-        subicon.sizeAnchors /==/ CGSize.square(size: 24)
-        subicon.leftAnchor /==/ title.leftAnchor
-        subicon.topAnchor /==/ title.topAnchor
-        
+                
         self.awardContainerView.addSubview(awardView)
         
         if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
@@ -1449,11 +1440,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         guard let link = self.link else {
             return
         }
-
-        let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full, textView: title)
+        
+        let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
-        title.layoutIfNeeded()
+        
+        title.isScrollEnabled = false
         title.sizeToFit()
+
         /*title.removeConstraints(titleAttrs)
         titleAttrs = batch {
             title.heightAnchor /==/ bounds.textBoundingSize.height
@@ -3728,12 +3721,39 @@ class RoundedImageView: UIImageView {
 }
 
 extension NSAttributedString {
-
     func height(containerWidth: CGFloat) -> CGFloat {
+        let size = CGSize(width: containerWidth, height: .infinity)
+        let boundingBox = self.boundingRect(
+            with: size,
+            options: [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics],
+            context: nil
+        )
+        return boundingBox.height
+    }
+    func height2(containerWidth: CGFloat) -> CGFloat {
+        let textStorage = NSTextStorage(attributedString: self)
+        let size = CGSize(width: containerWidth, height: CGFloat.greatestFiniteMagnitude)
+        let boundingRect = CGRect(origin: .zero, size: size)
 
-        let rect = self.boundingRect(with: CGSize.init(width: containerWidth, height: CGFloat.greatestFiniteMagnitude),
-                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
-                                     context: nil)
-        return ceil(rect.size.height)
+        let textContainer = NSTextContainer(size: size)
+        textContainer.lineFragmentPadding = 0
+
+        let layoutManager = NSLayoutManager()
+        layoutManager.addTextContainer(textContainer)
+
+        textStorage.addLayoutManager(layoutManager)
+
+        self.enumerateAttribute(.attachment, in: NSRange(location: 0, length: self.length), options: []) { (value, range, _) in
+            if let attachment = value as? NSTextAttachment {
+                layoutManager.setAttachmentSize(CGSize.square(size: 24), forGlyphRange: range)
+                layoutManager.setNeedsLayout(forAttachment: attachment)
+                layoutManager.setNeedsDisplay(forAttachment: attachment)
+            }
+        }
+        layoutManager.glyphRange(forBoundingRect: boundingRect, in: textContainer)
+
+        let rect = layoutManager.usedRect(for: textContainer)
+
+        return rect.integral.size.height
     }
 }

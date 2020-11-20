@@ -37,11 +37,9 @@ final class TextLinkCellView: LinkCellView {
                 title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             }
             if !SettingValues.actionBarMode.isFull() {
-                title.bottomAnchor /==/ awardContainerView.topAnchor - ctwelve / 2
-                awardContainerView.bottomAnchor /==/ innerView.bottomAnchor - ctwelve / 2
+                title.bottomAnchor /==/ innerView.bottomAnchor - ctwelve
             } else {
-                title.bottomAnchor /<=/ awardContainerView.topAnchor - ceight / 2
-                awardContainerView.bottomAnchor /==/ box.topAnchor - ceight / 2
+                title.bottomAnchor /<=/ box.topAnchor - ceight
             }
             
             subicon.topAnchor /==/ title.topAnchor

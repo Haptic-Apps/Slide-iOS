@@ -1787,12 +1787,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             } else {
                 totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(height)) + imageHeight
             }
-            
+                 
             totalHeight += innerPadding + actionbar + textHeight
             if SettingValues.postViewMode != .CARD || isGallery {
                 totalHeight += 5
             }
-            
+
             totalHeight += CGFloat(submission.gilded && !SettingValues.hideAwards ? 23 : 0)
             
             return CGSize(width: itemWidth, height: totalHeight)
