@@ -173,8 +173,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var sideDownvote: UIImageView!
     var sideScore: UILabel!
     var innerView = UIView()
-    var awardView: UIStackView!
-    var awardContainerView = UIView()
 
     var setElevation = false
     
@@ -489,15 +487,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         
-        self.awardView = UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 2
-        }
-        
-        self.awardContainerView = UIView().then {
-            $0.accessibilityIdentifier = "Post Awards"
-        }
-        
         self.info = UILabel().then {
             $0.accessibilityIdentifier = "Banner Info"
             $0.numberOfLines = 2
@@ -515,12 +504,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if self is FullLinkCellView {
-            innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, textView, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, textView, infoContainer, tagbody)
         } else {
-            innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, infoContainer, tagbody)
         }
-                
-        self.awardContainerView.addSubview(awardView)
         
         if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
             self.videoView = VideoView().then {
@@ -1260,8 +1247,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         }
         
-        self.awardContainerView.horizontalAnchors == self.title.horizontalAnchors
-
         if !full {
             layoutForType()
             layoutForContent()
@@ -1418,7 +1403,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         refreshTitle(np: np)
-        refreshAwards()
 
         if !full {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -1453,109 +1437,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }*/
         //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
     }
-    
-    var awardAttrs: [NSLayoutConstraint] = []
-    var emptyAwardAttrs: [NSLayoutConstraint] = []
-    func setupAwardView(to: Int) {
-        awardView.subviews.forEach { (view) in
-            view.removeFromSuperview()
-        }
-        if let link = link, link.gilded, to > 0 {
-            let awardDict = link.awardsJSON.dictionaryValue()
-            awardView.isHidden = false
-            if !emptyAwardAttrs.isEmpty {
-                awardView.removeConstraints(emptyAwardAttrs)
-                awardContainerView.removeConstraints(emptyAwardAttrs)
-                emptyAwardAttrs = []
-            }
-            if awardAttrs.isEmpty {
-                awardAttrs = batch {
-                    awardView.horizontalAnchors == awardContainerView.horizontalAnchors
-                    awardView.topAnchor == awardContainerView.topAnchor + 4
-                    awardView.bottomAnchor == awardContainerView.bottomAnchor - 4
-                    awardView.heightAnchor == 15
-                    awardContainerView.heightAnchor == 23
-                }
-            }
-            var awardCount = 0
-            let values = awardDict.values
-            let sortedValues = values.sorted { (a, b) -> Bool in
-                let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
-                let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
-
-                return amountA > amountB
-            }
-            for raw in sortedValues {
-                if let award = raw as? [String] {
-                    awardCount += Int(award[2]) ?? 0
-                }
-            }
             
-            var totalAwards = 0
-            
-            for raw in sortedValues {
-                if let award = raw as? [String] {
-                    if totalAwards == to {
-                        break
-                    }
-                    
-                    totalAwards += 1
-
-                    let url = award[1]
-                    if let urlAsURL = URL(string: url) {
-                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-                        flairView.contentMode = .scaleAspectFit
-                        flairView.sd_setImage(with: urlAsURL)
-                        flairView.sizeAnchors == CGSize.square(size: 15)
-                        awardView.addArrangedSubview(flairView)
-                        flairView.backgroundColor = ColorUtil.theme.foregroundColor
-                        flairView.isOpaque = true
-                        flairView.addTapGestureRecognizer {
-                            self.showAwardMenu()
-                        }
-                    }
-                }
-            }
-
-            if totalAwards == to {
-                let label = UILabel().then {
-                    $0.font = UIFont.boldSystemFont(ofSize: 10)
-                    $0.text = "\(awardCount) Awards"
-                    $0.backgroundColor = ColorUtil.theme.foregroundColor
-                    $0.textColor = ColorUtil.theme.fontColor
-                }
-                label.addTapGestureRecognizer {
-                    self.showAwardMenu()
-                }
-
-                awardView.addArrangedSubview(label)
-            }
-            awardView.addArrangedSubview(UIView()) //right spacer
-        } else if emptyAwardAttrs.isEmpty {
-            awardView.subviews.forEach { (view) in
-                view.removeFromSuperview()
-            }
-            if !awardAttrs.isEmpty {
-                awardView.removeConstraints(awardAttrs)
-                awardContainerView.removeConstraints(awardAttrs)
-                awardAttrs = []
-            }
-            emptyAwardAttrs = batch {
-                awardView.heightAnchor == 0
-                awardContainerView.heightAnchor == 0
-            }
-            awardView.isHidden = true
-        }
-    }
-    
-    func refreshAwards() {
-        if SettingValues.hideAwards {
-            setupAwardView(to: 0)
-        } else {
-            setupAwardView(to: 3) //Big enough number
-        }
-    }
-        
     @objc func doDTap(_ sender: AnyObject) {
         typeImage = UIImageView().then {
             $0.accessibilityIdentifier = "Action type"
@@ -2000,7 +1882,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         refresh(np: np)
         refreshTitle(np: np)
-        refreshAwards()
 
         if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) || (full && thumb && type != .SELF) {
             infoContainer.isHidden = false
@@ -2945,7 +2826,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let titleHeight = title.attributedText!.height(containerWidth: estimatedUsableWidth)
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(titleHeight) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat((link?.gilded ?? false) && !SettingValues.hideAwards ? 23 : 0)
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(titleHeight) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5)
             estimatedHeight = totalHeight
         }
         return estimatedHeight

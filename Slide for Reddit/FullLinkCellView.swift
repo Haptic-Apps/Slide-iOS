@@ -32,13 +32,12 @@ final class FullLinkCellView: LinkCellView {
             textView.bottomAnchor /==/ infoBox.topAnchor - (ctwelve / 2)
             infoBox.bottomAnchor />=/ box.topAnchor - (ctwelve / 2)
             infoBox.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
-            textView.topAnchor /==/ awardContainerView.bottomAnchor + ceight / 2
+            textView.topAnchor /==/ title.bottomAnchor + ceight
             textView.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
             title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
 
             if big {
-                awardContainerView.topAnchor /==/ title.bottomAnchor + ceight / 2
                 bannerImage.isHidden = false
                 // Image goes between title and buttons
                 title.bottomAnchor /==/ bannerImage.topAnchor - ceight

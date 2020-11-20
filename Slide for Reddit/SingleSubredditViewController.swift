@@ -1796,8 +1796,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             if SettingValues.postViewMode != .CARD || isGallery {
                 totalHeight += 5
             }
-
-            totalHeight += CGFloat(submission.gilded && !SettingValues.hideAwards ? 23 : 0)
             
             return CGSize(width: itemWidth, height: totalHeight)
         } else { //If layout is nil, just return a size that won't crash the app...

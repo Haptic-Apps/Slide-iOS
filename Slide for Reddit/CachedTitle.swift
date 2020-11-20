@@ -55,7 +55,6 @@ class CachedTitle {
     }
 
     static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool, gallery: Bool) -> Title {
-
         var colorF = ColorUtil.theme.fontColor
         if white {
             colorF = .white
@@ -77,8 +76,6 @@ class CachedTitle {
             if !newlineDone {
                 newlineDone = true
                 attributedTitle.append(NSAttributedString(string: "\n"))
-            } else {
-                attributedTitle.append(spacer)
             }
             attributedTitle.append(flairTitle)
         }
@@ -342,9 +339,10 @@ class CachedTitle {
 
             if !text.isEmpty() {
                 extraLine.append(NSAttributedString.init(string: "\n")) //Extra space for body
-                extraLine.append(TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+                extraLine.append(TextDisplayStackView.createAttributedChunk(baseHTML: text.unescapeHTML.replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: ""), fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
             }
         }
+        
         return Title(mainTitle: finalTitle, infoLine: infoLine, extraLine: extraLine, color: colorF)
     }
 
@@ -497,6 +495,66 @@ class CachedTitle {
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
                 finalTitle.append(extraLine)
+            }
+        }
+        if !SettingValues.hideAwards {
+            let to = 3
+            if link.gilded {
+                var awardCount = 0
+                let awardDict = link.awardsJSON.dictionaryValue()
+
+                let values = awardDict.values
+                let sortedValues = values.sorted { (a, b) -> Bool in
+                    let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
+                    let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
+
+                    return amountA > amountB
+                }
+                for raw in sortedValues {
+                    if let award = raw as? [String] {
+                        awardCount += Int(award[2]) ?? 0
+                    }
+                }
+                
+                var totalAwards = 0
+                var attachments = [NSTextAttachment]()
+                
+                for raw in sortedValues {
+                    if let award = raw as? [String] {
+                        if totalAwards == to {
+                            break
+                        }
+                        
+                        totalAwards += 1
+
+                        let url = award[1]
+                        if let urlAsURL = URL(string: url) {
+                            if loadImages {
+                                let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
+                                attachment.bounds = CGRect(x: 0, y: (24 - 15) / 2, width: 15, height: 15)
+                                attachments.append(attachment)
+                            } else {
+                                let attachment = NSTextAttachment()
+                                attachment.bounds = CGRect(x: 0, y: (24 - 15) / 2, width: 15, height: 15)
+                                attachments.append(attachment)
+                            }
+                        }
+                    }
+                }
+                
+                let awardLine = NSMutableAttributedString(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
+
+                for award in attachments {
+                    awardLine.append(NSAttributedString(attachment: award))
+                    awardLine.appendString(" ")
+                }
+                
+                if totalAwards == to {
+                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.baselineOffset: (((24 - fontSize) / 2) - (titleFont.descender / 2))]))
+                }
+                
+
+                finalTitle.append(awardLine)
             }
         }
         return finalTitle
