@@ -165,30 +165,36 @@ class CachedTitle {
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
-
+        var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if submission.distinguished == "admin" {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#E57373"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#E57373")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "special" {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#F44336"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#F44336")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "moderator" {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#81C784"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#81C784")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if AccountController.currentName == submission.author {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#FFB74D")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = userColor
+            authorAttributes[.foregroundColor] = UIColor.white
         }
-        authorString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/u/\(submission.author)")!], range: NSRange(location: 0, length: authorString.length))
+        authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
+        
         if SettingValues.domainInInfo && !full {
             endString.append(NSAttributedString.init(string: "  •  \(submission.domain)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]))
         }
 
         let tag = ColorUtil.getTagForUser(name: submission.author)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor(rgb: 0x2196f3), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             endString.append(spacer)
             endString.append(tagString)
@@ -354,14 +360,14 @@ class CachedTitle {
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.foregroundColor: colorF])
 
         if submission.nsfw {
-            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor:GMColor.red500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor: GMColor.red500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             attributedTitle.append(spacer)
             attributedTitle.append(nsfw)
         }
 
         if submission.oc {
-            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor:GMColor.blue50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
+            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor: GMColor.blue50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
             attributedTitle.append(spacer)
             attributedTitle.append(oc)
@@ -369,26 +375,32 @@ class CachedTitle {
 
         let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
-
+        var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if submission.distinguished == "admin" {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#E57373"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#E57373")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "special" {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#F44336"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#F44336")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "moderator" {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#81C784"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#81C784")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if AccountController.currentName == submission.author {
-            authorString.addAttributes([NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#FFB74D")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = userColor
+            authorAttributes[.foregroundColor] = UIColor.white
         }
+        authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
 
         let tag = ColorUtil.getTagForUser(name: submission.author)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.backgroundStyle: BackgroundStyle(color: UIColor(rgb: 0x2196f3), cornerRadius: 3, border: nil, shadow: nil), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             endString.append(spacer)
             endString.append(tagString)
@@ -477,7 +489,13 @@ class CachedTitle {
             finalTitle.append(NSAttributedString.init(string: "\n"))
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
-                finalTitle.append(NSAttributedString(string: infoLine.string, attributes: attrs))
+                if let baseline = attrs[.baselineOffset] {
+                    let mutableLine = NSMutableAttributedString(attributedString: infoLine)
+                    mutableLine.addAttributes([.baselineOffset: baseline], range: NSRange(location: 0, length: infoLine.length))
+                    finalTitle.append(mutableLine)
+                } else {
+                    finalTitle.append(infoLine)
+                }
             }
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
@@ -486,7 +504,13 @@ class CachedTitle {
         } else {
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
-                finalTitle.append(NSAttributedString(string: infoLine.string, attributes: attrs))
+                if let baseline = attrs[.baselineOffset] {
+                    let mutableLine = NSMutableAttributedString(attributedString: infoLine)
+                    mutableLine.addAttributes([.baselineOffset: baseline], range: NSRange(location: 0, length: infoLine.length))
+                    finalTitle.append(mutableLine)
+                } else {
+                    finalTitle.append(infoLine)
+                }
             }
             finalTitle.append(NSAttributedString.init(string: "\n"))
             if let mainTitle = titleStrings.mainTitle {
@@ -556,7 +580,7 @@ class CachedTitle {
                 awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 0, length: awardLine.length)) //We will catch this URL later on
 
                 finalTitle.append(awardLine)
-                finalTitle.append(NSAttributedString(string: "")) //Stop tap from going to the end of the view width
+                finalTitle.append(NSAttributedString(string: " ")) //Stop tap from going to the end of the view width
             }
         }
         return finalTitle

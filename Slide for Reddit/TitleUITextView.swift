@@ -51,8 +51,11 @@ extension TitleUITextView: UIGestureRecognizerDelegate {
         let glyphIndex = self.layoutManager.glyphIndex(for: point, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
         let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
         if index < self.textStorage.length {
-            if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
-                return true
+            var range = NSRange()
+            if (self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: &range) as? URL) != nil {
+                if self.layoutManager.boundingRect(forGlyphRange: range, in: self.textContainer).contains(point) {
+                    return true
+                }
             }
         }
         return false
