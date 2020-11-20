@@ -1741,8 +1741,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between title and bottom
             }
         }
-        //thumb off by 12
-        //banner off by 4
         
         var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
         if thumb {

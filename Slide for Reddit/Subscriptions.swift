@@ -205,7 +205,9 @@ class Subscriptions {
             } else {
                 for sub in toReturn {
                     subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
-                    subColors[sub.displayName.lowercased()] = sub.keyColor
+                    if sub.keyColor.hexString().lowercased() != "#ffffff" && sub.keyColor.hexString() != "#000000" {
+                        subColors[sub.displayName.lowercased()] = sub.keyColor
+                    }
                 }
 
                 try session.getMineMultireddit({ (result) in
@@ -217,7 +219,9 @@ class Subscriptions {
                         for multi in multireddits {
                             toReturnMultis.append(multi)
                             subIcons["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.iconUrl
-                            subColors["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.keyColor
+                            if multi.keyColor != "#ffffff" && multi.keyColor != "#000000" {
+                                subColors["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.keyColor
+                            }
                         }
                         completion(toReturn, toReturnMultis)
                     }

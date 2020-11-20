@@ -662,7 +662,9 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                                 let communityIcon = sub["data"]["community_icon"].stringValue
                                 let keyColor = sub["data"]["key_color"].stringValue
                                 Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
-                                Subscriptions.subColors[subName.lowercased()] = keyColor
+                                if keyColor.lowercased() != "#ffffff" && keyColor != "#000000" {
+                                    Subscriptions.subColors[subName.lowercased()] = keyColor
+                                }
                                 if self.suggestions.contains(subName) {
                                     continue
                                 }

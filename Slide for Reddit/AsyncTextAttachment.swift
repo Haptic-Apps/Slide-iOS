@@ -74,7 +74,7 @@ public class AsyncTextAttachment: NSTextAttachment {
             return
         }
         
-        SDWebImageDownloader.shared.downloadImage(with: imageURL) { (image, data, _, _) in
+        SDWebImageDownloader.shared.downloadImage(with: imageURL, options: [.decodeFirstFrameOnly], progress: nil) { (image, data, _, _) in
             self.contents = data
             
             let ext = imageURL.pathExtension as CFString
