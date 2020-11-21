@@ -95,6 +95,7 @@ class SettingValues {
     public static let pref_linkAlwaysThumbnail = "LINK_ALWAYS_THUMBNAIL"
     public static let pref_actionbarMode = "ACTIONBAR_MODE"
     public static let pref_flatMode = "FLAT_MODE"
+    public static let pref_reduceElevation = "REDUCE_ELEVATION"
     public static let pref_bottomBarHidden = "BOTTOM_BAR_HIDDEN"
     public static let pref_widerIndicators = "WIDE_INDICATORS"
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
@@ -187,6 +188,7 @@ class SettingValues {
     public static var actionBarMode = ActionBarMode.FULL
     public static var autoPlayMode = AutoPlay.ALWAYS
     public static var flatMode = false
+    public static var reduceElevation = false
     public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
@@ -647,6 +649,7 @@ class SettingValues {
         SettingValues.autoPlayMode = AutoPlay.init(rawValue: settings.string(forKey: SettingValues.pref_autoPlayMode) ?? "always") ?? .ALWAYS
         SettingValues.browser = settings.string(forKey: SettingValues.pref_browser) ?? SettingValues.BROWSER_INTERNAL
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
+        SettingValues.reduceElevation = settings.bool(forKey: SettingValues.pref_reduceElevation)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
         SettingValues.commentGesturesMode = CellGestureMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF

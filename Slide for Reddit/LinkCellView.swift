@@ -1654,7 +1654,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) && !overrideFull {
             submissionHeight = test ? 150 : 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - (full ? 10 : 0))
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - (full ? 10 : 0) - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !(self is GalleryLinkCellView)) ? CGFloat(10) : CGFloat(0)))
             if (!full && SettingValues.postImageMode == .SHORT_IMAGE && !(self is AutoplayBannerLinkCellView)) && !overrideFull {
                 submissionHeight = test ? 200 : (h > halfScreen ? halfScreen : h)
             } else {
@@ -1957,7 +1957,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             popup.numberOfLines = 2
             
-            outer.elevate(elevation: 2)
+            if !SettingValues.reduceElevation {
+                outer.elevate(elevation: 2)
+            }
             outer.layer.cornerRadius = 5
             outer.clipsToBounds = true
             
@@ -2624,7 +2626,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 popup.numberOfLines = 2
                 
-                outer.elevate(elevation: 2)
+                if !SettingValues.reduceElevation {
+                    outer.elevate(elevation: 2)
+                }
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
@@ -2678,7 +2682,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 popup.numberOfLines = 2
                 
-                outer.elevate(elevation: 2)
+                if !SettingValues.reduceElevation {
+                    outer.elevate(elevation: 2)
+                }
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
@@ -3549,7 +3555,7 @@ class RoundedCornerView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        if shadowLayer == nil {
+        if shadowLayer == nil && !SettingValues.reduceElevation {
             shadowLayer = CAShapeLayer()
             shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
             shadowLayer.fillColor = cornerColor.cgColor
