@@ -254,10 +254,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
-            if !SettingValues.flatMode {
-                $0.elevate(elevation: 2.0)
-            }
         }
         
         self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
@@ -344,6 +342,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.contentInsetAdjustmentBehavior = .never
             $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.isUserInteractionEnabled = true
+            for subview in $0.subviews {
+                subview.isOpaque = true
+                subview.backgroundColor = ColorUtil.theme.foregroundColor
+            }
         }
         
         self.infoBox = UIStackView().then {
@@ -3055,11 +3057,14 @@ public extension UIImageView {
                             backView.accessibilityIgnoresInvertColors = true
                         }
                         backView.clipsToBounds = true
-
+                        backView.setCornerRadius()
+                        
                         self.superview?.bringSubviewToFront(self)
                     } else {
                         self.contentMode = .scaleAspectFill //Otherwise, fill view
-                    }
+                        if let round = self as? RoundedImageView {
+                            round.setCornerRadius()
+                        }                    }
                 } else if let round = self as? RoundedImageView {
                     round.setCornerRadius()
                 }

@@ -212,7 +212,8 @@ class CachedTitle {
         let extraLine = NSMutableAttributedString()
         finalTitle.append(attributedTitle)
         infoLine.append(endString)
-                
+        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
+
         if !full {
             if SettingValues.scoreInTitle {
                 var sColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.15))
@@ -246,11 +247,16 @@ class CachedTitle {
                         scoreInt -= 1
                     }
                 }
-                let upvoteImage = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.45)!
-
-                let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk", (Double(scoreInt) / Double(1000))) : "\(scoreInt)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: sColor])
                 
-                extraLine.append(upvoteImage)
+                let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : "\(scoreInt)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: sColor])
+                let size = subScore.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+
+                let image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.getCopy(withSize: CGSize.square(size: size.height * 0.65), withColor: ColorUtil.theme.fontColor)
+                let upvoteImage = NSTextAttachment()
+                upvoteImage.image = image
+                upvoteImage.bounds = CGRect(x: 0, y: (image.size.height * -0.35) / 2, width: image.size.width, height: image.size.height)
+                
+                extraLine.append(NSAttributedString(attachment: upvoteImage))
                 extraLine.append(subScore)
             }
             
@@ -258,11 +264,17 @@ class CachedTitle {
                 if SettingValues.scoreInTitle {
                     extraLine.append(spacer)
                 }
-                let commentImage = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(sfString: SFSymbol.bubbleRightFill, overrideString: "comments")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.5)!
+                
+                let commentString = NSMutableAttributedString(string: " \(submission.commentCount)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: colorF])
 
-                let scoreString = NSMutableAttributedString(string: "\(submission.commentCount)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: colorF])
-                extraLine.append(commentImage)
-                extraLine.append(scoreString)
+                let size = commentString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+                let commentImage = NSTextAttachment()
+                let image = UIImage(sfString: SFSymbol.bubbleRightFill, overrideString: "comments")!.getCopy(withSize: CGSize.square(size: size.height * 0.75), withColor: ColorUtil.theme.fontColor)
+                commentImage.image = image
+                commentImage.bounds = CGRect(x: 0, y: (image.size.height * -0.25) / 2, width: image.size.width, height: image.size.height)
+
+                extraLine.append(NSAttributedString(attachment: commentImage))
+                extraLine.append(commentString)
             }
         }
         
@@ -286,11 +298,18 @@ class CachedTitle {
             }
             
             let crosspost = NSMutableAttributedString()
-            let crosspostImage = NSTextAttachment()
-            crosspostImage.image = UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: titleFont.pointSize), withColor: ColorUtil.theme.fontColor)
-            crosspost.append(NSAttributedString(attachment: crosspostImage))
-            let finalText = NSMutableAttributedString.init(string: " Crossposted from ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
             
+            let finalText = NSMutableAttributedString.init(string: " Crossposted from ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            let size = finalText.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+            
+            let image = UIImage(named: "crosspost")!.getCopy(withColor: ColorUtil.theme.fontColor).getCopy(withSize: CGSize.square(size: size.height * 0.75), withColor: ColorUtil.theme.fontColor)
+
+            let crosspostImage = NSTextAttachment()
+            crosspostImage.image = image
+            crosspostImage.bounds = CGRect(x: 0, y: (image.size.height * -0.25) / 2, width: image.size.width, height: image.size.height)
+
+            crosspost.append(NSAttributedString(attachment: crosspostImage))
+
             let attrs = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
             let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)
@@ -467,9 +486,7 @@ class CachedTitle {
             iconString.append(tapString)
         } else {
             if color != ColorUtil.baseColor {
-                let adjustedSize = 12 + CGFloat(SettingValues.postFontOffset)
-
-                let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: adjustedSize), NSAttributedString.Key.foregroundColor: color])
+                let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
                 iconString = preString
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
                 tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
@@ -603,5 +620,21 @@ extension NSAttributedString {
         let range = NSRange(location: location, length: length)
         return attributedSubstring(from: range)
     }
+}
 
+extension UIImage {
+    func centerImage(with finalSize: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(finalSize, false, self.scale)
+        let _ = UIGraphicsGetCurrentContext()
+        
+        let selfSize = self.size
+        let left = (finalSize.width - selfSize.width) / 2
+        let top = (finalSize.height - selfSize.height) / 2
+        
+        let origin = CGPoint(x: left, y: top)
+        self.draw(at: origin)
+        let imageWithInsets = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return imageWithInsets
+    }
 }

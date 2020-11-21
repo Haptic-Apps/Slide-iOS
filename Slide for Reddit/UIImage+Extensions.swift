@@ -323,7 +323,6 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return image
     }
-
 }
 
 extension UIImage {
