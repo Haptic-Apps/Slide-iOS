@@ -1437,16 +1437,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
-        print(finalTitle.string)
         
         title.isScrollEnabled = false
         title.sizeToFit()
-
-        /*title.removeConstraints(titleAttrs)
-        titleAttrs = batch {
-            title.heightAnchor /==/ bounds.textBoundingSize.height
-        }*/
-        //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
     }
             
     @objc func doDTap(_ sender: AnyObject) {
