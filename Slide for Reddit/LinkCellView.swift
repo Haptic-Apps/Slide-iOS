@@ -2802,7 +2802,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 estimatedUsableWidth -= (24) //12 padding on either side
                 if thumb {
-                    fullHeightExtras += 45 + 12 + 12
+                    fullHeightExtras += 45 + 12
                 } else {
                     fullHeightExtras += imageHeight
                 }
