@@ -72,6 +72,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != index.row
+                })
             }
         }
     }
@@ -279,7 +282,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+                if !SettingValues.hideImageSelftext && (thing as! RSubmission).height > 0 {
+                    c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+                } else {
+                    c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+                }
             }
             
             c?.preservesSuperviewLayoutMargins = false
@@ -449,8 +456,21 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).endVideos()
+        if let cell = cell as? AutoplayBannerLinkCellView {
+            if cell.videoView != nil {
+                cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != indexPath.row
+                })
+            }
+        }
+        if let cell = cell as? GalleryLinkCellView {
+            if cell.videoView != nil {
+                cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != indexPath.row
+                })
+            }
         }
     }
     

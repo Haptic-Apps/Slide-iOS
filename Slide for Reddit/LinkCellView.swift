@@ -1753,12 +1753,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbImage.image = LinkCellImageCache.web
             }
+            if let round = thumbImage as? RoundedImageView {
+                round.setCornerRadius()
+            }
         } else if thumb && !big {
             thumbText.isHidden = true
             if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
                 thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
+                if let round = thumbImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
                 if submission.spoiler {
                     thumbImage.image = LinkCellImageCache.spoiler
@@ -1767,11 +1773,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 } else {
                     thumbImage.image = LinkCellImageCache.web
                 }
+                if let round = thumbImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
                 thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
             }
+            
         } else {
             thumbImage.image = nil
             thumbText.isHidden = true
@@ -2218,9 +2228,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
 
         strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
-        strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-        strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
-        strongSelf.updater?.isPaused = false
+        
+        if strongSelf.updater == nil {
+            strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
+            strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
+            strongSelf.updater?.isPaused = false
+        }
     }
     
     public static var cachedInternet: Bool?
