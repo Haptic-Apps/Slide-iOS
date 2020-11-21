@@ -541,9 +541,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows throughout Slide"
         flatModeCell.detailTextLabel?.numberOfLines = 0
 
-        createCell(reduceElevationCell, reduceElevation, isOn: SettingValues.flatMode, text: "Reduce Elevation")
+        createCell(reduceElevationCell, reduceElevation, isOn: SettingValues.reduceElevation, text: "Reduce Elevation")
         reduceElevationCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        reduceElevationCell.detailTextLabel?.text = "Disables shadows on cardsd and images"
+        reduceElevationCell.detailTextLabel?.text = "Disables shadows on cards and images"
         reduceElevationCell.detailTextLabel?.numberOfLines = 0
 
         doDisables()

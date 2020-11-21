@@ -235,7 +235,9 @@ class NavigationHomeViewController: UIViewController {
         navigationController?.setToolbarHidden(false, animated: false)
         self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
         
-        self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        if SettingValues.scrollSidebar {
+            self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -368,12 +370,14 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
             let sub = cell.subreddit
             self.accountHeader?.delegate?.navigation(self, didRequestSubreddit: sub)
         }
-        searchBar.text = ""
-        searchBar.endEditing(true)
-        filteredContent = []
-        isSearching = false
-        tableView.reloadData()
-        tableView.deselectRow(at: indexPath, animated: true)
+        if SettingValues.scrollSidebar {
+            searchBar.text = ""
+            searchBar.endEditing(true)
+            filteredContent = []
+            isSearching = false
+            tableView.reloadData()
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {

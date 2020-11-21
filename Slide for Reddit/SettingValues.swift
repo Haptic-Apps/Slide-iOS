@@ -144,6 +144,7 @@ class SettingValues {
     public static let pref_disableSubredditPopupIpad = "DISABLE_SUB_POPUP_IPAD"
     public static let pref_portraitMultiColumnCount = "MULTICOLUMN_COUNT_PORTRAIT"
     public static let pref_gfycatAPI = "USE_GFYCAT_API"
+    public static let pref_scrollSidebar = "SCROLL_SIDEBAR"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -216,6 +217,7 @@ class SettingValues {
     public static var disableBanner = false
     public static var newIndicator = false
     public static var typeInTitle = true
+    public static var scrollSidebar = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -522,6 +524,8 @@ class SettingValues {
                 break
             }
         }
+        
+        SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_commentFontSize)
