@@ -32,7 +32,11 @@ final class FullLinkCellView: LinkCellView {
             textView.bottomAnchor /==/ infoBox.topAnchor - (ctwelve / 2)
             infoBox.bottomAnchor />=/ box.topAnchor - (ctwelve / 2)
             infoBox.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
-            textView.topAnchor /==/ title.bottomAnchor + ceight
+            if type == .SELF && big && !SettingValues.hideImageSelftext {
+                textView.topAnchor /==/ bannerImage.bottomAnchor + ceight
+            } else {
+                textView.topAnchor /==/ title.bottomAnchor + ceight
+            }
             textView.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             title.topAnchor /==/ innerView.topAnchor + (ctwelve - 5)
             title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
@@ -43,7 +47,11 @@ final class FullLinkCellView: LinkCellView {
                 title.bottomAnchor /==/ bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
-                bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve / 2
+                
+                if type != .SELF || SettingValues.hideImageSelftext {
+                    bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve / 2
+                }
+
                 if thumb {
                     infoContainer.isHidden = false
                 } else {

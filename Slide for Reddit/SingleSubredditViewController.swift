@@ -1505,6 +1505,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && type == .SELF {
                     thumb = false
+                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+                    big = true
                 }
 
                 let fullImage = ContentType.fullImage(t: type)
@@ -1645,6 +1647,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if thumb && type == .SELF {
             thumb = false
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+            big = true
         }
         
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
@@ -1761,6 +1765,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else if big && !didRatio {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
+        }
+        
+        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+             submissionHeight = 200
         }
         
         var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
@@ -2589,7 +2597,11 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             case .banner:
                 cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
             default:
-                cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+                if !SettingValues.hideImageSelftext && submission.height > 0 {
+                    cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
+                } else {
+                    cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+                }
             }
         }
         

@@ -1720,6 +1720,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if thumb && type == .SELF {
             thumb = false
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 {
+            big = true
         }
         
         if (thumb || big) && submission.spoiler {
@@ -1846,6 +1848,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
                 
                 submissionHeight = test ? 150 : 200
+            }
+            
+            if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+                 submissionHeight = 200
             }
             bannerImage.isUserInteractionEnabled = true
 
@@ -2877,6 +2883,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
+            if type == .SELF {
+                if let image = URL(string: link.bannerUrl) {
+                    self.parentViewController?.doShow(url: image, heroView: nil, finalSize: nil, heroVC: nil, link: link)
+                    return
+                }
+            }
             (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
