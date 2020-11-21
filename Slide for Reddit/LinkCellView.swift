@@ -1437,6 +1437,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
+        print(finalTitle.string)
         
         title.isScrollEnabled = false
         title.sizeToFit()
@@ -2780,16 +2781,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else if big {
                 if SettingValues.postViewMode == .CENTER || full {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //between label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between banner and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and box
                 } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
                 }
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
-                innerPadding += 5 //between label and body
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             }
@@ -2883,7 +2882,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
-            if type == .SELF {
+            if type == .SELF && full {
                 if let image = URL(string: link.bannerUrl) {
                     self.parentViewController?.doShow(url: image, heroView: nil, finalSize: nil, heroVC: nil, link: link)
                     return

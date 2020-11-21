@@ -1738,7 +1738,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else {
             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and title
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
                 innerPadding -= 5 //LinkCellView L#1191
             } else {
