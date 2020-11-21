@@ -43,7 +43,7 @@ final class FullLinkCellView: LinkCellView {
                 title.bottomAnchor /==/ bannerImage.topAnchor - ceight
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
-                bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve
+                bannerImage.bottomAnchor /==/ infoBox.topAnchor - ctwelve / 2
                 if thumb {
                     infoContainer.isHidden = false
                 } else {

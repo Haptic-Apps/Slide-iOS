@@ -183,7 +183,10 @@ class CachedTitle {
             authorAttributes[.badgeColor] = userColor
             authorAttributes[.foregroundColor] = UIColor.white
         }
-        authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
+        
+        if full {
+            authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
+        }
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
@@ -412,7 +415,7 @@ class CachedTitle {
             authorAttributes[.badgeColor] = userColor
             authorAttributes[.foregroundColor] = UIColor.white
         }
-        authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
+
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)

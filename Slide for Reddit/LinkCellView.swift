@@ -3042,8 +3042,9 @@ public extension UIImageView {
                 self.backgroundColor = oldBackgroundColor
                 
                 if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
-                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) { //Aspect ratio of current image is less than
+                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) && ((self.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
                         self.contentMode = .scaleAspectFit
+                        
                         let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor)
                         backView.image = self.image?.sd_blurredImage(withRadius: 15)
                         backView.contentMode = .scaleAspectFill
@@ -3057,15 +3058,15 @@ public extension UIImageView {
                             backView.accessibilityIgnoresInvertColors = true
                         }
                         backView.clipsToBounds = true
-                        backView.setCornerRadius()
+                        backView.setCornerRadius(rect: self.bounds)
                         
                         self.superview?.bringSubviewToFront(self)
                     } else {
                         self.contentMode = .scaleAspectFill //Otherwise, fill view
-                        if let round = self as? RoundedImageView {
-                            round.setCornerRadius()
-                        }                    }
-                } else if let round = self as? RoundedImageView {
+                    }
+                }
+                
+                if let round = self as? RoundedImageView {
                     round.setCornerRadius()
                 }
 
@@ -3603,8 +3604,10 @@ class RoundedImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setCornerRadius() {
-        let path = UIBezierPath(roundedRect: self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+    func setCornerRadius(rect: CGRect? = nil) {
+        self.layer.mask = nil
+        self.layer.masksToBounds = false
+        let path = UIBezierPath(roundedRect: rect ?? self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         maskLayer?.removeFromSuperlayer()
         maskLayer = CAShapeLayer()
         maskLayer.frame = self.bounds
