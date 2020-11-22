@@ -74,26 +74,40 @@ public class AsyncTextAttachment: NSTextAttachment {
             return
         }
         
-        SDWebImageDownloader.shared.downloadImage(with: imageURL, options: [.decodeFirstFrameOnly], progress: nil) { (image, data, _, _) in
-            self.contents = data
-            
-            let ext = imageURL.pathExtension as CFString
-            if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) {
-                self.fileType = uti.takeRetainedValue() as String
-            }
-            if let image = image?.circleCorners(finalSize: self.bounds.size) { //2 was causing weird clipping
-                let imageSize = image.size
-                               
-                self.contents = image.pngData()
-                self.originalImageSize = imageSize
-            }
-            
-            DispatchQueue.main.async {
-                self.textContainer?.layoutManager?.setNeedsDisplay(forAttachment: self)
+        if let image = SDImageCache.shared.imageFromCache(forKey: imageURL.absoluteString) {
+            self.display(image, with: image.pngData(), url: imageURL)
+        } else {
+            self.downloadImage(with: imageURL)
+        }
+    }
+    
+    private func downloadImage(with: URL) {
+        SDWebImageDownloader.shared.downloadImage(with: with, options: [.decodeFirstFrameOnly], progress: nil) { (image, data, _, _) in
+            self.display(image, with: data, url: with)
+        }
+    }
+    
+    public func display(_ image: UIImage?, with: Data?, url: URL) {
+        self.contents = with
+        
+        DispatchQueue.global(qos: .background).async {
+            SDImageCache.shared.storeImage(toMemory: image, forKey: url.absoluteString)
+        }
+        let ext = url.pathExtension as CFString
+        if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) {
+            self.fileType = uti.takeRetainedValue() as String
+        }
+        if let image = image?.circleCorners(finalSize: self.bounds.size) { //2 was causing weird clipping
+            let imageSize = image.size
+                           
+            self.contents = image.pngData()
+            self.originalImageSize = imageSize
+        }
+        
+        DispatchQueue.main.async {
+            self.textContainer?.layoutManager?.setNeedsDisplay(forAttachment: self)
 
-                self.delegate?.textAttachmentDidLoadImage(textAttachment: self, displaySizeChanged: false)
-            }
-            
+            self.delegate?.textAttachmentDidLoadImage(textAttachment: self, displaySizeChanged: false)
         }
     }
     

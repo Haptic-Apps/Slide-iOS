@@ -167,6 +167,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
+        cell.detailTextLabel?.numberOfLines = 0
         if let s = switchV {
             s.isOn = isOn
             s.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControl.Event.valueChanged)

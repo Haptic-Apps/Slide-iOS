@@ -572,21 +572,25 @@ class CachedTitle {
                         totalAwards += 1
 
                         let url = award[1]
+                        let testString = NSMutableAttributedString(string: "test", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                         if let urlAsURL = URL(string: url) {
                             if loadImages {
+                                let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+
+
                                 let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
-                                attachment.bounds = CGRect(x: 0, y: (24 - 15) / 2, width: 15, height: 15)
+                                attachment.bounds = CGRect(x: 0, y: (15 * -0.25) / 2, width: 15, height: 15)
                                 attachments.append(attachment)
                             } else {
                                 let attachment = NSTextAttachment()
-                                attachment.bounds = CGRect(x: 0, y: (24 - 15) / 2, width: 15, height: 15)
+                                attachment.bounds = CGRect(x: 0, y: (15 * -0.25) / 2, width: 15, height: 15)
                                 attachments.append(attachment)
                             }
                         }
                     }
                 }
                 
-                let awardLine = NSMutableAttributedString(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
+                let awardLine = NSMutableAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
 
                 for award in attachments {
                     awardLine.append(NSAttributedString(attachment: award))
@@ -594,13 +598,13 @@ class CachedTitle {
                 }
                 
                 if totalAwards == to {
-                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.baselineOffset: (((24 - fontSize) / 2) - (titleFont.descender / 2))]))
+                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
                 }
                 
-                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 0, length: awardLine.length)) //We will catch this URL later on
+                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 2, length: awardLine.length - 2)) //We will catch this URL later on, start it after the newline
 
                 finalTitle.append(awardLine)
-                finalTitle.append(NSAttributedString(string: " ")) //Stop tap from going to the end of the view width
+                finalTitle.append(NSAttributedString(string: "\u{00A0}")) //Stop tap from going to the end of the view width
             }
         }
         return finalTitle

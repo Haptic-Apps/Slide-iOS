@@ -48,17 +48,23 @@ class TitleUITextView: UITextView {
 
 extension TitleUITextView: UIGestureRecognizerDelegate {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        let glyphIndex = self.layoutManager.glyphIndex(for: point, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
-        let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
-        if index < self.textStorage.length {
-            var range = NSRange()
-            if (self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: &range) as? URL) != nil {
-                if self.layoutManager.boundingRect(forGlyphRange: range, in: self.textContainer).contains(point) {
-                    return true
+        var toReturn = false
+        self.layoutManager.textStorage?.enumerateAttribute(.urlAction, in: NSRange(location: 0, length: self.attributedText.length)) { attr, bgStyleRange, _ in
+            if let link = attr as? URL {
+                let bgStyleGlyphRange = self.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                self.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                    let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                    var rect = self.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                    rect.origin.y = usedRect.origin.y
+                    rect.size.height = usedRect.height
+                    let insetTop = CGFloat.zero
+                    if rect.offsetBy(dx: 0, dy: insetTop).contains(point) {
+                        toReturn = true
+                    }
                 }
             }
         }
-        return false
+        return toReturn
     }
 }
 
