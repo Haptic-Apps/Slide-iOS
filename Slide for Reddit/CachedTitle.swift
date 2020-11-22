@@ -577,13 +577,12 @@ class CachedTitle {
                             if loadImages {
                                 let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
 
-
                                 let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
-                                attachment.bounds = CGRect(x: 0, y: (15 * -0.25) / 2, width: 15, height: 15)
+                                attachment.bounds = CGRect(x: 0, y: (15 * -0.5) / 2, width: 15, height: 15)
                                 attachments.append(attachment)
                             } else {
                                 let attachment = NSTextAttachment()
-                                attachment.bounds = CGRect(x: 0, y: (15 * -0.25) / 2, width: 15, height: 15)
+                                attachment.bounds = CGRect(x: 0, y: (15 * -0.5) / 2, width: 15, height: 15)
                                 attachments.append(attachment)
                             }
                         }

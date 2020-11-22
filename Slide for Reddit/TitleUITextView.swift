@@ -84,10 +84,13 @@ class BadgeLayoutManager: NSLayoutManager {
                 enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
                     let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
                     var rect = self.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                    var baseline = 0
+                    baseline = Int(textStorage.attribute(.baselineOffset, at: self.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
                     // Glyphs can take space outside of the line fragment, and we cannot draw outside of it.
                     // So it is best to restrict the height just to the line fragment.
-                    rect.origin.y = usedRect.origin.y
-                    rect.size.height = usedRect.height
+                    
+                    rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                    rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
                     let insetTop = CGFloat.zero
                     rects.append(rect.offsetBy(dx: 0, dy: insetTop))
                 }
@@ -141,8 +144,8 @@ class BadgeLayoutManager: NSLayoutManager {
 
             if previousRect != .zero, (currentRect.maxX - previousRect.minX) > cornerRadius {
                 let yDiff = currentRect.minY - previousRect.maxY
-                overlappingLine.move(to: CGPoint(x: max(previousRect.minX, currentRect.minX) + lineWidth / 2, y: previousRect.maxY + yDiff/2))
-                overlappingLine.addLine(to: CGPoint(x: min(previousRect.maxX, currentRect.maxX) - lineWidth / 2, y: previousRect.maxY + yDiff/2))
+                overlappingLine.move(to: CGPoint(x: max(previousRect.minX, currentRect.minX) + lineWidth / 2, y: previousRect.maxY + yDiff / 2))
+                overlappingLine.addLine(to: CGPoint(x: min(previousRect.maxX, currentRect.maxX) - lineWidth / 2, y: previousRect.maxY + yDiff / 2))
 
                 let leftX = max(previousRect.minX, currentRect.minX)
                 let rightX = min(previousRect.maxX, currentRect.maxX)
@@ -163,7 +166,7 @@ class BadgeLayoutManager: NSLayoutManager {
                 rightVerticalJoiningLineShadow.addLine(to: CGPoint(x: rightShadowX, y: currentRect.minY))
             }
 
-            currentCGContext.setShadow(offset: .zero, blur:0, color: UIColor.clear.cgColor)
+            currentCGContext.setShadow(offset: .zero, blur: 0, color: UIColor.clear.cgColor)
 
             // always draw over the overlapping bounds of previous and next rect to hide shadow/borders
             currentCGContext.setStrokeColor(color.cgColor)
@@ -255,8 +258,6 @@ extension NSAttributedString.Key {
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-import Foundation
-import UIKit
 
 public extension NSRange {
 

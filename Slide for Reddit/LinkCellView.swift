@@ -1780,6 +1780,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
                 thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                if let round = thumbImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             }
             
         } else {
@@ -1863,6 +1866,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             lq = shouldShowLq
             if submission.bannerUrl == "" || submission.width == 0 {
                 bannerImage.image = LinkCellImageCache.webBig
+                if let round = bannerImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             } else {
                 let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
                 loadedImage = bannerImageUrl
