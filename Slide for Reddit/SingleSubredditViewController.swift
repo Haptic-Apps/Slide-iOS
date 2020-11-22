@@ -399,6 +399,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let cell = cell as? LinkCellView {
+            var row = indexPath.row
+            if hasHeader {
+                row -= 1
+            }
+
+            let submission = dataSource.content[row]
+
+            cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
+        }
     }
 
     override func viewWillLayoutSubviews() {
@@ -2612,7 +2622,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
-        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
         if row > dataSource.content.count - 4 {
             if !dataSource.loading && !dataSource.nomore {
                 self.dataSource.getData(reload: false)
@@ -2620,7 +2629,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         }
         return cell
     }
-
 }
 
 // MARK: - Collection View Prefetching Data Source
