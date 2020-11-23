@@ -301,8 +301,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if isModal {
-            self.navigationController?.delegate = self
             if self.navigationController is TapBehindModalViewController {
+                self.navigationController?.delegate = self
                 (self.navigationController as! TapBehindModalViewController).del = self
             }
         }
