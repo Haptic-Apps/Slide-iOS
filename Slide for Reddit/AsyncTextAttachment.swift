@@ -70,12 +70,12 @@ public class AsyncTextAttachment: NSTextAttachment {
     // MARK: - Helpers
     
     private func startAsyncImageDownload() {
-        guard let imageURL = imageURL, contents == nil else {
+        guard let imageURL = imageURL else {
             return
         }
         
         DispatchQueue.global(qos: .background).async {
-            if let image = SDImageCache.shared.imageFromCache(forKey: imageURL.absoluteString) {
+            if let image = self.getCacheImage(with: imageURL) {
                 self.display(image, with: image.pngData(), url: imageURL)
             } else {
                 self.downloadImage(with: imageURL)
@@ -83,26 +83,29 @@ public class AsyncTextAttachment: NSTextAttachment {
         }
     }
     
+    private func getCacheImage(with: URL) -> UIImage? {
+        return SDImageCache.shared.imageFromCache(forKey: with.absoluteString)
+    }
+    
     private func downloadImage(with: URL) {
         SDWebImageDownloader.shared.downloadImage(with: with, options: [.decodeFirstFrameOnly], progress: nil) { (image, data, _, _) in
-            self.display(image, with: data, url: with)
+            let roundedImage = image?.circleCorners(finalSize: self.bounds.size)
+            DispatchQueue.global(qos: .background).async {
+                SDImageCache.shared.storeImage(toMemory: roundedImage, forKey: with.absoluteString)
+            }
+
+            self.display(roundedImage, with: data, url: with)
         }
     }
     
     public func display(_ image: UIImage?, with: Data?, url: URL) {
-        self.contents = with
-        
-        DispatchQueue.global(qos: .background).async {
-            SDImageCache.shared.storeImage(toMemory: image, forKey: url.absoluteString)
-        }
         let ext = url.pathExtension as CFString
         if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) {
             self.fileType = uti.takeRetainedValue() as String
         }
-        if let image = image?.circleCorners(finalSize: self.bounds.size) { //2 was causing weird clipping
+        if let image = image { //2 was causing weird clipping
             let imageSize = image.size
                            
-            self.contents = image.pngData()
             self.originalImageSize = imageSize
         }
         
@@ -116,7 +119,7 @@ public class AsyncTextAttachment: NSTextAttachment {
     public override func image(forBounds imageBounds: CGRect, textContainer: NSTextContainer?, characterIndex charIndex: Int) -> UIImage? {
         if let image = image { return image }
         
-        guard let contents = contents, let image = UIImage(data: contents) else {
+        guard let url = imageURL, let image = getCacheImage(with: url) else {
             // remember reference so that we can update it later
             self.textContainer = textContainer
             

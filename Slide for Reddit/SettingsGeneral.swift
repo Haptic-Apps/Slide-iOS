@@ -497,7 +497,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
         actionSheetController.show(self)
     }
 
-
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
         if s == .hot || s == .new || s == .rising || s == .best {
             SettingValues.defaultSorting = s
@@ -530,8 +529,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
-
-        if indexPath.section == 4 && indexPath.row == 0 {
+        if indexPath.section == 0 && indexPath.row == 1 {
+            changeFab()
+        } else if indexPath.section == 4 && indexPath.row == 0 {
             showMenu(tableView.cellForRow(at: indexPath))
         } else if indexPath.section == 4 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
