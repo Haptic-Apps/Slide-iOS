@@ -74,10 +74,12 @@ public class AsyncTextAttachment: NSTextAttachment {
             return
         }
         
-        if let image = SDImageCache.shared.imageFromCache(forKey: imageURL.absoluteString) {
-            self.display(image, with: image.pngData(), url: imageURL)
-        } else {
-            self.downloadImage(with: imageURL)
+        DispatchQueue.global(qos: .background).async {
+            if let image = SDImageCache.shared.imageFromCache(forKey: imageURL.absoluteString) {
+                self.display(image, with: image.pngData(), url: imageURL)
+            } else {
+                self.downloadImage(with: imageURL)
+            }
         }
     }
     

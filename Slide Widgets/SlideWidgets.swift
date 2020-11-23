@@ -357,7 +357,7 @@ struct SubredditLoader {
         }
         let shared = UserDefaults(suiteName: "group.\(USR_DOMAIN()).redditslide.prefs")
 
-        if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit == "frontpage" {
+        if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit.lowercased() == "frontpage" {
             let filteredSubs = subs.map({ $0.lowercased() }).filter { (sub) -> Bool in
                 //XCode was complaining that this would take too long to type check on one line :/
                 if !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated" {
