@@ -1209,12 +1209,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             if full {
-                self.innerView.edgeAnchors == self.contentView.edgeAnchors
+                self.innerView.edgeAnchors /==/ self.contentView.edgeAnchors
             } else {
-                self.innerView.leftAnchor == self.leftAnchor + leftmargin ~ .required
-                self.innerView.topAnchor == self.topAnchor + topmargin ~ .required
-                self.innerView.rightAnchor == self.rightAnchor - rightmargin ~ .required
-                self.innerView.bottomAnchor == self.bottomAnchor - bottommargin ~ .required
+                self.innerView.leftAnchor /==/ self.leftAnchor + leftmargin ~ .required
+                self.innerView.topAnchor /==/ self.topAnchor + topmargin ~ .required
+                self.innerView.rightAnchor /==/ self.rightAnchor - rightmargin ~ .required
+                self.innerView.bottomAnchor /==/ self.bottomAnchor - bottommargin ~ .required
             }
 
             if !SettingValues.flatMode {
