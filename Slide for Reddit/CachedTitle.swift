@@ -578,11 +578,11 @@ class CachedTitle {
                                 let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
 
                                 let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
-                                attachment.bounds = CGRect(x: 0, y: (15 * -0.5) / 2, width: 15, height: 15)
+                                attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
                                 attachments.append(attachment)
                             } else {
                                 let attachment = NSTextAttachment()
-                                attachment.bounds = CGRect(x: 0, y: (15 * -0.5) / 2, width: 15, height: 15)
+                                attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
                                 attachments.append(attachment)
                             }
                         }
@@ -597,7 +597,7 @@ class CachedTitle {
                 }
                 
                 if totalAwards == to {
-                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
+                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, .baselineOffset: -2]))
                 }
                 
                 awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 2, length: awardLine.length - 2)) //We will catch this URL later on, start it after the newline
