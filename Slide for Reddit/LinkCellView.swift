@@ -9,8 +9,9 @@
 import Anchorage
 import AudioToolbox
 import AVKit
-import Photos
 import MaterialComponents
+import Photos
+import Proton
 import reddift
 import RLBAlertsPickers
 import SafariServices
@@ -40,10 +41,12 @@ enum CurrentType {
 class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
     func linkTapped(url: URL, text: String) {
-        if !full {
+        linkClicked = true
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
             return
         }
-        linkClicked = true
+        
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
@@ -54,6 +57,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func linkLongTapped(url: URL) {
         longBlocking = true
         
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
+
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
         alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
@@ -143,7 +151,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
     var thumbText: UILabel!
-    var title: YYLabel!
+    var title: UITextView!
     var score: UILabel!
     var box: UIStackView!
     var sideButtons: UIStackView!
@@ -152,28 +160,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var info: UILabel!
     var subicon: UIImageView!
     var textView: TextDisplayStackView!
-    var save: UIButton!
-    var menu: UIButton!
-    var upvote: UIButton!
-    var hide: UIButton!
-    var share: UIButton!
-    var edit: UIButton!
-    var reply: UIButton!
-    var downvote: UIButton!
-    var mod: UIButton!
-    var readLater: UIButton!
+    var save: UIImageView!
+    var menu: UIImageView!
+    var upvote: UIImageView!
+    var hide: UIImageView!
+    var share: UIImageView!
+    var edit: UIImageView!
+    var reply: UIImageView!
+    var downvote: UIImageView!
+    var mod: UIImageView!
+    var readLater: UIImageView!
     var commenticon: UIImageView!
     var submissionicon: UIImageView!
     weak var del: LinkCellViewDelegate?
     var taglabel: UILabel!
     var tagbody: UIView!
     var crosspost: UITableViewCell!
-    var sideUpvote: UIButton!
-    var sideDownvote: UIButton!
+    var sideUpvote: UIImageView!
+    var sideDownvote: UIImageView!
     var sideScore: UILabel!
     var innerView = UIView()
-    var awardView: UIStackView!
-    var awardContainerView = UIView()
 
     var setElevation = false
     
@@ -229,6 +235,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func configureView() {
+        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
+            innerView = RoundedCornerView(radius: 15, cornerColor: ColorUtil.theme.foregroundColor)
+            self.innerView.backgroundColor = ColorUtil.theme.backgroundColor //The rounded corners code will take care of the foreground color
+        } else {
+            self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
+        }
+
         if full {
             self.contentView.addSubview(innerView)
         } else {
@@ -239,20 +252,15 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         accessibilityView.isAccessibilityElement = true
         accessibilityView.accessibilityTraits = UIAccessibilityTraits.link
         
-        self.thumbImageContainer = UIView().then {
+        self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
-            if !SettingValues.flatMode {
-                $0.elevate(elevation: 2.0)
-            }
         }
         
-        self.thumbImage = UIImageView().then {
+        self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image"
             $0.backgroundColor = UIColor.white
-            if !SettingValues.flatMode {
-                $0.layer.cornerRadius = 10
-            }
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
@@ -297,40 +305,47 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText.heightAnchor /==/ 20
         self.thumbText.bottomAnchor /==/ self.thumbImage.bottomAnchor + 2
                 
-        self.bannerImage = UIImageView().then {
+        self.bannerImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor).then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = SettingValues.postImageMode == .SHORT_IMAGE && self is BannerLinkCellView ? .scaleAspectFit : .scaleAspectFill
-            if !SettingValues.flatMode {
-                $0.layer.cornerRadius = 15
-            }
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
             $0.clipsToBounds = true
-            $0.backgroundColor = UIColor.white
+            $0.backgroundColor = ColorUtil.theme.backgroundColor
         }
         
-        self.title = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.title = TitleUITextView(delegate: self, textContainer: container).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.isOpaque = false
-            $0.numberOfLines = 0
-            $0.lineBreakMode = .byWordWrapping
+            $0.clipsToBounds = false
+            $0.textContainer.lineFragmentPadding = 0
+            $0.textContainerInset = .zero
+            $0.showsHorizontalScrollIndicator = false
+            $0.showsVerticalScrollIndicator = false
+            $0.layer.isOpaque = true
+            $0.isOpaque = true
+            $0.isSelectable = false
+            $0.layoutManager.allowsNonContiguousLayout = false
+            $0.isScrollEnabled = false
+            $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+            $0.layoutManager.usesFontLeading = false
+            $0.contentInset = .zero
+            $0.contentInsetAdjustmentBehavior = .never
             $0.backgroundColor = ColorUtil.theme.foregroundColor
-            $0.textContainerInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
-            $0.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
-                    for attr in attrs {
-                        if attr.value is YYTextHighlight {
-                            if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                self.linkTapped(url: url, text: text.attributedSubstring(from: range).string)
-                                return
-                            }
-                        }
-                    }
-                })
-            }
             $0.isUserInteractionEnabled = true
+            for subview in $0.subviews {
+                subview.isOpaque = true
+                subview.backgroundColor = ColorUtil.theme.foregroundColor
+            }
         }
         
         self.infoBox = UIStackView().then {
@@ -338,118 +353,115 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.axis = .vertical
         }
         
-        self.hide = UIButton(type: .custom).then {
+        self.hide = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Hide Button"
-            $0.setImage(LinkCellImageCache.hide, for: .normal)
+            $0.image = LinkCellImageCache.hide
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.reply = UIButton(type: .custom).then {
+        self.reply = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Reply Button"
-            $0.setImage(LinkCellImageCache.reply, for: .normal)
+            $0.image = LinkCellImageCache.reply
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.edit = UIButton(type: .custom).then {
+        self.edit = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Edit Button"
-            $0.setImage(LinkCellImageCache.edit, for: .normal)
+            $0.image = LinkCellImageCache.edit
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.save = UIButton(type: .custom).then {
+        self.save = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Save Button"
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.menu = UIButton(type: .custom).then {
+        self.menu = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Post menu"
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.upvote = UIButton(type: .custom).then {
+        self.upvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.downvote = UIButton(type: .custom).then {
+        self.downvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.sideUpvote = UIButton(type: .custom).then {
+        self.sideUpvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Upvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.sideDownvote = UIButton(type: .custom).then {
+        self.sideDownvote = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Downvote Button"
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
-        self.mod = UIButton(type: .custom).then {
+        self.mod = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Mod Button"
-            $0.setImage(LinkCellImageCache.mod, for: .normal)
+            $0.image = LinkCellImageCache.mod
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
 
-        self.share = UIButton(type: .custom).then {
+        self.share = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Share Button"
             $0.contentMode = .center
-            $0.setImage(LinkCellImageCache.share, for: .normal)
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.image = LinkCellImageCache.share
+            $0.isOpaque = true
         }
 
-        self.readLater = UIButton(type: .custom).then {
+        self.readLater = UIImageView().then {
+            $0.contentMode = .scaleAspectFit
             $0.accessibilityIdentifier = "Read Later Button"
-            $0.setImage(LinkCellImageCache.readLater, for: .normal)
+            $0.image = LinkCellImageCache.readLater
             $0.contentMode = .center
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
         self.commenticon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Comment Count Icon"
             $0.image = LinkCellImageCache.commentsIcon
             $0.contentMode = .scaleAspectFit
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
         self.submissionicon = UIImageView(frame: CGRect(x: 0, y: 0, width: 10, height: 10)).then {
             $0.accessibilityIdentifier = "Score Icon"
             $0.image = LinkCellImageCache.votesIcon
             $0.contentMode = .scaleAspectFit
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
             $0.textColor = ColorUtil.theme.fontColor
-            $0.isOpaque = false
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.isOpaque = true
         }
         
         self.sideScore = UILabel().then {
@@ -457,7 +469,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 1
             $0.textAlignment = .center
             $0.textColor = ColorUtil.theme.fontColor
-            $0.isOpaque = false
+            $0.isOpaque = true
         }
         
         self.comments = UILabel().then {
@@ -465,7 +477,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
             $0.textColor = ColorUtil.theme.fontColor
-            $0.isOpaque = false
+            $0.isOpaque = true
             $0.backgroundColor = ColorUtil.theme.foregroundColor
         }
         
@@ -485,15 +497,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
         
-        self.awardView = UIStackView().then {
-            $0.axis = .horizontal
-            $0.spacing = 2
-        }
-        
-        self.awardContainerView = UIView().then {
-            $0.accessibilityIdentifier = "Post Awards"
-        }
-        
         self.info = UILabel().then {
             $0.accessibilityIdentifier = "Banner Info"
             $0.numberOfLines = 2
@@ -511,12 +514,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if self is FullLinkCellView {
-            innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, textView, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, textView, infoContainer, tagbody)
         } else {
-            innerView.addSubviews(bannerImage, thumbImageContainer, title, awardContainerView, subicon, infoContainer, tagbody)
+            innerView.addSubviews(bannerImage, thumbImageContainer, title, subicon, infoContainer, tagbody)
         }
-        
-        self.awardContainerView.addSubview(awardView)
         
         if self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView {
             self.videoView = VideoView().then {
@@ -619,21 +620,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         if !addTouch {
-            save.addTarget(self, action: #selector(LinkCellView.save(sender:)), for: .touchUpInside)
-            upvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-            if SettingValues.actionBarMode.isSide() {
-                sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-                sideDownvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
+            save.addTapGestureRecognizer { (_) in
+                self.save()
             }
-            reply.addTarget(self, action: #selector(LinkCellView.reply(sender:)), for: .touchUpInside)
-            downvote.addTarget(self, action: #selector(LinkCellView.downvote(sender:)), for: .touchUpInside)
-            mod.addTarget(self, action: #selector(LinkCellView.mod(sender:)), for: .touchUpInside)
-            readLater.addTarget(self, action: #selector(readLater(sender:)), for: .touchUpInside)
-            edit.addTarget(self, action: #selector(LinkCellView.edit(sender:)), for: .touchUpInside)
-            hide.addTarget(self, action: #selector(LinkCellView.hide(sender:)), for: .touchUpInside)
-            share.addTarget(self, action: #selector(LinkCellView.share(sender:)), for: .touchUpInside)
-            sideUpvote.addTarget(self, action: #selector(LinkCellView.upvote(sender:)), for: .touchUpInside)
-            menu.addTarget(self, action: #selector(LinkCellView.more(sender:)), for: .touchUpInside)
+            upvote.addTapGestureRecognizer { (_) in
+                self.upvote()
+            }
+
+            if SettingValues.actionBarMode.isSide() {
+                sideUpvote.addTapGestureRecognizer { (_) in
+                    self.upvote()
+                }
+                sideDownvote.addTapGestureRecognizer { (_) in
+                    self.downvote()
+                }
+            }
+            
+            reply.addTapGestureRecognizer { (_) in
+                self.reply()
+            }
+            downvote.addTapGestureRecognizer { (_) in
+                self.downvote()
+            }
+            mod.addTapGestureRecognizer { (_) in
+                self.mod()
+            }
+            readLater.addTapGestureRecognizer { (_) in
+                self.readLater()
+            }
+            edit.addTapGestureRecognizer { (_) in
+                self.edit(sender: self.edit)
+            }
+            hide.addTapGestureRecognizer { (_) in
+                self.hide()
+            }
+            share.addTapGestureRecognizer { (_) in
+                self.share()
+            }
+            sideUpvote.addTapGestureRecognizer { (_) in
+                self.upvote()
+            }
+            menu.addTapGestureRecognizer { (_) in
+                self.more()
+            }
 
             addTouch(view: thumbImage, action: #selector(LinkCellView.openLink(sender:)))
             
@@ -710,9 +739,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.innerView.addGestureRecognizer(longPress!)
             }
             
-            self.awardContainerView.addTapGestureRecognizer {
-                self.showAwardMenu()
-            }
             addTouch = true
         }
         
@@ -745,8 +771,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         for raw in sortedValues {
             if let award = raw as? [String] {
                 coinTotal += Int(award[4]) ?? 0
-                alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[1], action: {() in
-                    let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[1])
+                alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[5], action: {() in
+                    let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[5])
                     alertController.modalPresentationStyle = .overCurrentContext
                     if let window = UIApplication.shared.keyWindow, let modalVC = window.rootViewController?.presentedViewController {
                         if let presented = modalVC.presentedViewController {
@@ -1231,8 +1257,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             title.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         }
         
-        self.awardContainerView.horizontalAnchors == self.title.horizontalAnchors
-
         if !full {
             layoutForType()
             layoutForContent()
@@ -1389,7 +1413,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         refreshTitle(np: np)
-        refreshAwards()
 
         if !full {
             let comment = UITapGestureRecognizer(target: self, action: #selector(LinkCellView.openComment(sender:)))
@@ -1411,157 +1434,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         guard let link = self.link else {
             return
         }
-
+        
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
-        
-        let bounds = self.estimateHeightSingle(full, np: np, attText: finalTitle)
-        if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
-            oldBounds = bounds.textBoundingSize
-            title.textLayout = bounds
-            title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-            title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
-        }
-        // TODO setting to turn off, check for link being valid
-        //subicon.sd_setImage(with: URL(string: link.subreddit_icon), completed: nil)
         title.attributedText = finalTitle
-        /*title.removeConstraints(titleAttrs)
-        titleAttrs = batch {
-            title.heightAnchor /==/ bounds.textBoundingSize.height
-        }*/
-        //title.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0, y: 0, width: 32, height: 5))]
         
-        title.textVerticalAlignment = .top
-        title.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
-                for attr in attrs {
-                    if attr.value is YYTextHighlight {
-                        if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                            self.linkTapped(url: url, text: "")
-                            return
-                        } else if (attr.value as! YYTextHighlight).userInfo?["spoiler"] as? Bool ?? false {
-                            self.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
-                        }
-                    }
-                }
-            })
-        }
-        title.highlightLongPressAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                for attr in attrs {
-                    if let value = attr.value as? YYTextHighlight {
-                        if let profile = value.userInfo?["profile"] as? String {
-                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
-                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
-                                vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
-                                parent.present(vc, animated: true)
-                                if #available(iOS 10.0, *) {
-                                    HapticUtility.hapticActionStrong()
-                                }
-                            }
-                            return
-                        } else if let url = value.userInfo?["url"] as? URL {
-                            self.linkLongTapped(url: url)
-                            return
-                        }
-                    }
-                }
-            })
-        }
+        title.isScrollEnabled = false
+        title.sizeToFit()
     }
-    
-    var awardAttrs: [NSLayoutConstraint] = []
-    var emptyAwardAttrs: [NSLayoutConstraint] = []
-    func setupAwardView(to: Int) {
-        awardView.subviews.forEach { (view) in
-            view.removeFromSuperview()
-        }
-        if let link = link, link.gilded, to > 0 {
-            let awardDict = link.awardsJSON.dictionaryValue()
-            awardView.isHidden = false
-            if !emptyAwardAttrs.isEmpty {
-                awardView.removeConstraints(emptyAwardAttrs)
-                awardContainerView.removeConstraints(emptyAwardAttrs)
-                emptyAwardAttrs = []
-            }
-            if awardAttrs.isEmpty {
-                awardAttrs = batch {
-                    awardView.horizontalAnchors == awardContainerView.horizontalAnchors
-                    awardView.topAnchor == awardContainerView.topAnchor + 4
-                    awardView.bottomAnchor == awardContainerView.bottomAnchor - 4
-                    awardView.heightAnchor == 15
-                    awardContainerView.heightAnchor == 23
-                }
-            }
-            var awardCount = 0
-            let values = awardDict.values
-            let sortedValues = values.sorted { (a, b) -> Bool in
-                let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
-                let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
-
-                return amountA > amountB
-            }
-            for raw in sortedValues {
-                if let award = raw as? [String] {
-                    awardCount += Int(award[2]) ?? 0
-                }
-            }
             
-            var totalAwards = 0
-            
-            for raw in sortedValues {
-                if let award = raw as? [String] {
-                    if totalAwards == to {
-                        break
-                    }
-                    
-                    totalAwards += 1
-
-                    let url = award[1]
-                    if let urlAsURL = URL(string: url) {
-                        let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
-                        flairView.contentMode = .scaleAspectFit
-                        flairView.sd_setImage(with: urlAsURL)
-                        flairView.sizeAnchors == CGSize.square(size: 15)
-                        awardView.addArrangedSubview(flairView)
-                    }
-                }
-            }
-
-            if totalAwards == to {
-                let label = UILabel().then {
-                    $0.font = UIFont.boldSystemFont(ofSize: 10)
-                    $0.text = "\(awardCount) Awards"
-                    $0.textColor = ColorUtil.theme.fontColor
-                }
-                awardView.addArrangedSubview(label)
-            }
-            awardView.addArrangedSubview(UIView()) //right spacer
-        } else if emptyAwardAttrs.isEmpty {
-            awardView.subviews.forEach { (view) in
-                view.removeFromSuperview()
-            }
-            if !awardAttrs.isEmpty {
-                awardView.removeConstraints(awardAttrs)
-                awardContainerView.removeConstraints(awardAttrs)
-                awardAttrs = []
-            }
-            emptyAwardAttrs = batch {
-                awardView.heightAnchor == 0
-                awardContainerView.heightAnchor == 0
-            }
-            awardView.isHidden = true
-        }
-    }
-    
-    func refreshAwards() {
-        if SettingValues.hideAwards {
-            setupAwardView(to: 0)
-        } else {
-            setupAwardView(to: 3) //Big enough number
-        }
-    }
-        
     @objc func doDTap(_ sender: AnyObject) {
         typeImage = UIImageView().then {
             $0.accessibilityIdentifier = "Action type"
@@ -1697,7 +1577,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 NSLog(error.localizedDescription)
             }
         }
-        
+            
         self.linkClicked = false
 
         self.full = self is FullLinkCellView
@@ -1711,7 +1591,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.loadedImage = nil
         lq = false
 
-        self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
+        if let round = innerView as? RoundedCornerView, let shadow = round.shadowLayer {
+            shadow.removeFromSuperlayer()
+            round.shadowLayer = nil
+        }
         comments.textColor = ColorUtil.theme.navIconColor
         title.textColor = ColorUtil.theme.navIconColor
 
@@ -1771,7 +1654,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else if big && ((!full && SettingValues.postImageMode == .CROPPED_IMAGE) || (full && !SettingValues.commentFullScreen)) && !overrideFull {
             submissionHeight = test ? 150 : 200
         } else if big {
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - (full ? 10 : 0))
+            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.width) : innerView.frame.size.width) : parentWidth) - (full ? 10 : 0) - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !(self is GalleryLinkCellView)) ? CGFloat(10) : CGFloat(0)))
             if (!full && SettingValues.postImageMode == .SHORT_IMAGE && !(self is AutoplayBannerLinkCellView)) && !overrideFull {
                 submissionHeight = test ? 200 : (h > halfScreen ? halfScreen : h)
             } else {
@@ -1831,6 +1714,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if thumb && type == .SELF {
             thumb = false
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 {
+            big = true
         }
         
         if (thumb || big) && submission.spoiler {
@@ -1868,12 +1753,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbImage.image = LinkCellImageCache.web
             }
+            if let round = thumbImage as? RoundedImageView {
+                round.setCornerRadius()
+            }
         } else if thumb && !big {
             thumbText.isHidden = true
             if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
                 thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
+                if let round = thumbImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
                 if submission.spoiler {
                     thumbImage.image = LinkCellImageCache.spoiler
@@ -1882,11 +1773,18 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 } else {
                     thumbImage.image = LinkCellImageCache.web
                 }
+                if let round = thumbImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
                 thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                if let round = thumbImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             }
+            
         } else {
             thumbImage.image = nil
             thumbText.isHidden = true
@@ -1958,12 +1856,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 submissionHeight = test ? 150 : 200
             }
+            
+            if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+                 submissionHeight = 200
+            }
             bannerImage.isUserInteractionEnabled = true
 
             // Pulse the background color of the banner image until it loads
             lq = shouldShowLq
             if submission.bannerUrl == "" || submission.width == 0 {
                 bannerImage.image = LinkCellImageCache.webBig
+                if let round = bannerImage as? RoundedImageView {
+                    round.setCornerRadius()
+                }
             } else {
                 let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
                 loadedImage = bannerImageUrl
@@ -2003,7 +1908,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         refresh(np: np)
         refreshTitle(np: np)
-        refreshAwards()
 
         if (type != .IMAGE && type != .SELF && !thumb) || (full && (type == .LINK || type == .REDDIT)) || (full && thumb && type != .SELF) {
             infoContainer.isHidden = false
@@ -2069,7 +1973,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             popup.numberOfLines = 2
             
-            outer.elevate(elevation: 2)
+            if !SettingValues.reduceElevation {
+                outer.elevate(elevation: 2)
+            }
             outer.layer.cornerRadius = 5
             outer.clipsToBounds = true
             
@@ -2111,7 +2017,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             endString.append(authorString)
             boldString.append(endString)
             
-            outer.addTapGestureRecognizer {
+            outer.addTapGestureRecognizer { (_) in
                 VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
             }
             popup.attributedText = boldString
@@ -2328,9 +2234,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
 
         strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
-        strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-        strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
-        strongSelf.updater?.isPaused = false
+        
+        if strongSelf.updater == nil {
+            strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
+            strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
+            strongSelf.updater?.isPaused = false
+        }
     }
     
     public static var cachedInternet: Bool?
@@ -2611,26 +2520,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func refresh(np: Bool = false) {
         let link = self.link!
 
-        upvote.setImage(LinkCellImageCache.upvote, for: .normal)
-        downvote.setImage(LinkCellImageCache.downvote, for: .normal)
-        sideUpvote.setImage(LinkCellImageCache.upvoteSmall, for: .normal)
-        sideDownvote.setImage(LinkCellImageCache.downvoteSmall, for: .normal)
-        share.setImage(LinkCellImageCache.share, for: .normal)
-        menu.setImage(LinkCellImageCache.menu, for: .normal)
+        upvote.image = LinkCellImageCache.upvote
+        downvote.image = LinkCellImageCache.downvote
+        sideUpvote.image = LinkCellImageCache.upvoteSmall
+        sideDownvote.image = LinkCellImageCache.downvoteSmall
+        share.image = LinkCellImageCache.share
+        menu.image = LinkCellImageCache.menu
 
-        save.setImage(ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save, for: .normal)
-        mod.setImage(link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted, for: .normal)
-        readLater.setImage(ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater, for: .normal)
-        
+        save.image = ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save
+        mod.image = link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted
+        readLater.image = ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater
+
         var attrs: [NSAttributedString.Key: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
         case .down:
-            downvote.setImage(LinkCellImageCache.downvoteTinted, for: .normal)
-            sideDownvote.setImage(LinkCellImageCache.downvoteTintedSmall, for: .normal)
+            downvote.image = LinkCellImageCache.downvoteTinted
+            sideDownvote.image = LinkCellImageCache.downvoteTintedSmall
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         case .up:
-            upvote.setImage(LinkCellImageCache.upvoteTinted, for: .normal)
-            sideUpvote.setImage(LinkCellImageCache.upvoteTintedSmall, for: .normal)
+            upvote.image = LinkCellImageCache.upvoteTinted
+            sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.theme.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
@@ -2736,7 +2645,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 popup.numberOfLines = 2
                 
-                outer.elevate(elevation: 2)
+                if !SettingValues.reduceElevation {
+                    outer.elevate(elevation: 2)
+                }
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
@@ -2757,7 +2668,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.horizontalAnchors /==/ infoBox.horizontalAnchors
                 outer.heightAnchor /==/ 48
                 
-                outer.addTapGestureRecognizer {
+                outer.addTapGestureRecognizer { (_) in
                     let shareItems: Array = [link.url]
                     let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems as [Any], applicationActivities: nil)
                     if let presenter = activityViewController.popoverPresentationController {
@@ -2790,7 +2701,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 popup.numberOfLines = 2
                 
-                outer.elevate(elevation: 2)
+                if !SettingValues.reduceElevation {
+                    outer.elevate(elevation: 2)
+                }
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
@@ -2828,11 +2741,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         super.layoutSubviews()
-
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode && !setElevation {
-            setElevation = true
-            self.innerView.elevate(elevation: 2)
-        }
     }
     
     var registered: Bool = false
@@ -2891,16 +2799,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else if big {
                 if SettingValues.postViewMode == .CENTER || full {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //between label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between banner and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and box
                 } else {
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
                 }
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
-                innerPadding += 5 //between label and body
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
             }
@@ -2919,7 +2825,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 estimatedUsableWidth -= (24) //12 padding on either side
                 if thumb {
-                    fullHeightExtras += 45 + 12 + 12
+                    fullHeightExtras += 45 + 12
                 } else {
                     fullHeightExtras += imageHeight
                 }
@@ -2951,99 +2857,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 estimatedUsableWidth = 100
             }
             
-            let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: title.attributedText!)!
-            title.textLayout = layout
-            let textSize = layout.textBoundingSize
+            let titleHeight = title.attributedText!.height(containerWidth: estimatedUsableWidth)
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(textSize.height) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(textSize.height), 72) : ceil(textSize.height)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5) + CGFloat((link?.gilded ?? false) && !SettingValues.hideAwards ? 23 : 0)
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(titleHeight) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5)
             estimatedHeight = totalHeight
         }
         return estimatedHeight
-    }
-    
-    func estimateHeightSingle(_ full: Bool, np: Bool, attText: NSAttributedString) -> YYTextLayout {
-        var paddingLeft = CGFloat(0)
-        var paddingRight = CGFloat(0)
-        var innerPadding = CGFloat(0)
-        if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) {
-            paddingLeft = 5
-            paddingRight = 5
-        }
-        var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
-        let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
-        
-        if thumb {
-            imageHeight = thumbheight
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between top and thumbnail
-            innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) //between label and bottom box
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
-        } else if big {
-            if SettingValues.postViewMode == .CENTER || full {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //between label
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between banner and box
-            } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
-            }
-            
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
-        } else {
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8)
-            innerPadding += 5 //between label and body
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
-            innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
-        }
-        
-        var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
-        var fullHeightExtras = CGFloat(0)
-        
-        if !full {
-            if thumb {
-                estimatedUsableWidth -= thumbheight //is the same as the width
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between thumb and label
-            } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
-            }
-        } else {
-            fullHeightExtras += 12
-            estimatedUsableWidth -= (35) //12 padding on either side
-            if thumb {
-                fullHeightExtras += 45 + 12 + 12
-            } else {
-                fullHeightExtras += imageHeight
-            }
-            
-            if link!.archived || link!.locked || np {
-                fullHeightExtras += 56
-            }
-            
-            fullHeightExtras += 8
-            
-            if link!.isCrosspost {
-                fullHeightExtras += 56
-            }
-        }
-        
-        if SettingValues.actionBarMode.isSide() && !full {
-            estimatedUsableWidth -= 40
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 16) //buttons horizontal margins
-            if thumb {
-                estimatedUsableWidth += (SettingValues.postViewMode == .COMPACT ? 16 : 24) //between edge and thumb no longer exists
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons buttons and thumb
-            }
-        }
-        
-        //Temporary fix to iOS 14 crash
-        //TODO fix
-        if estimatedUsableWidth < 0 {
-            estimatedUsableWidth = 100
-        }
-        
-        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: attText)!
-        return layout
     }
     
     // TODO: - this
@@ -3081,6 +2900,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
+            if type == .SELF && full {
+                if let image = URL(string: link.bannerUrl) {
+                    self.parentViewController?.doShow(url: image, heroView: nil, finalSize: nil, heroVC: nil, link: link)
+                    return
+                }
+            }
             (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
@@ -3246,26 +3071,32 @@ public extension UIImageView {
                 self.backgroundColor = oldBackgroundColor
                 
                 if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
-                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) { //Aspect ratio of current image is less than
+                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) && ((self.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
                         self.contentMode = .scaleAspectFit
-                        let backView = UIImageView(image: self.image?.sd_blurredImage(withRadius: 15))
+                        
+                        let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor)
+                        backView.image = self.image?.sd_blurredImage(withRadius: 15)
                         backView.contentMode = .scaleAspectFill
+                        backView.backgroundColor = ColorUtil.theme.backgroundColor
                         backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors /==/ self.edgeAnchors
                         self.backgroundColor = .clear
-                        if !SettingValues.flatMode {
-                            backView.layer.cornerRadius = 15
-                        }
+                        
                         if #available(iOS 11.0, *) {
                             backView.accessibilityIgnoresInvertColors = true
                         }
                         backView.clipsToBounds = true
-
+                        backView.setCornerRadius(rect: self.bounds)
+                        
                         self.superview?.bringSubviewToFront(self)
                     } else {
                         self.contentMode = .scaleAspectFill //Otherwise, fill view
                     }
+                }
+                
+                if let round = self as? RoundedImageView {
+                    round.setCornerRadius()
                 }
 
                 if cacheType == .none {
@@ -3719,3 +3550,136 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
 }
 
+class RoundedCornerView: UIView {
+    var cornerRadius = 0 as CGFloat
+    var cornerColor: UIColor
+    init(radius: CGFloat, cornerColor: UIColor) {
+        self.cornerRadius = radius
+        self.cornerColor = cornerColor
+        super.init(frame: CGRect.zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func draw(_ rect: CGRect) {
+        let borderPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius)
+        cornerColor.set()
+        borderPath.fill()
+    }
+    
+    public var shadowLayer: CAShapeLayer!
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if shadowLayer == nil && !SettingValues.reduceElevation {
+            shadowLayer = CAShapeLayer()
+            shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
+            shadowLayer.fillColor = cornerColor.cgColor
+
+            shadowLayer.shadowPath = shadowLayer.path
+            
+            shadowLayer.shadowColor = UIColor.black.cgColor
+            shadowLayer.shadowOffset = CGSize(width: 0, height: 2)
+            shadowLayer.shadowRadius = CGFloat(2)
+            shadowLayer.shadowOpacity = 0.24
+
+            layer.insertSublayer(shadowLayer, at: 0)
+        }
+    }
+}
+
+class RoundedImageViewShadow: RoundedImageView {
+    override func draw(_ rect: CGRect) {
+        let borderPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: cornerRadius)
+        cornerColor.set()
+        borderPath.fill()
+    }
+    
+    public var shadowLayer: CAShapeLayer!
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if shadowLayer == nil {
+            shadowLayer = CAShapeLayer()
+            shadowLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
+            shadowLayer.fillColor = cornerColor.cgColor
+
+            shadowLayer.shadowPath = shadowLayer.path
+            
+            shadowLayer.shadowColor = UIColor.black.cgColor
+            shadowLayer.shadowOffset = CGSize(width: 0, height: 2)
+            shadowLayer.shadowRadius = CGFloat(2)
+            shadowLayer.shadowOpacity = 0.24
+            layer.insertSublayer(shadowLayer, at: 0)
+        }
+    }
+}
+
+class RoundedImageView: UIImageView {
+    var cornerRadius = 0 as CGFloat
+    var cornerColor: UIColor
+    var maskLayer: CAShapeLayer!
+    init(radius: CGFloat, cornerColor: UIColor) {
+        self.cornerRadius = radius
+        self.cornerColor = cornerColor
+        super.init(frame: CGRect.zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setCornerRadius(rect: CGRect? = nil) {
+        self.layer.mask = nil
+        self.layer.masksToBounds = false
+        let path = UIBezierPath(roundedRect: rect ?? self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+        maskLayer?.removeFromSuperlayer()
+        maskLayer = CAShapeLayer()
+        maskLayer.frame = self.bounds
+        maskLayer.path = path.cgPath
+        self.layer.mask = maskLayer
+        self.layer.masksToBounds = true
+    }
+}
+
+extension NSAttributedString {
+    func height(containerWidth: CGFloat) -> CGFloat {
+        let size = CGSize(width: containerWidth, height: .infinity)
+        let boundingBox = self.boundingRect(
+            with: size,
+            options: [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics],
+            context: nil
+        )
+        return boundingBox.height
+    }
+    func height2(containerWidth: CGFloat) -> CGFloat {
+        let textStorage = NSTextStorage(attributedString: self)
+        let size = CGSize(width: containerWidth, height: CGFloat.greatestFiniteMagnitude)
+        let boundingRect = CGRect(origin: .zero, size: size)
+
+        let textContainer = NSTextContainer(size: size)
+        textContainer.lineFragmentPadding = 0
+
+        let layoutManager = NSLayoutManager()
+        layoutManager.addTextContainer(textContainer)
+
+        textStorage.addLayoutManager(layoutManager)
+
+        self.enumerateAttribute(.attachment, in: NSRange(location: 0, length: self.length), options: []) { (value, range, _) in
+            if let attachment = value as? NSTextAttachment {
+                layoutManager.setAttachmentSize(CGSize.square(size: 24), forGlyphRange: range)
+                layoutManager.setNeedsLayout(forAttachment: attachment)
+                layoutManager.setNeedsDisplay(forAttachment: attachment)
+            }
+        }
+        layoutManager.glyphRange(forBoundingRect: boundingRect, in: textContainer)
+
+        let rect = layoutManager.usedRect(for: textContainer)
+
+        return rect.integral.size.height
+    }
+}

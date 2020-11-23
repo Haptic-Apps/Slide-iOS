@@ -159,7 +159,8 @@ class BottomActionCell: UITableViewCell {
         icon.rightAnchor /==/ background.rightAnchor - 16
         icon.centerYAnchor /==/ background.centerYAnchor
         icon.heightAnchor /==/ 44
-        
+        icon.widthAnchor /==/ 44
+
         self.selectionStyle = .none
     }
     
@@ -471,7 +472,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         close.rightAnchor /==/ toReturn.rightAnchor - 16
         close.heightAnchor /==/ 30
         close.widthAnchor /==/ 30
-        close.addTapGestureRecognizer {
+        close.addTapGestureRecognizer { (_) in
             self.dismiss(animated: true, completion: nil)
         }
         close.isAccessibilityElement = true

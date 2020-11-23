@@ -150,12 +150,12 @@ class SettingsFont: BubbleSettingTableViewController {
         submissionSize.textLabel?.text = "Font size"
 
         submissionWeight.textLabel?.text = "Font variant"
-        submissionWeight.addTapGestureRecognizer { [weak self] in
+        submissionWeight.addTapGestureRecognizer { [weak self] (_) in
             self?.weightCellWasTapped(submission: true)
         }
 
         submissionFont.textLabel?.text = "Font"
-        submissionFont.addTapGestureRecognizer { [weak self] in
+        submissionFont.addTapGestureRecognizer { [weak self] (_) in
             self?.submissionFontCellWasTapped()
         }
 
@@ -186,12 +186,12 @@ class SettingsFont: BubbleSettingTableViewController {
         slider.heightAnchor /==/ 60
         slider.bottomAnchor /==/ commentSize.contentView.bottomAnchor
         commentFont.textLabel?.text = "Font"
-        commentFont.addTapGestureRecognizer { [weak self] in
+        commentFont.addTapGestureRecognizer { [weak self] (_) in
             self?.commentFontCellWasTapped()
         }
 
         commentWeight.textLabel?.text = "Font variant"
-        commentWeight.addTapGestureRecognizer { [weak self] in
+        commentWeight.addTapGestureRecognizer { [weak self] (_) in
             self?.weightCellWasTapped(submission: false)
         }
 
@@ -426,9 +426,35 @@ extension SettingsFont {
         self.key = .commentFont
 
         if #available(iOS 13, *) {
-            let vc = UIFontPickerViewController()
-            vc.delegate = self
-            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+            let actionSheetController = DragDownAlertMenu(title: "Submission font", subtitle: "", icon: nil, themeColor: nil, full: true)
+
+            let fonts = FontMapping.sanFranciscoVariants
+
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
+            let submission = false
+            
+            // Prune out the weights that aren't available for the selected font
+            for font in fonts {
+                actionSheetController.addAction(title: font.displayedName, icon: font.storedName.contains(FontGenerator.fontOfSize(size: 16, submission: submission).fontName) ? selected : nil) {
+                    UserDefaults.standard.set(font.storedName, forKey: submission ? "postfont" : "commentfont")
+                    
+                    UserDefaults.standard.synchronize()
+                    FontGenerator.initialize()
+                    CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+                    CachedTitle.titles.removeAll()
+                    self.refresh()
+                }
+            }
+            
+            actionSheetController.addAction(title: "Custom font", icon: nil) {
+                let config = UIFontPickerViewController.Configuration()
+                config.includeFaces = true
+                let vc = UIFontPickerViewController(configuration: config)
+                vc.delegate = self
+                self.present(vc, animated: true)
+            }
+
+            actionSheetController.show(self)
         } else {
             let vc = FontSelectionTableViewController()
             vc.title = "Comment Font"

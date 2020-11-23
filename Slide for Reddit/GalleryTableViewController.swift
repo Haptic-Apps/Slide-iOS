@@ -57,7 +57,7 @@ class GalleryTableViewController: MediaTableViewController {
             }
             exit.addSubview(image)
             image.edgeAnchors /==/ exit.edgeAnchors
-            exit.addTapGestureRecognizer {
+            exit.addTapGestureRecognizer { (_) in
                 self.exit.removeFromSuperview()
                 self.doExit()
             }

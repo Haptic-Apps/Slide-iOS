@@ -265,6 +265,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
 
@@ -359,6 +360,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         //menuNav?.configureToolbarSwipe()
+        fullWidthBackGestureRecognizer?.isEnabled = true
+        cellGestureRecognizer?.isEnabled = true
         refreshControl.setValue(100, forKey: "_snappingHeight")
 
         if dataSource.loaded && dataSource.content.count > oldCount {
@@ -396,6 +399,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let cell = cell as? LinkCellView {
+            var row = indexPath.row
+            if hasHeader {
+                row -= 1
+            }
+
+            let submission = dataSource.content[row]
+
+            cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
+        }
     }
 
     override func viewWillLayoutSubviews() {
@@ -428,7 +441,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab?.removeFromSuperview()
             self.fab = nil
         }
-
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
                 do {
@@ -511,7 +523,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
+        fullWidthBackGestureRecognizer?.isEnabled = false
+        cellGestureRecognizer?.isEnabled = false
+
         if fab != nil {
             fab?.removeFromSuperview()
             fab = nil
@@ -733,10 +747,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fab!.titleLabel?.font = UIFont.systemFont(ofSize: 14)
             
             fabHelper = UIView(frame: self.fab!.frame)
-            fabHelper?.addTapGestureRecognizer(action: {
+            fabHelper?.addTapGestureRecognizer(action: { (_) in
                 self.doFabActions()
             })
-            fabHelper?.addLongTapGestureRecognizer(action: {
+            fabHelper?.addLongTapGestureRecognizer(action: { (_) in
                 self.changeFab()
             })
                         
@@ -759,7 +773,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }, completion: { [weak self] (_) in
                 guard let strongSelf = self else { return }
                 strongSelf.fab?.addTarget(strongSelf, action: #selector(strongSelf.doFabActions), for: .touchUpInside)
-                strongSelf.fab?.addLongTapGestureRecognizer {
+                strongSelf.fab?.addLongTapGestureRecognizer { (_) in
                     strongSelf.changeFab()
                 }
                 
@@ -1501,6 +1515,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && type == .SELF {
                     thumb = false
+                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+                    big = true
                 }
 
                 let fullImage = ContentType.fullImage(t: type)
@@ -1641,6 +1657,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if thumb && type == .SELF {
             thumb = false
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+            big = true
         }
         
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
@@ -1730,15 +1748,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else {
             innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and title
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between body and box
                 innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
                 innerPadding -= 5 //LinkCellView L#1191
             } else {
                 innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between title and bottom
             }
         }
-        //thumb off by 12
-        //banner off by 4
         
         var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
         if thumb {
@@ -1761,6 +1776,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
         
+        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+             submissionHeight = 200
+        }
+        
         var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
         
         if thumb {
@@ -1778,24 +1797,20 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
                 
-        let size = CGSize(width: estimatedUsableWidth, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false))
-        if let layout = layout {
-            let textSize = layout.textBoundingSize
-
+        let height = CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false).height(containerWidth: estimatedUsableWidth)
+        
+        if height < 100000 { //Make sure it's a valid height
             var totalHeight = paddingTop + paddingBottom
             if thumb {
-                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(textSize.height), imageHeight)
+                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(height), imageHeight)
             } else {
-                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(textSize.height)) + imageHeight
+                totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(height)) + imageHeight
             }
-            
+                 
             totalHeight += innerPadding + actionbar + textHeight
             if SettingValues.postViewMode != .CARD || isGallery {
                 totalHeight += 5
             }
-            
-            totalHeight += CGFloat(submission.gilded && !SettingValues.hideAwards ? 23 : 0)
             
             return CGSize(width: itemWidth, height: totalHeight)
         } else { //If layout is nil, just return a size that won't crash the app...
@@ -2128,7 +2143,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         } else {
             self.emptyStateView.setText(title: "Nothing to see here!", message: "All posts were filtered while loading this subreddit. Check your global filters in Slide's Settings, or tap here to view this subreddit's content filters")
             self.emptyStateView.isHidden = false
-            self.emptyStateView.addTapGestureRecognizer {
+            self.emptyStateView.addTapGestureRecognizer { (_) in
                 self.filterContent(true)
             }
         }
@@ -2591,7 +2606,11 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             case .banner:
                 cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
             default:
-                cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+                if !SettingValues.hideImageSelftext && submission.height > 0 {
+                    cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
+                } else {
+                    cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
+                }
             }
         }
         
@@ -2603,7 +2622,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
-        cell.configure(submission: submission, parent: self, nav: self.navigationController, baseSub: self.sub, np: false)
         if row > dataSource.content.count - 4 {
             if !dataSource.loading && !dataSource.nomore {
                 self.dataSource.getData(reload: false)
@@ -2611,7 +2629,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         }
         return cell
     }
-
 }
 
 // MARK: - Collection View Prefetching Data Source
@@ -2922,10 +2939,15 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             }
         } else if let nav = self.parent?.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            nav.interactivePushGestureRecognizer?.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }
         }
+        if let swipe = fullWidthBackGestureRecognizer {
+            swipe.require(toFail: cellGestureRecognizer)
+        }
+        
     }
         
     func setupSwipeGesture() {
@@ -2952,6 +2974,11 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             if let interactivePopGestureRecognizer = self.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
                 setupSwipeWithTarget(fullWidthBackGestureRecognizer as! UIPanGestureRecognizer, targets: targets)
             }
+        }
+        if let nav = navigationController as? SwipeForwardNavigationController {
+            let gesture = nav.fullWidthBackGestureRecognizer
+            nav.interactivePushGestureRecognizer?.require(toFail: fullWidthBackGestureRecognizer)
+            gesture.require(toFail: fullWidthBackGestureRecognizer)
         }
     }
     
@@ -3233,7 +3260,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
         }
-        view.addTapGestureRecognizer(action: {
+        
+        view.addTapGestureRecognizer { (_) in
             self.del?.subscribeSingle(view)
             stack.removeArrangedSubview(view)
             var oldSize = scroll.contentSize
@@ -3241,7 +3269,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             stack.widthAnchor /==/ oldSize.width
             scroll.contentSize = oldSize
             view.removeFromSuperview()
-        })
+        }
 
         let widthS = CGFloat(30)
 
@@ -3258,9 +3286,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
-            $0.addTapGestureRecognizer(action: {
+            $0.addTapGestureRecognizer { (_) in
                 PostActions.showPostMenu(self.del!, sub: self.sub)
-            })
+            }
         }
         
         let widthS = CGFloat(30)
@@ -3278,9 +3306,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
             $0.setImage(UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")?.menuIcon().getCopy(withColor: .white), for: .normal)
             $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             $0.imageView?.contentMode = .center
-            $0.addTapGestureRecognizer(action: {
+            $0.addTapGestureRecognizer { (_) in
                 self.del?.doDisplaySidebar()
-            })
+            }
         }
         
         let widthS = CGFloat(30)
@@ -3315,7 +3343,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
             sortTitle.leftAnchor /==/ sortImage.rightAnchor + 8
             sortTitle.centerYAnchor /==/ sortImage.centerYAnchor
             sortTitle.rightAnchor /==/ sort.rightAnchor
-            sort.addTapGestureRecognizer {
+            sort.addTapGestureRecognizer { (_) in
                 self.del?.showSortMenu(self)
             }
             sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
@@ -3343,9 +3371,9 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
                     $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
-                    $0.addTapGestureRecognizer(action: {
+                    $0.addTapGestureRecognizer { (_) in
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
-                    })
+                    }
                 }
                 
                 let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(45)

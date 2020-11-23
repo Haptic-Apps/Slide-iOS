@@ -206,6 +206,13 @@ class RealmDataWrapper {
                     awardArray.append("\(award["count"] as? Int ?? 0)")
                     awardArray.append(award["description"] as? String ?? "")
                     awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
                     jsonDict[name] = awardArray
                 }
             }
@@ -352,6 +359,13 @@ class RealmDataWrapper {
                     awardArray.append("\(award["count"] as? Int ?? 0)")
                     awardArray.append(award["description"] as? String ?? "")
                     awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
                     jsonDict[name] = awardArray
                 }
             }
@@ -733,6 +747,28 @@ class RMessage: Object {
     @objc dynamic var context = ""
     @objc dynamic var wasComment = false
     @objc dynamic var subreddit = ""
+    @objc dynamic var subject = ""
+    
+    func getId() -> String {
+        return id
+    }
+}
+
+class RModlogItem: Object {
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    @objc dynamic var id = ""
+    @objc dynamic var mod = ""
+    @objc dynamic var targetBody = ""
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var subreddit = ""
+    @objc dynamic var targetTitle = ""
+    @objc dynamic var permalink = ""
+    @objc dynamic var details = ""
+    @objc dynamic var action = ""
+    @objc dynamic var targetAuthor = ""
     @objc dynamic var subject = ""
     
     func getId() -> String {

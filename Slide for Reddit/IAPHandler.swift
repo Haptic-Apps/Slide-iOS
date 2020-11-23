@@ -93,7 +93,6 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
     }
     
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
-        purchaseStatusBlock?(.restored)
     }
     
     // MARK: - IAP PAYMENT QUEUE
@@ -107,6 +106,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                     print("Product Purchased")
                     purchaseStatusBlock?(.purchased)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    break
                 case .failed:
                     print("Purchased Failed")
                     didFail = true
@@ -116,6 +116,7 @@ extension IAPHandler: SKProductsRequestDelegate, SKPaymentTransactionObserver {
                     print("Already Purchased")
                     purchaseStatusBlock?(.restored)
                     SKPaymentQueue.default().finishTransaction(transaction as! SKPaymentTransaction)
+                    break
                 default:
                     break
                 }

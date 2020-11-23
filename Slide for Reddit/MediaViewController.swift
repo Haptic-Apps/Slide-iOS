@@ -139,6 +139,17 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                         }
                     }
                 }
+                if let subVC = self as? ContentListingViewController {
+                    for index in subVC.tableView.indexPathsForVisibleItems {
+                        if let cell = subVC.tableView.cellForItem(at: index) as? LinkCellView {
+                            cell.endVideos()
+                            subVC.currentPlayingIndex = subVC.currentPlayingIndex.filter({ (included) -> Bool in
+                                return included.row != index.row
+                            })
+                        }
+                    }
+                }
+
             }
             if ContentType.isGif(uri: url) {
                 if !link.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {

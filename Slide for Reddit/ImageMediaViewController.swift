@@ -179,7 +179,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             view.addGestureRecognizer(tap)
         }
         
-        imageView.addLongTapGestureRecognizer {
+        imageView.addLongTapGestureRecognizer { (_) in
             self.shareImage(sender: self.menuButton)
         }
 

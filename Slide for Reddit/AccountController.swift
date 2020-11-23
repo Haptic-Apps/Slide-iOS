@@ -225,7 +225,9 @@ class AccountController {
                     } else {
                         for sub in toReturn {
                             Subscriptions.subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
-                            Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
+                            if sub.keyColor.hexString().lowercased() != "#ffffff" && sub.keyColor.hexString() != "#000000" {
+                                Subscriptions.subColors[sub.displayName.lowercased()] = sub.keyColor
+                            }
                         }
 
                         completion(toReturn)

@@ -131,10 +131,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
                 jump.addSubview(image)
                 image.edgeAnchors /==/ jump.edgeAnchors
-                jump.addTapGestureRecognizer {
+                jump.addTapGestureRecognizer { (_) in
                     self.goDown(self.jump)
                 }
-                jump.addLongTapGestureRecognizer {
+                jump.addLongTapGestureRecognizer { (_) in
                     self.goUp(self.jump)
                 }
             }
@@ -324,7 +324,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 $0.layer.cornerRadius = 20
                                                 $0.clipsToBounds = true
                                                 $0.textAlignment = .center
-                                                $0.addTapGestureRecognizer {
+                                                $0.addTapGestureRecognizer { (_) in
                                                     UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
                                                         self.tableView.contentOffset.y = (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64
                                                     }, completion: { (_) in
@@ -1118,7 +1118,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         label.accessibilityHint = "Opens the sub red it r \(sub)"
         label.accessibilityLabel = "Sub red it: r \(sub)"
 
-        label.addTapGestureRecognizer(action: {
+        label.addTapGestureRecognizer(action: { (_) in
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
         
@@ -1430,8 +1430,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-                    ColorUtil.matchTraitCollection()
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { //Wait for 0.1 seconds. There is a race condition here that sets the theme twice on iPad
+                        if previousTraitCollection?.userInterfaceStyle != self.traitCollection.userInterfaceStyle {
+                            ColorUtil.matchTraitCollection()
+                        }
+                    }
                 }
             } else {
                 if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
@@ -1661,6 +1665,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        fullWidthBackGestureRecognizer?.isEnabled = true
+        cellGestureRecognizer?.isEnabled = true
+
         refreshControl.setValue(100, forKey: "_snappingHeight")
 
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
@@ -2255,6 +2262,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         inHeadView.removeFromSuperview()
         headerCell.endVideos()
         
+        fullWidthBackGestureRecognizer?.isEnabled = false
+        cellGestureRecognizer?.isEnabled = false
+
         self.didDisappearCompletely = true
     }
 
@@ -3226,6 +3236,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            nav.interactivePushGestureRecognizer?.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }
@@ -3270,6 +3281,11 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             if let interactivePopGestureRecognizer = self.navigationController?.interactivePopGestureRecognizer, let targets = interactivePopGestureRecognizer.value(forKey: "targets") {
                 setupSwipeWithTarget(fullWidthBackGestureRecognizer, interactivePopGestureRecognizer: interactivePopGestureRecognizer, targets: targets)
             }
+        }
+        if let nav = navigationController as? SwipeForwardNavigationController {
+            let gesture = nav.fullWidthBackGestureRecognizer
+            nav.interactivePushGestureRecognizer?.require(toFail: fullWidthBackGestureRecognizer)
+            gesture.require(toFail: fullWidthBackGestureRecognizer)
         }
     }
 

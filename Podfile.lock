@@ -19,39 +19,39 @@ PODS:
     - DTFoundation/Core
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (118.1.0):
+  - MaterialComponents/ActivityIndicator (119.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (118.1.0)
-  - MaterialComponents/Availability (118.1.0)
-  - MaterialComponents/Elevation (118.1.0):
+  - MaterialComponents/AnimationTiming (119.1.0)
+  - MaterialComponents/Availability (119.1.0)
+  - MaterialComponents/Elevation (119.1.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Ink (118.1.0):
+  - MaterialComponents/Ink (119.1.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (118.1.0)
-  - MaterialComponents/private/Application (118.1.0)
-  - MaterialComponents/private/Color (118.1.0):
+  - MaterialComponents/Palettes (119.1.0)
+  - MaterialComponents/private/Application (119.1.0)
+  - MaterialComponents/private/Color (119.1.0):
     - MaterialComponents/Availability
-  - MaterialComponents/private/Math (118.1.0)
-  - MaterialComponents/ProgressView (118.1.0):
+  - MaterialComponents/private/Math (119.1.0)
+  - MaterialComponents/ProgressView (119.1.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
-  - MaterialComponents/Ripple (118.1.0):
+  - MaterialComponents/Ripple (119.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
-  - MaterialComponents/ShadowElevations (118.1.0)
-  - MaterialComponents/ShadowLayer (118.1.0):
+  - MaterialComponents/ShadowElevations (119.1.0)
+  - MaterialComponents/ShadowLayer (119.1.0):
     - MaterialComponents/ShadowElevations
-  - MaterialComponents/Tabs (118.1.0):
+  - MaterialComponents/Tabs (119.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -62,7 +62,7 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
-  - MaterialComponents/Typography (118.1.0):
+  - MaterialComponents/Typography (119.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
     - MDFTextAccessibility
@@ -85,7 +85,7 @@ PODS:
   - SwiftEntryKit (1.2.1):
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
-  - SwiftLint (0.40.3)
+  - SwiftLint (0.41.0)
   - SwiftyJSON (5.0.0)
   - TGPControls (5.1.0)
   - YoutubePlayer-in-WKWebView (0.3.4)
@@ -160,7 +160,7 @@ CHECKOUT OPTIONS:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: a1813197efb1952e7045f02621503e6364b63a4b
+    :commit: 5f57e8a1368898e8185ad8313acb7bf4380124b2
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: a22003f93a803c2e14b193f636669c21358fb1d7
@@ -181,7 +181,7 @@ SPEC CHECKSUMS:
   DTFoundation: e7781d9fd2f202bfd451fbbf8cab71ce83b46498
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: e4a7c8b5eabe7856ef58f632fb5800a229bda5be
+  MaterialComponents: 04f29e3ec4965c29a48e13a626a0ab4bbd19e289
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MDFTextAccessibility: 85c09a1bd9c321f494348e632a25063bcda35a53
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
@@ -197,7 +197,7 @@ SPEC CHECKSUMS:
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: 1661b766dd22b07679e6ebb326ccfbd81ceb0a20
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
-  SwiftLint: dfd554ff0dff17288ee574814ccdd5cea85d76f7
+  SwiftLint: c585ebd615d9520d7fbdbe151f527977b0534f1e
   SwiftyJSON: f0574c07d8ca1644050db687067209e3033a89a0
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717

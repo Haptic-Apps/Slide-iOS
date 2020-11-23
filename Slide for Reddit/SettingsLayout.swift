@@ -23,6 +23,11 @@ class SettingsLayout: BubbleSettingTableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    var reduceElevationCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "elevate")
+    var reduceElevation = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var hideImageSelftextCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "hide")
     var hideImageSelftext = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -188,6 +193,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == flatMode {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
+        } else if changed == reduceElevation {
+            SettingValues.reduceElevation = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceElevation)
         }
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
@@ -533,6 +541,11 @@ class SettingsLayout: BubbleSettingTableViewController {
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows throughout Slide"
         flatModeCell.detailTextLabel?.numberOfLines = 0
 
+        createCell(reduceElevationCell, reduceElevation, isOn: SettingValues.reduceElevation, text: "Reduce Elevation")
+        reduceElevationCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        reduceElevationCell.detailTextLabel?.text = "Disables shadows on cards and images"
+        reduceElevationCell.detailTextLabel?.numberOfLines = 0
+
         doDisables()
         self.tableView.tableFooterView = UIView()
     }
@@ -587,7 +600,8 @@ class SettingsLayout: BubbleSettingTableViewController {
             case 1: return self.imageCell
             case 2: return self.actionBarCell
             case 3: return self.flatModeCell
-                
+            case 4: return self.reduceElevationCell
+
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -630,7 +644,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 4
+        case 1: return 5
         case 2: return 8
         case 3: return 4
         case 4: return 7

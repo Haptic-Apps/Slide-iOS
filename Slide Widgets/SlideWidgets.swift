@@ -377,9 +377,8 @@ struct SubredditLoader {
                 subsString += item
             }
             let subredditUrl = URL(string: "https://reddit.com/r/\(subsString)/hot.json?limit=7&raw_json=1")!
-            print("https://reddit.com/r/\(subsString)/hot.json?limit=7&raw_json=1")
-            var request = URLRequest(url: subredditUrl)
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let request = URLRequest(url: subredditUrl)
+            let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
                 guard error == nil else {
                     completion(.failure(error!))
                     return
@@ -390,7 +389,7 @@ struct SubredditLoader {
             task.resume()
         } else {
             let subredditUrl = URL(string: apiUrl)!
-            let task = URLSession.shared.dataTask(with: subredditUrl) { (data, response, error) in
+            let task = URLSession.shared.dataTask(with: subredditUrl) { (data, _, error) in
                 guard error == nil else {
                     completion(.failure(error!))
                     return
@@ -423,8 +422,6 @@ struct SubredditLoader {
                     }
                 }
             }
-        } catch {
-            
         }
         
         return SubredditPosts(date: Date(), subreddit: subreddit, posts: posts)

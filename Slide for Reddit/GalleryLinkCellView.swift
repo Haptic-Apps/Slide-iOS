@@ -24,8 +24,7 @@ final class GalleryLinkCellView: LinkCellView {
             // Image goes above title
             title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
             
-            title.bottomAnchor /==/ awardContainerView.topAnchor - ceight / 2
-            awardContainerView.bottomAnchor /==/ box.topAnchor - ceight / 2
+            title.bottomAnchor /==/ box.topAnchor - ceight
 
             bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding
             bannerImage.bottomAnchor /==/ title.topAnchor - ceight
@@ -68,15 +67,7 @@ final class GalleryLinkCellView: LinkCellView {
             }
 
         let attText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: full)
-        let bounds = self.estimateHeightSingle(full, np: np, attText: attText)
-        if oldBounds.width != bounds.textBoundingSize.width || oldBounds.height != bounds.textBoundingSize.height {
-            oldBounds = bounds.textBoundingSize
-            title.textLayout = bounds
-            title.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-            title.preferredMaxLayoutWidth = bounds.textBoundingSize.width
-        }
         title.attributedText = attText
-        title.textVerticalAlignment = .top
     }
     
     override func refresh(np: Bool = false) {
