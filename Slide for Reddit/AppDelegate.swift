@@ -134,10 +134,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var launchedURL: URL?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        self.window = window
+        didFinishLaunching(window: window)
+
         if #available(iOS 13.0, *) { return true } else {
-            let window = UIWindow(frame: UIScreen.main.bounds)
-            self.window = window
-            didFinishLaunching(window: window)
             launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
             let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
             
@@ -859,9 +860,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        if #available(iOS 13.0, *) { return } else {
-            didBecomeActive()
-        }
+        didBecomeActive()
     }
     
     func didBecomeActive() {
@@ -904,9 +903,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var backView: UIView?
     func applicationWillResignActive(_ application: UIApplication) {
-        if #available(iOS 13.0, *) { return } else {
-            willResignActive()
-        }
+        willResignActive()
     }
     
     func willResignActive() {
@@ -989,9 +986,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        if #available(iOS 13.0, *) { return } else {
             didEnterBackground()
-        }
     }
         
     func didEnterBackground() {

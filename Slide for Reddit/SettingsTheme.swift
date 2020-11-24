@@ -82,7 +82,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         } else {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 150)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColor()
@@ -125,10 +125,22 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 presenter.sourceRect = selectedTableView.bounds
             }
 
-            present(alertController, animated: false, completion: nil)
+            if let presenter = self.navigationController {
+                presenter.present(alertController, animated: true, completion: nil)
+            } else {
+                present(alertController, animated: true, completion: nil)
+            }
         }
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section > 0 {
+            return 60
+        } else {
+            return UITableView.automaticDimension
+        }
+    }
+
     func redoThemes() {
         self.customThemes.removeAll()
         self.themes.removeAll()

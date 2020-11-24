@@ -92,13 +92,17 @@ class PostActions: NSObject {
             
             parent.present(activityViewController, animated: true, completion: nil)
         case .CHROME:
-            let open = OpenInChromeController.init()
-            open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+            if link.url != nil {
+                let open = OpenInChromeController.init()
+                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+            }
         case .SAFARI:
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(link.url!)
+            if link.url != nil {
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(link.url!)
+                }
             }
         case .FILTER:
             delegate.showFilterMenu(cell)
