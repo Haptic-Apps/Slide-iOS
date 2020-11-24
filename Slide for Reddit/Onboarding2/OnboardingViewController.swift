@@ -50,7 +50,7 @@ class OnboardingViewController: UIViewController {
 
         setupConstraints()
         
-        finishButton.addTapGestureRecognizer {
+        finishButton.addTapGestureRecognizer { (_) in
             self.dismiss(animated: true, completion: nil)
         }
         

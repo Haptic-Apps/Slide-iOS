@@ -23,6 +23,11 @@ class SettingsLayout: BubbleSettingTableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    var reduceElevationCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "elevate")
+    var reduceElevation = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var hideImageSelftextCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "hide")
     var hideImageSelftext = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -188,6 +193,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == flatMode {
             SettingValues.flatMode = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_flatMode)
+        } else if changed == reduceElevation {
+            SettingValues.reduceElevation = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceElevation)
         }
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
@@ -240,7 +248,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.width = 636
         fakesub.vote = false
 
-        link.contentView.removeFromSuperview()
+        link.innerView.removeFromSuperview()
         if SettingValues.postImageMode == .THUMBNAIL {
             link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         } else {
@@ -252,10 +260,10 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
         linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
-        link.contentView.heightAnchor /==/ link.estimateHeight(false, true, np: false)
-        link.contentView.widthAnchor /==/ min(self.tableView.frame.size.width, 350)
-        linkCell.contentView.addSubview(link.contentView)
-        link.contentView.centerAnchors /==/ linkCell.contentView.centerAnchors
+        link.innerView.heightAnchor /==/ link.estimateHeight(false, true, np: false)
+        link.innerView.widthAnchor /==/ min(self.tableView.frame.size.width, 350)
+        linkCell.contentView.addSubview(link.innerView)
+        link.innerView.centerAnchors /==/ linkCell.contentView.centerAnchors
         
         switch SettingValues.postViewMode {
         case .CARD:
@@ -513,13 +521,13 @@ class SettingsLayout: BubbleSettingTableViewController {
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Content type in title")
-        createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Condense post award counts")
+        createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Hide Reddit awards line")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
         createCell(scoreTitleCell, scoreTitle, isOn: SettingValues.scoreInTitle, text: "Post score in title")
         createCell(abbreviateScoreCell, abbreviateScore, isOn: SettingValues.abbreviateScores, text: "Abbreviate post scores (ex: 10k)")
-        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Title post details")
+        createCell(infoBelowTitleCell, infoBelowTitle, isOn: SettingValues.infoBelowTitle, text: "Post details below title line")
         createCell(domainInfoCell, domainInfo, isOn: SettingValues.domainInInfo, text: "Domain in title")
         createCell(leftThumbCell, leftThumb, isOn: SettingValues.leftThumbnail, text: "Left-side thumbnail")
         createCell(hideCell, hide, isOn: SettingValues.hideButton, text: "Hide post button")
@@ -532,6 +540,11 @@ class SettingsLayout: BubbleSettingTableViewController {
         flatModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows throughout Slide"
         flatModeCell.detailTextLabel?.numberOfLines = 0
+
+        createCell(reduceElevationCell, reduceElevation, isOn: SettingValues.reduceElevation, text: "Reduce Elevation")
+        reduceElevationCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        reduceElevationCell.detailTextLabel?.text = "Disables shadows on cards and images"
+        reduceElevationCell.detailTextLabel?.numberOfLines = 0
 
         doDisables()
         self.tableView.tableFooterView = UIView()
@@ -587,7 +600,8 @@ class SettingsLayout: BubbleSettingTableViewController {
             case 1: return self.imageCell
             case 2: return self.actionBarCell
             case 3: return self.flatModeCell
-                
+            case 4: return self.reduceElevationCell
+
             default: fatalError("Unknown row in section 1")
             }
         case 2:
@@ -630,7 +644,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0: return 1
-        case 1: return 4
+        case 1: return 5
         case 2: return 8
         case 3: return 4
         case 4: return 7

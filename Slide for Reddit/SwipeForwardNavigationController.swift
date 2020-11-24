@@ -92,9 +92,9 @@ class SwipeForwardNavigationController: UINavigationController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
-        if let first = pushableViewControllers.first as? SplitMainViewController {
+        if let last = pushableViewControllers.last as? SplitMainViewController {
             pushableViewControllers.removeAll()
-            pushableViewControllers.append(first)
+            pushableViewControllers.append(last)
         } else {
             pushableViewControllers.removeAll()
         }

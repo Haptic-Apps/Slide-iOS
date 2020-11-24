@@ -95,6 +95,7 @@ class SettingValues {
     public static let pref_linkAlwaysThumbnail = "LINK_ALWAYS_THUMBNAIL"
     public static let pref_actionbarMode = "ACTIONBAR_MODE"
     public static let pref_flatMode = "FLAT_MODE"
+    public static let pref_reduceElevation = "REDUCE_ELEVATION"
     public static let pref_bottomBarHidden = "BOTTOM_BAR_HIDDEN"
     public static let pref_widerIndicators = "WIDE_INDICATORS"
     public static let pref_blackShadowbox = "BLACK_SHADOWBOX"
@@ -134,7 +135,7 @@ class SettingValues {
     public static let pref_thumbTag = "THUMB_TAG"
     public static let pref_commentLimit = "COMMENT_LIMIT"
     public static let pref_submissionLimit = "SUBMISSION_LIMIT"
-    public static let pref_hideAwards = "HIDE_AWARDS"
+    public static let pref_hideAwards = "HIDE_AWARDS_v2"
     public static let pref_subredditIcons = "SUBREDDIT_ICONS"
     public static let pref_streamVideos = "STREAM_VIDEOS"
     public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
@@ -143,6 +144,7 @@ class SettingValues {
     public static let pref_disableSubredditPopupIpad = "DISABLE_SUB_POPUP_IPAD"
     public static let pref_portraitMultiColumnCount = "MULTICOLUMN_COUNT_PORTRAIT"
     public static let pref_gfycatAPI = "USE_GFYCAT_API"
+    public static let pref_scrollSidebar = "SCROLL_SIDEBAR"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -187,6 +189,7 @@ class SettingValues {
     public static var actionBarMode = ActionBarMode.FULL
     public static var autoPlayMode = AutoPlay.ALWAYS
     public static var flatMode = false
+    public static var reduceElevation = false
     public static var fabType = FabType.HIDE_READ
     public static var pictureMode = "PICTURE_MODE"
     public static var hideImageSelftext = false
@@ -214,6 +217,7 @@ class SettingValues {
     public static var disableBanner = false
     public static var newIndicator = false
     public static var typeInTitle = true
+    public static var scrollSidebar = false
 
     public static var enlargeLinks = true
     public static var noImages = false
@@ -525,6 +529,8 @@ class SettingValues {
                 break
             }
         }
+        
+        SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
         SettingValues.postFontOffset = settings.object(forKey: SettingValues.pref_postFontSize) == nil ? 0 : settings.integer(forKey: SettingValues.pref_postFontSize)
         SettingValues.commentFontOffset = settings.object(forKey: SettingValues.pref_commentFontSize) == nil ? -2 : settings.integer(forKey: SettingValues.pref_commentFontSize)
@@ -652,6 +658,7 @@ class SettingValues {
         SettingValues.autoPlayMode = AutoPlay.init(rawValue: settings.string(forKey: SettingValues.pref_autoPlayMode) ?? "always") ?? .ALWAYS
         SettingValues.browser = settings.string(forKey: SettingValues.pref_browser) ?? SettingValues.BROWSER_INTERNAL
         SettingValues.flatMode = settings.bool(forKey: SettingValues.pref_flatMode)
+        SettingValues.reduceElevation = settings.bool(forKey: SettingValues.pref_reduceElevation)
         SettingValues.postImageMode = PostImageMode.init(rawValue: settings.string(forKey: SettingValues.pref_postImageMode) ?? "full") ?? .CROPPED_IMAGE
         SettingValues.fabType = FabType.init(rawValue: settings.string(forKey: SettingValues.pref_fabType) ?? "hide") ?? .HIDE_READ
         SettingValues.commentGesturesMode = CellGestureMode.init(rawValue: settings.string(forKey: SettingValues.pref_commentGesturesMode) ?? "half") ?? .HALF
@@ -719,7 +726,7 @@ class SettingValues {
         detailViewController.comments.setTitle("Join the discussion!", for: UIControl.State.normal)
         detailViewController.comments.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
         detailViewController.comments.contentHorizontalAlignment = .left
-        detailViewController.comments.addTapGestureRecognizer {
+        detailViewController.comments.addTapGestureRecognizer { (_) in
             detailViewController.dismiss(animated: true) {
                 VCPresenter.openRedditLink(submission.permalink, parentVC.navigationController, parentVC)
             }

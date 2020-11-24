@@ -222,7 +222,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.autocache.imageView?.tintColor = ColorUtil.theme.fontColor
         self.autocache.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         
-        three.addTapGestureRecognizer {
+        three.addTapGestureRecognizer { (_) in
             IAPHandler.shared.purchaseMyProduct(index: 0)
             self.alertController = UIAlertController(title: "Upgrading you to Pro!\n\n\n", message: nil, preferredStyle: .alert)
 
@@ -235,7 +235,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             self.present(self.alertController!, animated: true, completion: nil)
         }
         
-        six.addTapGestureRecognizer {
+        six.addTapGestureRecognizer { (_) in
             IAPHandler.shared.purchaseMyProduct(index: 1)
             self.alertController = UIAlertController(title: "Upgrading you to Pro!\n\n\n", message: nil, preferredStyle: .alert)
 

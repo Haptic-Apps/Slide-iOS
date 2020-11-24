@@ -28,6 +28,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     var alwaysShowHeader: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "head")
     var commentLimit: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "cl")
     var postLimit: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "pl")
+    var scrollSidebar: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "scroll")
 
     var postSorting: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "post")
     var commentSorting: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "comment")
@@ -66,6 +67,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
     var notificationsSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    var scrollSidebarSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,6 +105,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
         } else if changed == hapticFeedback {
             SettingValues.hapticFeedback = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hapticFeedback)
+        } else if changed == scrollSidebarSwitch {
+            SettingValues.scrollSidebar = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_scrollSidebar)
         } else if changed == notificationsSwitch {
             SettingValues.notifications = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_notifications)
@@ -160,6 +167,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         cell.textLabel?.textColor = ColorUtil.theme.fontColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
+        cell.detailTextLabel?.numberOfLines = 0
         if let s = switchV {
             s.isOn = isOn
             s.addTarget(self, action: #selector(SettingsGeneral.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
@@ -188,6 +196,8 @@ class SettingsGeneral: BubbleSettingTableViewController {
         createCell(totallyCollapse, totallyCollapseSwitch, isOn: SettingValues.hideBottomBar, text: "Hide bottom bars on scroll")
         createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.hideStatusBar, text: "Hide status bar on scroll")
         createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Show subreddit header")
+        createCell(scrollSidebar, scrollSidebarSwitch, isOn: SettingValues.scrollSidebar, text: "Reset sidebar automatically")
+
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
         self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.alwaysShowHeader.detailTextLabel?.numberOfLines = 0
@@ -219,13 +229,19 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.searchSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.searchSorting.backgroundColor = ColorUtil.theme.foregroundColor
         self.searchSorting.textLabel?.textColor = ColorUtil.theme.fontColor
+       
+        self.scrollSidebar.textLabel?.text = "Reset Sidebar automatically"
+        self.scrollSidebar.detailTextLabel?.text = "Reset search and scroll to the top of the subreddit menu automatically"
+        self.scrollSidebar.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.scrollSidebar.backgroundColor = ColorUtil.theme.foregroundColor
+        self.scrollSidebar.textLabel?.textColor = ColorUtil.theme.fontColor
 
         self.commentLimit.textLabel?.text = "Number of comments to load"
         self.commentLimit.detailTextLabel?.text = "\(SettingValues.commentLimit) comments"
         self.commentLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.commentLimit.backgroundColor = ColorUtil.theme.foregroundColor
         self.commentLimit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.commentLimit.contentView.addTapGestureRecognizer {
+        self.commentLimit.contentView.addTapGestureRecognizer { (_) in
             self.showCountMenu(false)
         }
 
@@ -234,7 +250,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         self.postLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.postLimit.backgroundColor = ColorUtil.theme.foregroundColor
         self.postLimit.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.postLimit.contentView.addTapGestureRecognizer {
+        self.postLimit.contentView.addTapGestureRecognizer { (_) in
             self.showCountMenu(true)
         }
 
@@ -265,7 +281,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         }
         
         self.notifications.textLabel?.text = "New message notifications"
-        self.notifications.detailTextLabel?.text = "Check for new mail every 15 minutes"
+        self.notifications.detailTextLabel?.text = "Check for new mail when iOS allows Slide to wake from background"
         self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.notifications.backgroundColor = ColorUtil.theme.foregroundColor
         self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
@@ -391,6 +407,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         case 2:
             switch indexPath.row {
             case 0: cell = self.hapticFeedback
+            case 1: cell = self.scrollSidebar
             //case 1: return self.matchSilence
             default: fatalError("Unknown row in section 0")
             }
@@ -480,7 +497,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
         actionSheetController.show(self)
     }
 
-
     func showTimeMenu(s: LinkSortType, selector: UIView?) {
         if s == .hot || s == .new || s == .rising || s == .best {
             SettingValues.defaultSorting = s
@@ -513,8 +529,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         self.timeMenuView = self.tableView.cellForRow(at: indexPath)!.contentView
-
-        if indexPath.section == 4 && indexPath.row == 0 {
+        if indexPath.section == 0 && indexPath.row == 1 {
+            changeFab()
+        } else if indexPath.section == 4 && indexPath.row == 0 {
             showMenu(tableView.cellForRow(at: indexPath))
         } else if indexPath.section == 4 && indexPath.row == 1 {
             showMenuComments(tableView.cellForRow(at: indexPath))
@@ -529,7 +546,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         switch section {
         case 0: return 4 + (!pad ? 1 : 0)
         case 1: return 3
-        case 2: return 1
+        case 2: return 2
         case 3: return 1
         case 4: return 3
         case 5: return 2
@@ -637,7 +654,7 @@ class BubbleSettingTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
+        return UITableView.automaticDimension
     }
 
     override func loadView() {

@@ -861,7 +861,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestModMenu: Void) {
-        let vc = ModerationViewController()
+        let vc = ModerationOverviewViewController()
         
         doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: vc)
     }
@@ -1024,6 +1024,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
             }
         case .POPOVER_AFTER_NAVIGATION:
             if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
+                nav.delegate = nav //Fixes strange case where the nav delegate is either overwritten or not equal to self, which is needed for the toExecute() stuff
                 nav.pushNextViewControllerFromRight() {
                     if let present = toPresent {
                         VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)

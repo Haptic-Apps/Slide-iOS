@@ -370,7 +370,7 @@ class CommentViewController: MediaViewController {
         if navigationController != nil {
             sortButton = UIButton(buttonImage: nil)
             sortButton.accessibilityLabel = "Change sort type"
-            sortButton.addTarget(self, action: #selector(sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
             sortB = UIBarButtonItem.init(customView: sortButton)
             
             doSortImage(sortButton)
@@ -405,7 +405,7 @@ class CommentViewController: MediaViewController {
             }
         }
         
-        initialSetup()
+        doStartupItems()
 
         if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
             headerCell.videoView?.player?.play()
@@ -459,6 +459,9 @@ class CommentViewController: MediaViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        fullWidthBackGestureRecognizer?.isEnabled = true
+        cellGestureRecognizer?.isEnabled = true
+
         refreshControl.setValue(100, forKey: "_snappingHeight")
 
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
@@ -476,13 +479,30 @@ class CommentViewController: MediaViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if loaded && finishedPush == false && first {
-            self.tableViewReloadingAnimation()
+            self.reloadTableViewAnimated()
         }
         self.finishedPush = true
         
-        if SettingValues.commentGesturesMode != .FULL && !(parent is PagingCommentViewController) {
-            setupSwipeGesture()
+        if SettingValues.commentGesturesMode != .FULL && !swipeBackAdded {
+            if let parent = parent as? PagingCommentViewController {
+                if parent.submissionDataSource.content[parent.startIndex].getId() == self.submission?.getId() {
+                    setupSwipeGesture()
+                }
+            } else {
+                setupSwipeGesture()
+            }
         }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        inHeadView.removeFromSuperview()
+        headerCell.endVideos()
+        
+        fullWidthBackGestureRecognizer?.isEnabled = false
+        cellGestureRecognizer?.isEnabled = false
+
+        self.didDisappearCompletely = true
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -490,14 +510,6 @@ class CommentViewController: MediaViewController {
         self.isHiding = true
         self.liveTimer.invalidate()
         self.removeJumpButton()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        inHeadView.removeFromSuperview()
-        headerCell.endVideos()
-        
-        self.didDisappearCompletely = true
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -561,11 +573,11 @@ class CommentViewController: MediaViewController {
                 }
                 jump.addSubview(image)
                 image.edgeAnchors /==/ jump.edgeAnchors
-                jump.addTapGestureRecognizer {
-                    self.scrollDown(self.jump)
+                jump.addTapGestureRecognizer { (_) in
+                    self.goDown(self.jump)
                 }
-                jump.addLongTapGestureRecognizer {
-                    self.scrollUp(self.jump)
+                jump.addLongTapGestureRecognizer { (_) in
+                    self.goUp(self.jump)
                 }
             }
             
@@ -682,120 +694,240 @@ class CommentViewController: MediaViewController {
         
         progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         liveB = UIBarButtonItem.init(customView: progressDot)
-
         self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, self.liveB]
         
         progressDot.layer.add(pulseAnimation, forKey: "scale")
         progressDot.layer.add(fadeAnimation, forKey: "fade")
     }
     
+    
+    func applyFilters() {
+        if PostFilter.filter([submission!], previous: nil, baseSubreddit: "all").isEmpty {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    
+    func replySent(comment: Comment?, cell: CommentDepthCell?) {
+        if comment != nil && cell != nil {
+            DispatchQueue.main.async(execute: { () -> Void in
+                let startDepth = (self.cDepth[cell!.comment!.getIdentifier()] ?? 0) + 1
+
+                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
+                self.cDepth[comment!.getId()] = startDepth
+
+                var realPosition = 0
+                for c in self.comments {
+                    let id = c
+                    if id == cell!.comment!.getIdentifier() {
+                        break
+                    }
+                    realPosition += 1
+                }
+
+                var insertIndex = 0
+                for c in self.dataArray {
+                    let id = c
+                    if id == cell!.comment!.getIdentifier() {
+                        break
+                    }
+                    insertIndex += 1
+                }
+
+                var ids: [String] = []
+                for item in queue {
+                    let id = item.getIdentifier()
+                    ids.append(id)
+                    self.content[id] = item
+                }
+
+                self.dataArray.insert(contentsOf: ids, at: insertIndex + 1)
+                self.comments.insert(contentsOf: ids, at: realPosition + 1)
+                self.updateStringsSingle(queue)
+                self.doArrays()
+                self.isReply = false
+                self.isEditing = false
+                self.tableView.reloadData()
+
+            })
+        } else if comment != nil && cell == nil {
+            DispatchQueue.main.async(execute: { () -> Void in
+                let startDepth = 1
+
+                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
+                self.cDepth[comment!.getId()] = startDepth
+
+                let realPosition = 0
+                self.menuId = nil
+
+                var ids: [String] = []
+                for item in queue {
+                    let id = item.getIdentifier()
+                    ids.append(id)
+                    self.content[id] = item
+                }
+
+                self.dataArray.insert(contentsOf: ids, at: 0)
+                self.comments.insert(contentsOf: ids, at: realPosition == 0 ? 0 : realPosition + 1)
+                self.updateStringsSingle(queue)
+                self.doArrays()
+                self.isReply = false
+                self.isEditing = false
+                self.tableView.reloadData()
+            })
+        }
+    }
+    
+    
+    func openComments(id: String, subreddit: String?) {
+        //don't do anything
+    }
+    
+    
+    func editSent(cr: Comment?, cell: CommentDepthCell) {
+        if cr != nil {
+            DispatchQueue.main.async(execute: { () -> Void in
+                var realPosition = 0
+
+                var comment = cell.comment!
+                for c in self.comments {
+                    let id = c
+                    if id == comment.getIdentifier() {
+                        break
+                    }
+                    realPosition += 1
+                }
+
+                var insertIndex = 0
+                for c in self.dataArray {
+                    let id = c
+                    if id == comment.getIdentifier() {
+                        break
+                    }
+                    insertIndex += 1
+                }
+
+                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.getIdentifier()] ?? 1)
+                self.dataArray.remove(at: insertIndex)
+                self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
+                self.comments.remove(at: realPosition)
+                self.comments.insert(comment.getIdentifier(), at: realPosition)
+                self.content[comment.getIdentifier()] = comment
+                self.updateStringsSingle([comment])
+                self.doArrays()
+                self.isEditing = false
+                self.isReply = false
+                self.tableView.reloadData()
+                self.discard()
+            })
+        }
+    }
+    
     /// Loads and inserts incoming live comments.
     @objc func loadLiveComments() {
         var name = submission!.name
-                if name.contains("t3_") {
-                    name = name.replacingOccurrences(of: "t3_", with: "")
-                }
-                do {
-                    try session?.getArticles(name, sort: .new, limit: SettingValues.commentLimit, completion: { (result) in
-                        switch result {
-                        case .failure(let error):
-                            print(error)
-                        case .success(let tuple):
-                            DispatchQueue.main.async(execute: { () -> Void in
-                                var queue: [Object] = []
-                                let startDepth = 1
-                                let listing = tuple.1
-                                
-                                for child in listing.children {
-                                    let incoming = self.extendKeepMore(in: child, current: startDepth)
-                                    for i in incoming {
-                                        if i.1 == 1 {
-                                            let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                                            if self.content[item.getIdentifier()] == nil {
-                                                self.content[item.getIdentifier()] = item
-                                                self.cDepth[item.getIdentifier()] = i.1
-                                                queue.append(item)
-                                                self.updateStrings([i])
-                                            }
-                                        }
+        if name.contains("t3_") {
+            name = name.replacingOccurrences(of: "t3_", with: "")
+        }
+        do {
+            try session?.getArticles(name, sort: .new, limit: SettingValues.commentLimit, completion: { (result) in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(let tuple):
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        
+                        var queue: [Object] = []
+                        let startDepth = 1
+                        let listing = tuple.1
+                        
+                        for child in listing.children {
+                            let incoming = self.extendKeepMore(in: child, current: startDepth)
+                            for i in incoming {
+                                if i.1 == 1 {
+                                    let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
+                                    if self.content[item.getIdentifier()] == nil {
+                                        self.content[item.getIdentifier()] = item
+                                        self.cDepth[item.getIdentifier()] = i.1
+                                        queue.append(item)
+                                        self.updateStrings([i])
                                     }
                                 }
+                            }
+                        }
 
-                                let datasetPosition = 0
-                                let realPosition = 0
-                                var ids: [String] = []
-                                for item in queue {
-                                    let id = item.getIdentifier()
-                                    ids.append(id)
-                                    self.content[id] = item
-                                }
+                        let datasetPosition = 0
+                        let realPosition = 0
+                        var ids: [String] = []
+                        for item in queue {
+                            let id = item.getIdentifier()
+                            ids.append(id)
+                            self.content[id] = item
+                        }
 
-                                if queue.count != 0 {
-                                    self.dataArray.insert(contentsOf: ids, at: datasetPosition)
-                                    self.comments.insert(contentsOf: ids, at: realPosition)
-                                    self.doArrays()
-                                    var paths: [IndexPath] = []
-                                    for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
-                                        self.liveNewCount += 1
-                                        paths.append(IndexPath.init(row: i, section: 0))
-                                    }
-                                    let contentHeight = self.tableView.contentSize.height
-                                    let offsetY = self.tableView.contentOffset.y
-                                    let bottomOffset = contentHeight - offsetY
-                                    if #available(iOS 11.0, *) {
-                                        CATransaction.begin()
-                                        CATransaction.setDisableActions(true)
-                                        self.isHiding = true
-                                        self.tableView.performBatchUpdates({
-                                            self.tableView.insertRows(at: paths, with: .fade)
-                                        }, completion: { (_) in
-                                            self.lastY = self.tableView.contentOffset.y
-                                            self.olderY = self.tableView.contentOffset.y
-                                            self.isHiding = false
-                                            if self.tableView.contentOffset.y > (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64 + 10 {
-                                                if self.liveView == nil {
-                                                    self.liveView = UILabel().then {
-                                                        $0.textColor = .white
-                                                        $0.font = UIFont.boldSystemFont(ofSize: 10)
-                                                        $0.backgroundColor = ColorUtil.getColorForSub(sub: self.subreddit)
-                                                        $0.layer.cornerRadius = 20
-                                                        $0.clipsToBounds = true
-                                                        $0.textAlignment = .center
-                                                        $0.addTapGestureRecognizer {
-                                                            UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                                                                self.tableView.contentOffset.y = (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64
-                                                            }, completion: { (_) in
-                                                                self.lastY = self.tableView.contentOffset.y
-                                                                self.olderY = self.tableView.contentOffset.y
-                                                            })
-                                                        }
-                                                    }
-                                                    self.view.addSubview(self.liveView!)
-                                                    self.liveView!.topAnchor == self.view.safeTopAnchor + 20
-                                                    self.liveView!.centerXAnchor == self.view.centerXAnchor
-                                                    self.liveView!.heightAnchor == 40
-                                                    self.liveView!.widthAnchor == 130
+                        if queue.count != 0 {
+                            self.dataArray.insert(contentsOf: ids, at: datasetPosition)
+                            self.comments.insert(contentsOf: ids, at: realPosition)
+                            self.doArrays()
+                            var paths: [IndexPath] = []
+                            for i in stride(from: datasetPosition, to: datasetPosition + queue.count, by: 1) {
+                                self.liveNewCount += 1
+                                paths.append(IndexPath.init(row: i, section: 0))
+                            }
+                            let contentHeight = self.tableView.contentSize.height
+                            let offsetY = self.tableView.contentOffset.y
+                            let bottomOffset = contentHeight - offsetY
+                            if #available(iOS 11.0, *) {
+                                CATransaction.begin()
+                                CATransaction.setDisableActions(true)
+                                self.isHiding = true
+                                self.tableView.performBatchUpdates({
+                                    self.tableView.insertRows(at: paths, with: .fade)
+                                }, completion: { (_) in
+                                    self.lastY = self.tableView.contentOffset.y
+                                    self.olderY = self.tableView.contentOffset.y
+                                    self.isHiding = false
+                                    if self.tableView.contentOffset.y > (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64 + 10 {
+                                        if self.liveView == nil {
+                                            self.liveView = UILabel().then {
+                                                $0.textColor = .white
+                                                $0.font = UIFont.boldSystemFont(ofSize: 10)
+                                                $0.backgroundColor = ColorUtil.getColorForSub(sub: self.subreddit)
+                                                $0.layer.cornerRadius = 20
+                                                $0.clipsToBounds = true
+                                                $0.textAlignment = .center
+                                                $0.addTapGestureRecognizer { (_) in
+                                                    UIView.animate(withDuration: 0.3, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                                                        self.tableView.contentOffset.y = (self.tableView.tableHeaderView?.frame.size.height ?? 60) + 64
+                                                    }, completion: { (_) in
+                                                        self.lastY = self.tableView.contentOffset.y
+                                                        self.olderY = self.tableView.contentOffset.y
+                                                    })
                                                 }
-                                                self.liveView!.text = "\(self.liveNewCount) NEW COMMENT\((self.liveNewCount > 1) ? "S" : "")"
-                                                self.liveView!.setNeedsLayout()
                                             }
                                             self.view.addSubview(self.liveView!)
                                             self.liveView!.topAnchor /==/ self.view.safeTopAnchor + 20
                                             self.liveView!.centerXAnchor /==/ self.view.centerXAnchor
                                             self.liveView!.heightAnchor /==/ 40
                                             self.liveView!.widthAnchor /==/ 130
-                                        })
+                                        }
                                         self.liveView!.text = "\(self.liveNewCount) NEW COMMENT\((self.liveNewCount > 1) ? "S" : "")"
                                         self.liveView!.setNeedsLayout()
                                     }
-                                }
-                            })
+                                    //self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    CATransaction.commit()
+                                })
+                            } else {
+                                self.tableView.insertRows(at: paths, with: .fade)
+                            }
                         }
                     })
-
-                } catch {
-                    
                 }
+            })
+
+        } catch {
+            
+        }
     }
     
     /**
@@ -1307,7 +1439,7 @@ class CommentViewController: MediaViewController {
         label.accessibilityHint = "Opens the sub red it r \(sub)"
         label.accessibilityLabel = "Sub red it: r \(sub)"
 
-        label.addTapGestureRecognizer(action: {
+        label.addTapGestureRecognizer(action: { (_) in
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
     }
@@ -1536,12 +1668,8 @@ class CommentViewController: MediaViewController {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if #available(iOS 13.0, *) {
-            if #available(iOS 14.0, *) {
-                if previousTraitCollection?.activeAppearance != traitCollection.activeAppearance {
-                    ColorUtil.matchTraitCollection()
-                }
-            } else {
+        if UIDevice.current.userInterfaceIdiom == .phone { //TODO: iPad there is a bug here
+            if #available(iOS 13.0, *) {
                 if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
                     if themeChanged {
                         ColorUtil.matchTraitCollection()
@@ -1833,7 +1961,7 @@ class CommentViewController: MediaViewController {
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                if PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(comment.author) == .orderedSame}) {
+                if PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) {
                     self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 } else {
                     self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)

@@ -116,7 +116,7 @@ public class ColorUtil {
         if header && SettingValues.reduceColor {
             return ColorUtil.theme.foregroundColor
         }
-        if let color = Subscriptions.color(for: sub) {
+        if let color = Subscriptions.color(for: sub), color != .white, color != .black {
             return color
         } else if let color = UserDefaults.standard.colorForKey(key: "color+" + sub) {
             return color

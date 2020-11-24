@@ -36,7 +36,8 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 } else {
                     title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight  ~ .required
+                
+                title.bottomAnchor /==/ bannerImage.topAnchor - ceight ~ .required
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 
@@ -61,9 +62,9 @@ final class AutoplayBannerLinkCellView: LinkCellView {
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight  ~ .required
+                    title.bottomAnchor /==/ innerView.bottomAnchor - ceight ~ .required
                 } else {
-                    title.bottomAnchor /==/ box.topAnchor - ceight  ~ .required
+                    title.bottomAnchor /==/ box.topAnchor - ceight / 2 ~ .required
                 }
                 
                 bannerImage.topAnchor /==/ innerView.topAnchor + bannerPadding  ~ .required

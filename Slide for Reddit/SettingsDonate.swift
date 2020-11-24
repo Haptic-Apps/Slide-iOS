@@ -108,7 +108,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
         lunch.font = UIFont.boldSystemFont(ofSize: 16)
         lunch.textAlignment = .center
 
-        bagel.addTapGestureRecognizer {
+        bagel.addTapGestureRecognizer { (_) in
             IAPHandlerTip.shared.purchaseMyProduct(index: 0)
             self.alertController = UIAlertController(title: "Processing your tip!\n\n\n", message: nil, preferredStyle: .alert)
             
@@ -121,7 +121,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             self.present(self.alertController!, animated: true, completion: nil)
         }
         
-        coffee.addTapGestureRecognizer {
+        coffee.addTapGestureRecognizer { (_) in
             IAPHandlerTip.shared.purchaseMyProduct(index: 1)
             self.alertController = UIAlertController(title: "Processing your tip!\n\n\n", message: nil, preferredStyle: .alert)
             
@@ -134,7 +134,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             self.present(self.alertController!, animated: true, completion: nil)
         }
 
-        lunch.addTapGestureRecognizer {
+        lunch.addTapGestureRecognizer { (_) in
             IAPHandlerTip.shared.purchaseMyProduct(index: 2)
             self.alertController = UIAlertController(title: "Processing your tip!\n\n\n", message: nil, preferredStyle: .alert)
             

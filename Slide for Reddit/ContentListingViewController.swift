@@ -72,6 +72,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != index.row
+                })
             }
         }
     }
@@ -204,6 +207,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(TextLinkCellView.classForCoder(), forCellWithReuseIdentifier: "text")
         self.tableView.register(CommentCellView.classForCoder(), forCellWithReuseIdentifier: "comment")
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
+        self.tableView.register(ModlogCellView.classForCoder(), forCellWithReuseIdentifier: "modlog")
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
         tableView.backgroundColor = ColorUtil.theme.backgroundColor
         
@@ -278,17 +282,18 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+                if !SettingValues.hideImageSelftext && (thing as! RSubmission).height > 0 {
+                    c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
+                } else {
+                    c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
+                }
             }
             
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
             
             (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "", np: false)
-            
-            c?.layer.shouldRasterize = true
-            c?.layer.rasterizationScale = UIScreen.main.scale
-            
+                        
             if self is ReadLaterViewController {
                 c?.readLater.isHidden = false
             }
@@ -297,20 +302,19 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else if thing is RComment {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
         } else if thing is RFriend {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.setFriend(friend: (thing as! RFriend), parent: self)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
             cell = c
-        } else {
+        } else if thing is RMessage {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
-            c.layer.shouldRasterize = true
-            c.layer.rasterizationScale = UIScreen.main.scale
+            cell = c
+        } else {
+            //Is mod log item
+            let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
+            c.setLogItem(logItem: (thing as! RModlogItem), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         }
         
@@ -344,7 +348,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is RFriend {
                 return CGSize(width: itemWidth, height: 70)
-            } else {
+            } else if thing is RMessage {
                 let message = thing as! RMessage
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message)
@@ -354,6 +358,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[message.id] = height + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
+            } else {
+                let logItem = thing as! RModlogItem
+                if estimatedHeights[logItem.id] == nil {
+                    let titleText = ModlogCellView.getTitleText(item: logItem)
+                    
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: logItem.targetTitle)
+                    
+                    estimatedHeights[logItem.id] = height + 20
+                }
+                return CGSize(width: itemWidth, height: estimatedHeights[logItem.id]!)
             }
         }
         return CGSize(width: itemWidth, height: 90)
@@ -442,8 +456,21 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if cell is LinkCellView && (cell as! LinkCellView).videoView != nil {
-            (cell as! LinkCellView).endVideos()
+        if let cell = cell as? AutoplayBannerLinkCellView {
+            if cell.videoView != nil {
+                cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != indexPath.row
+                })
+            }
+        }
+        if let cell = cell as? GalleryLinkCellView {
+            if cell.videoView != nil {
+                cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != indexPath.row
+                })
+            }
         }
     }
     

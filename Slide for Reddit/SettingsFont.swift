@@ -19,6 +19,7 @@ class SettingsFont: BubbleSettingTableViewController {
     var type = UISwitch()
     var slider: TGPDiscreteSlider!
     var sliderSub: TGPDiscreteSlider!
+    var key = FontSelectionTableViewController.Key.postFont
 
     var previewCell: UITableViewCell = InsetCell()
     var preview = UISwitch()
@@ -149,12 +150,12 @@ class SettingsFont: BubbleSettingTableViewController {
         submissionSize.textLabel?.text = "Font size"
 
         submissionWeight.textLabel?.text = "Font variant"
-        submissionWeight.addTapGestureRecognizer { [weak self] in
+        submissionWeight.addTapGestureRecognizer { [weak self] (_) in
             self?.weightCellWasTapped(submission: true)
         }
 
         submissionFont.textLabel?.text = "Font"
-        submissionFont.addTapGestureRecognizer { [weak self] in
+        submissionFont.addTapGestureRecognizer { [weak self] (_) in
             self?.submissionFontCellWasTapped()
         }
 
@@ -185,12 +186,12 @@ class SettingsFont: BubbleSettingTableViewController {
         slider.heightAnchor /==/ 60
         slider.bottomAnchor /==/ commentSize.contentView.bottomAnchor
         commentFont.textLabel?.text = "Font"
-        commentFont.addTapGestureRecognizer { [weak self] in
+        commentFont.addTapGestureRecognizer { [weak self] (_) in
             self?.commentFontCellWasTapped()
         }
 
         commentWeight.textLabel?.text = "Font variant"
-        commentWeight.addTapGestureRecognizer { [weak self] in
+        commentWeight.addTapGestureRecognizer { [weak self] (_) in
             self?.weightCellWasTapped(submission: false)
         }
 
@@ -213,8 +214,14 @@ class SettingsFont: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if (indexPath.section == 1 && indexPath.row == 2) || (indexPath.section == 0 && indexPath.row == 2) {
-            return 90
+        if #available(iOS 13, *) {
+            if (indexPath.section == 1 && indexPath.row == 1) || (indexPath.section == 0 && indexPath.row == 1) {
+                return 90
+            }
+        } else {
+            if (indexPath.section == 1 && indexPath.row == 2) || (indexPath.section == 0 && indexPath.row == 2) {
+                return 90
+            }
         }
         return 60
     }
@@ -266,22 +273,45 @@ class SettingsFont: BubbleSettingTableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
+        var is13 = false
+        if #available(iOS 13, *) {
+            is13 = true
+        }
+
         switch indexPath.section {
         case 0:
-            switch indexPath.row {
-            case 0: cell = self.submissionFont
-            case 1: cell = self.submissionWeight
-            case 2: cell = self.submissionSize
-            case 3: cell = self.submissionPreview
-            default: fatalError("Unknown row in section \(indexPath.section)")
+            if is13 {
+                switch indexPath.row {
+                case 0: cell = self.submissionFont
+                case 1: cell = self.submissionSize
+                case 2: cell = self.submissionPreview
+                default: fatalError("Unknown row in section \(indexPath.section)")
+                }
+            } else {
+                switch indexPath.row {
+                case 0: cell = self.submissionFont
+                case 1: cell = self.submissionWeight
+                case 2: cell = self.submissionSize
+                case 3: cell = self.submissionPreview
+                default: fatalError("Unknown row in section \(indexPath.section)")
+                }
             }
         case 1:
-            switch indexPath.row {
-            case 0: cell = self.commentFont
-            case 1: cell = self.commentWeight
-            case 2: cell = self.commentSize
-            case 3: cell = self.commentPreview
-            default: fatalError("Unknown row in section \(indexPath.section)")
+            if is13 {
+                switch indexPath.row {
+                case 0: cell = self.commentFont
+                case 1: cell = self.commentSize
+                case 2: cell = self.commentPreview
+                default: fatalError("Unknown row in section \(indexPath.section)")
+                }
+            } else {
+                switch indexPath.row {
+                case 0: cell = self.commentFont
+                case 1: cell = self.commentWeight
+                case 2: cell = self.commentSize
+                case 3: cell = self.commentPreview
+                default: fatalError("Unknown row in section \(indexPath.section)")
+                }
             }
         case 2:
             switch indexPath.row {
@@ -306,31 +336,132 @@ class SettingsFont: BubbleSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        var versionOffset = 0
+        if #available(iOS 13, *) {
+            versionOffset = 1
+        }
         switch section {
-        case 0: return 4    // section 0 has 2 rows
-        case 1: return 4    // section 1 has 2 rows
+        case 0: return 4 - versionOffset
+        case 1: return 4 - versionOffset
         case 2: return 3
         default: fatalError("Unknown number of sections")
         }
     }
 }
 
+extension SettingsFont: UIFontPickerViewControllerDelegate {
+    @available(iOS 13.0, *)
+    func fontPickerViewControllerDidPickFont(_ viewController: UIFontPickerViewController) {
+        guard let descriptor = viewController.selectedFontDescriptor else { return }
+        
+        // Reset the font weight if the font was changed
+        switch self.key {
+        case .postFont:
+            SettingValues.submissionFontWeight = "Regular"
+        case .commentFont:
+            SettingValues.commentFontWeight = "Regular"
+        }
+        
+        // Store the font name to the given key
+        var name = descriptor.fontAttributes[.name] as? String ?? ""
+        if name.isEmpty {
+            name = descriptor.fontAttributes[.family] as? String ?? ""
+        }
+        UserDefaults.standard.set(name, forKey: self.key.rawValue)
+
+        // Update the VC
+        UserDefaults.standard.synchronize()
+        FontGenerator.initialize()
+        CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+        CachedTitle.titles.removeAll()
+        refresh()
+    }
+}
+
 // MARK: - Actions
 extension SettingsFont {
     func submissionFontCellWasTapped() {
-        let vc = FontSelectionTableViewController()
-        vc.title = "Submission Font"
-        vc.key = FontSelectionTableViewController.Key.postFont
-        vc.delegate = self
-        VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        self.key = .postFont
+
+        if #available(iOS 13, *) {
+            let actionSheetController = DragDownAlertMenu(title: "Submission font", subtitle: "", icon: nil, themeColor: nil, full: true)
+
+            let fonts = FontMapping.sanFranciscoVariants
+
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
+            let submission = true
+            
+            // Prune out the weights that aren't available for the selected font
+            for font in fonts {
+                actionSheetController.addAction(title: font.displayedName, icon: font.storedName.contains(FontGenerator.fontOfSize(size: 16, submission: submission).fontName) ? selected : nil) {
+                    UserDefaults.standard.set(font.storedName, forKey: submission ? "postfont" : "commentfont")
+                    
+                    UserDefaults.standard.synchronize()
+                    FontGenerator.initialize()
+                    CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+                    CachedTitle.titles.removeAll()
+                    self.refresh()
+                }
+            }
+            
+            actionSheetController.addAction(title: "Custom font", icon: nil) {
+                let config = UIFontPickerViewController.Configuration()
+                config.includeFaces = true
+                let vc = UIFontPickerViewController(configuration: config)
+                vc.delegate = self
+                self.present(vc, animated: true)
+            }
+
+            actionSheetController.show(self)
+        } else {
+            let vc = FontSelectionTableViewController()
+            vc.title = "Submission Font"
+            vc.key = FontSelectionTableViewController.Key.postFont
+            vc.delegate = self
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }
     }
 
     func commentFontCellWasTapped() {
-        let vc = FontSelectionTableViewController()
-        vc.title = "Comment Font"
-        vc.key = FontSelectionTableViewController.Key.commentFont
-        vc.delegate = self
-        VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        self.key = .commentFont
+
+        if #available(iOS 13, *) {
+            let actionSheetController = DragDownAlertMenu(title: "Submission font", subtitle: "", icon: nil, themeColor: nil, full: true)
+
+            let fonts = FontMapping.sanFranciscoVariants
+
+            let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
+            let submission = false
+            
+            // Prune out the weights that aren't available for the selected font
+            for font in fonts {
+                actionSheetController.addAction(title: font.displayedName, icon: font.storedName.contains(FontGenerator.fontOfSize(size: 16, submission: submission).fontName) ? selected : nil) {
+                    UserDefaults.standard.set(font.storedName, forKey: submission ? "postfont" : "commentfont")
+                    
+                    UserDefaults.standard.synchronize()
+                    FontGenerator.initialize()
+                    CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
+                    CachedTitle.titles.removeAll()
+                    self.refresh()
+                }
+            }
+            
+            actionSheetController.addAction(title: "Custom font", icon: nil) {
+                let config = UIFontPickerViewController.Configuration()
+                config.includeFaces = true
+                let vc = UIFontPickerViewController(configuration: config)
+                vc.delegate = self
+                self.present(vc, animated: true)
+            }
+
+            actionSheetController.show(self)
+        } else {
+            let vc = FontSelectionTableViewController()
+            vc.title = "Comment Font"
+            vc.key = FontSelectionTableViewController.Key.commentFont
+            vc.delegate = self
+            VCPresenter.showVC(viewController: vc, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+        }
     }
 
     func commentSizeCellWasTapped() {
@@ -370,6 +501,22 @@ extension SettingsFont {
         CachedTitle.titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = true
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = false
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let nav = self.navigationController as? SwipeForwardNavigationController {
+            nav.fullWidthBackGestureRecognizer.isEnabled = false
+        }
+        if #available(iOS 13, *) {
+            self.isModalInPresentation = true
+        }
     }
 
     func weightCellWasTapped(submission: Bool) {
