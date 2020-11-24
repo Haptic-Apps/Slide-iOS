@@ -32,7 +32,8 @@ class Subscriptions {
     public static var subIcons: NSMutableDictionary = NSMutableDictionary()
     
     public static func icon(for sub: String) -> String? {
-        if let icon = subIcons.object(forKey: sub.lowercased()) as? String, icon != "" {
+        var subString = sub.lowercased()
+        if let icon = subIcons.object(forKey: subString) as? String, icon != "" {
             return icon
         }
         return nil
@@ -193,7 +194,7 @@ class Subscriptions {
                     case .success(let listing):
                         toReturn += listing.children.compactMap({ $0 as? Subreddit })
                         paginator = listing.paginator
-                        print("Size is \(toReturn.count) and hasmore is \(paginator.hasMore())")
+
                         if paginator.hasMore() {
                             getSubscriptionsUntilCompletion(session: session, p: paginator, tR: toReturn, mR: toReturnMultis, multis: false, completion: completion)
                         } else {
@@ -202,20 +203,25 @@ class Subscriptions {
                     }
                 })
             } else {
+                for sub in toReturn {
+                    subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
+                    if sub.keyColor.hexString().lowercased() != "#ffffff" && sub.keyColor.hexString() != "#000000" {
+                        subColors[sub.displayName.lowercased()] = sub.keyColor
+                    }
+                }
+
                 try session.getMineMultireddit({ (result) in
                     switch result {
                     case .failure:
                         print(result.error!)
-                        for sub in toReturn {
-                            subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
-                            subColors[sub.displayName.lowercased()] = sub.keyColor
-                        }
                         completion(toReturn, toReturnMultis)
                     case .success(let multireddits):
-                        toReturnMultis.append(contentsOf: multireddits)
-                        for sub in toReturn {
-                            subIcons[sub.displayName.lowercased()] = sub.iconImg == "" ? sub.communityIcon : sub.iconImg
-                            subColors[sub.displayName.lowercased()] = sub.keyColor
+                        for multi in multireddits {
+                            toReturnMultis.append(multi)
+                            subIcons["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.iconUrl
+                            if multi.keyColor != "#ffffff" && multi.keyColor != "#000000" {
+                                subColors["/m/" + multi.displayName.replacingOccurrences(of: " ", with: "_").lowercased()] = multi.keyColor
+                            }
                         }
                         completion(toReturn, toReturnMultis)
                     }

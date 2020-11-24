@@ -49,6 +49,12 @@ custom_rules:
       - docComment
     message: "Quotes and apostrophes in localized strings should be curly: “” ‘’"
     severity: warning
+  slow_anchorage_syntax:
+    name: "Slow Anchorage == Syntax"
+    regex: "(?:edge|horizontal|vertical|leading|trailing|top|bottom|left|right|height|width|centerX|centerY)Anchors?\\s*(==|<=|>=)"
+    message: "Wrap Anchorage operators with //. For example, use /==/ instead of ==."
+    severity: warning
+
 
 excluded:
 - Pods

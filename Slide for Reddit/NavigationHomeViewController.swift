@@ -235,7 +235,9 @@ class NavigationHomeViewController: UIViewController {
         navigationController?.setToolbarHidden(false, animated: false)
         self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
         
-        self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        if SettingValues.scrollSidebar {
+            self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -368,12 +370,14 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
             let sub = cell.subreddit
             self.accountHeader?.delegate?.navigation(self, didRequestSubreddit: sub)
         }
-        searchBar.text = ""
-        searchBar.endEditing(true)
-        filteredContent = []
-        isSearching = false
-        tableView.reloadData()
-        tableView.deselectRow(at: indexPath, animated: true)
+        if SettingValues.scrollSidebar {
+            searchBar.text = ""
+            searchBar.endEditing(true)
+            filteredContent = []
+            isSearching = false
+            tableView.reloadData()
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -662,7 +666,9 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                                 let communityIcon = sub["data"]["community_icon"].stringValue
                                 let keyColor = sub["data"]["key_color"].stringValue
                                 Subscriptions.subIcons[subName.lowercased()] = icon == "" ? communityIcon : icon
-                                Subscriptions.subColors[subName.lowercased()] = keyColor
+                                if keyColor.lowercased() != "#ffffff" && keyColor != "#000000" {
+                                    Subscriptions.subColors[subName.lowercased()] = keyColor
+                                }
                                 if self.suggestions.contains(subName) {
                                     continue
                                 }
@@ -970,9 +976,11 @@ class CurrentAccountHeaderView: UIView {
             $0.accessibilityIgnoresInvertColors = true
         }
         if !SettingValues.flatMode {
-            $0.elevate(elevation: 2.0)
             $0.layer.cornerRadius = 10
             $0.clipsToBounds = true
+        }
+        if !SettingValues.reduceElevation {
+            $0.elevate(elevation: 2.0)
         }
     }
     
@@ -1126,8 +1134,7 @@ extension CurrentAccountHeaderView {
             )
         }()
         
-        contentView.addTapGestureRecognizer {
-            [weak self] in
+        contentView.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             strongSelf.delegate?.accountHeaderView(strongSelf.parent!, didRequestProfilePageAtIndex: 0)
         }
@@ -1335,7 +1342,7 @@ class AccountShortcutsView: UIView {
             if !action.needsAccount() || AccountController.isLoggedIn {
                 cellStack.addArrangedSubview(UITableViewCell().then {
                     $0.configure(text: action.getTitle(), image: action.getImage())
-                    $0.addTapGestureRecognizer {
+                    $0.addTapGestureRecognizer { (_) in
                         if let delegate = self.delegate, let parent = self.parent {
                             delegate.navigation(parent, didRequestAction: action)
                         }
@@ -1350,7 +1357,7 @@ class AccountShortcutsView: UIView {
         
         cellStack.addArrangedSubview(UITableViewCell().then {
             $0.configure(text: "More shortcuts", image: UIImage(sfString: SFSymbol.ellipsis, overrideString: "moreh")!.menuIcon())
-            $0.addTapGestureRecognizer {
+            $0.addTapGestureRecognizer { (_) in
                 let optionMenu = DragDownAlertMenu(title: "Slide shortcuts", subtitle: "Displayed shortcuts can be changed in Settings", icon: nil)
                 for action in SettingValues.NavigationHeaderActions.cases {
                     if !action.needsAccount() || AccountController.isLoggedIn {

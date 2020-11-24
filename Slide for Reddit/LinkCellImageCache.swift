@@ -109,3 +109,12 @@ public class LinkCellImageCache {
     }
 
 }
+
+func optimizedImage(from image: UIImage) -> UIImage {
+    let imageSize: CGSize = image.size
+    UIGraphicsBeginImageContextWithOptions(imageSize, true, UIScreen.main.scale)
+    image.draw(in: CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+    let optimizedImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return optimizedImage ?? UIImage()
+}

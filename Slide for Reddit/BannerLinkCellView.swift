@@ -36,7 +36,7 @@ final class BannerLinkCellView: LinkCellView {
                 } else {
                     title.horizontalAnchors /==/ innerView.horizontalAnchors + ctwelve
                 }
-                title.bottomAnchor /<=/ bannerImage.topAnchor - ceight ~ .required
+                title.bottomAnchor /==/ bannerImage.topAnchor - ceight ~ .required
 
                 bannerImage.horizontalAnchors /==/ innerView.horizontalAnchors + bannerPadding
                 
@@ -58,7 +58,7 @@ final class BannerLinkCellView: LinkCellView {
                 }
                 
                 if !SettingValues.actionBarMode.isFull() {
-                    title.bottomAnchor /<=/ innerView.bottomAnchor - ceight ~ .required
+                    title.bottomAnchor /==/ innerView.bottomAnchor - ceight ~ .required
                 } else {
                     title.bottomAnchor /==/ box.topAnchor - ceight ~ .required
                 }

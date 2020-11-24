@@ -80,6 +80,8 @@ DerivedData/
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
 
+Slide for Reddit.xcodeproj/xcuserdata/*
+
 ### Xcode Patch ###
 **/xcshareddata/WorkspaceSettings.xcsettings
 

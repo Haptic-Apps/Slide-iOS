@@ -270,9 +270,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         selectedBackgroundView = selectedView
         
         self.icon.contentMode = .center
-        if subreddit.contains("m/") {
-            self.icon.image = SubredditCellView.defaultIconMulti
-        } else if subreddit.lowercased() == "all" {
+         if subreddit.lowercased() == "all" {
             self.icon.image = SubredditCellView.allIcon
         } else if subreddit.lowercased() == "frontpage" {
             self.icon.image = SubredditCellView.frontpageIcon
@@ -282,6 +280,8 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
             self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()
             self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+        } else if subreddit.contains("m/") {
+            self.icon.image = SubredditCellView.defaultIconMulti
         } else {
             self.icon.image = SubredditCellView.defaultIcon
         }

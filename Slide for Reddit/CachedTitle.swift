@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import SDWebImage
+import Proton
 import YYText
 
 struct Title {
@@ -17,6 +19,7 @@ struct Title {
 }
 
 class CachedTitle {
+    static var AWARD_KEY = "https://ccrama.me/awards"
     static var titles: [String: Title] = [:]
     static var removed: [String] = []
     static var approved: [String] = []
@@ -53,7 +56,6 @@ class CachedTitle {
     }
 
     static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool, gallery: Bool) -> Title {
-
         var colorF = ColorUtil.theme.fontColor
         if white {
             colorF = .white
@@ -68,87 +70,134 @@ class CachedTitle {
         }
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: brightF])
 
+        var newlineDone = false
         if !submission.flair.isEmpty {
-            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: brightF])
+            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
 
-            attributedTitle.append(spacer)
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            }
             attributedTitle.append(flairTitle)
         }
         
         if submission.nsfw {
-            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.red500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.red500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
-            attributedTitle.append(spacer)
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
             attributedTitle.append(nsfw)
         }
 
         if submission.spoiler {
-            let spoiler = NSMutableAttributedString.init(string: "\u{00A0}SPOILER\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.grey50Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.black])
+            let spoiler = NSMutableAttributedString.init(string: "\u{00A0}SPOILER\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.grey50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
-            attributedTitle.append(spacer)
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
             attributedTitle.append(spoiler)
         }
 
         if submission.oc {
-            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.blue50Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.black])
+            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.blue50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
-            attributedTitle.append(spacer)
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
             attributedTitle.append(oc)
         }
 
-        
-        /*if submission.cakeday {
-            attributedTitle.append(spacer)
-            let gild = NSMutableAttributedString(string: "🍰", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-            attributedTitle.append(gild)
-        }*/
-
         if submission.stickied {
-            let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.green500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
-            attributedTitle.append(spacer)
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
             attributedTitle.append(pinned)
         }
 
         if submission.locked {
-            let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.green500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
-            attributedTitle.append(spacer)
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
             attributedTitle.append(locked)
         }
         if submission.archived {
-            let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: brightF])
+            let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
 
             attributedTitle.append(archived)
         }
-
+        
+        if SettingValues.typeInTitle {
+            let info = NSMutableAttributedString.init(string: "\u{00A0}\(submission.type.rawValue)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.fontColor, NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
+            if !newlineDone {
+                newlineDone = true
+                attributedTitle.append(NSAttributedString(string: "\n"))
+            } else {
+                attributedTitle.append(spacer)
+            }
+            attributedTitle.append(info)
+        }
 
         let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author + (submission.cakeday ? " 🎂" : ""), small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
-        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.author)")!, "profile": submission.author])
-
+        var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if submission.distinguished == "admin" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#E57373"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#E57373")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "special" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#F44336"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#F44336")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "moderator" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#81C784"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#81C784")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if AccountController.currentName == submission.author {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#FFB74D")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = userColor
+            authorAttributes[.foregroundColor] = UIColor.white
         }
+        
+        if full {
+            authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
+        }
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
+        
         if SettingValues.domainInInfo && !full {
             endString.append(NSAttributedString.init(string: "  •  \(submission.domain)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]))
         }
 
         let tag = ColorUtil.getTagForUser(name: submission.author)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             endString.append(spacer)
             endString.append(tagString)
@@ -166,7 +215,8 @@ class CachedTitle {
         let extraLine = NSMutableAttributedString()
         finalTitle.append(attributedTitle)
         infoLine.append(endString)
-                
+        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
+
         if !full {
             if SettingValues.scoreInTitle {
                 var sColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.15))
@@ -200,11 +250,16 @@ class CachedTitle {
                         scoreInt -= 1
                     }
                 }
-                let upvoteImage = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.45)!
-
-                let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: "%0.1fk", (Double(scoreInt) / Double(1000))) : "\(scoreInt)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: sColor])
                 
-                extraLine.append(upvoteImage)
+                let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : "\(scoreInt)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: sColor])
+                let size = subScore.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+
+                let image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.getCopy(withSize: CGSize.square(size: size.height * 0.65), withColor: ColorUtil.theme.fontColor)
+                let upvoteImage = NSTextAttachment()
+                upvoteImage.image = image
+                upvoteImage.bounds = CGRect(x: 0, y: (image.size.height * -0.35) / 2, width: image.size.width, height: image.size.height)
+                
+                extraLine.append(NSAttributedString(attachment: upvoteImage))
                 extraLine.append(subScore)
             }
             
@@ -212,11 +267,17 @@ class CachedTitle {
                 if SettingValues.scoreInTitle {
                     extraLine.append(spacer)
                 }
-                let commentImage = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(sfString: SFSymbol.bubbleRightFill, overrideString: "comments")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.5)!
+                
+                let commentString = NSMutableAttributedString(string: " \(submission.commentCount)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: colorF])
 
-                let scoreString = NSMutableAttributedString(string: "\(submission.commentCount)", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: colorF])
-                extraLine.append(commentImage)
-                extraLine.append(scoreString)
+                let size = commentString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+                let commentImage = NSTextAttachment()
+                let image = UIImage(sfString: SFSymbol.bubbleRightFill, overrideString: "comments")!.getCopy(withSize: CGSize.square(size: size.height * 0.75), withColor: ColorUtil.theme.fontColor)
+                commentImage.image = image
+                commentImage.bounds = CGRect(x: 0, y: (image.size.height * -0.25) / 2, width: image.size.width, height: image.size.height)
+
+                extraLine.append(NSAttributedString(attachment: commentImage))
+                extraLine.append(commentString)
             }
         }
         
@@ -234,21 +295,24 @@ class CachedTitle {
             extraLine.append(NSMutableAttributedString.init(string: "Approved\(!submission.approvedBy.isEmpty() ? " by \(submission.approvedBy)":"")", attributes: attrs))
         }
         
-        if SettingValues.typeInTitle {
-            let info = NSMutableAttributedString.init(string: "\u{00A0}\u{00A0}\(submission.type.rawValue)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.fontColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
-            finalTitle.append(spacer)
-            finalTitle.append(info)
-        }
-
         if submission.isCrosspost && !full {
             if extraLine.string.length > 0 {
                 extraLine.append(NSAttributedString.init(string: "\n"))
             }
             
-            let crosspost = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "crosspost")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.75)!
-
-            let finalText = NSMutableAttributedString.init(string: " Crossposted from ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            let crosspost = NSMutableAttributedString()
             
+            let finalText = NSMutableAttributedString.init(string: " Crossposted from ", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            let size = finalText.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+            
+            let image = UIImage(named: "crosspost")!.getCopy(withColor: ColorUtil.theme.fontColor).getCopy(withSize: CGSize.square(size: size.height * 0.75), withColor: ColorUtil.theme.fontColor)
+
+            let crosspostImage = NSTextAttachment()
+            crosspostImage.image = image
+            crosspostImage.bounds = CGRect(x: 0, y: (image.size.height * -0.25) / 2, width: image.size.width, height: image.size.height)
+
+            crosspost.append(NSAttributedString(attachment: crosspostImage))
+
             let attrs = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
             let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)
@@ -304,9 +368,10 @@ class CachedTitle {
 
             if !text.isEmpty() {
                 extraLine.append(NSAttributedString.init(string: "\n")) //Extra space for body
-                extraLine.append(TextDisplayStackView.createAttributedChunk(baseHTML: text, fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+                extraLine.append(TextDisplayStackView.createAttributedChunk(baseHTML: text.replacingOccurrences(of: "<!-- SC_OFF -->", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: ""), fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil).trimWhiteSpace())
             }
         }
+        
         return Title(mainTitle: finalTitle, infoLine: infoLine, extraLine: extraLine, color: colorF)
     }
 
@@ -317,14 +382,14 @@ class CachedTitle {
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.foregroundColor: colorF])
 
         if submission.nsfw {
-            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.red500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor: GMColor.red500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             attributedTitle.append(spacer)
             attributedTitle.append(nsfw)
         }
 
         if submission.oc {
-            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.blue50Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.black])
+            let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor: GMColor.blue50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
             attributedTitle.append(spacer)
             attributedTitle.append(oc)
@@ -332,33 +397,37 @@ class CachedTitle {
 
         let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author + (submission.cakeday ? " 🎂" : ""), small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
-        authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(submission.author)")!, "profile": submission.author])
-
+        var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
         if submission.distinguished == "admin" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#E57373"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#E57373")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "special" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#F44336"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#F44336")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if submission.distinguished == "moderator" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#81C784"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#81C784")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if AccountController.currentName == submission.author {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = UIColor.init(hexString: "#FFB74D")
+            authorAttributes[.foregroundColor] = UIColor.white
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorAttributes[.badgeColor] = userColor
+            authorAttributes[.foregroundColor] = UIColor.white
         }
+
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
 
         let tag = ColorUtil.getTagForUser(name: submission.author)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             endString.append(spacer)
             endString.append(tagString)
         }
         
-                
         let extraLine = NSMutableAttributedString()
                         
         return Title(mainTitle: attributedTitle, infoLine: endString, extraLine: extraLine, color: UIColor.white)
@@ -390,8 +459,9 @@ class CachedTitle {
 
     static func getTitleAttributedString(_ link: RSubmission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true) -> NSAttributedString {
         let titleStrings = CachedTitle.getTitle(submission: link, full: full, force, white, gallery: gallery)
-        
-        let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: titleStrings.color] as [NSAttributedString.Key: Any]
+        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
+        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: titleStrings.color] as [NSAttributedString.Key: Any]
         
         let color = ColorUtil.getColorForSub(sub: link.subreddit)
 
@@ -402,108 +472,32 @@ class CachedTitle {
             }
             if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
                 if loadImages {
-                    let flairView = UIImageView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
-                    flairView.layer.cornerRadius = CGFloat(20 + SettingValues.postFontOffset) / 2
-                    flairView.layer.borderColor = color.cgColor
-                    flairView.backgroundColor = color
-                    flairView.layer.borderWidth = 0.5
-                    flairView.clipsToBounds = true
-                    flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
-                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize(width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset), alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-                    iconString.append(flairImage)
+                    let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                    iconString.append(NSAttributedString(attachment: attachment))
+                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
                 } else {
-                    let flairView = UIView(frame: CGRect(x: 0, y: 3, width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset))
-                    let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize(width: 20 + SettingValues.postFontOffset, height: 20 + SettingValues.postFontOffset), alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-                    iconString.append(flairImage)
+                    let attachment = NSTextAttachment()
+                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                    iconString.append(NSAttributedString(attachment: attachment))
+                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
                 }
             }
             let tapString = NSMutableAttributedString(string: "  r/\(link.subreddit)", attributes: attrs)
-            tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(link.subreddit)")!])
+            tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+
             iconString.append(tapString)
         } else {
             if color != ColorUtil.baseColor {
-                let adjustedSize = 12 + CGFloat(SettingValues.postFontOffset)
-
-                let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: adjustedSize), NSAttributedString.Key.foregroundColor: color])
+                let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
                 iconString = preString
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
-                tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(link.subreddit)")!])
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                 iconString.append(tapString)
             } else {
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
-                tapString.yy_setTextHighlight(NSRange(location: 0, length: tapString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/r/\(link.subreddit)")!])
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                 iconString = tapString
-            }
-        }
-
-        let awardString = NSMutableAttributedString()
-        let awardPStyle = NSMutableParagraphStyle()
-        awardPStyle.minimumLineHeight = 20
-        if link.gilded {
-            let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            if SettingValues.hideAwards {
-                var awardCount = link.platinum + link.silver + link.gold
-                for award in link.awards {
-                    awardCount += Int(award.split(":")[1]) ?? 0
-                }
-                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                awardString.append(gild)
-                if awardCount > 1 {
-                    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(awardCount) ", attributes: [NSAttributedString.Key.paragraphStyle: awardPStyle, NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                    awardString.append(gilded)
-                }
-            } else {
-                for award in link.awards {
-                    let url = award.split("*")[0]
-                    let count = Int(award.split(":")[1]) ?? 0
-                    if let urlAsURL = URL(string: url) {
-                        if loadImages {
-                            let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                            flairView.sd_setImage(with: urlAsURL, placeholderImage: nil, context: [.imageThumbnailPixelSize: CGSize(width: flairView.frame.size.width * UIScreen.main.scale, height: flairView.frame.size.height * UIScreen.main.scale)])
-                            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: CachedTitle.titleFont.pointSize * 0.75).size, alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-
-                            awardString.append(flairImage)
-                        } else {
-                            let flairView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CachedTitle.getImageSize(fontSize: CachedTitle.titleFont.pointSize * 0.75).size, alignTo: CachedTitle.titleFont, alignment: YYTextVerticalAlignment.center)
-
-                            awardString.append(flairImage)
-                        }
-                    }
-                    if count > 1 {
-                        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(link.gold) ", attributes: [NSAttributedString.Key.paragraphStyle: awardPStyle, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(gilded)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-                if link.platinum > 0 {
-                    let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                    awardString.append(gild)
-                    if link.platinum > 1 {
-                        let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(link.platinum) ", attributes: [NSAttributedString.Key.paragraphStyle: awardPStyle, NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(platinumed)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-                
-                if link.gold > 0 {
-                    let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                    awardString.append(gild)
-                    if link.gold > 1 {
-                        let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(link.gold) ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(gilded)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
-                if link.silver > 0 {
-                    let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: CachedTitle.titleFont.pointSize * 0.75)!
-                    awardString.append(gild)
-                    if link.silver > 1 {
-                        let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(link.silver) ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: titleStrings.color])
-                        awardString.append(silvered)
-                    }
-                    awardString.append(CachedTitle.spacer)
-                }
             }
         }
 
@@ -515,11 +509,13 @@ class CachedTitle {
             finalTitle.append(NSAttributedString.init(string: "\n"))
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
-                finalTitle.append(infoLine)
-            }
-            if awardString.length > 0 {
-                finalTitle.append(NSAttributedString.init(string: "\n"))
-                finalTitle.append(awardString)
+                if let baseline = attrs[.baselineOffset] {
+                    let mutableLine = NSMutableAttributedString(attributedString: infoLine)
+                    mutableLine.addAttributes([.baselineOffset: baseline], range: NSRange(location: 0, length: infoLine.length))
+                    finalTitle.append(mutableLine)
+                } else {
+                    finalTitle.append(infoLine)
+                }
             }
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
@@ -528,22 +524,123 @@ class CachedTitle {
         } else {
             finalTitle.append(iconString)
             if let infoLine = titleStrings.infoLine {
-                finalTitle.append(infoLine)
+                if let baseline = attrs[.baselineOffset] {
+                    let mutableLine = NSMutableAttributedString(attributedString: infoLine)
+                    mutableLine.addAttributes([.baselineOffset: baseline], range: NSRange(location: 0, length: infoLine.length))
+                    finalTitle.append(mutableLine)
+                } else {
+                    finalTitle.append(infoLine)
+                }
             }
             finalTitle.append(NSAttributedString.init(string: "\n"))
             if let mainTitle = titleStrings.mainTitle {
                 finalTitle.append(mainTitle)
-            }
-            if awardString.length > 0 {
-                finalTitle.append(NSAttributedString.init(string: "\n"))
-                finalTitle.append(awardString)
             }
             if let extraLine = titleStrings.extraLine, extraLine.length > 0 {
                 finalTitle.append(NSAttributedString.init(string: "\n"))
                 finalTitle.append(extraLine)
             }
         }
+        if !SettingValues.hideAwards {
+            let to = 3
+            if link.gilded {
+                var awardCount = 0
+                let awardDict = link.awardsJSON.dictionaryValue()
+
+                let values = awardDict.values
+                let sortedValues = values.sorted { (a, b) -> Bool in
+                    let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
+                    let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
+
+                    return amountA > amountB
+                }
+                for raw in sortedValues {
+                    if let award = raw as? [String] {
+                        awardCount += Int(award[2]) ?? 0
+                    }
+                }
+                
+                var totalAwards = 0
+                var attachments = [NSTextAttachment]()
+                
+                for raw in sortedValues {
+                    if let award = raw as? [String] {
+                        if totalAwards == to {
+                            break
+                        }
+                        
+                        totalAwards += 1
+
+                        let url = award[1]
+                        let testString = NSMutableAttributedString(string: "test", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                        if let urlAsURL = URL(string: url) {
+                            if loadImages {
+                                let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+
+                                let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
+                                attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                                attachments.append(attachment)
+                            } else {
+                                let attachment = NSTextAttachment()
+                                attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                                attachments.append(attachment)
+                            }
+                        }
+                    }
+                }
+                
+                let awardLine = NSMutableAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.foregroundColor])
+
+                for award in attachments {
+                    awardLine.append(NSAttributedString(attachment: award))
+                    awardLine.appendString(" ")
+                }
+                
+                if totalAwards == to {
+                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, .baselineOffset: -2]))
+                }
+                
+                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 2, length: awardLine.length - 2)) //We will catch this URL later on, start it after the newline
+
+                finalTitle.append(awardLine)
+                finalTitle.append(NSAttributedString(string: "\u{00A0}")) //Stop tap from going to the end of the view width
+            }
+        }
         return finalTitle
     }
+}
 
+extension NSAttributedString {
+
+    /** Will Trim space and new line from start and end of the text */
+    public func trimWhiteSpace() -> NSAttributedString {
+        let invertedSet = CharacterSet.whitespacesAndNewlines.inverted
+        let startRange = string.utf16.description.rangeOfCharacter(from: invertedSet)
+        let endRange = string.utf16.description.rangeOfCharacter(from: invertedSet, options: .backwards)
+        guard let startLocation = startRange?.upperBound, let endLocation = endRange?.lowerBound else {
+            return NSAttributedString(string: string)
+        }
+
+        let location = string.utf16.distance(from: string.startIndex, to: startLocation) - 1
+        let length = string.utf16.distance(from: startLocation, to: endLocation) + 2
+        let range = NSRange(location: location, length: length)
+        return attributedSubstring(from: range)
+    }
+}
+
+extension UIImage {
+    func centerImage(with finalSize: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(finalSize, false, self.scale)
+        let _ = UIGraphicsGetCurrentContext()
+        
+        let selfSize = self.size
+        let left = (finalSize.width - selfSize.width) / 2
+        let top = (finalSize.height - selfSize.height) / 2
+        
+        let origin = CGPoint(x: left, y: top)
+        self.draw(at: origin)
+        let imageWithInsets = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return imageWithInsets
+    }
 }
