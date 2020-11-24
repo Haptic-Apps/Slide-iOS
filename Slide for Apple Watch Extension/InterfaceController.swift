@@ -34,6 +34,8 @@ class InterfaceController: Votable {
     var isNew = false
     
     override func willActivate() {
+        //setTitle("WILL ACTIVATE")
+
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
@@ -69,6 +71,8 @@ class InterfaceController: Votable {
                 self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
             }
         }
+        //self.setTitle("getting submissions")
+
         WCSession.default.sendMessage(["links": subreddit, "reset": reset, "new": isNew], replyHandler: { (message) in
             self.loadingImage.setHidden(true)
             if let newLinks = message["links"] as? [NSDictionary] {
@@ -81,6 +85,7 @@ class InterfaceController: Votable {
     }
     
     override func didDeactivate() {
+        //setTitle("DEACTIVATE")
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
     }
@@ -115,20 +120,32 @@ class InterfaceController: Votable {
         }
     }
     
+    var tries = 0
+    var letThrough = false
     func loadData(_ session: WCSession) {
-        print("Heartbeat")
-        if session.isReachable && session.activationState == .activated {
+        //setTitle("HB \(tries)")
+        tries += 1
+        if session.isReachable {
+            if !letThrough {
+                letThrough = true
+                return
+            }
             checkTimer?.invalidate()
             checkTimer = nil
         } else if checkTimer == nil {
-            checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (_) in
-                self.loadData(session)
-            })
+            DispatchQueue.main.async {
+                self.checkTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { (_) in
+                    self.loadData(session)
+                })
+            }
             return
         } else {
             return
         }
+        //setTitle("LOADING")
+        letThrough = true
         session.sendMessage(["sublist": true], replyHandler: { (message) in
+            //self.setTitle("got subs")
             self.subs = message["subs"] as? [String: String] ?? [String: String]()
             self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
             self.isPro = message["pro"] as? Bool ?? false
@@ -136,6 +153,7 @@ class InterfaceController: Votable {
                 self.getSubmissions(self.subsOrdered[0], reset: true)
             }
         }, errorHandler: { (error) in
+            self.setTitle("Error connecting...")
             print(error)
         })
     }
@@ -153,11 +171,12 @@ extension InterfaceController: WCSessionDelegate {
     }
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        //setTitle("DID ACTIVATE")
         if subs.isEmpty {
             loadingImage.setHidden(false)
             loadingImage.setImageNamed("Activity")
             loadingImage.startAnimatingWithImages(in: NSRange(location: 0, length: 15), duration: 1.0, repeatCount: 0)
-            loadData(session)
+            loadData(WCSession.default)
         }
     }
 }

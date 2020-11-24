@@ -178,8 +178,8 @@ class SubredditReorderViewController: UITableViewController {
                 }
             }
             for m in newMultis {
-                if !self.subs.contains("/m/" + m.displayName) {
-                    self.subs.append("/m/" + m.displayName)
+                if !self.subs.contains("/m/" + m.displayName.replacingOccurrences(of: " ", with: "_")) {
+                    self.subs.append("/m/" + m.displayName.replacingOccurrences(of: " ", with: "_"))
                 }
             }
             self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })

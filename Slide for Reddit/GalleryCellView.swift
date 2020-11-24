@@ -37,10 +37,10 @@ class GalleryCellView: UITableViewCell {
         self.contentView.addSubview(commentsImage)
         self.contentView.addSubview(typeImage)
 
-        commentsImage.addTapGestureRecognizer {
+        commentsImage.addTapGestureRecognizer { (_) in
             VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: self.link!.permalink)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
         }
-        bannerImage.addTapGestureRecognizer {
+        bannerImage.addTapGestureRecognizer { (_) in
             parent.setLink(link: self.link!, shownURL: nil, lq: false, saveHistory: true, heroView: self.bannerImage, finalSize: self.bannerImage.image?.size, heroVC: parent, upvoteCallbackIn: nil)
         }
 

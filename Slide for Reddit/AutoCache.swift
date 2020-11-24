@@ -301,7 +301,7 @@ public class AutoCache: NSObject {
         button.heightAnchor /==/ 25
         button.widthAnchor /==/ 25
         button.centerYAnchor /==/ popup.centerYAnchor
-        button.addTapGestureRecognizer {
+        button.addTapGestureRecognizer { (_) in
             AutoCache.cancelAutocache(completed: -1)
         }
         button.isUserInteractionEnabled = true

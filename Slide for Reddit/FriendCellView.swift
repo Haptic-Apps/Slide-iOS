@@ -45,7 +45,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.setupConstraints()
         
-        self.contentView.addTapGestureRecognizer {
+        self.contentView.addTapGestureRecognizer { (_) in
             let prof = ProfileViewController.init(name: self.friend?.name ?? "")
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
         }

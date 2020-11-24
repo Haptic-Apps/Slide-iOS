@@ -1288,7 +1288,7 @@ class CommentViewController: MediaViewController {
         label.accessibilityHint = "Opens the sub red it r \(sub)"
         label.accessibilityLabel = "Sub red it: r \(sub)"
 
-        label.addTapGestureRecognizer(action: {
+        label.addTapGestureRecognizer(action: { (_) in
             VCPresenter.openRedditLink("/r/\(sub)", self.navigationController, self)
         })
     }
@@ -1806,7 +1806,7 @@ class CommentViewController: MediaViewController {
                 first = false
             }
             if let comment = thing.0 as? Comment {
-                if PostFilter.profiles.contains(where: {$0.caseInsensitiveCompare(comment.author) == .orderedSame}) {
+                if PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) {
                     self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 } else {
                     self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)

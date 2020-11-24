@@ -422,5 +422,6 @@ extension ProfileViewController {
 extension ProfileViewController: UIColorPickerViewControllerDelegate {
     func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
         newColor = viewController.selectedColor
+        ColorUtil.setColorForUser(name: name, color: newColor)
     }
 }

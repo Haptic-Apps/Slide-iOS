@@ -446,11 +446,12 @@ extension UIView {
     private struct AssociatedObjectKeys {
         static var tapGestureRecognizer = "tapGR"
         static var longTapGestureRecognizer = "longTapGR"
+        static var longTapGestureRecognizerInstance = "longTapGRInstance"
         static var longTapGestureTimer = "longTapTimer"
         static var longTapGestureCancelled = "longTapCancelled"
     }
 
-    private typealias Action = (() -> Void)?
+    private typealias Action = ((_ sender: UIGestureRecognizer) -> Void)?
 
     // Set our computed property type to a closure
     private var tapGestureRecognizerAction: Action? {
@@ -475,6 +476,19 @@ extension UIView {
         }
         get {
             let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
+    }
+    
+    private var longTapGestureRecognizer: UIGestureRecognizer? {
+        set {
+            if let newValue = newValue {
+                // Computed properties get stored as associated objects
+                objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
+            }
+        }
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance) as? UIGestureRecognizer
             return tapGestureRecognizerActionInstance
         }
     }
@@ -507,14 +521,29 @@ extension UIView {
 
     // This is the meat of the sauce, here we create the tap gesture recognizer and
     // store the closure the user passed to us in the associated object we declared above
-    public func addTapGestureRecognizer(action: (() -> Void)?) {
+    public func addTapGestureRecognizer(action: ((_ sender: UIGestureRecognizer) -> Void)?) {
+        self.isUserInteractionEnabled = true
+        self.tapGestureRecognizerAction = action
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
+        self.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    public func addTapGestureRecognizer(delegate: UIGestureRecognizerDelegate, action: ((_ sender: UIGestureRecognizer) -> Void)?) {
         self.isUserInteractionEnabled = true
         self.tapGestureRecognizerAction = action
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
         self.addGestureRecognizer(tapGestureRecognizer)
     }
 
-    public func addLongTapGestureRecognizer(action: (() -> Void)?) {
+    public func addLongTapGestureRecognizer(action: ((_ sender: UIGestureRecognizer) -> Void)?) {
+        self.isUserInteractionEnabled = true
+        self.longTapGestureRecognizerAction = action
+        let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
+        tapGestureRecognizer.minimumPressDuration = 0.36
+        self.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    public func addLongTapGestureRecognizer(delegate: UIGestureRecognizerDelegate, action: ((_ sender: UIGestureRecognizer) -> Void)?) {
         self.isUserInteractionEnabled = true
         self.longTapGestureRecognizerAction = action
         let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
@@ -526,7 +555,7 @@ extension UIView {
     // which triggers the closure we stored
     @objc private func handleTapGesture(sender: UITapGestureRecognizer) {
         if let action = self.tapGestureRecognizerAction {
-            action?()
+            action?(sender)
         }
     }
     
@@ -541,7 +570,10 @@ extension UIView {
             } else if SettingValues.hapticFeedback {
                 AudioServicesPlaySystemSound(1519)
             }
-            action?()
+
+            if let long = self.longTapGestureRecognizer {
+                action?(long)
+            }
         }
     }
 
@@ -563,6 +595,7 @@ extension UIView {
         }
     }
 }
+
 extension Int {
     private static var numberFormatter: NumberFormatter = {
         let numberFormatter = NumberFormatter()

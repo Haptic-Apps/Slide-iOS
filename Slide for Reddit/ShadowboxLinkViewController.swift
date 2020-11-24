@@ -352,16 +352,16 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func populateContent() {
-        self.baseBody.addTapGestureRecognizer {
+        self.baseBody.addTapGestureRecognizer { (_) in
             self.comments(self.view)
         }
-        self.topBody.addTapGestureRecognizer {
+        self.topBody.addTapGestureRecognizer { (_) in
             self.content(self.view)
         }
-        self.upvote.addTapGestureRecognizer {
+        self.upvote.addTapGestureRecognizer { (_) in
             self.upvote(self.upvote)
         }
-        self.downvote.addTapGestureRecognizer {
+        self.downvote.addTapGestureRecognizer { (_) in
             self.downvote(self.downvote)
         }
         if type == .SELF {
