@@ -138,7 +138,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var cancelled = false
     
     public static func getTitleText(message: RMessage) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle : message.subject.escapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor]))
+        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle.unescapeHTML : message.subject.unescapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor]))
         
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
         

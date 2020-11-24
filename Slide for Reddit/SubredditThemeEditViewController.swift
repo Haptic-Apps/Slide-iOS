@@ -110,7 +110,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
             $0.contentMode = .center
         }
         
-        resetCard.addTapGestureRecognizer {
+        resetCard.addTapGestureRecognizer { (_) in
             self.setupTitleView(self.subreddit)
             self.delegate.didChangeColors(false, color: ColorUtil.getColorForSub(sub: self.subreddit))
             

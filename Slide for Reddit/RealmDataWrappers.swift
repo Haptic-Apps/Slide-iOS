@@ -192,21 +192,32 @@ class RealmDataWrapper {
             rSubmission.reports.append("\(array[0]): \(array[1])")
         }
         
-        rSubmission.awards.removeAll()
+        let jsonDict = NSMutableDictionary()
         for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
             if let award = item as? JSONDictionary {
                 if award["icon_url"] != nil && award["count"] != nil {
                     let name = award["name"] as? String ?? ""
-                    if name != "Silver" && name != "Gold" && name != "Platinum" {
-                        if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
-                            rSubmission.awards.append("\(url.unescapeHTML)*\(award["count"] as? Int ?? 0)")
-                        } else {
-                            rSubmission.awards.append("\(award["icon_url"] as? String ?? "")*\(award["count"] as? Int ?? 0)")
-                        }
+                    var awardArray = [name]
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
                     }
+                    awardArray.append("\(award["count"] as? Int ?? 0)")
+                    awardArray.append(award["description"] as? String ?? "")
+                    awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
+                    jsonDict[name] = awardArray
                 }
             }
         }
+        rSubmission.awardsJSON = jsonDict.jsonString()
 
         rSubmission.gallery.removeAll()
         for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
@@ -230,7 +241,7 @@ class RealmDataWrapper {
         
         rSubmission.pollTotal = (submission.baseJson["poll_data"] as? JSONDictionary)?["total_vote_count"] as? Int ?? 0
 
-        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + rSubmission.awards.count > 0
+        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + jsonDict.allKeys.count > 0
 
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
@@ -334,22 +345,33 @@ class RealmDataWrapper {
             
         }
         
-        rSubmission.awards.removeAll()
+        let jsonDict = NSMutableDictionary()
         for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
             if let award = item as? JSONDictionary {
                 if award["icon_url"] != nil && award["count"] != nil {
                     let name = award["name"] as? String ?? ""
-                    if name != "Silver" && name != "Gold" && name != "Platinum" {
-                        if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
-                            rSubmission.awards.append("\(url.unescapeHTML)*\(award["count"] as? Int ?? 0)")
-                        } else {
-                            rSubmission.awards.append("\(award["icon_url"] as? String ?? "")*\(award["count"] as? Int ?? 0)")
-                        }
+                    var awardArray = [name]
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
                     }
+                    awardArray.append("\(award["count"] as? Int ?? 0)")
+                    awardArray.append(award["description"] as? String ?? "")
+                    awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
+                    jsonDict[name] = awardArray
                 }
             }
         }
-        
+        rSubmission.awardsJSON = jsonDict.jsonString()
+
         rSubmission.gallery.removeAll()
         for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
             if let image = (submission.baseJson["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
@@ -379,7 +401,7 @@ class RealmDataWrapper {
         rSubmission.silver = ((submission.baseJson["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
         rSubmission.gold = ((submission.baseJson["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
         rSubmission.platinum = ((submission.baseJson["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
-        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + rSubmission.awards.count > 0
+        rSubmission.gilded = rSubmission.silver + rSubmission.gold + rSubmission.platinum + jsonDict.allKeys.count > 0
         rSubmission.htmlBody = bodyHtml
         rSubmission.subreddit = submission.subreddit
         rSubmission.archived = submission.archived
@@ -658,7 +680,7 @@ class RSubmission: Object {
     }
     
     var reports = List<String>()
-    var awards = List<String>()
+    @objc dynamic var awardsJSON = ""
     var gallery = List<String>()
     var pollOptions = List<String>()
     @objc dynamic var pollTotal = -1
@@ -725,6 +747,28 @@ class RMessage: Object {
     @objc dynamic var context = ""
     @objc dynamic var wasComment = false
     @objc dynamic var subreddit = ""
+    @objc dynamic var subject = ""
+    
+    func getId() -> String {
+        return id
+    }
+}
+
+class RModlogItem: Object {
+    override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    @objc dynamic var id = ""
+    @objc dynamic var mod = ""
+    @objc dynamic var targetBody = ""
+    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
+    @objc dynamic var subreddit = ""
+    @objc dynamic var targetTitle = ""
+    @objc dynamic var permalink = ""
+    @objc dynamic var details = ""
+    @objc dynamic var action = ""
+    @objc dynamic var targetAuthor = ""
     @objc dynamic var subject = ""
     
     func getId() -> String {
@@ -858,18 +902,43 @@ extension String {
         }
     }
 }
-
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-	return input.rawValue
+    return input.rawValue
+}
+
+//From https://stackoverflow.com/a/43665681/3697225
+extension String {
+    func dictionaryValue() -> [String: AnyObject] {
+        if let data = self.data(using: String.Encoding.utf8) {
+            do {
+                let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: AnyObject]
+                return json ?? [:]
+            } catch {
+                print("Error converting to JSON")
+            }
+        }
+        return NSDictionary() as! [String : AnyObject]
+    }
+}
+
+extension NSDictionary {
+    func jsonString() -> String {
+        do {
+            let jsonData: Data = try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
+                return String.init(data: jsonData, encoding: .utf8)!
+        } catch {
+            return "{}"
+        }
+    }
 }

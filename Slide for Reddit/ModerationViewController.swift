@@ -15,6 +15,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
     var content: [String] = ["Mod Mail", "Mod Mail Unread"]
     var isReload = false
     var session: Session?
+    var subreddit: String
 
     var vCs: [UIViewController] = []
 
@@ -31,16 +32,17 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         }
     }
 
-    public init() {
+    public init(_ subreddit: String) {
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
-
+        self.subreddit = subreddit
         vCs.append(ContentListingViewController.init(dataSource: ModMailContributionLoader(false)))
         vCs.append(ContentListingViewController.init(dataSource: ModMailContributionLoader(true)))
 
-        for place in AccountController.modSubs {
-            content.append(place)
-            vCs.append(ContentListingViewController.init(dataSource: ModQueueContributionLoader(subreddit: place)))
-        }
+        content.append("Mod Queue")
+        vCs.append(ContentListingViewController.init(dataSource: ModQueueContributionLoader(subreddit: subreddit)))
+
+        content.append("Mod Log")
+        vCs.append(ContentListingViewController.init(dataSource: ModlogContributionLoader(subreddit: subreddit)))
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
 
@@ -59,7 +61,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.title = "Moderation"
+        self.title = "r/\(subreddit)"
         navigationController?.setNavigationBarHidden(false, animated: true)
         setupBaseBarColors()
     }

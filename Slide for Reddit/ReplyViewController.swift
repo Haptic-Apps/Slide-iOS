@@ -812,7 +812,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
             text2.isEditable = false
 
-            text2.addTapGestureRecognizer {
+            text2.addTapGestureRecognizer { (_) in
                 let search = SubredditFindReturnViewController(includeSubscriptions: true, includeCollections: false, includeTrending: false, subscribe: false, callback: { (subreddit) in
                     text2.text = subreddit
                     self.subreddit = subreddit
@@ -839,7 +839,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text3.textContainer.maximumNumberOfLines = 0
                 
                 if type == .SUBMIT_IMAGE {
-                    text3.addTapGestureRecognizer {
+                    text3.addTapGestureRecognizer { (_) in
                         self.toolbar?.uploadImage(UIButton())
                     }
                     text3.placeholder = "Tap to choose an image"

@@ -517,7 +517,7 @@ public class GesturePreviewCell: InsetCell {
         if enabled {
             view.backgroundColor = comment.getColor()
             view.image = UIImage(named: comment.getPhoto())?.getCopy(withSize: CGSize.square(size: 40), withColor: UIColor.white)
-            view.addTapGestureRecognizer {
+            view.addTapGestureRecognizer { (_) in
                 action()
             }
         } else {
@@ -537,7 +537,7 @@ public class GesturePreviewCell: InsetCell {
         if enabled {
             view.backgroundColor = submission.getColor()
             view.image = UIImage(named: submission.getPhoto())?.getCopy(withSize: CGSize.square(size: 40), withColor: UIColor.white)
-            view.addTapGestureRecognizer {
+            view.addTapGestureRecognizer { (_) in
                 action()
             }
         } else {

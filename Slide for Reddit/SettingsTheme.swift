@@ -125,7 +125,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 presenter.sourceRect = selectedTableView.bounds
             }
 
-            present(alertController, animated: true, completion: nil)
+            present(alertController, animated: false, completion: nil)
         }
     }
     
@@ -210,7 +210,6 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             }
 
             present(alertController, animated: true, completion: nil)
-
         }
     }
 

@@ -65,7 +65,7 @@ class ModalMediaViewController: UIViewController {
             titleView.numberOfLines = 0
             
             if commentCallback != nil {
-                titleView.addTapGestureRecognizer { [weak self] in
+                titleView.addTapGestureRecognizer { [weak self] (_) in
                     guard let strongSelf = self else { return }
                     strongSelf.dismiss(animated: false) {
                         strongSelf.commentCallback?()
