@@ -1502,7 +1502,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+        if (SettingValues.dataSavingEnabled && (SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.noImages) || !SettingValues.dataSavingEnabled {
             for submission in values {
                 var thumb = submission.thumbnail
                 var big = submission.banner

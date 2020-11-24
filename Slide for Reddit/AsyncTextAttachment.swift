@@ -84,14 +84,14 @@ public class AsyncTextAttachment: NSTextAttachment {
     }
     
     private func getCacheImage(with: URL) -> UIImage? {
-        return SDImageCache.shared.imageFromCache(forKey: with.absoluteString)
+        return SDImageCache.shared.imageFromCache(forKey: with.absoluteString + "-round")
     }
     
     private func downloadImage(with: URL) {
         SDWebImageDownloader.shared.downloadImage(with: with, options: [.decodeFirstFrameOnly], progress: nil) { (image, data, _, _) in
             let roundedImage = image?.circleCorners(finalSize: self.bounds.size)
             DispatchQueue.global(qos: .background).async {
-                SDImageCache.shared.storeImage(toMemory: roundedImage, forKey: with.absoluteString)
+                SDImageCache.shared.storeImage(toMemory: roundedImage, forKey: with.absoluteString + "-round")
             }
 
             self.display(roundedImage, with: data, url: with)

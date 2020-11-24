@@ -568,10 +568,10 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         } else {
             let thing: String
             if isSearching {
-                print(users)
-                print(suggestions)
-                print(indexPath.row)
                 if (indexPath.row > suggestions.count - 1 || suggestions.count == 0) && users.count > 0 {
+                    if users.count > indexPath.row - suggestions.count {
+                        
+                    }
                     thing = users[indexPath.row - suggestions.count]
                     let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                     c.setProfile(profile: thing, nav: self)
