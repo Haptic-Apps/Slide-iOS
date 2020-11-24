@@ -125,7 +125,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 presenter.sourceRect = selectedTableView.bounds
             }
 
-            UIApplication.shared.keyWindow?.rootViewController?.present(alertController, animated: true, completion: nil)
+            if let presenter = self.navigationController {
+                presenter.present(alertController, animated: true, completion: nil)
+            } else {
+                present(alertController, animated: true, completion: nil)
+            }
         }
     }
     
