@@ -594,41 +594,41 @@ class SettingsLayout: BubbleSettingTableViewController {
             save.isEnabled = false
             readLater.isEnabled = false
             
-            hideCell.alpha = 0.5
-            saveCell.alpha = 0.5
-            readLaterCell.alpha = 0.5
+            hideCell.contentView.alpha = 0.5
+            saveCell.contentView.alpha = 0.5
+            readLaterCell.contentView.alpha = 0.5
         } else {
             hide.isEnabled = true
             save.isEnabled = true
             readLater.isEnabled = true
             
-            hideCell.alpha = 1
-            saveCell.alpha = 1
-            readLaterCell.alpha = 1
+            hideCell.contentView.alpha = 1
+            saveCell.contentView.alpha = 1
+            readLaterCell.contentView.alpha = 1
 
         }
         if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
             
-            thumbLinkCell.alpha = 0.5
+            thumbLinkCell.contentView.alpha = 0.5
         } else {
             thumbLink.isEnabled = true
             
-            thumbLinkCell.alpha = 1
+            thumbLinkCell.contentView.alpha = 1
         }
         
-        if SettingValues.showFlairs {
+        if !SettingValues.showFlairs {
             coloredFlairs.isEnabled = false
             imageFlairs.isEnabled = false
             
-            coloredFlairsCell.alpha = 0.5
-            imageFlairsCell.alpha = 0.5
+            coloredFlairsCell.contentView.alpha = 0.5
+            imageFlairsCell.contentView.alpha = 0.5
         } else {
             coloredFlairs.isEnabled = true
             imageFlairs.isEnabled = true
             
-            coloredFlairsCell.alpha = 1
-            imageFlairsCell.alpha = 1
+            coloredFlairsCell.contentView.alpha = 1
+            imageFlairsCell.contentView.alpha = 1
         }
     }
     

@@ -220,9 +220,9 @@ class NavigationHomeViewController: UIViewController {
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
         let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
-        if !landscape {
+        //if !landscape {
             self.view.addSubview(inHeadView)
-        }
+        //}
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor

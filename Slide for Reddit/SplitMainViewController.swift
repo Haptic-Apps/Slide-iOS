@@ -897,7 +897,17 @@ extension SplitMainViewController: NavigationHomeDelegate {
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
-        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: settings)
+        var iOS13 = false
+        if #available(iOS 13.0, *) {
+            iOS13 = true
+        }
+        if UIDevice.current.userInterfaceIdiom == .phone && !iOS13 {
+            doOpen(.POPOVER_AFTER_NAVIGATION, homeViewController) {
+                self.navigationController?.pushViewController(settings, animated: false)
+            }
+        } else {
+            doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: settings)
+        }
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, goToMultireddit multireddit: String) {
