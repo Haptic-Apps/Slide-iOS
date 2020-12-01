@@ -82,7 +82,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         } else {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 150)
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 200)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColor()
@@ -118,6 +118,9 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
+            }
 
             alertController.modalPresentationStyle = .popover
             if let presenter = alertController.popoverPresentationController {
@@ -125,11 +128,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 presenter.sourceRect = selectedTableView.bounds
             }
 
-            if let presenter = self.navigationController {
-                presenter.present(alertController, animated: true, completion: nil)
-            } else {
-                present(alertController, animated: true, completion: nil)
-            }
+            present(alertController, animated: true, completion: nil)
         }
     }
     
@@ -173,7 +172,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 200)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColorAccent()
@@ -216,6 +215,9 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
             alertController.modalPresentationStyle = .popover
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
+            }
             if let presenter = alertController.popoverPresentationController {
                 presenter.sourceView = selectedTableView
                 presenter.sourceRect = selectedTableView.bounds
