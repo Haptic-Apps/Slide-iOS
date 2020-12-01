@@ -577,7 +577,11 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
                     c.setProfile(profile: thing, nav: self)
                     cell = c
                 } else {
-                    thing = suggestions[indexPath.row]
+                    if suggestions.count <= indexPath.row {
+                        thing = ""
+                    } else {
+                        thing = suggestions[indexPath.row]
+                    }
                     let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                     c.setSubreddit(subreddit: thing, nav: self, exists: true)
                     cell = c

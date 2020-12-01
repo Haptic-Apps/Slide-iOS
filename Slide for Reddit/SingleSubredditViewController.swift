@@ -1515,7 +1515,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && type == .SELF {
                     thumb = false
-                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 && SettingValues.postImageMode != .THUMBNAIL {
                     big = true
                 }
 
@@ -1657,7 +1657,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if thumb && type == .SELF {
             thumb = false
-        } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
             big = true
         }
         
@@ -1776,7 +1776,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
         
-        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 && SettingValues.postImageMode != .THUMBNAIL {
              submissionHeight = 200
         }
         

@@ -1297,6 +1297,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
 
         var testedViews: [UIView] = [
+            bannerImage,
+            thumbImage,
             menu,
             share,
             upvote,
@@ -1714,7 +1716,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if thumb && type == .SELF {
             thumb = false
-        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 {
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
             big = true
         }
         
@@ -1857,7 +1859,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 submissionHeight = test ? 150 : 200
             }
             
-            if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+            if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 && SettingValues.postImageMode != .THUMBNAIL {
                  submissionHeight = 200
             }
             bannerImage.isUserInteractionEnabled = true

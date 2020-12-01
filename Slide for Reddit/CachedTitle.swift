@@ -71,14 +71,35 @@ class CachedTitle {
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: brightF])
 
         var newlineDone = false
-        if !submission.flair.isEmpty {
-            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
-
-            if !newlineDone {
-                newlineDone = true
-                attributedTitle.append(NSAttributedString(string: "\n"))
+        if SettingValues.showFlairs {
+            let flairsDict = submission.flairJSON.dictionaryValue()
+            let flairTitle = NSMutableAttributedString(string: "", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: brightF])
+            if !flairsDict.keys.isEmpty {
+                for key in flairsDict.keys {
+                    let flair = flairsDict[key] as? NSDictionary
+                    if let url = flair?["url"] as? String, SettingValues.imageFlairs {
+                        if let urlAsURL = URL(string: url) {
+                            let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
+                            attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                            flairTitle.append(NSAttributedString(attachment: attachment))
+                        }
+                    } else {
+                        let flair = flairsDict[key] as? NSDictionary
+                        if let color = flair?["color"] as? String, SettingValues.coloredFlairs {
+                            let singleFlair = NSMutableAttributedString(string: "\u{00A0}\(key)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(hexString: color), NSAttributedString.Key.foregroundColor: UIColor.white])
+                            flairTitle.append(singleFlair)
+                        } else {
+                            let singleFlair = NSMutableAttributedString(string: "\u{00A0}\(key)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
+                            flairTitle.append(singleFlair)
+                        }
+                    }
+                }
+                if !newlineDone {
+                    newlineDone = true
+                    attributedTitle.append(NSAttributedString(string: "\n"))
+                }
+                attributedTitle.append(flairTitle)
             }
-            attributedTitle.append(flairTitle)
         }
         
         if submission.nsfw {
