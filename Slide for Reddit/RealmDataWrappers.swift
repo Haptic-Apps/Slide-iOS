@@ -223,7 +223,7 @@ class RealmDataWrapper {
         for item in submission.baseJson["link_flair_richtext"] as? [AnyObject] ?? [] {
             if let flair = item as? JSONDictionary {
                 if flair["e"] as? String == "text" {
-                    if let title = flair["t"] as? String {
+                    if let title = (flair["t"] as? String)?.unescapeHTML {
                         if let color = submission.baseJson["link_flair_background_color"] as? String, !color.isEmpty {
                             flairDict[title.trimmed()] = ["color": color]
                         } else {
@@ -231,7 +231,7 @@ class RealmDataWrapper {
                         }
                     }
                 } else if flair["e"] as? String == "emoji" {
-                    if let title = flair["a"] as? String, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
+                    if let title = (flair["a"] as? String)?.unescapeHTML, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
                         flairDict[title.trimmed()] = ["url": url, "fallback": fallback]
                     }
                 }
@@ -407,7 +407,7 @@ class RealmDataWrapper {
         for item in submission.baseJson["link_flair_richtext"] as? [AnyObject] ?? [] {
             if let flair = item as? JSONDictionary {
                 if flair["e"] as? String == "text" {
-                    if let title = flair["t"] as? String {
+                    if let title = (flair["t"] as? String)?.unescapeHTML {
                         if let color = submission.baseJson["link_flair_background_color"] as? String, !color.isEmpty {
                             flairDict[title.trimmed()] = ["color": color]
                         } else {
@@ -415,7 +415,7 @@ class RealmDataWrapper {
                         }
                     }
                 } else if flair["e"] as? String == "emoji" {
-                    if let title = flair["a"] as? String, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
+                    if let title = (flair["a"] as? String)?.unescapeHTML, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
                         flairDict[title.trimmed()] = ["url": url, "fallback": fallback]
                     }
                 }
