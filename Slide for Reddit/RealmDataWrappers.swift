@@ -248,6 +248,7 @@ class RealmDataWrapper {
             }
         }
 
+
         rSubmission.pollOptions.removeAll()
         for item in (submission.baseJson["poll_data"] as? JSONDictionary)?["options"] as? [AnyObject] ?? [] {
             if let poll = item as? JSONDictionary {
@@ -266,15 +267,25 @@ class RealmDataWrapper {
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
         
-        if json?["crosspost_parent_list"] != nil {
+        if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
             rSubmission.isCrosspost = true
-            let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
-            let author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
-            let permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            let sub = (crosspostParent.first as? [String: Any])?["subreddit"] as? String ?? ""
+            let author = (crosspostParent.first as? [String: Any])?["author"] as? String ?? ""
+            let permalink = (crosspostParent.first as? [String: Any])?["permalink"] as? String ?? ""
             rSubmission.crosspostSubreddit = sub
             rSubmission.crosspostAuthor = author
             rSubmission.crosspostPermalink = permalink
+            
+            rSubmission.gallery.removeAll()
+            for item in ((crosspostParent.first as? [String: Any])?["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
+                if let image = ((crosspostParent.first as? [String: Any])?["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
+                    if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
+                        rSubmission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                    }
+                }
+            }
         }
+
         return rSubmission
     }
     
@@ -507,14 +518,23 @@ class RealmDataWrapper {
 
         rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
 
-        if json?["crosspost_parent_list"] != nil {
+        if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
             rSubmission.isCrosspost = true
-            let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
-            let author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
-            let permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            let sub = (crosspostParent.first as? [String: Any])?["subreddit"] as? String ?? ""
+            let author = (crosspostParent.first as? [String: Any])?["author"] as? String ?? ""
+            let permalink = (crosspostParent.first as? [String: Any])?["permalink"] as? String ?? ""
             rSubmission.crosspostSubreddit = sub
             rSubmission.crosspostAuthor = author
             rSubmission.crosspostPermalink = permalink
+            
+            rSubmission.gallery.removeAll()
+            for item in ((crosspostParent.first as? [String: Any])?["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
+                if let image = ((crosspostParent.first as? [String: Any])?["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
+                    if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
+                        rSubmission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                    }
+                }
+            }
         }
 
         rSubmission.reports.removeAll()

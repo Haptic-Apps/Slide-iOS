@@ -3101,10 +3101,6 @@ public extension UIImageView {
 
         startPulsingAnimation()
 
-        var frame = CGSize(width: self.frame.size.width * UIScreen.main.scale, height: self.frame.size.height * UIScreen.main.scale)
-        if let newSize = overrideSize {
-            frame = CGSize(width: newSize.width * UIScreen.main.scale, height: newSize.height * UIScreen.main.scale)
-        }
         DispatchQueue.global(qos: .userInteractive).async {
             self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates], context: [:], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
