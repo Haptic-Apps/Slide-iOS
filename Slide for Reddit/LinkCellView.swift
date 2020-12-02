@@ -1297,8 +1297,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
 
         var testedViews: [UIView] = [
-            bannerImage,
-            thumbImage,
             menu,
             share,
             upvote,
@@ -1310,7 +1308,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             reply,
             edit,
         ]
-
+        
         if SettingValues.actionBarMode.isSide() {
             testedViews += [
                 sideUpvote,
@@ -1440,8 +1438,48 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
         
-        title.isScrollEnabled = false
+        //Should be moved into TitleUITextView.swift
+        title.subviews.forEach { (view) in
+            if view is UIImageView {
+                view.removeFromSuperview()
+            }
+        }
         title.sizeToFit()
+        title.layoutManager.textStorage?.enumerateAttribute(.attachment, in: NSRange(location: 0, length: title.attributedText.length)) { attr, bgStyleRange, _ in
+            var rects = [CGRect]()
+            if let attachment = attr as? AsyncTextAttachmentNoLoad {
+                let url = attachment.imageURL
+                if let url = url {
+                    let bgStyleGlyphRange = title.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                    title.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                        var rect = self.title.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                        var baseline = 0
+                        baseline = Int(self.title.layoutManager.textStorage!.attribute(.baselineOffset, at: self.title.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+
+                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2) + (attachment.bounds.size.height < 20 ? 2 : 0)
+                        rect.size = attachment.bounds.size
+                        let insetTop = CGFloat.zero
+                        rects.append(rect.offsetBy(dx: 0, dy: insetTop))
+                    }
+                    if let first = rects.first {
+                        let imageView = UIImageView(frame: first)
+                        title.addSubview(imageView)
+                        imageView.sd_setImage(with: url, completed: nil)
+                        
+                        if attachment.rounded {
+                            imageView.backgroundColor = attachment.backgroundColor
+                            imageView.clipsToBounds = true
+                            imageView.layer.cornerRadius = first.size.height / 2
+                        }
+                    }
+                }
+                
+                title.selectedRange = .zero
+            }
+        }
+
+        title.isScrollEnabled = false
     }
             
     @objc func doDTap(_ sender: AnyObject) {
@@ -3641,7 +3679,7 @@ class RoundedImageView: UIImageView {
         let path = UIBezierPath(roundedRect: rect ?? self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         maskLayer?.removeFromSuperlayer()
         maskLayer = CAShapeLayer()
-        maskLayer.frame = self.bounds
+        maskLayer.frame = self.layer.bounds
         maskLayer.path = path.cgPath
         self.layer.mask = maskLayer
         self.layer.masksToBounds = true

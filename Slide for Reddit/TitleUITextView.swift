@@ -98,7 +98,7 @@ class BadgeLayoutManager: NSLayoutManager {
             }
         }
     }
-
+    
     private func drawBackground(backgroundStyle: UIColor, rects: [CGRect], currentCGContext: CGContext) {
         currentCGContext.saveGState()
 

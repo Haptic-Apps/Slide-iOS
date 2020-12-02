@@ -1604,25 +1604,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let fullImage = ContentType.fullImage(t: type)
         let halfScreen = UIScreen.main.bounds.height / 2
-        var didRatio = false
         
         if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
-        } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
-            submissionHeight = 200
-        } else if big {
-            didRatio = true
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !isGallery) ? CGFloat(10) : CGFloat(0)))
-            if (SettingValues.postImageMode == .SHORT_IMAGE) && !(ContentType.displayVideo(t: type) && type != .VIDEO) {
-                submissionHeight = h > halfScreen ? halfScreen : h
-            } else {
-                if h == 0 {
-                    submissionHeight = 200
-                } else {
-                    submissionHeight = h
-                }
-            }
         }
         
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
@@ -1769,9 +1754,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
-        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) && !didRatio {
+        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = submissionHeight > halfScreen ? halfScreen : submissionHeight
-        } else if big && !didRatio {
+        } else if big {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
