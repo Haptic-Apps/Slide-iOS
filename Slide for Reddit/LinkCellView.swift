@@ -1438,7 +1438,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
         
-        //Should be moved into TitleUITextView.swift
+        layoutTitleImageViews()
+        title.isScrollEnabled = false
+    }
+    
+    //Should be moved into TitleUITextView.swift
+    func layoutTitleImageViews() {
         title.subviews.forEach { (view) in
             if view is UIImageView {
                 view.removeFromSuperview()
@@ -1474,12 +1479,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         }
                     }
                 }
-                
-                title.selectedRange = .zero
             }
         }
-
-        title.isScrollEnabled = false
     }
             
     @objc func doDTap(_ sender: AnyObject) {
@@ -3091,7 +3092,6 @@ private extension UIView {
             }
         })
     }
-
 }
 
 public extension UIImageView {

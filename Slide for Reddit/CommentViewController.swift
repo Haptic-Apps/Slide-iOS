@@ -1531,7 +1531,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 view.addSubview(headerCell.contentView)
                 self.tableView.tableHeaderView = view
             }
-
+            headerCell.layoutTitleImageViews()
         }
     }
 
