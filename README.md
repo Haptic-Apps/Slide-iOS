@@ -4,6 +4,8 @@
 
 Slide is a powerful open-source, ad-free, Swift-based Reddit browser for iOS. Feel free to join us on [the official subreddit](https://www.reddit.com/r/slide_ios) for discussion or requests!
 
+## [Join us on Discord!](https://discord.gg/6yrPzgCtFH)
+
 <a href="https://apps.apple.com/us/app/slide-for-reddit/id1260626828?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2018-08-20&kind=iossoftware&bubble=ios_apps) no-repeat;width:135px;height:40px;"><img src="https://raw.githubusercontent.com/ccrama/ccrama.github.io/master/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"/></a>
 
 <br>
