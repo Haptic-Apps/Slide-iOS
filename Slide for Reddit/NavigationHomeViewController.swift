@@ -1018,9 +1018,11 @@ class CurrentAccountHeaderView: UIView {
         let forwardItem = UIBarButtonItem(customView: forwardButton)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
-        //parent.toolbarItems.rightBarButtonItems = [forwardItem, rightItem]
-
+        if UIApplication.shared.isMac() {
+            parent.toolbarItems = [leftItem, space, rightItem]
+        } else {
+            parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountMailCountChanged), name: .onAccountMailCountChanged, object: nil)

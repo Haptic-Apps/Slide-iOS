@@ -252,7 +252,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
 
-        if let splitViewController = splitViewController, !UIApplication.shared.isSplitOrSlideOver {
+        if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
     }
@@ -1044,7 +1044,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
                     is14Column = true
                 }
 
@@ -1084,7 +1084,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
                     is14Column = true
                 }
 

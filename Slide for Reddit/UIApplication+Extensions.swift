@@ -14,6 +14,16 @@ extension UIApplication {
         return statusBarUIView
     }
     
+    public func isMac() -> Bool {
+        if #available(iOS 14.0, *) {
+            return ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp
+        } else if #available(iOS 13.0, *) {
+            return ProcessInfo.processInfo.isMacCatalystApp
+        } else {
+           return false
+        }
+    }
+    
 }
 extension UIApplication {
     public var isSplitOrSlideOver: Bool {

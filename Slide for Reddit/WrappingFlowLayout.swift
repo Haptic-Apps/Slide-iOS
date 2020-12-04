@@ -66,8 +66,10 @@ class WrappingFlowLayout: UICollectionViewLayout {
             numberOfColumns = 1
         }
         
-        if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds || UIApplication.shared.isSplitOrSlideOver {
-            numberOfColumns = 1
+        if !UIApplication.shared.isMac() {
+            if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds || UIApplication.shared.isSplitOrSlideOver {
+                numberOfColumns = 1
+            }
         }
                 
         if vc is ContentListingViewController && numberOfColumns > 2 {
