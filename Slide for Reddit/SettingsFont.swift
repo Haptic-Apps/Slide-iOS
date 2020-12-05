@@ -7,7 +7,6 @@
 //
 
 import Anchorage
-import TGPControls
 import reddift
 import UIKit
 
@@ -17,8 +16,8 @@ class SettingsFont: BubbleSettingTableViewController {
     var typeCell: UITableViewCell = InsetCell()
     var enlarge = UISwitch()
     var type = UISwitch()
-    var slider: TGPDiscreteSlider!
-    var sliderSub: TGPDiscreteSlider!
+    var slider: StepSlider!
+    var sliderSub: StepSlider!
     var key = FontSelectionTableViewController.Key.postFont
 
     var previewCell: UITableViewCell = InsetCell()
@@ -124,14 +123,13 @@ class SettingsFont: BubbleSettingTableViewController {
 
         submissionPreview.textLabel?.text = "I'm a text preview!"
 
-        sliderSub = TGPDiscreteSlider()
-        sliderSub.incrementValue = 1
-        sliderSub.minimumValue = -8
-        sliderSub.tickCount = 16
-        sliderSub.tickSize = CGSize(width: 3, height: 10)
-        sliderSub.tickStyle = 2 //rounded
-        sliderSub.value = CGFloat(SettingValues.postFontOffset)
-        sliderSub.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
+        sliderSub = StepSlider(frame: .zero, values: [-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8], callback: { (newValue) in
+            SettingValues.postFontOffset = Int(newValue)
+            UserDefaults.standard.set(SettingValues.postFontOffset, forKey: SettingValues.pref_postFontSize)
+            let submissionFont = FontGenerator.fontOfSize(size: 16, submission: true)
+            self.submissionPreview.textLabel?.font = submissionFont
+        })
+
         sliderSub.minimumTrackTintColor = ColorUtil.baseAccent
         sliderSub.maximumTrackTintColor = ColorUtil.theme.fontColor
         
@@ -163,14 +161,13 @@ class SettingsFont: BubbleSettingTableViewController {
 
         commentSize.textLabel?.text = "Font size"
         
-        slider = TGPDiscreteSlider()
-        slider.incrementValue = 1
-        slider.minimumValue = -8
-        slider.tickCount = 16
-        slider.tickSize = CGSize(width: 3, height: 10)
-        slider.tickStyle = 2 //rounded
-        slider.value = CGFloat(SettingValues.commentFontOffset)
-        slider.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
+        slider = StepSlider(frame: .zero, values: [], callback: { (newValue) in
+            SettingValues.commentFontOffset = Int(newValue)
+            UserDefaults.standard.set(SettingValues.commentFontOffset, forKey: SettingValues.pref_commentFontSize)
+            let commentFont = FontGenerator.fontOfSize(size: 16, submission: false)
+            self.commentPreview.textLabel?.font = commentFont
+
+        })
         slider.minimumTrackTintColor = ColorUtil.baseAccent
         slider.maximumTrackTintColor = ColorUtil.theme.fontColor
         
@@ -198,21 +195,7 @@ class SettingsFont: BubbleSettingTableViewController {
         refresh()
         self.tableView.tableFooterView = UIView()
     }
-    
-    @objc func valueChanged(_ sender: TGPDiscreteSlider, event: UIEvent) {
-        if sender == sliderSub {
-            SettingValues.postFontOffset = Int(Double(sender.value))
-            UserDefaults.standard.set(SettingValues.postFontOffset, forKey: SettingValues.pref_postFontSize)
-        } else {
-            SettingValues.commentFontOffset = Int(Double(sender.value))
-            UserDefaults.standard.set(SettingValues.commentFontOffset, forKey: SettingValues.pref_commentFontSize)
-        }
-        let submissionFont = FontGenerator.fontOfSize(size: 16, submission: true)
-        let commentFont = FontGenerator.fontOfSize(size: 16, submission: false)
-        self.submissionPreview.textLabel?.font = submissionFont
-        self.commentPreview.textLabel?.font = commentFont
-    }
-    
+        
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if #available(iOS 13, *) {
             if (indexPath.section == 1 && indexPath.row == 1) || (indexPath.section == 0 && indexPath.row == 1) {
@@ -606,5 +589,38 @@ extension SettingsFont: UIGestureRecognizerDelegate {
             return false
         }
         return true
+    }
+}
+
+//https://stackoverflow.com/a/8219848/3697225
+class StepSlider: UISlider {
+    private let values: [Float]
+    private var lastIndex: Int? = nil
+    let callback: (Float) -> Void
+
+    init(frame: CGRect, values: [Float], callback: @escaping (_ newValue: Float) -> Void) {
+        self.values = values
+        self.callback = callback
+        super.init(frame: frame)
+        self.addTarget(self, action: #selector(handleValueChange(sender:)), for: .valueChanged)
+
+        let steps = values.count - 1
+        self.minimumValue = 0
+        self.maximumValue = Float(steps)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc func handleValueChange(sender: UISlider) {
+        let newIndex = Int(sender.value + 0.5) // round up to next index
+        self.setValue(Float(newIndex), animated: false) // snap to increments
+        let didChange = lastIndex == nil || newIndex != lastIndex!
+        if didChange {
+            lastIndex = newIndex
+            let actualValue = self.values[newIndex]
+            self.callback(actualValue)
+        }
     }
 }

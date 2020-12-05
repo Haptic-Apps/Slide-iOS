@@ -87,7 +87,6 @@ PODS:
   - SwiftLinkPreview (3.0.1)
   - SwiftLint (0.41.0)
   - SwiftyJSON (5.0.0)
-  - TGPControls (5.1.0)
   - YoutubePlayer-in-WKWebView (0.3.4)
   - YYText (1.0.7)
 
@@ -109,7 +108,6 @@ DEPENDENCIES:
   - SwiftLinkPreview (~> 3.0.1)
   - SwiftLint
   - SwiftyJSON (from `https://github.com/ccrama/SwiftyJSON.git`, branch `hotfix-xcode12`)
-  - TGPControls
   - YoutubePlayer-in-WKWebView (~> 0.3.0)
   - YYText
 
@@ -131,7 +129,6 @@ SPEC REPOS:
     - SubtleVolume
     - SwiftLinkPreview
     - SwiftLint
-    - TGPControls
     - YoutubePlayer-in-WKWebView
     - YYText
 
@@ -199,10 +196,9 @@ SPEC CHECKSUMS:
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
   SwiftLint: c585ebd615d9520d7fbdbe151f527977b0534f1e
   SwiftyJSON: f0574c07d8ca1644050db687067209e3033a89a0
-  TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 922b6388b2a09dc65358bca9fb3ad13b5de908da
+PODFILE CHECKSUM: cb3cb439a2f2b08234e74e10708747ae35cc1b2e
 
 COCOAPODS: 1.10.0

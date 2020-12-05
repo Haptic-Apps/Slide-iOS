@@ -58,7 +58,6 @@
 		B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333EA251274050032BB64 /* BadgeSwift */; };
 		B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333F42512742E0032BB64 /* BiometricAuthentication */; };
 		B4F3348B2512770F0032BB64 /* Embassy in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3348A2512770F0032BB64 /* Embassy */; };
-		B4F3349F251277B80032BB64 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3349E251277B80032BB64 /* Starscream */; };
 		B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3354B25127BAB0032BB64 /* Anchorage */; };
 		B4F3355625127BD20032BB64 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = B4F3355525127BD20032BB64 /* Then */; };
 		B776B17D5CA92860424F37C0 /* ModQueueContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */; };
@@ -143,6 +142,7 @@
 		BE1B57E721DEB5B600FF6F98 /* ic_mint@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E521DEB5B600FF6F98 /* ic_mint@2x.png */; };
 		BE1B57EA21DED23000FF6F98 /* ic_stars@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E821DED23000FF6F98 /* ic_stars@2x.png */; };
 		BE1B57EB21DED23000FF6F98 /* ic_stars@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE1B57E921DED23000FF6F98 /* ic_stars@3x.png */; };
+		BE1BBE882579D60600ED11FD /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = BE1BBE872579D60600ED11FD /* Starscream */; };
 		BE1CD01320F43E51007746B6 /* TextDisplayStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01220F43E51007746B6 /* TextDisplayStackView.swift */; };
 		BE1CD01520F51C37007746B6 /* RemovalReasons.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01420F51C37007746B6 /* RemovalReasons.swift */; };
 		BE1CD01720F586E9007746B6 /* CodeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */; };
@@ -907,12 +907,12 @@
 				B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */,
 				B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */,
 				BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */,
+				BE1BBE882579D60600ED11FD /* Starscream in Frameworks */,
 				B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */,
 				B4F3348B2512770F0032BB64 /* Embassy in Frameworks */,
 				BE31454625674E03004A908C /* Proton in Frameworks */,
 				BE2E9F0823492B4300FE07B4 /* CloudKit.framework in Frameworks */,
 				BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */,
-				B4F3349F251277B80032BB64 /* Starscream in Frameworks */,
 				01BBE6AB1AC863FE2E897632 /* Pods_Slide_for_Reddit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1699,10 +1699,10 @@
 				B4F333EA251274050032BB64 /* BadgeSwift */,
 				B4F333F42512742E0032BB64 /* BiometricAuthentication */,
 				B4F3348A2512770F0032BB64 /* Embassy */,
-				B4F3349E251277B80032BB64 /* Starscream */,
 				B4F3354B25127BAB0032BB64 /* Anchorage */,
 				B4F3355525127BD20032BB64 /* Then */,
 				BE31454525674E03004A908C /* Proton */,
+				BE1BBE872579D60600ED11FD /* Starscream */,
 			);
 			productName = "Slide for Reddit";
 			productReference = BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */;
@@ -1870,10 +1870,10 @@
 				B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */,
 				B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */,
 				B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */,
-				B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */,
 				B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */,
 				B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */,
 				BE31454425674E03004A908C /* XCRemoteSwiftPackageReference "proton" */,
+				BE1BBE862579D60600ED11FD /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
 			productRefGroup = BE8FCA051E0C46090063B8EF /* Products */;
 			projectDirPath = "";
@@ -2161,7 +2161,6 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftEntryKit/SwiftEntryKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLinkPreview/SwiftLinkPreview.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
-				"${BUILT_PRODUCTS_DIR}/TGPControls/TGPControls.framework",
 				"${BUILT_PRODUCTS_DIR}/YYText/YYText.framework",
 				"${BUILT_PRODUCTS_DIR}/YoutubePlayer-in-WKWebView/YoutubePlayer_in_WKWebView.framework",
 				"${BUILT_PRODUCTS_DIR}/reddift/reddift.framework",
@@ -2189,7 +2188,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftEntryKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLinkPreview.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TGPControls.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYText.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YoutubePlayer_in_WKWebView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/reddift.framework",
@@ -3410,14 +3408,6 @@
 				minimumVersion = 4.1.1;
 			};
 		};
-		B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/daltoniam/Starscream";
-			requirement = {
-				kind = exactVersion;
-				version = 3.1.1;
-			};
-		};
 		B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Rightpoint/Anchorage";
@@ -3432,6 +3422,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.7.0;
+			};
+		};
+		BE1BBE862579D60600ED11FD /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.4;
 			};
 		};
 		BE31454425674E03004A908C /* XCRemoteSwiftPackageReference "proton" */ = {
@@ -3475,11 +3473,6 @@
 			package = B4F334892512770F0032BB64 /* XCRemoteSwiftPackageReference "Embassy" */;
 			productName = Embassy;
 		};
-		B4F3349E251277B80032BB64 /* Starscream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4F3349D251277B80032BB64 /* XCRemoteSwiftPackageReference "Starscream" */;
-			productName = Starscream;
-		};
 		B4F3354B25127BAB0032BB64 /* Anchorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */;
@@ -3489,6 +3482,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */;
 			productName = Then;
+		};
+		BE1BBE872579D60600ED11FD /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE1BBE862579D60600ED11FD /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
 		};
 		BE31454525674E03004A908C /* Proton */ = {
 			isa = XCSwiftPackageProductDependency;

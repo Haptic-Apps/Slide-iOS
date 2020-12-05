@@ -238,52 +238,10 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     
     var socket: WebSocket?
     func setupWatcher(websocketUrl: String) {
-        socket = WebSocket(url: URL(string: websocketUrl)!)
-        //websocketDidConnect
-        socket!.onConnect = {
-            print("websocket is connected")
-        }
-        //websocketDidDisconnect
-        socket!.onDisconnect = { (error: Error?) in
-            print("websocket is disconnected: \(error?.localizedDescription ?? "")")
-        }
-        //websocketDidReceiveMessage
-        socket!.onText = { (text: String) in
-            print("got some text: \(text)")
-            do {
-                let text = try JSONSerialization.jsonObject(with: text.data(using: .utf8)!, options: [])
-                if (text as! JSONDictionary)["type"] as! String == "update" {
-                    if let payload = (text as! JSONDictionary)["payload"] as? JSONDictionary, let data = payload["data"] as? JSONDictionary {
-                        DispatchQueue.main.async {
-                            self.content.insert(data, at: 0)
-                            self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: false)
-                            let contentHeight = self.tableView.contentSize.height
-                            let offsetY = self.tableView.contentOffset.y
-                            let bottomOffset = contentHeight - offsetY
-                            if #available(iOS 11.0, *) {
-                                CATransaction.begin()
-                                CATransaction.setDisableActions(true)
-                                self.tableView.performBatchUpdates({
-                                    self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
-                                }, completion: { (_) in
-                                    self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
-                                    CATransaction.commit()
-                                })
-                            } else {
-                                self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
-                            }
-                        }
-                    }
-                }
-            } catch {
-                
-            }
-        }
-        //websocketDidReceiveData
-        socket!.onData = { (data: Data) in
-            print("got some data: \(data.count)")
-        }
-        //you could do onPong as well.
+        socket = WebSocket(request: URLRequest(url: URL(string: websocketUrl)!))
+
+        socket!.delegate = self
+
         socket!.connect()
     }
 
@@ -319,4 +277,45 @@ private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttrib
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
 	return input.rawValue
+}
+
+extension LiveThreadViewController: WebSocketDelegate {
+    func didReceive(event: WebSocketEvent, client: WebSocket) {
+        switch event  {
+        case .text(let text):
+            print("got some text: \(text)")
+            do {
+                let text = try JSONSerialization.jsonObject(with: text.data(using: .utf8)!, options: [])
+                if (text as! JSONDictionary)["type"] as! String == "update" {
+                    if let payload = (text as! JSONDictionary)["payload"] as? JSONDictionary, let data = payload["data"] as? JSONDictionary {
+                        DispatchQueue.main.async {
+                            self.content.insert(data, at: 0)
+                            self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: false)
+                            let contentHeight = self.tableView.contentSize.height
+                            let offsetY = self.tableView.contentOffset.y
+                            let bottomOffset = contentHeight - offsetY
+                            if #available(iOS 11.0, *) {
+                                CATransaction.begin()
+                                CATransaction.setDisableActions(true)
+                                self.tableView.performBatchUpdates({
+                                    self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
+                                }, completion: { (_) in
+                                    self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    CATransaction.commit()
+                                })
+                            } else {
+                                self.tableView.insertItems(at: [IndexPath(row: 0, section: 0)])
+                            }
+                        }
+                    }
+                }
+            } catch {
+                
+            }
+        default:
+            ()
+        }
+    }
+    
+    
 }

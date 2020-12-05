@@ -7,7 +7,6 @@
 //
 
 import Anchorage
-import BadgeSwift
 import reddift
 import RLBAlertsPickers
 import SDCAlertView

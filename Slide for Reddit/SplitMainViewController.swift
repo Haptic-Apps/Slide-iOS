@@ -9,7 +9,6 @@
 import Alamofire
 import Anchorage
 import AudioToolbox
-import BadgeSwift
 import SDWebImage
 import SwiftyJSON
 import MaterialComponents.MaterialTabs

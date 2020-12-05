@@ -24,7 +24,6 @@ target 'Slide for Reddit' do
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON', :git => 'https://github.com/ccrama/SwiftyJSON.git', :branch => 'hotfix-xcode12'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
-  pod 'TGPControls'
 
   target 'Slide for RedditTests' do
     inherit! :search_paths
