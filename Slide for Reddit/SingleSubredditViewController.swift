@@ -10,7 +10,7 @@ import Anchorage
 import Embassy
 import MaterialComponents.MDCActivityIndicator
 import MKColorPicker
-import RealmSwift
+
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
@@ -1479,7 +1479,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func deleteSelf(_ cell: LinkCellView) {
         do {
-            try session?.deleteCommentOrLink(cell.link!.getId(), completion: { (_) in
+            try session?.deleteCommentOrLink(cell.link!.id, completion: { (_) in
                 DispatchQueue.main.async {
                     if self.navigationController!.modalPresentationStyle == .formSheet {
                         self.navigationController!.dismiss(animated: true)
@@ -1504,9 +1504,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         var urls: [URL] = []
         if (SettingValues.dataSavingEnabled && (SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.noImages) || !SettingValues.dataSavingEnabled {
             for submission in values {
-                var thumb = submission.thumbnail
-                var big = submission.banner
-                var height = submission.height
+                var thumb = submission.hasThumbnail
+                var big = submission.hasBanner
+                var height = submission.imageHeight
                 if submission.url != nil {
                 var type = ContentType.getContentType(baseUrl: submission.url)
                 if submission.isSelf {
@@ -1515,7 +1515,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && type == .SELF {
                     thumb = false
-                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 && SettingValues.postImageMode != .THUMBNAIL {
+                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.imageHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
                     big = true
                 }
 
@@ -1538,7 +1538,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     big = false
                 }
 
-                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+                let shouldShowLq = SettingValues.dataSavingEnabled && submission.isLQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
                 if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                         || SettingValues.noImages && submission.isSelf {
                     big = false
@@ -1555,9 +1555,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && !big {
                     if submission.thumbnailUrl == "nsfw" {
-                    } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                    } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty {
                     } else {
-                        if let url = URL.init(string: submission.thumbnailUrl) {
+                        if let url = URL.init(string: submission.thumbnailUrl ?? "") {
                             urls.append(url)
                         }
                     }
@@ -1565,12 +1565,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if big {
                     if shouldShowLq {
-                        if let url = URL.init(string: submission.lqUrl) {
+                        if let url = URL.init(string: submission.lqURL ?? "") {
                             urls.append(url)
                         }
 
                     } else {
-                        if let url = URL.init(string: submission.bannerUrl) {
+                        if let url = URL.init(string: submission.bannerUrl ?? "") {
                             urls.append(url)
                         }
                     }
@@ -1587,10 +1587,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if itemWidth < 10 { //Not a valid width
             itemWidth = UIScreen.main.bounds.width
         }
-        var thumb = submission.thumbnail
-        var big = submission.banner
+        var thumb = submission.hasThumbnail
+        var big = submission.hasBanner
         
-        var submissionHeight = CGFloat(submission.height)
+        var submissionHeight = CGFloat(submission.imageHeight)
         
         var type = ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
@@ -1630,7 +1630,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
         
-        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && isCollection) {
+        if (thumb || big) && submission.isNSFW && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && isCollection) {
             big = false
             thumb = true
         }
@@ -1812,9 +1812,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     static func cellType(foSubmission submission: Submission, _ isCollection: Bool, cellWidth: CGFloat) -> CurrentType {
         var target: CurrentType = .none
 
-        var thumb = submission.thumbnail
-        var big = submission.banner
-        let height = CGFloat(submission.height)
+        var thumb = submission.hasThumbnail
+        var big = submission.hasBanner
+        let height = CGFloat(submission.imageHeight)
 
         var type = ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
@@ -1876,7 +1876,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = true
         }
 
-        if (thumb || big) && submission.nsfw && (!SettingValues.nsfwPreviews || (SettingValues.hideNSFWCollection && isCollection)) {
+        if (thumb || big) && submission.isNSFW && (!SettingValues.nsfwPreviews || (SettingValues.hideNSFWCollection && isCollection)) {
             big = false
             thumb = true
         }
@@ -2593,7 +2593,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             case .banner:
                 cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && submission.height > 0 {
+                if !SettingValues.hideImageSelftext && submission.imageHeight > 0 {
                     cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
                 } else {
                     cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
@@ -2630,13 +2630,13 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
 
     func openComments(id: String, subreddit: String?) {
         if let nav = ((self.splitViewController?.viewControllers.count ?? 0 > 1) ? self.splitViewController?.viewControllers[1] : nil) as? UINavigationController, let detail = nav.viewControllers[0] as? PagingCommentViewController {
-            if detail.submissionDataSource.content[detail.startIndex].getId() == id {
+            if detail.submissionDataSource.content[detail.startIndex].id == id {
                 return
             }
         }
         var index = 0
         for s in dataSource.content {
-            if s.getId() == id {
+            if s.id == id {
                 break
             }
             index += 1
@@ -2760,7 +2760,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func save(_ cell: LinkCellView) {
         do {
-            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.id)!, completion: { (_) in
 
             })
             ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -2772,7 +2772,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func upvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
@@ -2786,7 +2786,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (_) in
 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
@@ -2800,12 +2800,12 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func hide(_ cell: LinkCellView) {
         do {
-            try session?.setHide(true, name: cell.link!.getId(), completion: { (_) in })
-            let id = cell.link!.getId()
+            try session?.setHide(true, name: cell.link!.id, completion: { (_) in })
+            let id = cell.link!.id
             var location = 0
             var item = dataSource.content[0]
             for submission in dataSource.content {
-                if submission.getId() == id {
+                if submission.id == id {
                     item = dataSource.content[location]
                     dataSource.content.remove(at: location)
                     break
@@ -2833,7 +2833,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
                 do {
-                    try self.session?.setHide(false, name: cell.link!.getId(), completion: { (_) in })
+                    try self.session?.setHide(false, name: cell.link!.id, completion: { (_) in })
                 } catch {
                 }
             })

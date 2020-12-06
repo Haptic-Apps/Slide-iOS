@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RealmSwift
+
 import reddift
 
 protocol SubmissionDataSouceDelegate: class {
@@ -117,7 +117,7 @@ class SubmissionsDataSource {
             if !indexPaths.isEmpty {
                 var hideString = ""
                 for item in toRemove {
-                    hideString.append(item.id + ",")
+                    hideString.append(item.getId() + ",")
                 }
                 hideString = hideString.substring(0, length: hideString.length - 1)
                 do {
@@ -241,7 +241,7 @@ class SubmissionsDataSource {
                         var converted: [Submission] = []
                         var ids = [String]()
                         for link in newLinks {
-                            ids.append(link.getId())
+                            ids.append(link.id)
                             let newRS = Submission.linkToSubmission(submission: link)
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)

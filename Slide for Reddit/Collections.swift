@@ -61,11 +61,11 @@ class Collections {
     }
 
     public static func isSavedCollectionAny(link: Submission) -> Bool {
-        return isSavedCollectionAny(id: link.getId())
+        return isSavedCollectionAny(id: link.id)
     }
 
     public static func isSavedCollectionAny(link: Submission, title: String) -> Bool {
-        return isSavedCollection(id: link.getId(), title: title)
+        return isSavedCollection(id: link.id, title: title)
     }
 
     public static func isSavedCollectionAny(id: String) -> Bool {
@@ -74,13 +74,13 @@ class Collections {
 
     public static func isSavedCollection(id: String, title: String) -> Bool {
         return Collections.getCollectionIDs(title: title).contains(where: { (link) -> Bool in
-            return link.getId() == id
+            return link.id == id
         })
     }
 
     @discardableResult
     public static func toggleSavedCollection(link: Submission, title: String) -> Bool {
-        let isMarkedReadLater = isSavedCollection(id: link.getId(), title: title)
+        let isMarkedReadLater = isSavedCollection(id: link.id, title: title)
         if isMarkedReadLater {
             Collections.removeFromCollection(link: link, title: title)
             return false
@@ -91,7 +91,7 @@ class Collections {
     }
 
     public static func addToCollection(link: Submission, title: String) {
-        addToCollection(id: link.getId(), title: title)
+        addToCollection(id: link.id, title: title)
     }
     
     public static func addToCollection(id: String, title: String) {
@@ -107,7 +107,7 @@ class Collections {
     }
 
     public static func removeFromCollection(link: Submission, title: String) {
-        removeFromCollection(id: link.getId(), title: title)
+        removeFromCollection(id: link.id, title: title)
         delegate?.didUpdate()
     }
     

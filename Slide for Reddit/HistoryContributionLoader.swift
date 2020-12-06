@@ -6,8 +6,9 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
+
 import reddift
 
 class HistoryContributionLoader: ContributionLoader {
@@ -25,7 +26,7 @@ class HistoryContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [Object]
+    var content: [NSManagedObject]
     var delegate: ContentListingViewController?
     var paging = true
     var ids = [Link]()
@@ -66,7 +67,7 @@ class HistoryContributionLoader: ContributionLoader {
                         for item in baseContent {
                             if item is Link {
                                 if !(item as! Link).over18 || SettingValues.saveNSFWHistory {
-                                    self.content.append(RealmDataWrapper.linkToSubmission(submission: item as! Link))
+                                    self.content.append(Submission.linkToSubmission(submission: item as! Link))
                                 }
                             }
                         }

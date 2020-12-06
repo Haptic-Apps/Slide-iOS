@@ -254,7 +254,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment: RComment?
+    var comment: CommentModel?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
     

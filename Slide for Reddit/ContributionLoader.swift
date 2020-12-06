@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
 import reddift
 
 protocol ContributionLoader {
@@ -15,7 +15,7 @@ protocol ContributionLoader {
     var paginator: Paginator { get }
     var delegate: ContentListingViewController? { get set }
     func getData(reload: Bool)
-    var content: [Object] { get set }
+    var content: [NSManagedObject] { get set }
     var color: UIColor { get set }
     var paging: Bool { get }
     var canGetMore: Bool { get }

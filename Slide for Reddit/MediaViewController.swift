@@ -85,7 +85,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if upvoteCallbackIn == nil {
             upvoteCallback = { () in
                 do {
-                    try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: link) == .up ? .none : .up, name: (link.getId()), completion: { (_) in
+                    try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: link) == .up ? .none : .up, name: (link.id), completion: { (_) in
                         
                     })
                     ActionStates.setVoteDirection(s: link, direction: ActionStates.getVoteDirection(s: link) == .up ? .none : .up)
@@ -98,7 +98,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             upvoteCallback = upvoteCallbackIn
         }
         
-        if link.archived || !AccountController.isLoggedIn {
+        if link.isArchived || !AccountController.isLoggedIn {
             upvoteCallback = nil
         }
 

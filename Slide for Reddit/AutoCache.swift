@@ -5,7 +5,7 @@
 
 import Anchorage
 import MaterialComponents.MDCProgressView
-import RealmSwift
+
 import reddift
 import SDCAlertView
 import SDWebImage
@@ -90,8 +90,8 @@ public class AutoCache: NSObject {
                         allIncoming.append(contentsOf: incoming)
                         for i in incoming {
                             let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                            content[item.id] = item
-                            comments.append(item.id)
+                            content[item.getId()] = item
+                            comments.append(item.getId())
                         }
                     }
 
@@ -101,8 +101,8 @@ public class AutoCache: NSObject {
                                 realm.beginWrite()
                                 for comment in comments {
                                     realm.create(type(of: content[comment]!), value: content[comment]!, update: .all)
-                                    if content[comment]! is RComment {
-                                        link.comments.append(content[comment] as! RComment)
+                                    if content[comment]! is CommentModel {
+                                        link.comments.append(content[comment] as! CommentModel)
                                     }
                                 }
                                 realm.create(type(of: link), value: link, update: .all)
@@ -362,7 +362,7 @@ public class AutoCache: NSObject {
                         }
                     }
                     buf.append((comment, depth + relativeDepth))
-                    buf.append(contentsOf: extendForMore(parentId: comment.getId(), comments: comments, current: depth + relativeDepth + 1))
+                    buf.append(contentsOf: extendForMore(parentId: comment.id, comments: comments, current: depth + relativeDepth + 1))
                 } else if let more = thing as? More {
                     var relativeDepth = 0
                     for parent in buf {

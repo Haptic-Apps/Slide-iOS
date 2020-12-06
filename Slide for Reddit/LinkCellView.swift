@@ -1733,7 +1733,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumb = false
         }
         
-        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
+        if submission.isNSFW && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
             big = false
             thumb = true
         }
@@ -1783,7 +1783,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
             thumb = true
             thumbText.isHidden = true
-            if submission.nsfw {
+            if submission.isNSFW {
                 thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
@@ -1799,7 +1799,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         } else if thumb && !big {
             thumbText.isHidden = true
-            if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
+            if submission.isNSFW && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSub)) {
                 thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
@@ -2104,7 +2104,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         let actionManager = PostActionsManager(submission: submission)
 
-        let isReadLater = ReadLater.isReadLater(id: submission.getId())
+        let isReadLater = ReadLater.isReadLater(id: submission.id)
         let isSaved = ActionStates.isSaved(s: submission)
 
         var actions: [UIAccessibilityCustomAction] = [
@@ -2267,7 +2267,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
 //                }
         strongSelf.setOnce = false
-        strongSelf.videoID = strongSelf.link?.getId() ?? ""
+        strongSelf.videoID = strongSelf.link?.id ?? ""
         if SettingValues.muteInlineVideos {
             strongSelf.videoView?.player?.isMuted = true
         } else {
@@ -2570,7 +2570,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         save.image = ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save
         mod.image = link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted
-        readLater.image = ReadLater.isReadLater(id: link.getId()) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater
+        readLater.image = ReadLater.isReadLater(id: link.id) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater
 
         var attrs: [NSAttributedString.Key: Any] = [:]
         switch ActionStates.getVoteDirection(s: link) {
@@ -2662,10 +2662,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 text = "This is a no participation link.\nPlease don't vote or comment"
                 icon = "close"
             }
-            if link.archived {
+            if link.isArchived {
                 text = "This is an archived post.\nYou won't be able to vote or comment"
                 icon = "multis"
-            } else if link.locked {
+            } else if link.isLocked {
                 text = "This is a locked post.\nYou won't be able to comment"
                 icon = "lock"
             }
@@ -2871,7 +2871,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     fullHeightExtras += imageHeight
                 }
                 
-                if link!.archived || link!.locked || np {
+                if link!.isArchived || link!.isLocked || np {
                     fullHeightExtras += 56
                 }
                 
@@ -2881,7 +2881,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
                 if link!.isCrosspost {
                     fullHeightExtras += 56
-                    if link!.archived || link!.locked || np {
+                    if link!.isArchived || link!.isLocked || np {
                         fullHeightExtras += 8
                     }
                 }
@@ -3000,7 +3000,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     videoView?.player?.pause()
                 }
                 History.addSeen(s: link!, skipDuplicates: true)
-                delegate.openComments(id: link!.getId(), subreddit: link!.subreddit)
+                delegate.openComments(id: link!.id, subreddit: link!.subreddit)
                 if History.getSeen(s: link!) && !SettingValues.newIndicator {
                     self.title.alpha = 0.3
                 } else {
@@ -3175,7 +3175,7 @@ class PostActionsManager {
     }
 
     var isVotingPossible: Bool {
-        return networkActionsArePossible && !submission.archived
+        return networkActionsArePossible && !submission.isArchived
     }
 
     var isSavePossible: Bool {
@@ -3183,15 +3183,15 @@ class PostActionsManager {
     }
 
     var isEditPossible: Bool {
-        return networkActionsArePossible && !submission.archived && AccountController.currentName == submission.author
+        return networkActionsArePossible && !submission.isArchived && AccountController.currentName == submission.author
     }
 
     var isReplyPossible: Bool {
-        return networkActionsArePossible && !submission.archived
+        return networkActionsArePossible && !submission.isArchived
     }
 
     var isModPossible: Bool {
-        return networkActionsArePossible && submission.canMod
+        return networkActionsArePossible && submission.isMod
     }
 
     init(submission: Submission) {
@@ -3566,7 +3566,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 bottom.dismiss(animated: true) { [weak self] in
                     guard let self = self else { return }
                     if let title = bottom.getText() {
-                        Collections.addToCollectionCreate(id: self.link!.getId(), title: title)
+                        Collections.addToCollectionCreate(id: self.link!.id, title: title)
                         BannerUtil.makeBanner(text: "Saved to \(title)", seconds: 3, context: self.parentViewController)
                     }
                 }

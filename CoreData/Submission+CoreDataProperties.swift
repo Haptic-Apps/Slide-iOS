@@ -71,8 +71,10 @@ extension Submission {
     @NSManaged public var upvoteRatio: Double
     @NSManaged public var domain: String
     @NSManaged public var hasVoted: Bool
-    @NSManaged public var imageHeight: Double
-    @NSManaged public var imageWidth: Double
+    @NSManaged public var imageHeight: Int
+    @NSManaged public var imageWidth: Int
     @NSManaged public var voteDirection: Bool
+    @NSManaged public var isArchived: Bool
+    @NSManaged public var isLocked: Bool
 
 }

@@ -97,7 +97,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
-    func setComment(comment: RComment, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
+    func setComment(comment: CommentModel, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         text.estimatedWidth = self.contentView.frame.size.width - 16
         parentViewController = parent
@@ -111,10 +111,10 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         commentClick.delegate = self
         self.addGestureRecognizer(commentClick)
         
-        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlText)
+        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody)
     }
     
-    public static func getTitle(_ comment: RComment) -> NSAttributedString {
+    public static func getTitle(_ comment: CommentModel) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
                 
         var uC: UIColor
@@ -131,7 +131,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         
         let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor] as [String: Any]
         
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
         let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
@@ -160,7 +160,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment: RComment?
+    var comment: CommentModel?
     public weak var parentViewController: (UIViewController & MediaVCDelegate)?
     public weak var navViewController: UIViewController?
     

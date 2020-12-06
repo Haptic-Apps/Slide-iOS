@@ -314,7 +314,7 @@ extension UserDefaults {
     func setColor(color: UIColor?, forKey key: String) {
         var colorData: NSData?
         if let color = color {
-            colorData = NSKeyedArchiver.archivedData(withRootObject: color) as NSData?
+            colorData = NSKeyedArchiver.isArchivedData(withRootObject: color) as NSData?
         }
         set(colorData, forKey: key)
     }

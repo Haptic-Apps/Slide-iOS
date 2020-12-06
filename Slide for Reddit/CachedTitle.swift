@@ -28,21 +28,21 @@ class CachedTitle {
     static let baseFontSize: CGFloat = 18
 
     static func addTitle(s: Submission) {
-        titles[s.getId()] = titleFoSubmission(submission: s, full: false, white: false, gallery: false)
+        titles[s.id] = titleFoSubmission(submission: s, full: false, white: false, gallery: false)
     }
 
     static var titleFont = FontGenerator.fontOfSize(size: baseFontSize, submission: true)
     static var titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
 
     static func getTitle(submission: Submission, full: Bool, _ refresh: Bool, _ white: Bool = false, gallery: Bool) -> Title {
-        let title = titles[submission.getId()]
+        let title = titles[submission.id]
         if title == nil || refresh || full || white || gallery {
             if white {
                 return titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
             }
             if !full {
-                titles[submission.getId()] = titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
-                return titles[submission.getId()]!
+                titles[submission.id] = titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
+                return titles[submission.id]!
             } else {
                 return titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
             }
@@ -102,7 +102,7 @@ class CachedTitle {
             }
         }
         
-        if submission.nsfw {
+        if submission.isNSFW {
             let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.red500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             if !newlineDone {
@@ -114,7 +114,7 @@ class CachedTitle {
             attributedTitle.append(nsfw)
         }
 
-        if submission.spoiler {
+        if submission.isSpoiler {
             let spoiler = NSMutableAttributedString.init(string: "\u{00A0}SPOILER\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.grey50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
             if !newlineDone {
@@ -126,7 +126,7 @@ class CachedTitle {
             attributedTitle.append(spoiler)
         }
 
-        if submission.oc {
+        if submission.isOC {
             let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.blue50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
             if !newlineDone {
@@ -138,7 +138,7 @@ class CachedTitle {
             attributedTitle.append(oc)
         }
 
-        if submission.stickied {
+        if submission.isStickied {
             let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             if !newlineDone {
@@ -150,7 +150,7 @@ class CachedTitle {
             attributedTitle.append(pinned)
         }
 
-        if submission.locked {
+        if submission.isLocked {
             let locked = NSMutableAttributedString.init(string: "\u{00A0}LOCKED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             if !newlineDone {
@@ -161,7 +161,7 @@ class CachedTitle {
             }
             attributedTitle.append(locked)
         }
-        if submission.archived {
+        if submission.isArchived {
             let archived = NSMutableAttributedString.init(string: "\u{00A0}ARCHIVED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
             if !newlineDone {
                 newlineDone = true
@@ -208,7 +208,7 @@ class CachedTitle {
         if full {
             authorAttributes[.urlAction] = URL(string: "https://www.reddit.com/u/\(submission.author)")!
         }
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.isCakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
         
@@ -336,7 +336,7 @@ class CachedTitle {
 
             let attrs = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: attrs)
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
             
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
             if color != ColorUtil.baseColor {
@@ -383,7 +383,7 @@ class CachedTitle {
             extraLine.append(poll)
         }
         
-        if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.nsfw && !full && !submission.body.trimmed().isEmpty {
+        if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.isNSFW && !full && !submission.body.trimmed().isEmpty {
             let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
             let text = submission.htmlBody.substring(0, length: length).trimmed()
 
@@ -402,14 +402,14 @@ class CachedTitle {
 
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.foregroundColor: colorF])
 
-        if submission.nsfw {
+        if submission.isNSFW {
             let nsfw = NSMutableAttributedString.init(string: "\u{00A0}NSFW\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor: GMColor.red500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             attributedTitle.append(spacer)
             attributedTitle.append(nsfw)
         }
 
-        if submission.oc {
+        if submission.isOC {
             let oc = NSMutableAttributedString.init(string: "\u{00A0}OC\u{00A0}", attributes: [NSAttributedString.Key.font: titleFontSmall, NSAttributedString.Key.badgeColor: GMColor.blue50Color(), NSAttributedString.Key.foregroundColor: UIColor.black])
 
             attributedTitle.append(spacer)
@@ -437,7 +437,7 @@ class CachedTitle {
             authorAttributes[.foregroundColor] = UIColor.white
         }
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.cakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.isCakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
 
@@ -487,9 +487,9 @@ class CachedTitle {
         let color = ColorUtil.getColorForSub(sub: link.subreddit)
 
         var iconString = NSMutableAttributedString()
-        if (link.subreddit_icon != "" || Subscriptions.icon(for: link.subreddit) != nil) && SettingValues.subredditIcons && !full {
+        if (link.subredditIcon != "" || Subscriptions.icon(for: link.subreddit) != nil) && SettingValues.subredditIcons && !full {
             if Subscriptions.icon(for: link.subreddit) == nil {
-                Subscriptions.subIcons[link.subreddit.lowercased()] = link.subreddit_icon.unescapeHTML
+                Subscriptions.subIcons[link.subreddit.lowercased()] = (link.subredditIcon ?? "").unescapeHTML
             }
             if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
                 let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)

@@ -287,10 +287,9 @@ class SubredditCellView: UITableViewCell {
                 subName.text = "r/\(submission.subreddit)"
                 thumbView.contentMode = .scaleAspectFill
                 
-                if submission.banner {
-
-                    if submission.nsfw && !SettingValues.nsfwPreviews {
-                    } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
+                if submission.hasBanner {
+                    if submission.isNSFW && !SettingValues.nsfwPreviews {
+                    } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty || submission.isSpoiler {
                     } else {
                         submissionView.addSubviews(thumbView, shadowView)
                         

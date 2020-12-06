@@ -10,7 +10,7 @@ import Anchorage
 import AudioToolbox
 import BadgeSwift
 import MaterialComponents.MaterialTabs
-import RealmSwift
+
 import reddift
 import SDCAlertView
 import StoreKit

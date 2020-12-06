@@ -6,7 +6,7 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import RealmSwift
+
 import reddift
 import UIKit
 import UserNotifications

@@ -8,7 +8,7 @@
 
 import BiometricAuthentication
 import LicensesViewController
-import RealmSwift
+
 import RLBAlertsPickers
 import SDWebImage
 import UIKit

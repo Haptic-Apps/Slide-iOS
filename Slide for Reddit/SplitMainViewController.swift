@@ -13,7 +13,7 @@ import BadgeSwift
 import SDWebImage
 import SwiftyJSON
 import MaterialComponents.MaterialTabs
-import RealmSwift
+
 import reddift
 import SDCAlertView
 import StoreKit

@@ -7,19 +7,19 @@
 //
 
 import Foundation
-import RealmSwift
+
 import reddift
 
 extension Object {
     func getIdentifier() -> String {
-        if self is RComment {
-            return (self as! RComment).getId()
+        if self is CommentModel {
+            return (self as! CommentModel).id
         } else if self is RMore {
-            return (self as! RMore).getId()
+            return (self as! RMore).id
         } else if self is Submission {
-            return (self as! Submission).getId()
+            return (self as! Submission).id
         } else {
-            return (self as! RMessage).getId()
+            return (self as! RMessage).id
         }
     }
 }

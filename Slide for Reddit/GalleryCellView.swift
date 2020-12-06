@@ -49,9 +49,9 @@ class GalleryCellView: UITableViewCell {
 
         self.parentViewController = parent
         self.link = link
-        let preview = link.bannerUrl
-        let w = link.width
-        let h = link.height
+        let preview = link.bannerUrl ?? ""
+        let w = link.imageWidth
+        let h = link.imageHeight
         estimatedHeight = CGFloat(getHeightFromAspectRatio(imageHeight: h, imageWidth: w))
         bannerImage.sd_setImage(with: URL.init(string: preview))
         
@@ -66,7 +66,6 @@ class GalleryCellView: UITableViewCell {
             typeImage.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.navIcon(true)
         default:
             typeImage.image = UIImage()
-
         }
     }
     

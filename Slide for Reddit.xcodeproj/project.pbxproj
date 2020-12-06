@@ -52,8 +52,6 @@
 		B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */; };
 		B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */; };
 		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
-		B4F333B925126FCE0032BB64 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333B825126FCE0032BB64 /* Realm */; };
-		B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333BA25126FCE0032BB64 /* RealmSwift */; };
 		B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333E0251273AF0032BB64 /* SDWebImage */; };
 		B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333EA251274050032BB64 /* BadgeSwift */; };
 		B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = B4F333F42512742E0032BB64 /* BiometricAuthentication */; };
@@ -285,6 +283,16 @@
 		BE84B213257C622400A90C5D /* Submission+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B20D257C622400A90C5D /* Submission+CoreDataProperties.swift */; };
 		BE84B214257C622400A90C5D /* Subreddit_Model+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B20E257C622400A90C5D /* Subreddit_Model+CoreDataClass.swift */; };
 		BE84B215257C622400A90C5D /* Subreddit_Model+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B20F257C622400A90C5D /* Subreddit_Model+CoreDataProperties.swift */; };
+		BE84B21F257D935F00A90C5D /* CommentModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B21E257D935F00A90C5D /* CommentModel+Extensions.swift */; };
+		BE84B22C257D978F00A90C5D /* MessageModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B228257D978F00A90C5D /* MessageModel+CoreDataClass.swift */; };
+		BE84B22D257D978F00A90C5D /* MessageModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B228257D978F00A90C5D /* MessageModel+CoreDataClass.swift */; };
+		BE84B22E257D978F00A90C5D /* MessageModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B229257D978F00A90C5D /* MessageModel+CoreDataProperties.swift */; };
+		BE84B22F257D978F00A90C5D /* MessageModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B229257D978F00A90C5D /* MessageModel+CoreDataProperties.swift */; };
+		BE84B230257D978F00A90C5D /* CommentModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B22A257D978F00A90C5D /* CommentModel+CoreDataClass.swift */; };
+		BE84B231257D978F00A90C5D /* CommentModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B22A257D978F00A90C5D /* CommentModel+CoreDataClass.swift */; };
+		BE84B232257D978F00A90C5D /* CommentModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B22B257D978F00A90C5D /* CommentModel+CoreDataProperties.swift */; };
+		BE84B233257D978F00A90C5D /* CommentModel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B22B257D978F00A90C5D /* CommentModel+CoreDataProperties.swift */; };
+		BE84B23D257D9FDE00A90C5D /* MessageModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE84B23C257D9FDE00A90C5D /* MessageModel+Extensions.swift */; };
 		BE854973239310E300D51DDC /* GalleryLinkCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE854972239310E300D51DDC /* GalleryLinkCellView.swift */; };
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
@@ -775,6 +783,12 @@
 		BE84B20D257C622400A90C5D /* Submission+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Submission+CoreDataProperties.swift"; path = "CoreData/Submission+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		BE84B20E257C622400A90C5D /* Subreddit_Model+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Subreddit_Model+CoreDataClass.swift"; path = "CoreData/Subreddit_Model+CoreDataClass.swift"; sourceTree = "<group>"; };
 		BE84B20F257C622400A90C5D /* Subreddit_Model+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Subreddit_Model+CoreDataProperties.swift"; path = "CoreData/Subreddit_Model+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		BE84B21E257D935F00A90C5D /* CommentModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommentModel+Extensions.swift"; sourceTree = "<group>"; };
+		BE84B228257D978F00A90C5D /* MessageModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MessageModel+CoreDataClass.swift"; path = "CoreData/MessageModel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		BE84B229257D978F00A90C5D /* MessageModel+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MessageModel+CoreDataProperties.swift"; path = "CoreData/MessageModel+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		BE84B22A257D978F00A90C5D /* CommentModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CommentModel+CoreDataClass.swift"; path = "CoreData/CommentModel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		BE84B22B257D978F00A90C5D /* CommentModel+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CommentModel+CoreDataProperties.swift"; path = "CoreData/CommentModel+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		BE84B23C257D9FDE00A90C5D /* MessageModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageModel+Extensions.swift"; sourceTree = "<group>"; };
 		BE854972239310E300D51DDC /* GalleryLinkCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryLinkCellView.swift; sourceTree = "<group>"; };
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
@@ -921,12 +935,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4F333B925126FCE0032BB64 /* Realm in Frameworks */,
 				B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */,
 				BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */,
 				B4F3355625127BD20032BB64 /* Then in Frameworks */,
 				B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */,
-				B4F333BB25126FCE0032BB64 /* RealmSwift in Frameworks */,
 				B4F333EB251274050032BB64 /* BadgeSwift in Frameworks */,
 				BE51BE6520C7386A00DFFD8B /* StoreKit.framework in Frameworks */,
 				B4F3354C25127BAB0032BB64 /* Anchorage in Frameworks */,
@@ -1381,6 +1393,8 @@
 			children = (
 				BE84B1B1257C5DBC00A90C5D /* Submission+Extensions.swift */,
 				BE84B200257C5F5C00A90C5D /* SlideCoreData.swift */,
+				BE84B21E257D935F00A90C5D /* CommentModel+Extensions.swift */,
+				BE84B23C257D9FDE00A90C5D /* MessageModel+Extensions.swift */,
 			);
 			name = CoreData;
 			sourceTree = "<group>";
@@ -1388,6 +1402,10 @@
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
+				BE84B228257D978F00A90C5D /* MessageModel+CoreDataClass.swift */,
+				BE84B229257D978F00A90C5D /* MessageModel+CoreDataProperties.swift */,
+				BE84B22A257D978F00A90C5D /* CommentModel+CoreDataClass.swift */,
+				BE84B22B257D978F00A90C5D /* CommentModel+CoreDataProperties.swift */,
 				BE84B20A257C622400A90C5D /* Subreddit_Posts+CoreDataClass.swift */,
 				BE84B20B257C622400A90C5D /* Subreddit_Posts+CoreDataProperties.swift */,
 				BE84B20C257C622400A90C5D /* Submission+CoreDataClass.swift */,
@@ -1733,8 +1751,6 @@
 			);
 			name = "Slide for Reddit";
 			packageProductDependencies = (
-				B4F333B825126FCE0032BB64 /* Realm */,
-				B4F333BA25126FCE0032BB64 /* RealmSwift */,
 				B4F333E0251273AF0032BB64 /* SDWebImage */,
 				B4F333EA251274050032BB64 /* BadgeSwift */,
 				B4F333F42512742E0032BB64 /* BiometricAuthentication */,
@@ -1906,7 +1922,6 @@
 			);
 			mainGroup = BE8FC9FB1E0C46090063B8EF;
 			packageReferences = (
-				B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 				B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 				B4F333E9251274050032BB64 /* XCRemoteSwiftPackageReference "swift-badge" */,
 				B4F333F32512742E0032BB64 /* XCRemoteSwiftPackageReference "BiometricAuthentication" */,
@@ -2285,6 +2300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */,
+				BE84B231257D978F00A90C5D /* CommentModel+CoreDataClass.swift in Sources */,
 				BE3D19A82411E3C200049C72 /* Votable.swift in Sources */,
 				BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */,
 				BE13C2D021655AF7002687F2 /* String+Extensions.swift in Sources */,
@@ -2293,12 +2309,15 @@
 				BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */,
 				BEA86AD6257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */,
 				BE0F4434218F6BBD00D98279 /* ProInterfaceController.swift in Sources */,
+				BE84B22F257D978F00A90C5D /* MessageModel+CoreDataProperties.swift in Sources */,
 				BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */,
 				BE13C2CE21655A9A002687F2 /* DateFormatter+Extensions.swift in Sources */,
 				BE0D639D215983260006A2DD /* PostActionMenuController.swift in Sources */,
 				BE13C2D221655E43002687F2 /* UIColor+Extensions.swift in Sources */,
+				BE84B233257D978F00A90C5D /* CommentModel+CoreDataProperties.swift in Sources */,
 				BE20852321588F3B00D8F33C /* InterfaceController.swift in Sources */,
 				BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */,
+				BE84B22D257D978F00A90C5D /* MessageModel+CoreDataClass.swift in Sources */,
 				BE0D63A3215AA5CD0006A2DD /* ContentType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2385,10 +2404,12 @@
 				BEBF3814256376AC00C91668 /* ModerationOverviewViewController.swift in Sources */,
 				BE7439EB1E201BB0008BB63B /* SubredditToolbarSearchViewController.swift in Sources */,
 				BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */,
+				BE84B230257D978F00A90C5D /* CommentModel+CoreDataClass.swift in Sources */,
 				0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */,
 				BEB81A6821445FE4007E326B /* FriendCellView.swift in Sources */,
 				BE3144FF25663674004A908C /* AsyncTextAttachment.swift in Sources */,
 				BEBE0C6F222199DA0044FF55 /* IAPHandlerTip.swift in Sources */,
+				BE84B232257D978F00A90C5D /* CommentModel+CoreDataProperties.swift in Sources */,
 				BE11351C2159390700502C5B /* WatchSessionManager.swift in Sources */,
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */,
@@ -2408,6 +2429,7 @@
 				09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */,
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,
+				BE84B22E257D978F00A90C5D /* MessageModel+CoreDataProperties.swift in Sources */,
 				BEC4A1AA232EA36300EE5114 /* ProfileInfoPresentationAnimator.swift in Sources */,
 				BE3B74392107AA1200658DE9 /* UIAlertController+Extensions.swift in Sources */,
 				BE836478254A3A8B00677F8A /* TrendingViewController.swift in Sources */,
@@ -2461,6 +2483,7 @@
 				BE9456021F3375460097EEF0 /* LeftTransition.swift in Sources */,
 				BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */,
 				BE7AF5761F3529E00003B24B /* ShadowboxLinkViewController.swift in Sources */,
+				BE84B22C257D978F00A90C5D /* MessageModel+CoreDataClass.swift in Sources */,
 				BEBF45C81E230CC900764BB8 /* History.swift in Sources */,
 				BE6EA6E01E1C228100E9E709 /* GfycatTranscoded.swift in Sources */,
 				BEE5BF641E11A15500E3C9AE /* LinkCellView.swift in Sources */,
@@ -2479,6 +2502,7 @@
 				BE25CADE24C4E3FB00736CA5 /* SplitMainViewController.swift in Sources */,
 				BE981D351E31855500BD3846 /* OpenInChrome.swift in Sources */,
 				BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */,
+				BE84B21F257D935F00A90C5D /* CommentModel+Extensions.swift in Sources */,
 				BEC4A1B82331533400EE5114 /* AutoplayScrollViewHandler.swift in Sources */,
 				BE2B89F31E2450D70053D493 /* ColorPicker.swift in Sources */,
 				BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */,
@@ -2515,6 +2539,7 @@
 				B776B41AF52E177BCE0241F3 /* Filter.swift in Sources */,
 				B776BB46CB68FCCCA9E843A9 /* CacheSettings.swift in Sources */,
 				BE84B201257C5F5C00A90C5D /* SlideCoreData.swift in Sources */,
+				BE84B23D257D9FDE00A90C5D /* MessageModel+Extensions.swift in Sources */,
 				BEC4A1A4232E98CF00EE5114 /* ProfileInfoViewController.swift in Sources */,
 				B776B87EDB6E25D8D1B2D4B5 /* CustomAlbum.swift in Sources */,
 				B776BC55CA329427879F17B4 /* ModMailContributionLoader.swift in Sources */,
@@ -3440,14 +3465,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-cocoa.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 		B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
@@ -3515,16 +3532,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B4F333B825126FCE0032BB64 /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
-			productName = Realm;
-		};
-		B4F333BA25126FCE0032BB64 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B4F333B725126FCE0032BB64 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
-			productName = RealmSwift;
-		};
 		B4F333E0251273AF0032BB64 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B4F333DF251273AF0032BB64 /* XCRemoteSwiftPackageReference "SDWebImage" */;

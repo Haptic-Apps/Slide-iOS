@@ -9,7 +9,7 @@
 import Anchorage
 import MobileCoreServices
 import Photos
-import RealmSwift
+
 import reddift
 import SDCAlertView
 import SwiftyJSON
@@ -62,7 +62,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var message: String?
 
     var subreddit = ""
-    var canMod = false
+    var isMod = false
     var scrollView = UIScrollView()
     var username: String?
 
@@ -222,7 +222,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     init(submission: Submission, sub: String, delegate: ReplyDelegate) {
         subreddit = sub
         type = .REPLY_SUBMISSION
-        self.canMod = AccountController.modSubs.contains(sub)
+        self.isMod = AccountController.modSubs.contains(sub)
         toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
@@ -251,7 +251,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     init(submission: Submission, sub: String, modMessage: String, completion: @escaping (Comment?) -> Void) {
         type = .REPLY_SUBMISSION
         toReplyTo = submission
-        self.canMod = true
+        self.isMod = true
         super.init(nibName: nil, bundle: nil)
         self.modText = modMessage
         setBarColors(color: ColorUtil.getColorForSub(sub: sub))
@@ -372,7 +372,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     convenience init(subreddit: String, type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.init(type: type, completion: completion)
         self.subreddit = subreddit
-        self.canMod = AccountController.modSubs.contains(subreddit)
+        self.isMod = AccountController.modSubs.contains(subreddit)
         setBarColors(color: ColorUtil.getColorForSub(sub: subreddit))
     }
 
@@ -482,14 +482,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         var finalWidth = CGFloat(0)
         if type == .REPLY_SUBMISSION {
             info!.isHidden = true
-            if canMod {
+            if isMod {
                 finalWidth = CGFloat(8) + width + widthS
             } else {
                 sticky!.isHidden = true
                 finalWidth = width
             }
         } else {
-            if canMod || (toReplyTo != nil && (toReplyTo as! Submission).canMod) {
+            if isMod || (toReplyTo != nil && (toReplyTo as! Submission).isMod) {
                 finalWidth = CGFloat(8 * 2) + width + widthI + widthS
             } else {
                 sticky!.isHidden = true
@@ -577,7 +577,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let alert = UIAlertController(title: "Select post flair", message: nil, preferredStyle: .alert)
         for item in flairs {
             alert.addAction(UIAlertAction(title: item.title, style: .default, handler: { (_) in
-                self.selectedFlair = item.id
+                self.selectedFlair = item.getId()
                 self.text?[0].placeholder = item.title
             }))
         }
@@ -1243,7 +1243,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
 
             do {
-                let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).getId() : toReplyTo is RComment ? (toReplyTo as! RComment).getId() : (toReplyTo as! Submission).getId()
+                let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).id : toReplyTo is CommentModel ? (toReplyTo as! CommentModel).id : (toReplyTo as! Submission).id
                 try self.session?.editCommentOrLink(name, newBody: body.text, completion: { (_) in
                     self.getSubmissionEdited(name)
                 })
@@ -1463,7 +1463,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         DispatchQueue.main.async {
             if self.sticky != nil && self.sticky!.isSelected {
                 do {
-                    try self.session?.distinguish(comment.getId(), how: "yes", sticky: true, completion: { (_) -> Void in
+                    try self.session?.distinguish(comment.id, how: "yes", sticky: true, completion: { (_) -> Void in
                         var newComment = comment
                         newComment.stickied = true
                         newComment.distinguished = .moderator
@@ -1482,7 +1482,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         DispatchQueue.main.async {
             if self.replies != nil && !self.replies!.isSelected {
                 do {
-                    try self.session?.setReplies(false, name: comment.getId(), completion: { (_) in
+                    try self.session?.setReplies(false, name: comment.id, completion: { (_) in
                         self.commentReplyCallback(comment, nil)
                     })
                 } catch {

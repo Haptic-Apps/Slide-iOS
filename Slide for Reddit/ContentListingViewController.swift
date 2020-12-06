@@ -299,9 +299,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             }
             
             cell = c
-        } else if thing is RComment {
+        } else if thing is CommentModel {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
-            c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setComment(comment: (thing as! CommentModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         } else if thing is RFriend {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
@@ -336,12 +336,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             if thing is Submission {
                 let submission = thing as! Submission
                 return SingleSubredditViewController.sizeWith(submission, width, false, false)
-            } else if thing is RComment {
-                let comment = thing as! RComment
+            } else if thing is CommentModel {
+                let comment = thing as! CommentModel
                 if estimatedHeights[comment.id] == nil {
                     let titleText = CommentCellView.getTitle(comment)
                     
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: comment.htmlText)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: comment.htmlBody)
                     
                     estimatedHeights[comment.id] = height + 20
                 }
@@ -582,7 +582,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     
     func upvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
@@ -596,7 +596,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (_) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
@@ -620,7 +620,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                     Collections.removeFromCollection(link: cell.link!, title: ctitle)
                     self.baseData.content = self.baseData.content.filter { (object) -> Bool in
                         if let link = object as? Submission {
-                            if link.getId() == cell.link!.getId() {
+                            if link.id == cell.link!.id {
                                 return false
                             }
                         }
@@ -633,7 +633,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             }
         } else {
             do {
-                try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
+                try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.id)!, completion: { (_) in
                     
                 })
                 ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -662,7 +662,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
         }
         
         if self is ReadLaterViewController {
-            ReadLater.removeReadLater(id: cell.link!.getId())
+            ReadLater.removeReadLater(id: cell.link!.id)
             let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
             self.baseData.content.remove(at: savedIndex)
             if self.baseData.content.count == 0 {
@@ -671,7 +671,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 self.tableView.deleteItems(at: [IndexPath.init(row: savedIndex, section: 0)])
             }
             BannerUtil.makeBanner(text: "Removed from Read Later\nTap to undo", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
-                ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
+                ReadLater.addReadLater(id: cell.link!.id, subreddit: cell.link!.subreddit)
                 self.baseData.content.insert(cell.link!, at: savedIndex)
                 if ReadLater.readLaterIDs.count == 1 {
                     self.tableView.reloadData()

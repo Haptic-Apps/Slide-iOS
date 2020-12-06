@@ -50,11 +50,11 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                     let children = message["context"] == nil ? listing.children : (listing.children[0] as! Comment).replies.children
                                     for child in children {
                                         if let comment = child as? Comment {
-                                            objects.append(["context": comment.id, "id": comment.getId(), "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score, "upvoted": (comment.likes) == VoteDirection.up, "downvoted": (comment.likes) == VoteDirection.down])
+                                            objects.append(["context": comment.id, "id": comment.id, "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score, "upvoted": (comment.likes) == VoteDirection.up, "downvoted": (comment.likes) == VoteDirection.down])
                                             if comment.likes == VoteDirection.down {
-                                                ActionStates.downVotedFullnames.append(comment.getId())
+                                                ActionStates.downVotedFullnames.append(comment.id)
                                             } else if comment.likes == VoteDirection.up {
-                                                ActionStates.upVotedFullnames.append(comment.getId())
+                                                ActionStates.upVotedFullnames.append(comment.id)
                                             }
 
                                         }
@@ -181,14 +181,14 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                         }
                                     }
                                     
-                                    dict["id"] = ((link as! Link)).getId()
+                                    dict["id"] = ((link as! Link)).id
                                     
                                     dict["upvoted"] = ((link as! Link).likes) == VoteDirection.up
                                     dict["downvoted"] = ((link as! Link).likes) == VoteDirection.down
                                     if ((link as! Link).likes) == VoteDirection.down {
-                                        ActionStates.downVotedFullnames.append((link as! Link).getId())
+                                        ActionStates.downVotedFullnames.append((link as! Link).id)
                                     } else if ((link as! Link).likes) == VoteDirection.up {
-                                        ActionStates.upVotedFullnames.append((link as! Link).getId())
+                                        ActionStates.upVotedFullnames.append((link as! Link).id)
                                     }
                                     dict["readLater"] = ReadLater.isReadLater(id: ((link as! Link).id))
                                     dict["bigimage"] = nil

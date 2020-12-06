@@ -655,7 +655,7 @@ extension DragDownAlertMenu {
                     for item in listing.children.compactMap({ $0 }) {
                         if item is Comment {
                         } else if self.results.count < 10 {
-                            self.results.append(RealmDataWrapper.linkToSubmission(submission: item as! Link))
+                            self.results.append(Submission.linkToSubmission(submission: item as! Link))
                         }
                     }
                     DispatchQueue.main.async {

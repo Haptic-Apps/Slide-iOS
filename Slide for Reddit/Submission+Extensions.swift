@@ -1,5 +1,5 @@
 //
-//  Submission+Extensions.swift
+//  submissionModel+Extensions.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/5/20.
@@ -128,96 +128,94 @@ public extension Submission {
             }
             
         }
-        let Submission = Submission()
+        
+        let submissionModel = submissionModel()
         do {
-            try Submission.smallPreview = ((previews?.first as? [String: Any])?["url"] as? String)?.convertHtmlSymbols() ?? ""
+            try submissionModel.smallPreview = ((previews?.first as? [String: Any])?["url"] as? String)?.convertHtmlSymbols() ?? ""
         } catch {
             
         }
         
-        Submission.subreddit_icon = ((json?["sr_detail"] as? [String: Any])?["icon_img"] as? String ?? ((json?["sr_detail"] as? [String: Any])?["community_icon"] as? String ?? ""))
+        submissionModel.subredditIcon ?? "" = ((json?["sr_detail"] as? [String: Any])?["icon_img"] as? String ?? ((json?["sr_detail"] as? [String: Any])?["community_icon"] as? String ?? ""))
 
-        Submission.id = submission.getId()
-        Submission.author = submission.author
-        Submission.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
-        Submission.isEdited = submission.edited > 0
-        Submission.edited = NSDate(timeIntervalSince1970: TimeInterval(submission.edited))
-        Submission.silver = ((json?["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
-        Submission.gold = ((json?["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
-        Submission.platinum = ((json?["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
-        Submission.htmlBody = bodyHtml
-        Submission.subreddit = submission.subreddit
-        Submission.archived = submission.archived
-        Submission.locked = submission.locked
+        submissionModel.id = submission.getId()
+        submissionModel.author = submission.author
+        submissionModel.created = NSDate(timeIntervalSince1970: TimeInterval(submission.createdUtc))
+        submissionModel.isEdited = submission.edited > 0
+        submissionModel.edited = NSDate(timeIntervalSince1970: TimeInterval(submission.edited))
+        submissionModel.htmlBody = bodyHtml
+        submissionModel.subreddit = submission.subreddit
+        submissionModel.isArchived = submission.archived
+        submissionModel.isLocked = submission.isLocked
         do {
-            try Submission.urlString = ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+            try submissionModel.urlString = ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
         } catch {
-            Submission.urlString = (submission.url?.absoluteString) ?? ""
+            submissionModel.urlString = (submission.url?.absoluteString) ?? ""
         }
-        Submission.urlString = Submission.urlString.removingPercentEncoding ?? Submission.urlString
-        Submission.title = submission.title
-        Submission.commentCount = submission.numComments
-        Submission.saved = submission.saved
-        Submission.stickied = submission.stickied
-        Submission.visited = submission.visited
-        Submission.bannerUrl = burl
-        Submission.thumbnailUrl = turl
-        Submission.thumbnail = thumb
-        Submission.nsfw = submission.over18
-        Submission.banner = big
-        Submission.lqUrl = String.init(htmlEncodedString: lqUrl)
-        Submission.domain = submission.domain
-        Submission.lQ = lowq
-        Submission.score = submission.score
-        Submission.flair = flair
-        Submission.voted = submission.likes != .none
-        Submission.upvoteRatio = submission.upvoteRatio
-        Submission.vote = submission.likes == .up
-        Submission.name = submission.id
+        submissionModel.urlString = submissionModel.urlString.removingPercentEncoding ?? submissionModel.urlString
+        submissionModel.title = submission.title
+        submissionModel.commentCount = submission.numComments
+        submissionModel.saved = submission.saved
+        submissionModel.stickied = submission.stickied
+        submissionModel.visited = submission.visited
+        submissionModel.bannerUrl = burl
+        submissionModel.thumbnailUrl = turl
+        submissionModel.thumbnail = thumb
+        submissionModel.isNSFW = submission.over18
+        submissionModel.banner = big
+        submissionModel.lqUrl = String.init(htmlEncodedString: lqUrl)
+        submissionModel.domain = submission.domain
+        submissionModel.lQ = lowq
+        submissionModel.score = submission.score
+        submissionModel.flair = flair
+        submissionModel.voted = submission.likes != .none
+        submissionModel.upvoteRatio = submission.upvoteRatio
+        submissionModel.vote = submission.likes == .up
+        submissionModel.name = submission.id
         do {
-            try Submission.videoPreview = (videoPreview ?? "").convertHtmlSymbols() ?? ""
+            try submissionModel.videoPreview = (videoPreview ?? "").convertHtmlSymbols() ?? ""
         } catch {
-            Submission.videoPreview = videoPreview ?? ""
+            submissionModel.videoPreview = videoPreview ?? ""
         }
         
         do {
-            try Submission.videoMP4 = ((((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String) ?? "").convertHtmlSymbols() ?? ""
+            try submissionModel.videoMP4 = ((((((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["variants"] as? [String: Any])?["mp4"] as? [String: Any])?["source"] as? [String: Any])?["url"] as? String) ?? "").convertHtmlSymbols() ?? ""
         } catch {
-            Submission.videoMP4 = ""
+            submissionModel.videoMP4 = ""
         }
         
-        if Submission.videoMP4 == "" {
+        if submissionModel.videoMP4 == "" {
             do {
-                try Submission.videoMP4 = ((((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String) ?? "").convertHtmlSymbols() ?? ""
+                try submissionModel.videoMP4 = ((((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["fallback_url"] as? String) ?? "").convertHtmlSymbols() ?? ""
             } catch {
-                Submission.videoMP4 = ""
+                submissionModel.videoMP4 = ""
             }
         }
 
-        Submission.height = h
-        Submission.width = w
-        Submission.distinguished = submission.distinguished.type
-        Submission.canMod = submission.canMod
-        Submission.isSelf = submission.isSelf
-        Submission.body = submission.selftext
-        Submission.permalink = submission.permalink
-        Submission.canMod = submission.canMod
-        Submission.spoiler = submission.baseJson["spoiler"] as? Bool ?? false
-        Submission.oc = submission.baseJson["is_original_content"] as? Bool ?? false
-        Submission.removedBy = submission.baseJson["banned_by"] as? String ?? ""
-        Submission.removalReason = submission.baseJson["ban_note"] as? String ?? ""
-        Submission.removalNote = submission.baseJson["mod_note"] as? String ?? ""
-        Submission.removed = !Submission.removedBy.isEmpty()
-        Submission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
-        Submission.hidden = submission.baseJson["hidden"] as? Bool ?? false
+        submissionModel.height = h
+        submissionModel.width = w
+        submissionModel.distinguished = submission.distinguished.type
+        submissionModel.isMod = submission.isMod
+        submissionModel.isSelf = submission.isSelf
+        submissionModel.body = submission.selftext
+        submissionModel.permalink = submission.permalink
+        submissionModel.isMod = submission.isMod
+        submissionModel.spoiler = submission.baseJson["spoiler"] as? Bool ?? false
+        submissionModel.oc = submission.baseJson["is_original_content"] as? Bool ?? false
+        submissionModel.removedBy = submission.baseJson["banned_by"] as? String ?? ""
+        submissionModel.removalReason = submission.baseJson["ban_note"] as? String ?? ""
+        submissionModel.removalNote = submission.baseJson["mod_note"] as? String ?? ""
+        submissionModel.removed = !submissionModel.removedBy.isEmpty()
+        submissionModel.isCakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
+        submissionModel.hidden = submission.baseJson["hidden"] as? Bool ?? false
 
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
-            Submission.reports.append("\(array[0]): \(array[1])")
+            submissionModel.reports.append("\(array[0]): \(array[1])")
         }
         for item in submission.baseJson["user_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
-            Submission.reports.append("\(array[0]): \(array[1])")
+            submissionModel.reports.append("\(array[0]): \(array[1])")
         }
         
         let jsonDict = NSMutableDictionary()
@@ -245,7 +243,7 @@ public extension Submission {
                 }
             }
         }
-        Submission.awardsJSON = jsonDict.jsonString()
+        submissionModel.awardsJSON = jsonDict.jsonString()
         
         let flairDict = NSMutableDictionary()
         for item in submission.baseJson["link_flair_richtext"] as? [AnyObject] ?? [] {
@@ -265,57 +263,70 @@ public extension Submission {
                 }
             }
         }
-        Submission.flairJSON = flairDict.jsonString()
+        submissionModel.flairJSON = flairDict.jsonString()
 
-        Submission.gallery.removeAll()
+        submissionModel.gallery.removeAll()
         for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
             if let image = (submission.baseJson["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
                 if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
-                    Submission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                    submissionModel.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
                 }
             }
         }
 
 
-        Submission.pollOptions.removeAll()
+        submissionModel.pollOptions.removeAll()
         for item in (submission.baseJson["poll_data"] as? JSONDictionary)?["options"] as? [AnyObject] ?? [] {
             if let poll = item as? JSONDictionary {
                 if poll["text"] != nil {
                     let name = poll["text"] as? String ?? ""
                     let amount = poll["vote_count"] as? Int ?? -1
-                    Submission.pollOptions.append("\(name);\(amount)")
+                    submissionModel.pollOptions.append("\(name);\(amount)")
                 }
             }
         }
         
-        Submission.pollTotal = (submission.baseJson["poll_data"] as? JSONDictionary)?["total_vote_count"] as? Int ?? 0
+        submissionModel.pollTotal = (submission.baseJson["poll_data"] as? JSONDictionary)?["total_vote_count"] as? Int ?? 0
 
-        Submission.gilded = Submission.silver + Submission.gold + Submission.platinum + jsonDict.allKeys.count > 0
+        submissionModel.gilded = submissionModel.silver + submissionModel.gold + submissionModel.platinum + jsonDict.allKeys.count > 0
 
-        Submission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
-        Submission.approved = !Submission.approvedBy.isEmpty()
+        submissionModel.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
+        submissionModel.approved = !submissionModel.approvedBy.isEmpty()
         
         if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
-            Submission.isCrosspost = true
+            submissionModel.isCrosspost = true
             let sub = (crosspostParent.first as? [String: Any])?["subreddit"] as? String ?? ""
             let author = (crosspostParent.first as? [String: Any])?["author"] as? String ?? ""
             let permalink = (crosspostParent.first as? [String: Any])?["permalink"] as? String ?? ""
-            Submission.crosspostSubreddit = sub
-            Submission.crosspostAuthor = author
-            Submission.crosspostPermalink = permalink
+            submissionModel.crosspostSubreddit = sub
+            submissionModel.crosspostAuthor = author
+            submissionModel.crosspostPermalink = permalink
             
-            Submission.gallery.removeAll()
+            submissionModel.gallery.removeAll()
             for item in ((crosspostParent.first as? [String: Any])?["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
                 if let image = ((crosspostParent.first as? [String: Any])?["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
                     if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
-                        Submission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                        submissionModel.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
                     }
                 }
             }
         }
 
-        return Submission
+        return submissionModel
     }
+}
 
-
+extension NSManagedObject {
+    
+    func getId() -> String {
+        if let object = self as? Submission {
+            return object.id
+        } else if let object = self as? CommentModel {
+            return object.id
+        } else if let object = self as? MessageModel {
+            return object.id
+        } else {
+            return ""
+        }
+    }
 }

@@ -6,8 +6,9 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
+
 import reddift
 
 class ModlogContributionLoader: ContributionLoader {
@@ -27,7 +28,7 @@ class ModlogContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [Object]
+    var content: [NSManagedObject]
     var delegate: ContentListingViewController?
     var paging = true
     
@@ -51,7 +52,7 @@ class ModlogContributionLoader: ContributionLoader {
                                 item.action = thing.action
                                 item.created = Date(timeIntervalSince1970: thing.createdUtc) as NSDate
                                 item.details = thing.details
-                                item.id = thing.id
+                                item.getId() = thing.id
                                 item.mod = thing.mod
                                 item.permalink = thing.targetPermalink
                                 item.subreddit = thing.subreddit

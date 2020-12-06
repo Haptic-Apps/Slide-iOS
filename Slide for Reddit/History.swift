@@ -19,10 +19,10 @@ class History {
     public static func getSeen(s: Submission) -> Bool {
         if !SettingValues.saveHistory {
             return false
-        } else if s.nsfw && !SettingValues.saveNSFWHistory {
+        } else if s.isNSFW && !SettingValues.saveNSFWHistory {
             return false
         }
-        let fullname = s.getId()
+        let fullname = s.id
         if seenTimes.object(forKey: fullname) != nil {
             return true
         }
@@ -30,7 +30,7 @@ class History {
     }
     
     public static func getSeenTime(s: Submission) -> Double {
-        let fullname = s.getId()
+        let fullname = s.id
         if let time = seenTimes.object(forKey: fullname) {
             if time is NSNumber {
                 return Double(truncating: time as! NSNumber)
@@ -50,15 +50,15 @@ class History {
     
     public static var currentSeen: [String] = [String]()
     public static func addSeen(s: Submission, skipDuplicates: Bool = true) {
-        if !SettingValues.saveNSFWHistory && s.nsfw {
+        if !SettingValues.saveNSFWHistory && s.isNSFW {
             
         } else if SettingValues.saveHistory {
-            let fullname = s.getId()
+            let fullname = s.id
             currentSeen.append(fullname)
             if !skipDuplicates || seenTimes.object(forKey: fullname) == nil {
                 seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
             }
-            currentVisits.append(s.getId())
+            currentVisits.append(s.id)
         }
     }
     
@@ -84,7 +84,7 @@ class History {
     
     //mark Comments
     public static func commentsSince(s: Submission) -> Int {
-        if let comments = commentCounts.object(forKey: s.getId()) {
+        if let comments = commentCounts.object(forKey: s.id) {
             return s.commentCount - (comments as! Int)
         } else {
             return 0
@@ -92,6 +92,6 @@ class History {
     }
     
     public static func setComments(s: Submission) {
-        commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.getId())
+        commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.id)
     }
 }

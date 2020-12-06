@@ -247,8 +247,8 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.body = "This is where the selftext preview goes in a normal submission."
         fakesub.title = "Chameleons are cool!"
         fakesub.subreddit = "all"
-        fakesub.archived = false
-        fakesub.locked = false
+        fakesub.isArchived = false
+        fakesub.isLocked = false
         fakesub.urlString = "http://i.imgur.com/mAs9Lk3.png"
         fakesub.distinguished = ""
         fakesub.isEdited = false

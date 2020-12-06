@@ -10,7 +10,7 @@ import Anchorage
 import BiometricAuthentication
 import LicensesViewController
 import MessageUI
-import RealmSwift
+
 import RLBAlertsPickers
 import SDWebImage
 import UIKit

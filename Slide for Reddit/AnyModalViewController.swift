@@ -100,10 +100,10 @@ class AnyModalViewController: UIViewController {
         self.embeddedPlayer = cellView.videoView.player
         self.toReturnTo = cellView
         self.baseURL = cellView.videoURL ?? cellView.link?.url
-        if VideoMediaViewController.VideoType.fromPath(self.baseURL!.absoluteString) == .REDDIT {
-            self.baseURL = URL(string: cellView.link!.videoPreview)
+        if let urlString = cellView.link?.videoPreview, VideoMediaViewController.VideoType.fromPath(self.baseURL!.absoluteString) == .REDDIT {
+            self.baseURL = URL(string: urlString)
         }
-        AnyModalViewController.linkID = cellView.link!.getId()
+        AnyModalViewController.linkID = cellView.link!.id
     }
     
     init(baseUrl: URL, _ commentCallback: (() -> Void)?, upvoteCallback: (() -> Void)?, isUpvoted: Bool, failure: ((_ url: URL) -> Void)?) {

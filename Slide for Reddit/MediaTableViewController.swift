@@ -73,7 +73,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         isUpvoted = ActionStates.getVoteDirection(s: link) == VoteDirection.up
         upvoteCallback = { () in
             do {
-                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: link) == .up ? .none : .up, name: (link.getId()), completion: { (_) in
+                try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(ActionStates.getVoteDirection(s: link) == .up ? .none : .up, name: (link.id), completion: { (_) in
                     
                 })
                 ActionStates.setVoteDirection(s: link, direction: ActionStates.getVoteDirection(s: link) == .up ? .none : .up)
@@ -82,7 +82,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 
             }
         }
-        if link.archived || !AccountController.isLoggedIn {
+        if link.isArchived || !AccountController.isLoggedIn {
             upvoteCallback = nil
         }
         if self is CommentViewController {

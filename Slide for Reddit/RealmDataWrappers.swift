@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RealmSwift
+
 import reddift
 
 class RealmDataWrapper {
@@ -18,85 +18,6 @@ class RealmDataWrapper {
         return rFriend
     }
     
-    static func commentToRealm(comment: Thing, depth: Int) -> Object {
-        if comment is Comment {
-            return commentToRComment(comment: comment as! Comment, depth: depth)
-        } else {
-            return moreToRMore(more: comment as! More)
-        }
-    }
-    
-    //Takes a Comment from reddift and turns it into a Realm model
-    static func commentToRComment(comment: Comment, depth: Int) -> RComment {
-        let flair = comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
-        var bodyHtml = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
-
-        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
-        let rComment = RComment()
-        let json = comment.baseJson
-        rComment.id = comment.getId()
-        rComment.author = comment.author
-        rComment.created = NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc))
-        rComment.isEdited = comment.edited > 0
-        rComment.edited = NSDate(timeIntervalSince1970: TimeInterval(comment.edited))
-        rComment.silver = ((json["gildings"] as? [String: Any])?["gid_1"] as? Int) ?? 0
-        rComment.gold = ((json["gildings"] as? [String: Any])?["gid_2"] as? Int) ?? 0
-        rComment.platinum = ((json["gildings"] as? [String: Any])?["gid_3"] as? Int) ?? 0
-        rComment.gilded = rComment.silver + rComment.gold + rComment.platinum > 0
-        rComment.htmlText = bodyHtml
-        rComment.subreddit = comment.subreddit
-        rComment.submissionTitle = comment.submissionTitle
-        rComment.saved = comment.saved
-        rComment.body = comment.body
-        rComment.removalReason = comment.baseJson["ban_note"] as? String ?? ""
-        rComment.removalNote = comment.baseJson["mod_note"] as? String ?? ""
-        rComment.removedBy = comment.baseJson["banned_by"] as? String ?? ""
-        rComment.removed = !rComment.removedBy.isEmpty()
-        rComment.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
-        rComment.approved = !rComment.approvedBy.isEmpty()
-        rComment.sticky = comment.stickied
-        rComment.flair = flair
-        rComment.cakeday = comment.baseJson["author_cakeday"] as? Bool ?? false
-
-        let richtextFlairs = (json["author_flair_richtext"] as? [Any])
-        if richtextFlairs != nil && richtextFlairs!.count > 0 {
-            for flair in richtextFlairs! {
-                if let flairDict = flair as? [String: Any] {
-                    if flairDict["e"] != nil && flairDict["e"] as! String == "emoji" {
-                        rComment.urlFlair = ((flairDict["u"] as? String) ?? "").decodeHTML().trimmed()
-                    } else if flairDict["e"] != nil && flairDict["e"] as! String == "text" {
-                        rComment.flair = ((flairDict["t"] as? String) ?? "").decodeHTML().trimmed()
-                    }
-                }
-            }
-        }
-
-        for item in comment.modReports {
-            let array = item as! [Any]
-            rComment.reports.append("\(array[0]): \(array[1])")
-        }
-        for item in comment.userReports {
-            let array = item as! [Any]
-            rComment.reports.append("\(array[0]): \(array[1])")
-        }
-       // TODO: - rComment.pinned = comment.pinned
-        rComment.score = comment.score
-        rComment.depth = depth
-        
-        rComment.canMod = comment.canMod
-        rComment.linkid = comment.linkId
-        rComment.archived = comment.archived
-        rComment.distinguished = comment.distinguished.type
-        rComment.controversiality = comment.controversiality
-        rComment.voted = comment.likes != .none
-        rComment.vote = comment.likes == .up
-        rComment.name = comment.name
-        rComment.parentId = comment.parentId
-        rComment.scoreHidden = comment.scoreHidden
-        rComment.permalink = "https://www.reddit.com" + comment.permalink
-        return rComment
-    }
-    
     static func messageToRMessage(message: Message) -> RMessage {
         let title = message.baseJson["link_title"] as? String ?? ""
         var bodyHtml = message.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
@@ -104,7 +25,7 @@ class RealmDataWrapper {
         let rMessage = RMessage()
         rMessage.htmlBody = bodyHtml
         rMessage.name = message.name
-        rMessage.id = message.getId()
+        rMessage.id = message.id
         
         rMessage.author = message.author
         rMessage.subreddit = message.subreddit
@@ -120,10 +41,10 @@ class RealmDataWrapper {
     //Takes a More from reddift and turns it into a Realm model
     static func moreToRMore(more: More) -> RMore {
         let rMore = RMore()
-        if more.getId().endsWith("_") {
+        if more.id.endsWith("_") {
             rMore.id = "more_\(NSUUID().uuidString)"
         } else {
-            rMore.id = more.getId()
+            rMore.id = more.id
         }
         rMore.name = more.name
         rMore.parentId = more.parentId
@@ -136,17 +57,6 @@ class RealmDataWrapper {
         return rMore
     }
     
-}
-
-class RListing: Object {
-    override class func primaryKey() -> String? {
-        return "subreddit"
-    }
-    
-    @objc dynamic var updated = NSDate(timeIntervalSince1970: 1)
-    @objc dynamic var subreddit = ""
-    @objc dynamic var comments = false
-    let links = List<Submission>()
 }
 
 class RMessage: Object {
@@ -166,9 +76,6 @@ class RMessage: Object {
     @objc dynamic var subreddit = ""
     @objc dynamic var subject = ""
     
-    func getId() -> String {
-        return id
-    }
 }
 
 class RModlogItem: Object {
@@ -187,73 +94,8 @@ class RModlogItem: Object {
     @objc dynamic var action = ""
     @objc dynamic var targetAuthor = ""
     @objc dynamic var subject = ""
-    
-    func getId() -> String {
-        return id
-    }
 }
 
-class RComment: Object {
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-    
-    func getId() -> String {
-        return id
-    }
-    
-    @objc dynamic var id = ""
-    @objc dynamic var name = ""
-    @objc dynamic var body = ""
-    @objc dynamic var author = ""
-    @objc dynamic var permalink = ""
-    var reports = List<String>()
-    @objc dynamic var removedBy = ""
-    @objc dynamic var removalReason = ""
-    @objc dynamic var removalNote = ""
-    @objc dynamic var approvedBy = ""
-    @objc dynamic var approved = false
-    @objc dynamic var removed = false
-    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
-    @objc dynamic var edited = NSDate(timeIntervalSince1970: 1)
-    @objc dynamic var depth = 0
-    @objc dynamic var gilded = false
-    @objc dynamic var gold = 0
-    @objc dynamic var silver = 0
-    @objc dynamic var platinum = 0
-    @objc dynamic var htmlText = ""
-    @objc dynamic var distinguished = ""
-    @objc dynamic var linkid = ""
-    @objc dynamic var canMod = false
-    @objc dynamic var sticky = false
-    @objc dynamic var submissionTitle = ""
-    @objc dynamic var pinned = false
-    @objc dynamic var controversiality = 0
-    @objc dynamic var isEdited = false
-    @objc dynamic var subreddit = ""
-    @objc dynamic var scoreHidden = false
-    @objc dynamic var parentId = ""
-    @objc dynamic var archived = false
-    @objc dynamic var score = 0
-    @objc dynamic var flair = ""
-    @objc dynamic var voted = false
-    @objc dynamic var vote = false
-    @objc dynamic var saved = false
-    @objc dynamic var cakeday = false
-    
-    @objc dynamic var urlFlair = ""
-    
-    var likes: VoteDirection {
-        if voted {
-            if vote {
-                return .up
-            } else {
-                return .down
-            }
-        }
-        return .none
-    }
-}
 
 class RString: Object {
     @objc dynamic var value = ""
@@ -263,23 +105,12 @@ class RMore: Object {
     override class func primaryKey() -> String? {
         return "id"
     }
-    
-    func getId() -> String {
-        return id
-    }
-    
+        
     @objc dynamic var count = 0
     @objc dynamic var id = ""
     @objc dynamic var name = ""
     @objc dynamic var parentId = ""
     let children = List<RString>()
-}
-
-class SubmissionListing: Object {
-    @objc dynamic var name = ""
-    @objc dynamic var accessed = NSDate(timeIntervalSince1970: 1)
-    @objc dynamic var comments = false
-    let submissions = List<Submission>()
 }
 
 class RFriend: Object {

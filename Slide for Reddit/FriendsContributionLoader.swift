@@ -6,12 +6,12 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
 import reddift
 
 class FriendsContributionLoader: ContributionLoader {
-    var content: [Object]
+    var content: [NSManagedObject]
     
     var color: UIColor
     var canGetMore: Bool

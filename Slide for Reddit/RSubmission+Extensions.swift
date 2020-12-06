@@ -16,9 +16,9 @@ extension Submission {
         var target = CurrentType.none
         let submission = self
 
-        var thumb = submission.thumbnail
-        var big = submission.banner
-        let height = submission.height
+        var thumb = submission.hasThumbnail
+        var big = submission.hasBanner
+        let height = submission.imageHeight
 
         var type = ContentType.getContentType(baseUrl: submission.url)
         if submission.isSelf {
@@ -53,7 +53,7 @@ extension Submission {
             thumb = false
         }
 
-        if big || !submission.thumbnail {
+        if big || !submission.hasThumbnail {
             thumb = false
         }
 
@@ -62,7 +62,7 @@ extension Submission {
         }
 
         let sub = submission.subreddit
-        if submission.nsfw && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub)) {
+        if submission.isNSFW && (!SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(sub)) {
             big = false
             thumb = true
         }

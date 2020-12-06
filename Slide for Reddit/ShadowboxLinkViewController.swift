@@ -9,8 +9,8 @@
 import Anchorage
 import AVFoundation
 import AVKit
+import CoreData
 import MaterialComponents.MaterialProgressView
-import RealmSwift
 import SDWebImage
 import YYText
 
@@ -33,7 +33,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     var bodyScrollView = UIScrollView()
     var embeddedVC: EmbeddableMediaViewController!
     
-    var content: Object?
+    var content: NSManagedObject?
     var baseURL: URL?
     
     var submission: Submission! {
@@ -80,7 +80,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-    init(url: URL?, content: Object?, parent: ShadowboxViewController) {
+    init(url: URL?, content: NSManagedObject?, parent: ShadowboxViewController) {
         self.parentVC = parent
         self.baseURL = url
         self.content = content
@@ -271,7 +271,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     func populateData() {
         var archived = false
         if let link = content as! Submission? {
-            archived = link.archived
+            archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote.getCopy(withColor: .white)
             downvote.image = LinkCellImageCache.downvote.getCopy(withColor: .white)
             var attrs: [String: Any] = [:]
@@ -301,8 +301,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
             titleLabel.textLayout = layout
             titleLabel.heightAnchor /==/ layout.textBoundingSize.height
-        } else if let link = content as! RComment? {
-            archived = link.archived
+        } else if let link = content as! CommentModel? {
+            archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote
             downvote.image = LinkCellImageCache.downvote
             var attrs: [String: Any] = [:]
@@ -333,7 +333,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             self.backgroundColor = .black
         } else {
             if content is Submission {
-                let thumbnail = (content as! Submission).thumbnailUrl
+                let thumbnail = (content as! Submission).thumbnailUrl ?? ""
                 if let url = URL(string: thumbnail) {
                     SDWebImageDownloader.shared.downloadImage(with: url, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (_, _, _) in
                     }, completed: { (image, _, _, _) in
@@ -369,7 +369,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             bodyScrollView.horizontalAnchors /==/ topBody.horizontalAnchors + 12
             bodyScrollView.verticalAnchors /==/ topBody.verticalAnchors + 12
             textView.estimatedWidth = UIScreen.main.bounds.width - 24
-            textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! Submission).htmlBody)
+            textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! Submission).htmlBody ?? "")
             bodyScrollView.addSubview(textView)
             textView.leftAnchor /==/ bodyScrollView.leftAnchor
             textView.widthAnchor /==/ textView.estimatedWidth
@@ -379,7 +379,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             parentVC?.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC?.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
             self.populated = true
-        } else if type != .ALBUM && type != .REDDIT_GALLERY && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is Submission && !(content as! Submission).nsfw) || SettingValues.nsfwPreviews) {
+        } else if type != .ALBUM && type != .REDDIT_GALLERY && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is Submission && !(content as! Submission).isNSFW) || SettingValues.nsfwPreviews) {
             if !ContentType.displayVideo(t: type) || !populated {
                 self.populated = true
                 let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
@@ -397,7 +397,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             } else {
                 populated = false
             }
-        } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is Submission && (content as! Submission).nsfw) && !SettingValues.nsfwPreviews) {
+        } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is Submission && (content as! Submission).isNSFW) && !SettingValues.nsfwPreviews) {
             self.populated = true
             topBody.addSubviews(thumbImageContainer, infoContainer)
             thumbImageContainer.centerAnchors /==/ topBody.centerAnchors
@@ -444,18 +444,22 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             info.attributedText = finalText
             if content is Submission {
                 let submission = content as! Submission
-                if submission.nsfw {
+                if submission.isNSFW {
                     thumbImage.image = LinkCellImageCache.nsfw
-                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty {
                     if type == .REDDIT {
                         thumbImage.image = LinkCellImageCache.reddit
                     } else {
                         thumbImage.image = LinkCellImageCache.web
                     }
                 } else {
-                    let thumbURL = submission.thumbnailUrl
-                    DispatchQueue.global(qos: .userInteractive).async {
-                        self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web)
+                    let thumbURL = submission.thumbnailUrl ?? ""
+                    if let url = URL(string: thumbURL) {
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            self.thumbImage.sd_setImage(with: url, placeholderImage: LinkCellImageCache.web)
+                        }
+                    } else {
+                        thumbImage.image = LinkCellImageCache.web
                     }
                 }
             } else {
@@ -476,7 +480,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         if content is Submission {
             let submission = content as! Submission
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (_) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.id, completion: { (_) in
                 })
                 ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
                 History.addSeen(s: submission)
@@ -491,7 +495,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         if content is Submission {
             let submission = content as! Submission
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (_) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.id, completion: { (_) in
                 })
                 ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
                 History.addSeen(s: submission)
@@ -505,8 +509,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     @objc func comments(_ sender: AnyObject) {
         if content is Submission {
             VCPresenter.openRedditLink((content as! Submission).permalink, nil, self)
-        } else if content is RComment {
-            VCPresenter.openRedditLink((content as! RComment).permalink, nil, self)
+        } else if content is CommentModel {
+            VCPresenter.openRedditLink((content as! CommentModel).permalink, nil, self)
         }
     }
 

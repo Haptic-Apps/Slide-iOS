@@ -7,7 +7,7 @@
 //
 
 import Anchorage
-import RealmSwift
+
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
@@ -205,7 +205,7 @@ class PostActions: NSObject {
             cell.flairSelf()
         }
 
-        if !cell.link!.nsfw {
+        if !cell.link!.isNSFW {
             alertController.addAction(title: "Mark as NSFW", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.modNSFW(cell, true)
             }
@@ -225,7 +225,7 @@ class PostActions: NSObject {
             }
         }
         
-        if cell.link!.locked {
+        if cell.link!.isLocked {
             alertController.addAction(title: "Unlock thread", icon: UIImage(named: "lock")!.menuIcon()) {
                 self.modLock(cell, false)
             }
@@ -280,7 +280,7 @@ class PostActions: NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(!set ? "un" : "")locked!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.locked = set
+                        cell.link!.isLocked = set
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -334,7 +334,7 @@ class PostActions: NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "NSFW tag set!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.nsfw = set
+                        cell.link!.isNSFW = set
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -626,7 +626,7 @@ class PostActions: NSObject {
             alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""
                 do {
-                    let name = (thing is RComment) ? (thing as! RComment).id : (thing as! Submission).id
+                    let name = (thing is CommentModel) ? (thing as! CommentModel).id : (thing as! Submission).id
                     try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
@@ -665,7 +665,7 @@ class PostActions: NSObject {
                         case .success(let account):
                                 DispatchQueue.main.async {
                                     do {
-                                        try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaId(account.getId(), completion: { (result) in
+                                        try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaId(account.id, completion: { (result) in
                                             print(result)
                                         })
                                     } catch {

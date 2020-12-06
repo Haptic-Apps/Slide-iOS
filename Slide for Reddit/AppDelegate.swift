@@ -11,7 +11,7 @@ import AVKit
 import BiometricAuthentication
 import CloudKit
 import DTCoreText
-import RealmSwift
+
 import reddift
 import SDWebImage
 import Then
@@ -62,15 +62,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
         if oldSchemaVersion < 13 {
             /*
-             - Property 'RComment.gilded' has been changed from 'int' to 'bool'.
-             - Property 'RComment.gold' has been added.
-             - Property 'RComment.silver' has been added.
-             - Property 'RComment.platinum' has been added.
+             - Property 'CommentModel.gilded' has been changed from 'int' to 'bool'.
+             - Property 'CommentModel.gold' has been added.
+             - Property 'CommentModel.silver' has been added.
+             - Property 'CommentModel.platinum' has been added.
              - Property 'Submission.gilded' has been changed from 'int' to 'bool'.
              - Property 'Submission.gold' has been added.
              - Property 'Submission.silver' has been added.
              */
-            migration.enumerateObjects(ofType: RComment.className(), { (old, new) in
+            migration.enumerateObjects(ofType: CommentModel.className(), { (old, new) in
                 // Change gilded from Int to Bool
                 guard let gildedCount = old?["gilded"] as? Int else {
                     fatalError("Old gilded value should Int, but is not.")

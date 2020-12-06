@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="20B28" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Comment_Model" representedClassName="Comment_Model" syncable="YES" codeGenerationType="class">
+    <entity name="CommentModel" representedClassName="CommentModel" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
         <attribute name="author" attributeType="String"/>
         <attribute name="awardsJSON" optional="YES" attributeType="String"/>
@@ -36,6 +36,21 @@
         <attribute name="subreddit" attributeType="String"/>
         <attribute name="voteDirection" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
+    <entity name="MessageModel" representedClassName="MessageModel" syncable="YES">
+        <attribute name="author" attributeType="String"/>
+        <attribute name="context" optional="YES" attributeType="String"/>
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="htmlBody" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="isNew" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="markdownBody" optional="YES" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="permalink" attributeType="String"/>
+        <attribute name="subject" attributeType="String"/>
+        <attribute name="submissionTitle" optional="YES" attributeType="String"/>
+        <attribute name="subreddit" attributeType="String"/>
+        <attribute name="wasComment" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
     <entity name="Submission" representedClassName="Submission" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
         <attribute name="archived" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -59,12 +74,14 @@
         <attribute name="hidden" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="htmlBody" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="imageHeight" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="imageWidth" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imageHeight" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imageWidth" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="isApproved" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isArchived" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isCakeday" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isCrosspost" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isEdited" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isLocked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isLQ" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isMod" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isNSFW" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -95,12 +112,13 @@
         <attribute name="videoPreview" optional="YES" attributeType="String"/>
         <attribute name="voteDirection" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
-    <entity name="Subreddit_Model" representedClassName="Subreddit_Model" syncable="YES"/>
-    <entity name="Subreddit_Posts" representedClassName="Subreddit_Posts" syncable="YES"/>
+    <entity name="SubredditModel" representedClassName="SubredditModel" syncable="YES"/>
+    <entity name="SubredditPosts" representedClassName="SubredditPosts" syncable="YES"/>
     <elements>
-        <element name="Comment_Model" positionX="-45" positionY="144" width="128" height="539"/>
-        <element name="Submission" positionX="-63" positionY="-18" width="128" height="898"/>
-        <element name="Subreddit_Model" positionX="-54" positionY="-9" width="128" height="43"/>
-        <element name="Subreddit_Posts" positionX="-36" positionY="9" width="128" height="43"/>
+        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="539"/>
+        <element name="MessageModel" positionX="160" positionY="192" width="128" height="224"/>
+        <element name="Submission" positionX="-63" positionY="-18" width="128" height="914"/>
+        <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
+        <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="29"/>
     </elements>
 </model>

@@ -8,7 +8,7 @@
 
 import Anchorage
 import AudioToolbox
-import RealmSwift
+import CoreData
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
@@ -131,10 +131,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var childrenCount: UIView!
     var childrenCountLabel: UILabel!
-    var comment: RComment?
+    var comment: CommentModel?
     var depth: Int = 0
     
-    var content: Object?
+    var content: NSManagedObject?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -313,7 +313,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! RComment).getId())) {
+        if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! CommentModel).id)) {
             self.showMenu(nil)
         } else {
             self.pushedSingleTap(nil)
@@ -595,7 +595,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func doShowMenu() {
         if let del = self.parent {
-            if del.isMenuShown() && del.getMenuShown() == (content as! RComment).getId() {
+            if del.isMenuShown() && del.getMenuShown() == (content as! CommentModel).id {
                 hideMenuAnimated()
             } else {
                 showMenuAnimated()
@@ -724,12 +724,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        if !AccountController.isLoggedIn || comment!.archived || parent!.np || (parent?.offline ?? false) {
+        if !AccountController.isLoggedIn || comment!.isArchived || parent!.np || (parent?.offline ?? false) {
             upvoteButton.isHidden = true
             downvoteButton.isHidden = true
             replyButton.isHidden = true
         }
-        if !comment!.canMod || (parent?.offline ?? false) {
+        if !comment!.isMod || (parent?.offline ?? false) {
             modButton.isHidden = true
         }
         if comment!.author != AccountController.currentName || (parent?.offline ?? false) {
@@ -1034,7 +1034,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.replyDelegate = parent!
 
         if edit {
-            body!.text = comment!.body.decodeHTML()
+            body!.text = comment!.markdownBody.decodeHTML()
         }
 
         toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
@@ -1086,7 +1086,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func vote() {
-        if content is RComment {
+        if content is CommentModel {
             let current = ActionStates.getVoteDirection(s: comment!)
             let dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
             var direction = dir
@@ -1114,12 +1114,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 print(error)
             }
             ActionStates.setVoteDirection(s: comment!, direction: direction)
-            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
     func modApprove() {
-        if content is RComment {
+        if content is CommentModel {
             do {
                 try parent?.session?.approve(comment!.id, completion: { (result) -> Void in
                     switch result {
@@ -1142,12 +1142,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
     
     func modDistinguish() {
-        if content is RComment {
+        if content is CommentModel {
             do {
                 try parent?.session?.distinguish(comment!.id, how: "yes", completion: { (result) -> Void in
                     switch result {
@@ -1165,12 +1165,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
     func modSticky(sticky: Bool) {
-        if content is RComment {
+        if content is CommentModel {
             do {
                 try parent?.session?.distinguish(comment!.id, how: "yes", sticky: sticky, completion: { (result) -> Void in
                     switch result {
@@ -1188,12 +1188,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
     
     func modRemove(_ spam: Bool = false) {
-        if content is RComment {
+        if content is CommentModel {
             do {
                 try parent?.session?.remove(comment!.id, spam: spam, completion: { (result) -> Void in
                     switch result {
@@ -1217,12 +1217,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
     func modBan(why: String, duration: Int?) {
-        if content is RComment {
+        if content is CommentModel {
             do {
                 try parent?.session?.ban(comment!.author, banReason: why, duration: duration == nil ? 999 /*forever*/ : duration!, completion: { (result) -> Void in
                     switch result {
@@ -1241,7 +1241,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! RComment, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
@@ -1250,7 +1250,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
 
-        let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.body, icon: nil)
+        let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.markdownBody, icon: nil)
 
         alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
             let prof = ProfileViewController.init(name: self.comment!.author)
@@ -1603,7 +1603,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     public var isCollapsed = false
     var dtap: UIShortTapGestureRecognizer?
 
-    func setComment(comment: RComment, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath, width: CGFloat) {
+    func setComment(comment: CommentModel, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath, width: CGFloat) {
         if title == nil {
             configureInit()
         }
@@ -1707,7 +1707,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var savedAuthor: String = ""
 
-    func refresh(comment: RComment, submissionAuthor: String?, text: NSAttributedString, _ date: Double = 0) {
+    func refresh(comment: CommentModel, submissionAuthor: String?, text: NSAttributedString, _ date: Double = 0) {
         var color: UIColor
         
         savedAuthor = submissionAuthor!
@@ -1727,15 +1727,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2.75
         
-        let spacerString = NSMutableAttributedString(string: (comment.controversiality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let new = date != 0 && date < Double(comment.created.timeIntervalSince1970)
-        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.isEdited, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         
         if new {
             endString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.accentColorForSub(sub: comment.subreddit), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
         }
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.cakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.isCakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
         if comment.author != "[deleted]" && comment.author != "[removed]" {
             authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
         }
@@ -1788,74 +1788,31 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         infoString.append(spacerString)
         infoString.append(endString)
 
-        if !comment.urlFlair.isEmpty {
-            infoString.append(spacer)
-            let flairView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-            flairView.sd_setImage(with: URL(string: comment.urlFlair), placeholderImage: nil, context: [.imageThumbnailPixelSize: flairView.frame.size])
-            let flairImage = NSMutableAttributedString.yy_attachmentString(withContent: flairView, contentMode: UIView.ContentMode.center, attachmentSize: CGSize.square(size: 20), alignTo: boldFont, alignment: YYTextVerticalAlignment.center)
 
-            infoString.append(flairImage)
-        }
-        
-        if !comment.flair.isEmpty {
-            infoString.append(spacer)
-            infoString.append(flairTitle)
-        }
-
-        if comment.sticky {
+        if comment.isStickied {
             infoString.append(spacer)
             infoString.append(pinned)
         }
         
-        if comment.gilded {
-            infoString.append(spacer)
-            if comment.platinum > 0 {
-                infoString.append(spacer)
-                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "platinum")!, fontSize: boldFont.pointSize)!
-                infoString.append(gild)
-                if comment.platinum > 1 {
-                    let platinumed = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.platinum) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
-                    infoString.append(platinumed)
-                }
-            }
-            if comment.gold > 0 {
-                infoString.append(spacer)
-                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "gold")!, fontSize: boldFont.pointSize)!
-                infoString.append(gild)
-                if comment.gold > 1 {
-                    let gilded = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.gold) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
-                    infoString.append(gilded)
-                }
-            }
-            if comment.silver > 0 {
-                infoString.append(spacer)
-                let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "silver")!, fontSize: boldFont.pointSize)!
-                infoString.append(gild)
-                if comment.silver > 1 {
-                    let silvered = NSMutableAttributedString.init(string: "\u{00A0}x\(comment.silver) ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
-                    infoString.append(silvered)
-                }
-            }
-        }
-
-        /*if comment.cakeday {
+        //TODO flairs and awards
+        /*if comment.isCakeday {
             infoString.append(spacer)
             let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "cakeday")!, fontSize: boldFont.pointSize)!
             infoString.append(gild)
         }*/
 
-        if parent!.removed.contains(comment.id) || (!comment.removedBy.isEmpty() && !parent!.approved.contains(comment.id)) {
+        if parent!.removed.contains(comment.id) || (!(comment.removedBy ?? "").isEmpty() && !parent!.approved.contains(comment.id)) {
             let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.red500Color()] as [String: Any]
             infoString.append(spacer)
             if comment.removedBy == "true" {
-                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!comment.removalReason.isEmpty() ? ":\(comment.removalReason)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(comment.removalReason ?? "").isEmpty() ? ":\(comment.removalReason!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
             } else {
-                infoString.append(NSMutableAttributedString.init(string: "Removed\(!comment.removedBy.isEmpty() ? " by \(comment.removedBy)":"")\(!comment.removalReason.isEmpty() ? " for \(comment.removalReason)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote ?? "")" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
             }
-        } else if parent!.approved.contains(comment.id) || (!comment.approvedBy.isEmpty() && !parent!.removed.contains(comment.id)) {
+        } else if parent!.approved.contains(comment.id) || (!(comment.approvedBy ?? "").isEmpty() && !parent!.removed.contains(comment.id)) {
             let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.green500Color()] as [String: Any]
             infoString.append(spacer)
-            infoString.append(NSMutableAttributedString.init(string: "Approved\(!comment.approvedBy.isEmpty() ? " by \(comment.approvedBy)":"")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+            infoString.append(NSMutableAttributedString.init(string: "Approved\(!(comment.approvedBy ?? "").isEmpty() ? " by \(comment.approvedBy!)":"")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
         }
         
         paragraphStyle.lineSpacing = 1.5
@@ -1866,7 +1823,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             title.attributedText = infoString
             commentBody.firstTextView.isHidden = false
             commentBody.clearOverflow()
-            commentBody.setTextWithTitleHTML(NSMutableAttributedString(), text, htmlString: comment.htmlText)
+            commentBody.setTextWithTitleHTML(NSMutableAttributedString(), text, htmlString: comment.htmlBody)
         } else {
             title.attributedText = infoString
             commentBody.clearOverflow()
@@ -1886,7 +1843,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
     }
 
-    func getScoreText(comment: RComment) -> Int {
+    func getScoreText(comment: CommentModel) -> Double {
         var submissionScore = comment.score
         switch ActionStates.getVoteDirection(s: comment) {
         case .up:
@@ -2219,7 +2176,7 @@ extension CommentDepthCell: UIPopoverPresentationControllerDelegate {
 
 class CommentActionsManager {
     var submission: Submission
-    var comment: RComment
+    var comment: CommentModel
 
     private lazy var networkActionsArePossible: Bool = {
         return AccountController.isLoggedIn && LinkCellView.checkInternet()
@@ -2230,7 +2187,7 @@ class CommentActionsManager {
     }
 
     var isVotingPossible: Bool {
-        return networkActionsArePossible && !submission.archived
+        return networkActionsArePossible && !submission.isArchived
     }
 
     var isSavePossible: Bool {
@@ -2246,14 +2203,14 @@ class CommentActionsManager {
     }
 
     var isReplyPossible: Bool {
-        return networkActionsArePossible && !submission.archived
+        return networkActionsArePossible && !submission.isArchived
     }
 
     var isModPossible: Bool {
-        return networkActionsArePossible && submission.canMod
+        return networkActionsArePossible && submission.isMod
     }
 
-    init(comment: RComment, submission: Submission) {
+    init(comment: CommentModel, submission: Submission) {
         self.comment = comment
         self.submission = submission
     }
@@ -2321,8 +2278,8 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                     var index = 0
                     for c in self.parent!.dataArray {
                         let comment = self.parent!.content[c]
-                        if comment is RComment && (comment as! RComment).id.contains(context) {
-                            self.parent!.menuId = comment!.id
+                        if comment is CommentModel && (comment as! CommentModel).id.contains(context) {
+                            self.parent!.menuId = comment!.getId()
                             self.parent!.tableView.reloadData()
                             if !SettingValues.dontHideTopBar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
                                 self.parent!.hideUI(inHeader: true)
@@ -2509,19 +2466,19 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         
         var contents = commentParent.content[commentParent.dataArray[topCell]]
         
-        while (contents is RComment ? (contents as! RComment).depth >= self.depth : true) && commentParent.dataArray.count > topCell && topCell - 1 >= 0 {
+        while (contents is CommentModel ? (contents as! CommentModel).depth >= self.depth : true) && commentParent.dataArray.count > topCell && topCell - 1 >= 0 {
             topCell -= 1
             contents = commentParent.content[commentParent.dataArray[topCell]]
         }
 
         let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
         
-        if let comment = contents as? RComment {
+        if let comment = contents as? CommentModel {
             parentCell.contentView.layer.cornerRadius = 10
             parentCell.contentView.clipsToBounds = true
             parentCell.commentBody.ignoreHeight = false
             parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
-            if contents is RComment {
+            if contents is CommentModel {
                 var count = 0
                 let hiddenP = commentParent.hiddenPersons.contains(comment.id)
                 if hiddenP {
@@ -2532,7 +2489,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                     t = commentParent.highlight(t)
                 }
                 
-                parentCell.setComment(comment: contents as! RComment, depth: 0, parent: commentParent, hiddenCount: count, date: commentParent.lastSeen, author: commentParent.submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentParent.commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
+                parentCell.setComment(comment: contents as! CommentModel, depth: 0, parent: commentParent, hiddenCount: count, date: commentParent.lastSeen, author: commentParent.submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentParent.commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
             } else {
                 parentCell.setMore(more: (contents as! RMore), depth: commentParent.cDepth[comment.id]!, depthColors: commentParent.commentDepthColors, parent: commentParent)
             }

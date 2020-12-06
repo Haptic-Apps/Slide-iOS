@@ -6,8 +6,9 @@
 //  Copyright © 2019 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
+
 import reddift
 
 class CollectionsContributionLoader: ContributionLoader {
@@ -27,7 +28,7 @@ class CollectionsContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [Object]
+    var content: [NSManagedObject]
     var delegate: ContentListingViewController?
     var paging = true
     var ids = [Link]()
