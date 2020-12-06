@@ -63,7 +63,7 @@ class PostFilter {
         return false
     }
 
-    public static func matches(_ link: RSubmission, baseSubreddit: String, gallery: Bool) -> Bool {
+    public static func matches(_ link: Submission, baseSubreddit: String, gallery: Bool) -> Bool {
         let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
             PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
             PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
@@ -120,7 +120,7 @@ class PostFilter {
         return mainMatch || contentMatch
     }
 
-    public static func openExternally(_ link: RSubmission) -> Bool {
+    public static func openExternally(_ link: Submission) -> Bool {
         return (PostFilter.openExternally.contains(where: {
             $0.containedIn(base: link.domain)
         }))
@@ -141,8 +141,8 @@ class PostFilter {
         var toReturn: [Object] = []
 
         for link in input {
-            if link is RSubmission {
-                if !matches(link as! RSubmission, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! RSubmission).getId()) {
+            if link is Submission {
+                if !matches(link as! Submission, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! Submission).getId()) {
                     toReturn.append(link)
                 }
             } else if link is RComment {

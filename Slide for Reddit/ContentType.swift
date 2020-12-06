@@ -259,7 +259,7 @@ class ContentType {
      * @return Content type of the Submission
      * @see #getContentType(String)
      */
-    public static func getContentType(submission: RSubmission?) -> CType {
+    public static func getContentType(submission: Submission?) -> CType {
         if submission == nil {
             return CType.SELF; //hopefully shouldn't be null, but catch it in case
         }

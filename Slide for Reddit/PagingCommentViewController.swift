@@ -253,7 +253,7 @@ extension PagingCommentViewController: SubmissionDataSouceDelegate {
     func preLoadItems() {
     }
     
-    func doPreloadImages(values: [RSubmission]) {
+    func doPreloadImages(values: [Submission]) {
     }
     
     func loadOffline() {

@@ -1500,7 +1500,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         return false
     }
 
-    func preloadImages(_ values: [RSubmission]) {
+    func preloadImages(_ values: [Submission]) {
         var urls: [URL] = []
         if (SettingValues.dataSavingEnabled && (SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.noImages) || !SettingValues.dataSavingEnabled {
             for submission in values {
@@ -1581,7 +1581,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
     
-    static func sizeWith(_ submission: RSubmission, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
+    static func sizeWith(_ submission: Submission, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
         var itemWidth = width
         
         if itemWidth < 10 { //Not a valid width
@@ -1808,8 +1808,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
     
-    // TODO: - This is mostly replicated by `RSubmission.getLinkView()`. Can we consolidate?
-    static func cellType(forSubmission submission: RSubmission, _ isCollection: Bool, cellWidth: CGFloat) -> CurrentType {
+    // TODO: - This is mostly replicated by `Submission.getLinkView()`. Can we consolidate?
+    static func cellType(foSubmission submission: Submission, _ isCollection: Bool, cellWidth: CGFloat) -> CurrentType {
         var target: CurrentType = .none
 
         var thumb = submission.thumbnail
@@ -2108,7 +2108,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: self.tableView)
     }
     
-    func doPreloadImages(values: [RSubmission]) {
+    func doPreloadImages(values: [Submission]) {
         self.preloadImages(values)
     }
     
@@ -2585,7 +2585,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         if isGallery {
             cell = tableView.dequeueReusableCell(withReuseIdentifier: "gallery\(SingleSubredditViewController.cellVersion)", for: indexPath) as! GalleryLinkCellView
         } else {
-            switch SingleSubredditViewController.cellType(forSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
+            switch SingleSubredditViewController.cellType(foSubmission: submission, Subscriptions.isCollection(sub), cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) / numberOfColumns ) {
             case .thumb:
                 cell = tableView.dequeueReusableCell(withReuseIdentifier: "thumb\(SingleSubredditViewController.cellVersion)", for: indexPath) as! ThumbnailLinkCellView
             case .autoplay:
@@ -2729,7 +2729,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         tableView.reloadData()
     }
 
-    func subscribe(link: RSubmission) {
+    func subscribe(link: Submission) {
         let sub = link.subreddit
         let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
@@ -2865,7 +2865,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
     
     func applyFilters() {
-        self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+        self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! Submission }
         self.reloadDataReset()
     }
 
@@ -2879,7 +2879,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { _ -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
-            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! Submission }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -2887,7 +2887,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { _ -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
-            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! Submission }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -2895,7 +2895,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { _ -> Void in
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
-            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! RSubmission }
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! Submission }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -3359,7 +3359,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
                     $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
                     $0.addTapGestureRecognizer { (_) in
-                        self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
+                        self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
                     }
                 }
                 

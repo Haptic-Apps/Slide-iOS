@@ -66,7 +66,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         return true
     }
 
-    public func setLink(link: RSubmission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { //lq is should load lq and did load lq
+    public func setLink(link: Submission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: link, skipDuplicates: true)
         }
@@ -169,7 +169,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         }
     }
 
-    func getControllerForUrl(baseUrl: URL, lq: URL? = nil, link: RSubmission) -> UIViewController? {
+    func getControllerForUrl(baseUrl: URL, lq: URL? = nil, link: Submission) -> UIViewController? {
         contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
         if shouldTruncate(url: contentUrl!) {
             let content = contentUrl?.absoluteString
@@ -245,7 +245,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         controller.parentController!.dismiss(animated: true)
     }
 
-    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: RSubmission) {
+    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: Submission) {
         failureCallback = {[weak self] (url: URL) in
             guard let strongSelf = self else { return }
             let vc: UIViewController

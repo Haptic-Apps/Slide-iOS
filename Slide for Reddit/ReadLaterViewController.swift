@@ -51,7 +51,7 @@ class ReadLaterViewController: ContentListingViewController {
         let alert = UIAlertController(title: "Really mark all as read?", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
             for item in self.baseData.content {
-                ReadLater.removeReadLater(id: item.getIdentifier())
+                ReadLater.removeReadLater(id: item.id)
             }
             self.navigationController?.popViewController(animated: true)
         }))

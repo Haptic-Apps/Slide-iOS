@@ -21,7 +21,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         color1 = (currentVc as! ShadowboxLinkViewController).backgroundColor
     }
     
-    func getURLToLoad(_ submission: RSubmission) -> URL? {
+    func getURLToLoad(_ submission: Submission) -> URL? {
         let url = submission.url
         if url != nil && ContentType.isGif(uri: url!) {
             if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url!) {
@@ -241,7 +241,7 @@ extension ShadowboxViewController: SubmissionDataSouceDelegate {
     func preLoadItems() {
     }
     
-    func doPreloadImages(values: [RSubmission]) {
+    func doPreloadImages(values: [Submission]) {
     }
     
     func loadOffline() {

@@ -52,7 +52,7 @@ class ModQueueContributionLoader: ContributionLoader {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                self.content.append(RealmDataWrapper.linkToSubmission(submission: item as! Link))
                             }
                         }
                         self.paginator = listing.paginator

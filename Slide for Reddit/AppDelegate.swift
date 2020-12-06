@@ -66,23 +66,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
              - Property 'RComment.gold' has been added.
              - Property 'RComment.silver' has been added.
              - Property 'RComment.platinum' has been added.
-             - Property 'RSubmission.gilded' has been changed from 'int' to 'bool'.
-             - Property 'RSubmission.gold' has been added.
-             - Property 'RSubmission.silver' has been added.
+             - Property 'Submission.gilded' has been changed from 'int' to 'bool'.
+             - Property 'Submission.gold' has been added.
+             - Property 'Submission.silver' has been added.
              */
-            migration.enumerateObjects(ofType: RSubmission.className()) { (old, new) in
-                // Change gilded from Int to Bool
-                guard let gildedCount = old?["gilded"] as? Int else {
-                    fatalError("Old gilded value should Int, but is not.")
-                }
-                new?["gilded"] = gildedCount > 0
-
-                // Set new properties
-                new?["gold"] = gildedCount
-                new?["silver"] = 0
-                new?["platinum"] = 0
-                new?["oc"] = false
-            }
             migration.enumerateObjects(ofType: RComment.className(), { (old, new) in
                 // Change gilded from Int to Bool
                 guard let gildedCount = old?["gilded"] as? Int else {
@@ -98,9 +85,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
         }
         if oldSchemaVersion < 26 {
-            migration.enumerateObjects(ofType: RSubmission.className()) { (old, new) in
-                new?["subreddit_icon"] = ""
-            }
         }
     }
 
@@ -1010,6 +994,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
+    
+    func applicationWillTerminate(_ application: UIApplication) {
+        SlideCoreData.sharedInstance.saveContext()
+    }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         self.refreshSession()
@@ -1184,8 +1172,9 @@ extension AppDelegate: UIWindowSceneDelegate {
     
     func sceneWillResignActive(_ scene: UIScene) {
         willResignActive()
+        SlideCoreData.sharedInstance.saveContext()
     }
-    
+        
     func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)

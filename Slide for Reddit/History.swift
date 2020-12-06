@@ -16,7 +16,7 @@ class History {
     public static var currentVisits = [String]()
     
     //mark SubmissionsÏ
-    public static func getSeen(s: RSubmission) -> Bool {
+    public static func getSeen(s: Submission) -> Bool {
         if !SettingValues.saveHistory {
             return false
         } else if s.nsfw && !SettingValues.saveNSFWHistory {
@@ -29,7 +29,7 @@ class History {
         return (s.visited || s.likes != .none)
     }
     
-    public static func getSeenTime(s: RSubmission) -> Double {
+    public static func getSeenTime(s: Submission) -> Double {
         let fullname = s.getId()
         if let time = seenTimes.object(forKey: fullname) {
             if time is NSNumber {
@@ -49,7 +49,7 @@ class History {
     }
     
     public static var currentSeen: [String] = [String]()
-    public static func addSeen(s: RSubmission, skipDuplicates: Bool = true) {
+    public static func addSeen(s: Submission, skipDuplicates: Bool = true) {
         if !SettingValues.saveNSFWHistory && s.nsfw {
             
         } else if SettingValues.saveHistory {
@@ -83,7 +83,7 @@ class History {
     }
     
     //mark Comments
-    public static func commentsSince(s: RSubmission) -> Int {
+    public static func commentsSince(s: Submission) -> Int {
         if let comments = commentCounts.object(forKey: s.getId()) {
             return s.commentCount - (comments as! Int)
         } else {
@@ -91,7 +91,7 @@ class History {
         }
     }
     
-    public static func setComments(s: RSubmission) {
+    public static func setComments(s: Submission) {
         commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.getId())
     }
 }

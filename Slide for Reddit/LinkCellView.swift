@@ -211,7 +211,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var submissionHeight: CGFloat = 0
     var addTouch = false
     
-    var link: RSubmission?
+    var link: Submission?
     var aspectWidth = CGFloat(0.1)
     
     var tempConstraints: [NSLayoutConstraint] = []
@@ -1362,7 +1362,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
-    func configure(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+    func configure(submission: Submission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if videoTask != nil {
             videoTask!.cancel()
         }
@@ -1399,7 +1399,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
 
-    func refreshLink(_ submission: RSubmission, np: Bool) {
+    func refreshLink(_ submission: Submission, np: Bool) {
         self.link = submission
         
         guard self.link != nil else {
@@ -1609,7 +1609,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var shouldLoadVideo = false
     
-    private func setLink(submission: RSubmission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+    private func setLink(submission: Submission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
             self.endVideos()
             do {
@@ -2080,7 +2080,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
     }
 
-    private func refreshAccessibility(submission: RSubmission) {
+    private func refreshAccessibility(submission: Submission) {
         //let postTimeAgo = (submission.created as Date).timeAgoString Was causing lag
         accessibilityView.accessibilityValue = """
             \(submission.title).
@@ -2438,7 +2438,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: RealmDataWrapper.linkToRSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
+                self.setLink(submission: RealmDataWrapper.linkToSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                 self.showBody(width: self.innerView.frame.size.width - 24)
             })
         }
@@ -2535,7 +2535,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.flairSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.id, text: text ?? "") { result in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flaiSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.id, text: text ?? "") { result in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -3148,7 +3148,7 @@ public extension UIImageView {
 }
 
 class PostActionsManager {
-    var submission: RSubmission
+    var submission: Submission
 
     private lazy var networkActionsArePossible: Bool = {
         return AccountController.isLoggedIn && LinkCellView.checkInternet()
@@ -3194,7 +3194,7 @@ class PostActionsManager {
         return networkActionsArePossible && submission.canMod
     }
 
-    init(submission: RSubmission) {
+    init(submission: Submission) {
         self.submission = submission
     }
 }

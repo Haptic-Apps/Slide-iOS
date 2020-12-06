@@ -763,7 +763,7 @@ class SettingValues {
         case MODERATE = "moderate"
         case SUBSCRIBE = "subscribe"
         
-        public static func getMenu(_ link: RSubmission, mutableList: Bool) -> [PostOverflowAction] {
+        public static func getMenu(_ link: Submission, mutableList: Bool) -> [PostOverflowAction] {
             var toReturn = [PostOverflowAction]()
             for item in getMenuNone() {
                 if item == .CHROME {
@@ -798,7 +798,7 @@ class SettingValues {
             return toReturn
         }
 
-        public func getTitle(_ link: RSubmission? = nil) -> String {
+        public func getTitle(_ link: Submission? = nil) -> String {
             switch self {
             case .PROFILE:
                 if link == nil {
@@ -827,7 +827,7 @@ class SettingValues {
                 if link == nil {
                     return "Read Later"
                 }
-                return ReadLater.isReadLater(id: link!.getIdentifier()) ? "Remove from Read Later" : "Add to Read Later"
+                return ReadLater.isReadLater(id: link!.id) ? "Remove from Read Later" : "Add to Read Later"
             case .SHARE_CONTENT:
                 return "Share content link"
             case .SHARE_REDDIT:
@@ -851,7 +851,7 @@ class SettingValues {
             }
         }
         
-        public func getImage(_ link: RSubmission? = nil) -> UIImage {
+        public func getImage(_ link: Submission? = nil) -> UIImage {
             switch self {
             case .PROFILE:
                 return UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
@@ -871,7 +871,7 @@ class SettingValues {
                 if link == nil {
                     return UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
                 }
-                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(sfString: SFSymbol.trayAndArrowUpFill, overrideString: "restore")!.menuIcon() : UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
+                return ReadLater.isReadLater(id: link!.id) ? UIImage(sfString: SFSymbol.trayAndArrowUpFill, overrideString: "restore")!.menuIcon() : UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
             case .SHARE_CONTENT:
                 return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
@@ -1151,7 +1151,7 @@ class SettingValues {
         }
         
         //TODO pre ios 13 icons
-        public func getImage(_ link: RSubmission? = nil) -> UIImage {
+        public func getImage(_ link: Submission? = nil) -> UIImage {
             switch self {
             case .HOME:
                 return UIImage(sfString: SFSymbol.houseFill, overrideString: "world")!.menuIcon()

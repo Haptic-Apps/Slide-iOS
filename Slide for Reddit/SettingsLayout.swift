@@ -231,7 +231,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     
     func doLink() {
         
-        let fakesub = RSubmission()
+        let fakesub = Submission()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let now: NSDate! = NSDate()
         

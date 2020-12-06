@@ -43,7 +43,7 @@ public class AutoCache: NSObject {
         cacheSub(0, progress: progress, completion: completion, total: 0, failed: 0)
     }
 
-    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [RSubmission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
+    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [Submission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
         if cancel {
             return
         }
@@ -90,8 +90,8 @@ public class AutoCache: NSObject {
                         allIncoming.append(contentsOf: incoming)
                         for i in incoming {
                             let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                            content[item.getIdentifier()] = item
-                            comments.append(item.getIdentifier())
+                            content[item.id] = item
+                            comments.append(item.id)
                         }
                     }
 
@@ -162,12 +162,12 @@ public class AutoCache: NSObject {
                     realmListing.updated = NSDate()
 
                     let newLinks = listing.children.compactMap({ $0 as? Link })
-                    var converted: [RSubmission] = []
+                    var converted: [Submission] = []
                     for link in newLinks {
-                        let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
+                        let newRS = RealmDataWrapper.linkToSubmission(submission: link)
                         converted.append(newRS)
                     }
-                    let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! RSubmission }
+                    let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! Submission }
                     AutoCache.preloadImages(values)
                     DispatchQueue.main.async {
                         cacheComments(index, commentIndex: 0, currentLinks: values, realmListing: realmListing, done: 0, failed: 0, progress: progress, completion: completion)
@@ -179,7 +179,7 @@ public class AutoCache: NSObject {
         }
     }
 
-    static func preloadImages(_ values: [RSubmission]) {
+    static func preloadImages(_ values: [Submission]) {
         var urls: [URL] = []
         for submission in values {
             if cancel {

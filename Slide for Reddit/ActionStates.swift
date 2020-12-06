@@ -107,7 +107,7 @@ class ActionStates {
     }
     
     //Realm
-    static func getVoteDirection(s: RSubmission) -> VoteDirection {
+    static func getVoteDirection(s: Submission) -> VoteDirection {
         if upVotedFullnames.contains(s.getId()) {
             return .up
         } else if downVotedFullnames.contains(s.getId()) {
@@ -119,7 +119,7 @@ class ActionStates {
         }
     }
     
-    static func setVoteDirection(s: RSubmission, direction: VoteDirection) {
+    static func setVoteDirection(s: Submission, direction: VoteDirection) {
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionComplete()
         }
@@ -147,7 +147,7 @@ class ActionStates {
         }
     }
     
-    static func isSaved(s: RSubmission) -> Bool {
+    static func isSaved(s: Submission) -> Bool {
         if savedFullnames.contains(s.getId()) {
             return true
         } else if unSavedFullnames.contains(s.getId()) {
@@ -159,7 +159,7 @@ class ActionStates {
         }
     }
     
-    static func setSaved(s: RSubmission, saved: Bool) {
+    static func setSaved(s: Submission, saved: Bool) {
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         }

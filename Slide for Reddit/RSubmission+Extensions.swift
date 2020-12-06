@@ -1,5 +1,5 @@
 //
-//  RSubmission+Extensions.swift
+//  Submission+Extensions.swift
 //  Slide for Reddit
 //
 //  Created by Jonathan Cole on 7/6/18.
@@ -10,7 +10,7 @@ import Foundation
 import Realm
 import reddift
 
-extension RSubmission {
+extension Submission {
     
     func getLinkView() -> LinkCellView {
         var target = CurrentType.none

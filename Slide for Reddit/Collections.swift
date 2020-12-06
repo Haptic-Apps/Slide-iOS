@@ -60,11 +60,11 @@ class Collections {
         return toReturn
     }
 
-    public static func isSavedCollectionAny(link: RSubmission) -> Bool {
+    public static func isSavedCollectionAny(link: Submission) -> Bool {
         return isSavedCollectionAny(id: link.getId())
     }
 
-    public static func isSavedCollectionAny(link: RSubmission, title: String) -> Bool {
+    public static func isSavedCollectionAny(link: Submission, title: String) -> Bool {
         return isSavedCollection(id: link.getId(), title: title)
     }
 
@@ -79,7 +79,7 @@ class Collections {
     }
 
     @discardableResult
-    public static func toggleSavedCollection(link: RSubmission, title: String) -> Bool {
+    public static func toggleSavedCollection(link: Submission, title: String) -> Bool {
         let isMarkedReadLater = isSavedCollection(id: link.getId(), title: title)
         if isMarkedReadLater {
             Collections.removeFromCollection(link: link, title: title)
@@ -90,7 +90,7 @@ class Collections {
         }
     }
 
-    public static func addToCollection(link: RSubmission, title: String) {
+    public static func addToCollection(link: Submission, title: String) {
         addToCollection(id: link.getId(), title: title)
     }
     
@@ -106,7 +106,7 @@ class Collections {
         delegate?.didUpdate()
     }
 
-    public static func removeFromCollection(link: RSubmission, title: String) {
+    public static func removeFromCollection(link: Submission, title: String) {
         removeFromCollection(id: link.getId(), title: title)
         delegate?.didUpdate()
     }

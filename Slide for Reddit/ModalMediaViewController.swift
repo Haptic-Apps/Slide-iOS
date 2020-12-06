@@ -46,7 +46,7 @@ class ModalMediaViewController: UIViewController {
     var isUpvoted = false
     var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: RSubmission?) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: Submission?) {
         super.init(nibName: nil, bundle: nil)
 
         self.failureCallback = failureCallback

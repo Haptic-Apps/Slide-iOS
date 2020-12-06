@@ -27,35 +27,35 @@ class CachedTitle {
 
     static let baseFontSize: CGFloat = 18
 
-    static func addTitle(s: RSubmission) {
-        titles[s.getId()] = titleForSubmission(submission: s, full: false, white: false, gallery: false)
+    static func addTitle(s: Submission) {
+        titles[s.getId()] = titleFoSubmission(submission: s, full: false, white: false, gallery: false)
     }
 
     static var titleFont = FontGenerator.fontOfSize(size: baseFontSize, submission: true)
     static var titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
 
-    static func getTitle(submission: RSubmission, full: Bool, _ refresh: Bool, _ white: Bool = false, gallery: Bool) -> Title {
+    static func getTitle(submission: Submission, full: Bool, _ refresh: Bool, _ white: Bool = false, gallery: Bool) -> Title {
         let title = titles[submission.getId()]
         if title == nil || refresh || full || white || gallery {
             if white {
-                return titleForSubmission(submission: submission, full: full, white: white, gallery: gallery)
+                return titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
             }
             if !full {
-                titles[submission.getId()] = titleForSubmission(submission: submission, full: full, white: white, gallery: gallery)
+                titles[submission.getId()] = titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
                 return titles[submission.getId()]!
             } else {
-                return titleForSubmission(submission: submission, full: full, white: white, gallery: gallery)
+                return titleFoSubmission(submission: submission, full: full, white: white, gallery: gallery)
             }
         } else {
             return title!
         }
     }
     
-    static func getTitleForMedia(submission: RSubmission) -> Title {
+    static func getTitleForMedia(submission: Submission) -> Title {
         return titleForMedia(submission: submission)
     }
 
-    static func titleForSubmission(submission: RSubmission, full: Bool, white: Bool, gallery: Bool) -> Title {
+    static func titleFoSubmission(submission: Submission, full: Bool, white: Bool, gallery: Bool) -> Title {
         var colorF = ColorUtil.theme.fontColor
         if white {
             colorF = .white
@@ -396,7 +396,7 @@ class CachedTitle {
         return Title(mainTitle: finalTitle, infoLine: infoLine, extraLine: extraLine, color: colorF)
     }
 
-    static func titleForMedia(submission: RSubmission) -> Title {
+    static func titleForMedia(submission: Submission) -> Title {
 
         let colorF = UIColor.white
 
@@ -478,7 +478,7 @@ class CachedTitle {
         return rect
     }
 
-    static func getTitleAttributedString(_ link: RSubmission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true) -> NSAttributedString {
+    static func getTitleAttributedString(_ link: Submission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true) -> NSAttributedString {
         let titleStrings = CachedTitle.getTitle(submission: link, full: full, force, white, gallery: gallery)
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
         let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)

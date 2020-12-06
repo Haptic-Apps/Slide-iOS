@@ -664,7 +664,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((self.comment)!.subreddit)).withAlphaComponent(0.25))
         }, completion: { (_) in
         })
-        parent!.menuId = comment!.getIdentifier()
+        parent!.menuId = comment!.id
     }
     
     func showCommentMenu(_ animate: Bool = true) {
@@ -880,7 +880,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let session = (UIApplication.shared.delegate as! AppDelegate).session
         
         do {
-            let name = comment!.getIdentifier()
+            let name = comment!.id
             try session?.editCommentOrLink(name, newBody: body!.text!, completion: { (_) in
                 self.getCommentEdited(name)
             })
@@ -909,7 +909,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent!.present(alertController!, animated: true, completion: nil)
         
         do {
-            let name = comment!.getIdentifier()
+            let name = comment!.id
             try session?.postComment(body!.text!, parentName: name, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):
@@ -1686,7 +1686,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             parent.registerForPreviewing(with: self, sourceView: title)
             registered = true
         }
-        if parent.getMenuShown() ?? "" == comment.getIdentifier() {
+        if parent.getMenuShown() ?? "" == comment.id {
             showCommentMenu()
             if parent.savedText != nil {
                 reply(self)
@@ -1920,7 +1920,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
             previewingContext.sourceRect = title.convert(rect, from: title)
-            if let controller = parent?.getControllerForUrl(baseUrl: url, link: RSubmission()) {
+            if let controller = parent?.getControllerForUrl(baseUrl: url, link: Submission()) {
                 return controller
             }
         }
@@ -1979,7 +1979,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         if !text.isEmpty {
             self.parent?.showSpoiler(text)
         } else {
-            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
+            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
         }
     }
 
@@ -2218,7 +2218,7 @@ extension CommentDepthCell: UIPopoverPresentationControllerDelegate {
 }
 
 class CommentActionsManager {
-    var submission: RSubmission
+    var submission: Submission
     var comment: RComment
 
     private lazy var networkActionsArePossible: Bool = {
@@ -2253,7 +2253,7 @@ class CommentActionsManager {
         return networkActionsArePossible && submission.canMod
     }
 
-    init(comment: RComment, submission: RSubmission) {
+    init(comment: RComment, submission: Submission) {
         self.comment = comment
         self.submission = submission
     }
@@ -2314,15 +2314,15 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
-                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
+                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
                     }
                 } else if vc is ParentCommentViewController && self.parent != nil {
                     let context = (vc as! ParentCommentViewController).parentContext
                     var index = 0
                     for c in self.parent!.dataArray {
                         let comment = self.parent!.content[c]
-                        if comment is RComment && (comment as! RComment).getIdentifier().contains(context) {
-                            self.parent!.menuId = comment!.getIdentifier()
+                        if comment is RComment && (comment as! RComment).id.contains(context) {
+                            self.parent!.menuId = comment!.id
                             self.parent!.tableView.reloadData()
                             if !SettingValues.dontHideTopBar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
                                 self.parent!.hideUI(inHeader: true)
@@ -2453,7 +2453,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: RSubmission()) {
+            if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: Submission()) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return SwipeForwardNavigationController(rootViewController: vc)
@@ -2523,18 +2523,18 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0
-                let hiddenP = commentParent.hiddenPersons.contains(comment.getIdentifier())
+                let hiddenP = commentParent.hiddenPersons.contains(comment.id)
                 if hiddenP {
-                    count = commentParent.getChildNumber(n: comment.getIdentifier())
+                    count = commentParent.getChildNumber(n: comment.id)
                 }
-                var t = commentParent.text[comment.getIdentifier()]!
+                var t = commentParent.text[comment.id]!
                 if commentParent.isSearching {
                     t = commentParent.highlight(t)
                 }
                 
                 parentCell.setComment(comment: contents as! RComment, depth: 0, parent: commentParent, hiddenCount: count, date: commentParent.lastSeen, author: commentParent.submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentParent.commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
             } else {
-                parentCell.setMore(more: (contents as! RMore), depth: commentParent.cDepth[comment.getIdentifier()]!, depthColors: commentParent.commentDepthColors, parent: commentParent)
+                parentCell.setMore(more: (contents as! RMore), depth: commentParent.cDepth[comment.id]!, depthColors: commentParent.commentDepthColors, parent: commentParent)
             }
             parentCell.content = comment
             parentCell.contentView.isUserInteractionEnabled = false

@@ -16,8 +16,8 @@ extension Object {
             return (self as! RComment).getId()
         } else if self is RMore {
             return (self as! RMore).getId()
-        } else if self is RSubmission {
-            return (self as! RSubmission).getId()
+        } else if self is Submission {
+            return (self as! Submission).getId()
         } else {
             return (self as! RMessage).getId()
         }

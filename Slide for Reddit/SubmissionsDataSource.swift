@@ -15,7 +15,7 @@ protocol SubmissionDataSouceDelegate: class {
     func generalError(title: String, message: String)
     func loadSuccess(before: Int, count: Int)
     func preLoadItems()
-    func doPreloadImages(values: [RSubmission])
+    func doPreloadImages(values: [Submission])
     func loadOffline()
     
     func emptyState(_ listing: Listing)
@@ -52,7 +52,7 @@ class SubmissionsDataSource {
     }
     
     var paginator: Paginator
-    var content: [RSubmission]
+    var content: [Submission]
     weak var delegate: SubmissionDataSouceDelegate?
     
     var loading = false
@@ -95,7 +95,7 @@ class SubmissionsDataSource {
     }
     func hideReadPostsPermanently(callback: @escaping (_ indexPaths: [IndexPath]) -> Void) {
         var indexPaths: [IndexPath] = []
-        var toRemove: [RSubmission] = []
+        var toRemove: [Submission] = []
         
         var index = 0
         var count = 0
@@ -117,7 +117,7 @@ class SubmissionsDataSource {
             if !indexPaths.isEmpty {
                 var hideString = ""
                 for item in toRemove {
-                    hideString.append(item.getId() + ",")
+                    hideString.append(item.id + ",")
                 }
                 hideString = hideString.substring(0, length: hideString.length - 1)
                 do {
@@ -238,20 +238,20 @@ class SubmissionsDataSource {
                         let before = self.content.count
 
                         let newLinks = listing.children.compactMap({ $0 as? Link })
-                        var converted: [RSubmission] = []
+                        var converted: [Submission] = []
                         var ids = [String]()
                         for link in newLinks {
                             ids.append(link.getId())
-                            let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
+                            let newRS = Submission.linkToSubmission(submission: link)
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
                         
                         self.delegate?.doPreloadImages(values: converted)
-                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
+                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! Submission }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
-                            let pageItem = RSubmission()
+                            let pageItem = Submission()
                             pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
                             pageItem.author = "PAGE_SEPARATOR"
                             pageItem.title = "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts"

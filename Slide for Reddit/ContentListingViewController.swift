@@ -31,7 +31,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         return 0
     }
     
-    func subscribe(link: RSubmission) {
+    func subscribe(link: Submission) {
         let sub = link.subreddit
         let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
@@ -271,10 +271,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
-        if thing is RSubmission {
+        if thing is Submission {
             let tableWidth = self.tableView.frame.size.width
             var c: LinkCellView?
-            switch SingleSubredditViewController.cellType(forSubmission: thing as! RSubmission, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
+            switch SingleSubredditViewController.cellType(foSubmission: thing as! Submission, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
             case .thumb:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
             case .banner:
@@ -282,7 +282,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && (thing as! RSubmission).height > 0 {
+                if !SettingValues.hideImageSelftext && (thing as! Submission).height > 0 {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
                 } else {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
@@ -292,7 +292,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
             
-            (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "", np: false)
+            (c)!.configure(submission: thing as! Submission, parent: self, nav: self.navigationController, baseSub: "", np: false)
                         
             if self is ReadLaterViewController {
                 c?.readLater.isHidden = false
@@ -333,8 +333,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if indexPath.row < baseData.content.count {
             let thing = baseData.content[indexPath.row]
             
-            if thing is RSubmission {
-                let submission = thing as! RSubmission
+            if thing is Submission {
+                let submission = thing as! Submission
                 return SingleSubredditViewController.sizeWith(submission, width, false, false)
             } else if thing is RComment {
                 let comment = thing as! RComment
@@ -619,7 +619,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 alert.addAction(UIAlertAction(title: "Remove", style: UIAlertAction.Style.destructive, handler: { (_) in
                     Collections.removeFromCollection(link: cell.link!, title: ctitle)
                     self.baseData.content = self.baseData.content.filter { (object) -> Bool in
-                        if let link = object as? RSubmission {
+                        if let link = object as? Submission {
                             if link.getId() == cell.link!.getId() {
                                 return false
                             }

@@ -19,7 +19,7 @@ protocol SubmissionMoreDelegate: class {
     func showFilterMenu(_ cell: LinkCellView)
     func applyFilters()
     func hide(index: Int)
-    func subscribe(link: RSubmission)
+    func subscribe(link: Submission)
 }
 
 class PostActions: NSObject {
@@ -67,11 +67,11 @@ class PostActions: NSObject {
         case .CROSSPOST:
             PostActions.crosspost(cell.link!, parent)
         case .READ_LATER:
-            if !ReadLater.isReadLater(id: link.getIdentifier()) {
-                ReadLater.addReadLater(id: cell.link!.getIdentifier(), subreddit: cell.link!.subreddit)
+            if !ReadLater.isReadLater(id: link.id) {
+                ReadLater.addReadLater(id: cell.link!.id, subreddit: cell.link!.subreddit)
                 BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             } else {
-                ReadLater.removeReadLater(id: cell.link!.getIdentifier())
+                ReadLater.removeReadLater(id: cell.link!.id)
                 BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             }
         case .SHARE_CONTENT:
@@ -563,7 +563,7 @@ class PostActions: NSObject {
     static var subText: String?
     static var titleText: String?
     
-    static func crosspost(_ thing: RSubmission, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
+    static func crosspost(_ thing: Submission, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
         VCPresenter.showVC(viewController: ReplyViewController.init(submission: thing, completion: { (submission) in
             VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
         }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
@@ -626,7 +626,7 @@ class PostActions: NSObject {
             alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""
                 do {
-                    let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
+                    let name = (thing is RComment) ? (thing as! RComment).id : (thing as! Submission).id
                     try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)

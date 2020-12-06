@@ -33,7 +33,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
     
-    func subscribe(link: RSubmission) {
+    func subscribe(link: Submission) {
         let sub = link.subreddit
         let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
@@ -274,9 +274,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             for i in incoming {
                                 if i.1 == 1 {
                                     let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                                    if self.content[item.getIdentifier()] == nil {
-                                        self.content[item.getIdentifier()] = item
-                                        self.cDepth[item.getIdentifier()] = i.1
+                                    if self.content[item.id] == nil {
+                                        self.content[item.id] = item
+                                        self.cDepth[item.id] = i.1
                                         queue.append(item)
                                         self.updateStrings([i])
                                     }
@@ -288,7 +288,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         let realPosition = 0
                         var ids: [String] = []
                         for item in queue {
-                            let id = item.getIdentifier()
+                            let id = item.id
                             ids.append(id)
                             self.content[id] = item
                         }
@@ -364,7 +364,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-    init(submission: RSubmission, single: Bool) {
+    init(submission: Submission, single: Bool) {
         self.submission = submission
         self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
         self.single = single
@@ -373,7 +373,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         setBarColors(color: ColorUtil.getColorForSub(sub: submission.subreddit))
     }
 
-    init(submission: RSubmission) {
+    init(submission: Submission) {
         self.submission = submission
         self.sort = SettingValues.getCommentSorting(forSubreddit: submission.subreddit)
         self.text = [:]
@@ -382,7 +382,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     init(submission: String, subreddit: String?, np: Bool = false) {
-        self.submission = RSubmission()
+        self.submission = Submission()
         self.np = np
         self.submission!.name = submission
         self.submission!.id = submission.startsWith("t3") ? submission : ("t3_" + submission)
@@ -402,7 +402,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
 
     init(submission: String, comment: String, context: Int, subreddit: String, np: Bool = false) {
-        self.submission = RSubmission()
+        self.submission = Submission()
         self.sort = SettingValues.getCommentSorting(forSubreddit: self.submission!.subreddit)
         self.submission!.name = submission
         self.submission!.subreddit = subreddit
@@ -427,7 +427,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
         if comment != nil && cell != nil {
             DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = (self.cDepth[cell!.comment!.getIdentifier()] ?? 0) + 1
+                let startDepth = (self.cDepth[cell!.comment!.id] ?? 0) + 1
 
                 let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.getId()] = startDepth
@@ -435,7 +435,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var realPosition = 0
                 for c in self.comments {
                     let id = c
-                    if id == cell!.comment!.getIdentifier() {
+                    if id == cell!.comment!.id {
                         break
                     }
                     realPosition += 1
@@ -444,7 +444,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var insertIndex = 0
                 for c in self.dataArray {
                     let id = c
-                    if id == cell!.comment!.getIdentifier() {
+                    if id == cell!.comment!.id {
                         break
                     }
                     insertIndex += 1
@@ -452,7 +452,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                 var ids: [String] = []
                 for item in queue {
-                    let id = item.getIdentifier()
+                    let id = item.id
                     ids.append(id)
                     self.content[id] = item
                 }
@@ -478,7 +478,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                 var ids: [String] = []
                 for item in queue {
-                    let id = item.getIdentifier()
+                    let id = item.id
                     ids.append(id)
                     self.content[id] = item
                 }
@@ -506,7 +506,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var comment = cell.comment!
                 for c in self.comments {
                     let id = c
-                    if id == comment.getIdentifier() {
+                    if id == comment.id {
                         break
                     }
                     realPosition += 1
@@ -515,18 +515,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var insertIndex = 0
                 for c in self.dataArray {
                     let id = c
-                    if id == comment.getIdentifier() {
+                    if id == comment.id {
                         break
                     }
                     insertIndex += 1
                 }
 
-                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.getIdentifier()] ?? 1)
+                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.id] ?? 1)
                 self.dataArray.remove(at: insertIndex)
-                self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
+                self.dataArray.insert(comment.id, at: insertIndex)
                 self.comments.remove(at: realPosition)
-                self.comments.insert(comment.getIdentifier(), at: realPosition)
-                self.content[comment.getIdentifier()] = comment
+                self.comments.insert(comment.id, at: realPosition)
+                self.content[comment.id] = comment
                 self.updateStringsSingle([comment])
                 self.doArrays()
                 self.isEditing = false
@@ -731,7 +731,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         cell.refresh()
     }
 
-    var submission: RSubmission?
+    var submission: Submission?
     var session: Session?
     var cDepth: Dictionary = [String: Int]()
     var comments: [String] = []
@@ -769,7 +769,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             do {
                 
                 let realm = try Realm()
-                if let listing = realm.objects(RSubmission.self).filter({ (item) -> Bool in
+                if let listing = realm.objects(Submission.self).filter({ (item) -> Bool in
                     return item.id == self.submission!.id
                 }).first {
                     self.comments = []
@@ -784,13 +784,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         if child.depth == 1 {
                             currentOP = child.author
                         }
-                        self.parents[child.getIdentifier()] = currentOP
+                        self.parents[child.id] = currentOP
                         currentIndex += 1
                         
                         temp.append(child)
-                        self.content[child.getIdentifier()] = child
-                        self.comments.append(child.getIdentifier())
-                        self.cDepth[child.getIdentifier()] = child.depth
+                        self.content[child.id] = child
+                        self.comments.append(child.id)
+                        self.cDepth[child.id] = child.depth
                     }
                     if !self.comments.isEmpty {
                         self.updateStringsSingle(temp)
@@ -868,7 +868,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             self.content = [:]
                             
                             if self.submission == nil || self.submission!.id.isEmpty() {
-                                self.submission = RealmDataWrapper.linkToRSubmission(submission: tuple.0.children[0] as! Link)
+                                self.submission = RealmDataWrapper.linkToSubmission(submission: tuple.0.children[0] as! Link)
                             } else {
                                 self.submission = RealmDataWrapper.updateSubmission(self.submission!, tuple.0.children[0] as! Link)
                             }
@@ -885,18 +885,18 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 
                                 for i in incoming {
                                     let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
-                                    self.content[item.getIdentifier()] = item
-                                    self.comments.append(item.getIdentifier())
+                                    self.content[item.id] = item
+                                    self.comments.append(item.id)
                                     if item is RComment {
                                         self.submission!.comments.append(item as! RComment)
                                     }
                                     if i.1 == 1 && item is RComment {
                                         currentOP = (item as! RComment).author
                                     }
-                                    self.parents[item.getIdentifier()] = currentOP
+                                    self.parents[item.id] = currentOP
                                     currentIndex += 1
                                     
-                                    self.cDepth[item.getIdentifier()] = i.1
+                                    self.cDepth[item.id] = i.1
                                 }
                             }
                             
@@ -1001,11 +1001,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if let comment = self.content[self.comments[0]] as? RComment {
                                         if comment.author == "AutoModerator" {
                                             var toRemove = [String]()
-                                            toRemove.append(comment.getIdentifier())
+                                            toRemove.append(comment.id)
                                             self.modLink = comment.permalink
-                                            self.hidden.insert(comment.getIdentifier())
+                                            self.hidden.insert(comment.id)
                                             
-                                            for next in self.walkTreeFlat(n: comment.getIdentifier()) {
+                                            for next in self.walkTreeFlat(n: comment.id) {
                                                 toRemove.append(next)
                                                 self.hidden.insert(next)
                                             }
@@ -1886,10 +1886,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         for thing in newComments {
             if let comment = thing as? RComment {
                 let html = comment.htmlText
-                self.text[comment.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[comment.id] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                self.text[(thing as! RMore).getIdentifier()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[(thing as! RMore).id] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
             }
 
         }
@@ -2076,7 +2076,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func matches(comment: RComment, sort: CommentNavType) -> Bool {
         switch sort {
         case .PARENTS:
-            if cDepth[comment.getIdentifier()]! == 1 {
+            if cDepth[comment.id]! == 1 {
                 return true
             } else {
                 return false
@@ -2274,7 +2274,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS) {
                     _ = hideNumber(n: dataArray[i], iB: i)
                     let t = content[dataArray[i]]
-                    let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
+                    let id = (t is RComment) ? (t as! RComment).id : (t as! RMore).id
                     if !hiddenPersons.contains(id) {
                         hiddenPersons.insert(id)
                     }
@@ -2292,7 +2292,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if content[dataArray[i]] is RComment && matches(comment: content[dataArray[i]] as! RComment, sort: .PARENTS) {
                     _ = unhideNumber(n: dataArray[i], iB: i)
                     let t = content[dataArray[i]]
-                    let id = (t is RComment) ? (t as! RComment).getIdentifier() : (t as! RMore).getIdentifier()
+                    let id = (t is RComment) ? (t as! RComment).id : (t as! RMore).id
                     if hiddenPersons.contains(id) {
                         hiddenPersons.remove(id)
                     }
@@ -2472,17 +2472,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         let alert = UIAlertController.init(title: "Really delete this comment?", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction.init(title: "Yes", style: .destructive, handler: { (_) in
             do {
-                try self.session?.deleteCommentOrLink(cell.comment!.getIdentifier(), completion: { (_) in
+                try self.session?.deleteCommentOrLink(cell.comment!.id, completion: { (_) in
                     DispatchQueue.main.async {
                         var realPosition = 0
                         for c in self.comments {
                             let id = c
-                            if id == cell.comment!.getIdentifier() {
+                            if id == cell.comment!.id {
                                 break
                             }
                             realPosition += 1
                         }
-                        self.text[cell.comment!.getIdentifier()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[deleted]</b></p>", fontSize: 16, submission: false, accentColor: self.color ?? ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                        self.text[cell.comment!.id] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[deleted]</b></p>", fontSize: 16, submission: false, accentColor: self.color ?? ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                         self.doArrays()
                         self.tableView.reloadData()
                     }
@@ -2698,7 +2698,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)
                 if hiddenP {
-                    count = getChildNumber(n: innerContent!.getIdentifier())
+                    count = getChildNumber(n: innerContent!.id)
                 }
                 var t = text[thing]!
                 if isSearching {
@@ -2818,7 +2818,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         var id = ""
         if contents is RComment && (contents as! RComment).depth == 1 {
             //collapse self
-            id = baseCell.comment!.getIdentifier()
+            id = baseCell.comment!.id
         } else {
             while (contents is RMore || (contents as! RComment).depth > 1) && 0 <= topCell {
                 topCell -= 1
@@ -2838,7 +2838,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                            at: UITableView.ScrollPosition.top, animated: false)
             }
             
-            id = (contents as! RComment).getIdentifier()
+            id = (contents as! RComment).id
         }
         let childNumber = getChildNumber(n: id)
         let indexPath = IndexPath.init(row: topCell, section: 0)
@@ -2848,17 +2848,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if !SettingValues.collapseFully {
                 } else if cell.isCollapsed {
                 } else {
-                    oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
-                    if !hiddenPersons.contains(cell.comment!.getIdentifier()) {
-                        hiddenPersons.insert(cell.comment!.getIdentifier())
+                    oldHeights[cell.comment!.id] = cell.contentView.frame.size.height
+                    if !hiddenPersons.contains(cell.comment!.id) {
+                        hiddenPersons.insert(cell.comment!.id)
                     }
                     self.tableView.beginUpdates()
-                    oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
+                    oldHeights[cell.comment!.id] = cell.contentView.frame.size.height
                     cell.collapse(childNumber: 0)
                     self.tableView.endUpdates()
                 }
             } else {
-                oldHeights[cell.comment!.getIdentifier()] = cell.contentView.frame.size.height
+                oldHeights[cell.comment!.id] = cell.contentView.frame.size.height
                 cell.collapse(childNumber: childNumber)
                 if hiddenPersons.contains((id)) && childNumber > 0 {
                 } else {
@@ -2905,19 +2905,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                            print(error)
                        case .success(let list):
                            DispatchQueue.main.async(execute: { () -> Void in
-                               let startDepth = self.cDepth[more.getIdentifier()] ?? 0
+                               let startDepth = self.cDepth[more.id] ?? 0
 
                                var queue: [Object] = []
                                for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
                                    let item = i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More)
                                    queue.append(item)
-                                   self.cDepth[item.getIdentifier()] = i.1
+                                   self.cDepth[item.id] = i.1
                                    self.updateStrings([i])
                                }
 
                                var realPosition = 0
                                for comment in self.comments {
-                                   if comment == more.getIdentifier() {
+                                   if comment == more.id {
                                        break
                                    }
                                    realPosition += 1
@@ -2930,11 +2930,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                }
                                self.dataArray.remove(at: datasetPosition)
                                
-                               let currentParent = self.parents[more.getIdentifier()]
+                               let currentParent = self.parents[more.id]
 
                                var ids: [String] = []
                                for item in queue {
-                                   let id = item.getIdentifier()
+                                   let id = item.id
                                    self.parents[id] = currentParent
                                    ids.append(id)
                                    self.content[id] = item
@@ -3017,13 +3017,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         if !isReply {
             if isSearching {
                 hideSearchBar()
-                context = (cell.content as! RComment).getIdentifier()
+                context = (cell.content as! RComment).id
                 var index = 0
                 if !self.context.isEmpty() {
                     for c in self.dataArray {
                         let comment = content[c]
-                        if comment is RComment && (comment as! RComment).getIdentifier().contains(self.context) {
-                            self.menuId = comment!.getIdentifier()
+                        if comment is RComment && (comment as! RComment).id.contains(self.context) {
+                            self.menuId = comment!.id
                             self.tableView.reloadData()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 self.goToCell(i: index)
@@ -3038,8 +3038,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 if let comment = cell.content as? RComment {
                     let row = tableView.indexPath(for: cell)?.row
-                    let id = comment.getIdentifier()
-                    let childNumber = getChildNumber(n: comment.getIdentifier())
+                    let id = comment.id
+                    let childNumber = getChildNumber(n: comment.id)
                     if childNumber == 0 {
                         if !SettingValues.collapseFully {
                             cell.showMenu(nil)
@@ -3105,7 +3105,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     }*/
                                 }
                                 if row != nil {
-                                    hideAll(comment: comment.getIdentifier(), i: row! + 1)
+                                    hideAll(comment: comment.id, i: row! + 1)
                                 }
                                 if !hiddenPersons.contains(id) {
                                     hiddenPersons.insert(id)
@@ -3134,19 +3134,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         print(error)
                                     case .success(let list):
                                         DispatchQueue.main.async(execute: { () -> Void in
-                                            let startDepth = self.cDepth[more.getIdentifier()] ?? 0
+                                            let startDepth = self.cDepth[more.id] ?? 0
 
                                             var queue: [Object] = []
                                             for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
                                                 let item = i.0 is Comment ? RealmDataWrapper.commentToRComment(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToRMore(more: i.0 as! More)
                                                 queue.append(item)
-                                                self.cDepth[item.getIdentifier()] = i.1
+                                                self.cDepth[item.id] = i.1
                                                 self.updateStrings([i])
                                             }
 
                                             var realPosition = 0
                                             for comment in self.comments {
-                                                if comment == more.getIdentifier() {
+                                                if comment == more.id {
                                                     break
                                                 }
                                                 realPosition += 1
@@ -3159,11 +3159,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             }
                                             self.dataArray.remove(at: datasetPosition)
                                             
-                                            let currentParent = self.parents[more.getIdentifier()]
+                                            let currentParent = self.parents[more.id]
 
                                             var ids: [String] = []
                                             for item in queue {
-                                                let id = item.getIdentifier()
+                                                let id = item.id
                                                 self.parents[id] = currentParent
                                                 ids.append(id)
                                                 self.content[id] = item
@@ -3469,18 +3469,18 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
             if contents is RComment {
                 var count = 0
-                let hiddenP = hiddenPersons.contains(comment.getIdentifier())
+                let hiddenP = hiddenPersons.contains(comment.id)
                 if hiddenP {
-                    count = getChildNumber(n: comment.getIdentifier())
+                    count = getChildNumber(n: comment.id)
                 }
-                var t = text[comment.getIdentifier()]!
+                var t = text[comment.id]!
                 if isSearching {
                     t = highlight(t)
                 }
                 
                 parentCell.setComment(comment: contents as! RComment, depth: 0, parent: self, hiddenCount: count, date: lastSeen, author: submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
             } else {
-                parentCell.setMore(more: (contents as! RMore), depth: cDepth[comment.getIdentifier()]!, depthColors: commentDepthColors, parent: self)
+                parentCell.setMore(more: (contents as! RMore), depth: cDepth[comment.id]!, depthColors: commentDepthColors, parent: self)
             }
             parentCell.content = comment
             parentCell.contentView.isUserInteractionEnabled = false

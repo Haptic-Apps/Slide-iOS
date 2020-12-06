@@ -15,11 +15,11 @@ class RelatedContributionLoader: ContributionLoader {
         content = []
     }
     
-    var thing: RSubmission
+    var thing: Submission
     var sub: String
     var color: UIColor
     
-    init(thing: RSubmission, sub: String) {
+    init(thing: Submission, sub: String) {
         self.thing = thing
         self.sub = sub
         color = ColorUtil.getColorForUser(name: sub)
@@ -55,7 +55,7 @@ class RelatedContributionLoader: ContributionLoader {
                             if item is Comment {
                                 self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                self.content.append(RealmDataWrapper.linkToSubmission(submission: item as! Link))
                             }
                         }
 

@@ -17,9 +17,9 @@ class GalleryCellView: UITableViewCell {
     var commentsImage = UIImageView()
     
     var estimatedHeight = CGFloat(0)
-    var link: RSubmission?
+    var link: Submission?
     
-    func setLink(_ link: RSubmission, parent: UIViewController & MediaVCDelegate) {
+    func setLink(_ link: Submission, parent: UIViewController & MediaVCDelegate) {
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.clipsToBounds = true
         bannerImage.contentMode = UIView.ContentMode.scaleAspectFit
