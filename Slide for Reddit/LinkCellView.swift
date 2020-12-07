@@ -1663,8 +1663,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         setVisibility(edit, actions.isEditPossible && full)
         setVisibility(mod, actions.isModPossible)
 
-        thumb = submission.thumbnail
-        big = submission.banner
+        thumb = submission.hasThumbnail
+        big = submission.hasBanner
         
         submissionHeight = CGFloat(submission.height)
         

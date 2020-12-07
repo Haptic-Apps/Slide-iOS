@@ -1296,7 +1296,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 $0.textColor = ColorUtil.theme.fontColor
                 $0.backgroundColor = .clear
                 $0.isEditable = false
-                $0.text = self.comment!.body.decodeHTML()
+                $0.text = self.comment!.markdownBody.decodeHTML() ?? ""
             }
             
             alert.contentView.addSubview(text)
@@ -1307,7 +1307,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             alert.addCloseButton()
             alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
-                UIPasteboard.general.string = self.comment!.body.decodeHTML()
+                UIPasteboard.general.string = self.comment!.markdownBody.decodeHTML() ?? ""
             }))
             
             alert.addBlurView()
@@ -1865,7 +1865,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 submissionScore -= 1
             }
         }
-        return submissionScore
+        return Double(submissionScore)
     }
 
     var registered: Bool = false

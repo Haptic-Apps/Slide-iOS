@@ -54,7 +54,7 @@ extension Submission {
     @NSManaged public var removalReason: String?
     @NSManaged public var removalNote: String?
     @NSManaged public var isEdited: Bool
-    @NSManaged public var commentCount: Double
+    @NSManaged public var commentCount: Int32
     @NSManaged public var isSaved: Bool
     @NSManaged public var isStickied: Bool
     @NSManaged public var isVisited: Bool
@@ -71,8 +71,8 @@ extension Submission {
     @NSManaged public var upvoteRatio: Double
     @NSManaged public var domain: String
     @NSManaged public var hasVoted: Bool
-    @NSManaged public var imageHeight: Int
-    @NSManaged public var imageWidth: Int
+    @NSManaged public var imageHeight: Int32
+    @NSManaged public var imageWidth: Int32
     @NSManaged public var voteDirection: Bool
     @NSManaged public var isArchived: Bool
     @NSManaged public var isLocked: Bool

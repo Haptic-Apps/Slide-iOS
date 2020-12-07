@@ -26,7 +26,7 @@ class History {
         if seenTimes.object(forKey: fullname) != nil {
             return true
         }
-        return (s.visited || s.likes != .none)
+        return (s.isVisited || s.likes != .none)
     }
     
     public static func getSeenTime(s: Submission) -> Double {

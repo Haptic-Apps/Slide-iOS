@@ -411,7 +411,7 @@ class ContentType {
     }
     
     static func getThumbnailType(submission: Link) -> ThumbnailType {
-        let thumbnail = submission.thumbnail
+        let thumbnail = submission.hasThumbnail
         
         if thumbnail.isEmpty() {
             return ThumbnailType.NONE

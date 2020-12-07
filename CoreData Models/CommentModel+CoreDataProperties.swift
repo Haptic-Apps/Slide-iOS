@@ -20,9 +20,9 @@ extension CommentModel {
     @NSManaged public var approvedBy: String?
     @NSManaged public var author: String
     @NSManaged public var awardsJSON: String
-    @NSManaged public var controversality: Int16
+    @NSManaged public var controversality: Int32
     @NSManaged public var created: Date
-    @NSManaged public var depth: Int16
+    @NSManaged public var depth: Int32
     @NSManaged public var distinguished: String?
     @NSManaged public var flairJSON: String?
     @NSManaged public var hasVoted: Bool
@@ -46,7 +46,7 @@ extension CommentModel {
     @NSManaged public var removalReason: String?
     @NSManaged public var removedBy: String?
     @NSManaged public var reportsJSON: String?
-    @NSManaged public var score: Double
+    @NSManaged public var score: Int32
     @NSManaged public var scoreHidden: Bool
     @NSManaged public var submissionTitle: String
     @NSManaged public var subreddit: String

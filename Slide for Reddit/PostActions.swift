@@ -7,7 +7,7 @@
 //
 
 import Anchorage
-
+import CoreData
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
@@ -571,7 +571,7 @@ class PostActions: NSObject {
     
     static var reportText: String?
     
-    static func report(_ thing: Object, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
+    static func report(_ thing: NSManagedObject, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
         let alert = AlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
         if !AccountController.isLoggedIn {

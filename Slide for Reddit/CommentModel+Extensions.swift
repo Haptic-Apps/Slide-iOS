@@ -23,7 +23,7 @@ public extension CommentModel {
         commentModel.author = comment.author
         commentModel.created = Date(timeIntervalSince1970: TimeInterval(comment.createdUtc))
         commentModel.isEdited = comment.edited > 0
-        commentModel.isEdited = NSDate(timeIntervalSince1970: TimeInterval(comment.edited))
+        commentModel.edited = Date(timeIntervalSince1970: TimeInterval(comment.edited))
         commentModel.htmlBody = bodyHtml
         commentModel.subreddit = comment.subreddit
         commentModel.submissionTitle = comment.submissionTitle
@@ -32,23 +32,23 @@ public extension CommentModel {
         commentModel.removalReason = comment.baseJson["ban_note"] as? String ?? ""
         commentModel.removalNote = comment.baseJson["mod_note"] as? String ?? ""
         commentModel.removedBy = comment.baseJson["banned_by"] as? String ?? ""
-        commentModel.isRemoved = !commentModel.removedBy.isEmpty()
+        commentModel.isRemoved = !commentModel.removedBy?.isEmpty()
         commentModel.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
-        commentModel.isApproved = !commentModel.approvedBy.isEmpty()
+        commentModel.isApproved = !commentModel.approvedBy?.isEmpty()
         commentModel.isStickied = comment.stickied
         //todo flairs and awards
         //todo reports
         commentModel.isCakeday = comment.baseJson["author_cakeday"] as? Bool ?? false
 
 
-        commentModel.score = comment.score
-        commentModel.depth = depth
+        commentModel.score = Int32(comment.score)
+        commentModel.depth = Int32(depth)
         
-        commentModel.isMod = comment.isMod
-        commentModel.linkid = comment.linkId
+        commentModel.isMod = comment.canMod
+        commentModel.linkId = comment.linkId
         commentModel.isArchived = comment.archived
         commentModel.distinguished = comment.distinguished.type
-        commentModel.controversality = comment.controversiality
+        commentModel.controversality = Int32(comment.controversiality)
         commentModel.hasVoted = comment.likes != .none
         commentModel.voteDirection = comment.likes == .up
         commentModel.name = comment.name
@@ -68,4 +68,20 @@ public extension CommentModel {
         }
         return .none
     }
+    
+    //Takes a More from reddift and turns it into a Realm model
+    static func moreToRMore(more: More) -> MoreModel {
+        let moreModel = MoreModel()
+        if more.id.endsWith("_") {
+            moreModel.id = "more_\(NSUUID().uuidString)"
+        } else {
+            moreModel.id = more.id
+        }
+        moreModel.name = more.name
+        moreModel.parentId = more.parentId
+        moreModel.count = Int32(more.count)
+        moreModel.childrenString = more.children.joined()
+        return moreModel
+    }
+
 }

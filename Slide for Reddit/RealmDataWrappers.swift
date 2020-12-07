@@ -7,74 +7,12 @@
 //
 
 import Foundation
-
+import CoreData
 import reddift
 
 class RealmDataWrapper {
-    static func friendToRealm(user: User) -> Object {
-        let rFriend = RFriend()
-        rFriend.name = user.name
-        rFriend.friendSince = NSDate(timeIntervalSince1970: TimeInterval(user.date))
-        return rFriend
-    }
     
-    static func messageToRMessage(message: Message) -> RMessage {
-        let title = message.baseJson["link_title"] as? String ?? ""
-        var bodyHtml = message.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
-        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
-        let rMessage = RMessage()
-        rMessage.htmlBody = bodyHtml
-        rMessage.name = message.name
-        rMessage.id = message.id
-        
-        rMessage.author = message.author
-        rMessage.subreddit = message.subreddit
-        rMessage.created = NSDate(timeIntervalSince1970: TimeInterval(message.createdUtc))
-        rMessage.isNew = message.new
-        rMessage.linkTitle = title
-        rMessage.context = message.context
-        rMessage.wasComment = message.wasComment
-        rMessage.subject = message.subject
-        return rMessage
-    }
     
-    //Takes a More from reddift and turns it into a Realm model
-    static func moreToRMore(more: More) -> RMore {
-        let rMore = RMore()
-        if more.id.endsWith("_") {
-            rMore.id = "more_\(NSUUID().uuidString)"
-        } else {
-            rMore.id = more.id
-        }
-        rMore.name = more.name
-        rMore.parentId = more.parentId
-        rMore.count = more.count
-        for s in more.children {
-            let str = RString()
-            str.value = s
-            rMore.children.append(str)
-        }
-        return rMore
-    }
-    
-}
-
-class RMessage: Object {
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-    
-    @objc dynamic var id = ""
-    @objc dynamic var name = ""
-    @objc dynamic var author = ""
-    @objc dynamic var created = NSDate(timeIntervalSince1970: 1)
-    @objc dynamic var htmlBody = ""
-    @objc dynamic var isNew = false
-    @objc dynamic var linkTitle = ""
-    @objc dynamic var context = ""
-    @objc dynamic var wasComment = false
-    @objc dynamic var subreddit = ""
-    @objc dynamic var subject = ""
     
 }
 
@@ -99,23 +37,6 @@ class RModlogItem: Object {
 
 class RString: Object {
     @objc dynamic var value = ""
-}
-
-class RMore: Object {
-    override class func primaryKey() -> String? {
-        return "id"
-    }
-        
-    @objc dynamic var count = 0
-    @objc dynamic var id = ""
-    @objc dynamic var name = ""
-    @objc dynamic var parentId = ""
-    let children = List<RString>()
-}
-
-class RFriend: Object {
-    @objc dynamic var name = ""
-    @objc dynamic var friendSince = NSDate(timeIntervalSince1970: 1)
 }
 
 extension String {

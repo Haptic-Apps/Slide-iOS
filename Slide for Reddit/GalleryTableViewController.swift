@@ -119,7 +119,7 @@ class GalleryTableViewController: MediaTableViewController {
         
     }
     
-    func getHeightFromAspectRatio(imageHeight: Double, imageWidth: Double) -> Int {
+    func getHeightFromAspectRatio(imageHeight: Int32, imageWidth: Int32) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(tableView.frame.size.width)
         return Int(width * ratio)

@@ -282,7 +282,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && (thing as! Submission).height > 0 {
+                if !SettingValues.hideImageSelftext && (thing as! Submission).imageHeight > 0 {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
                 } else {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
@@ -307,9 +307,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.setFriend(friend: (thing as! RFriend), parent: self)
             cell = c
-        } else if thing is RMessage {
+        } else if thing is MessageModel {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
-            c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setMessage(message: (thing as! MessageModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         } else {
             //Is mod log item
@@ -346,10 +346,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[comment.id] = height + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
-            } else if thing is RFriend {
+            } else if thing is FriendModel {
                 return CGSize(width: itemWidth, height: 70)
-            } else if thing is RMessage {
-                let message = thing as! RMessage
+            } else if thing is MessageModel {
+                let message = thing as! MessageModel
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message)
                     
@@ -359,7 +359,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             } else {
-                let logItem = thing as! RModlogItem
+                let logItem = thing as! ModlogModel
                 if estimatedHeights[logItem.id] == nil {
                     let titleText = ModlogCellView.getTitleText(item: logItem)
                     

@@ -240,37 +240,36 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.id = "234"
         fakesub.name = "234"
         fakesub.author = "ccrama"
-        fakesub.created = date0 as NSDate
-        fakesub.edited = NSDate(timeIntervalSince1970: 1)
-        fakesub.gilded = false
+        fakesub.created = date0
+        fakesub.edited = Date(timeIntervalSince1970: 1)
         fakesub.htmlBody = ""
-        fakesub.body = "This is where the selftext preview goes in a normal submission."
+        fakesub.markdownBody = "This is where the selftext preview goes in a normal submission."
         fakesub.title = "Chameleons are cool!"
         fakesub.subreddit = "all"
         fakesub.isArchived = false
         fakesub.isLocked = false
-        fakesub.urlString = "http://i.imgur.com/mAs9Lk3.png"
+        fakesub.contentUrl = "http://i.imgur.com/mAs9Lk3.png"
         fakesub.distinguished = ""
         fakesub.isEdited = false
         fakesub.commentCount = 42
-        fakesub.saved = false
-        fakesub.stickied = false
-        fakesub.visited = false
+        fakesub.isSaved = false
+        fakesub.isStickied = false
+        fakesub.isVisited = false
         fakesub.isSelf = false
         fakesub.permalink = ""
         fakesub.bannerUrl = "http://i.imgur.com/mAs9Lk3.png"
         fakesub.thumbnailUrl = "http://i.imgur.com/mAs9Lk3s.png"
         fakesub.lqUrl = "http://i.imgur.com/mAs9Lk3m.png"
-        fakesub.lQ = false
-        fakesub.thumbnail = true
-        fakesub.banner = true
+        fakesub.isLQ = false
+        fakesub.hasThumbnail = true
+        fakesub.hasBanner = true
         fakesub.score = 52314
-        fakesub.flair = "Cool!"
+        //TODO flair?
         fakesub.domain = "imgur.com"
-        fakesub.voted = false
-        fakesub.height = 288
-        fakesub.width = 636
-        fakesub.vote = false
+        fakesub.hasVoted = false
+        fakesub.imageHeight = 288
+        fakesub.imageWidth = 636
+        fakesub.voteDirection = false
 
         link.innerView.removeFromSuperview()
         if SettingValues.postImageMode == .THUMBNAIL {

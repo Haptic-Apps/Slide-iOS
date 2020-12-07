@@ -72,7 +72,7 @@ class CachedTitle {
 
         var newlineDone = false
         if SettingValues.showFlairs {
-            let flairsDict = submission.flairJSON.dictionaryValue()
+            let flairsDict = submission.flairDictionary
             let flairTitle = NSMutableAttributedString(string: "", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: brightF])
             if !flairsDict.keys.isEmpty {
                 for key in flairsDict.keys {
@@ -184,7 +184,7 @@ class CachedTitle {
             attributedTitle.append(info)
         }
 
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
@@ -302,18 +302,18 @@ class CachedTitle {
             }
         }
         
-        if removed.contains(submission.id) || (!submission.removedBy.isEmpty() && !approved.contains(submission.id)) {
+        if removed.contains(submission.id) || (!(submission.removedBy ?? "").isEmpty() && !approved.contains(submission.id)) {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: GMColor.red500Color()] as [NSAttributedString.Key: Any]
             extraLine.append(spacer)
             if submission.removedBy == "true" {
                 extraLine.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!submission.removalReason.isEmpty() ? ":\(submission.removalReason)" : "")", attributes: attrs))
             } else {
-                extraLine.append(NSMutableAttributedString.init(string: "Removed\(!submission.removedBy.isEmpty() ? "by \(submission.removedBy)" : "")\(!submission.removalReason.isEmpty() ? " for \(submission.removalReason)" : "")\(!submission.removalNote.isEmpty() ? " \(submission.removalNote)" : "")", attributes: attrs))
+                extraLine.append(NSMutableAttributedString.init(string: "Removed\(!submission.removedBy.isEmpty() ? "by \(submission.removedBy)" : "")\(!submission.removalReason.isEmpty() ? " for \(submission.removalReason)" : "")\(!(submission.removalNote?? "").isEmpty() ? " \(submission.removalNote!)" : "")", attributes: attrs))
             }
-        } else if approved.contains(submission.id) || (!submission.approvedBy.isEmpty() && !removed.contains(submission.id)) {
+        } else if approved.contains(submission.id) || (!(submission.approvedBy?? "").isEmpty() && !removed.contains(submission.id)) {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: GMColor.green500Color()] as [NSAttributedString.Key: Any]
             extraLine.append(spacer)
-            extraLine.append(NSMutableAttributedString.init(string: "Approved\(!submission.approvedBy.isEmpty() ? " by \(submission.approvedBy)":"")", attributes: attrs))
+            extraLine.append(NSMutableAttributedString.init(string: "Approved\(!(submission.approvedBy?? "").isEmpty() ? " by \(submission.approvedBy!)":"")", attributes: attrs))
         }
         
         if submission.isCrosspost && !full {
@@ -338,7 +338,7 @@ class CachedTitle {
             
             let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
             
-            let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
+            let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
             }
@@ -416,7 +416,7 @@ class CachedTitle {
             attributedTitle.append(oc)
         }
 
-        let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
@@ -557,9 +557,9 @@ class CachedTitle {
         }
         if !SettingValues.hideAwards {
             let to = 3
-            if link.gilded {
+            if !link.awardsDictionary.allKeys.isEmpty {
                 var awardCount = 0
-                let awardDict = link.awardsJSON.dictionaryValue()
+                let awardDict = link.awardsDictionary
 
                 let values = awardDict.values
                 let sortedValues = values.sorted { (a, b) -> Bool in

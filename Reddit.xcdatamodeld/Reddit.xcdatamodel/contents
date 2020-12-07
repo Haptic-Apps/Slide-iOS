@@ -4,9 +4,9 @@
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
         <attribute name="author" attributeType="String"/>
         <attribute name="awardsJSON" optional="YES" attributeType="String"/>
-        <attribute name="controversality" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="controversality" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="depth" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="depth" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="distinguished" optional="YES" attributeType="String"/>
         <attribute name="flairJSON" optional="YES" attributeType="String"/>
         <attribute name="hasVoted" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -30,11 +30,15 @@
         <attribute name="removalReason" optional="YES" attributeType="String"/>
         <attribute name="removedBy" optional="YES" attributeType="String"/>
         <attribute name="reportsJSON" optional="YES" attributeType="String"/>
-        <attribute name="score" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="score" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="scoreHidden" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="submissionTitle" optional="YES" attributeType="String"/>
         <attribute name="subreddit" attributeType="String"/>
         <attribute name="voteDirection" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="FriendModel" representedClassName="FriendModel" syncable="YES">
+        <attribute name="friendSince" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
     </entity>
     <entity name="MessageModel" representedClassName="MessageModel" syncable="YES">
         <attribute name="author" attributeType="String"/>
@@ -51,13 +55,33 @@
         <attribute name="subreddit" attributeType="String"/>
         <attribute name="wasComment" attributeType="Boolean" usesScalarValueType="YES"/>
     </entity>
+    <entity name="ModlogModel" representedClassName="ModlogModel" syncable="YES">
+        <attribute name="action" optional="YES" attributeType="String"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="details" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="mod" attributeType="String"/>
+        <attribute name="permalink" optional="YES" attributeType="String"/>
+        <attribute name="subject" optional="YES" attributeType="String"/>
+        <attribute name="subreddit" optional="YES" attributeType="String"/>
+        <attribute name="targetAuthor" optional="YES" attributeType="String"/>
+        <attribute name="targetBody" optional="YES" attributeType="String"/>
+        <attribute name="targetTitle" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="MoreModel" representedClassName="MoreModel" syncable="YES">
+        <attribute name="childrenString" attributeType="String"/>
+        <attribute name="count" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="parentID" attributeType="String"/>
+    </entity>
     <entity name="Submission" representedClassName="Submission" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
         <attribute name="archived" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="author" attributeType="String"/>
         <attribute name="awardsJSON" optional="YES" attributeType="String"/>
         <attribute name="bannerUrl" optional="YES" attributeType="String"/>
-        <attribute name="commentCount" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="commentCount" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="contentUrl" optional="YES" attributeType="String"/>
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="crosspostAuthor" optional="YES" attributeType="String"/>
@@ -74,8 +98,8 @@
         <attribute name="hidden" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="htmlBody" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="imageHeight" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="imageWidth" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imageHeight" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imageWidth" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="isApproved" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isArchived" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isCakeday" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -120,5 +144,8 @@
         <element name="Submission" positionX="-63" positionY="-18" width="128" height="914"/>
         <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
         <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="29"/>
+        <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
+        <element name="FriendModel" positionX="72" positionY="171" width="128" height="59"/>
+        <element name="ModlogModel" positionX="81" positionY="180" width="128" height="194"/>
     </elements>
 </model>

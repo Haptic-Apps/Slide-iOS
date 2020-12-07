@@ -117,7 +117,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     //New message reply
-    init(message: RMessage?, completion: @escaping (String?) -> Void) {
+    init(message: MessageModel?, completion: @escaping (String?) -> Void) {
         type = .REPLY_MESSAGE
         toReplyTo = message
         super.init(nibName: nil, bundle: nil)

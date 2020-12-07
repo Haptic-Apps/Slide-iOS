@@ -89,7 +89,7 @@ public class AutoCache: NSObject {
                         let incoming = AutoCache.extendKeepMore(in: child, current: startDepth)
                         allIncoming.append(contentsOf: incoming)
                         for i in incoming {
-                            let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
+                            let item = CommentModel.commentToRealm(comment: i.0, depth: i.1)
                             content[item.getId()] = item
                             comments.append(item.getId())
                         }
@@ -185,9 +185,9 @@ public class AutoCache: NSObject {
             if cancel {
                 return
             }
-            var thumb = submission.thumbnail
-            var big = submission.banner
-            var height = submission.height
+            var thumb = submission.hasThumbnail
+            var big = submission.hasBanner
+            var height = submission.imageHeight
             var type = ContentType.getContentType(baseUrl: submission.url)
             if submission.isSelf {
                 type = .SELF
