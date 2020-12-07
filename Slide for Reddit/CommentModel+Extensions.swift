@@ -13,11 +13,14 @@ import reddift
 public extension CommentModel {
     //Takes a Comment from reddift and turns it into a Realm model
     static func commentToCommentModel(comment: Comment, depth: Int) -> CommentModel {
+        let managedContext = SlideCoreData.sharedInstance.backgroundContext
+        let commentEntity = NSEntityDescription.entity(forEntityName: "CommentModel", in: managedContext)!
+        let commentModel = NSManagedObject(entity: commentEntity, insertInto: managedContext) as! CommentModel
+
         let flair = comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
         var bodyHtml = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
 
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
-        let commentModel = CommentModel()
         let json = comment.baseJson
         commentModel.id = comment.getId()
         commentModel.author = comment.author
@@ -96,7 +99,6 @@ public extension CommentModel {
 
         commentModel.isCakeday = comment.baseJson["author_cakeday"] as? Bool ?? false
 
-
         commentModel.score = Int32(comment.score)
         commentModel.depth = Int32(depth)
         
@@ -111,6 +113,15 @@ public extension CommentModel {
         commentModel.parentID = comment.parentId
         commentModel.scoreHidden = comment.scoreHidden
         commentModel.permalink = "https://www.reddit.com" + comment.permalink
+        
+        managedContext.performAndWait {
+            do {
+                try managedContext.save()
+            } catch let error as NSError {
+                print(error)
+            }
+
+        }
         return commentModel
     }
     
@@ -153,16 +164,28 @@ public extension CommentModel {
 public extension MoreModel {
     //Takes a More from reddift and turns it into a Realm model
     static func moreToMoreModel(more: More) -> MoreModel {
-        let moreModel = MoreModel()
+        let managedContext = SlideCoreData.sharedInstance.persistentContainer.viewContext
+        let moreEntity = NSEntityDescription.entity(forEntityName: "MoreModel", in: managedContext)!
+        let moreModel = NSManagedObject(entity: moreEntity, insertInto: managedContext) as! MoreModel
+
         if more.id.endsWith("_") {
             moreModel.id = "more_\(NSUUID().uuidString)"
         } else {
-            moreModel.id = more.id
+            moreModel.id = more.name
         }
         moreModel.name = more.name
         moreModel.parentID = more.parentId
         moreModel.count = Int32(more.count)
         moreModel.childrenString = more.children.joined()
+        
+        managedContext.performAndWait {
+            do {
+                try managedContext.save()
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+
         return moreModel
     }
     

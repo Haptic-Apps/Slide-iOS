@@ -255,11 +255,18 @@ class SubmissionsDataSource {
                         var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! Submission }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
-                            let pageItem = Submission()
+                            let managedContext = SlideCoreData.sharedInstance.persistentContainer.viewContext
+                            let submissionEntity = NSEntityDescription.entity(forEntityName: "Submission", in: managedContext)!
+                            let pageItem = NSManagedObject(entity: submissionEntity, insertInto: managedContext) as! Submission
                             pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
                             pageItem.author = "PAGE_SEPARATOR"
                             pageItem.title = "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts"
                             values.insert(pageItem, at: 0)
+                            do {
+                                try managedContext.save()
+                            } catch let error as NSError {
+                                print(error)
+                            }
                         }
                         self.page += 1
                         

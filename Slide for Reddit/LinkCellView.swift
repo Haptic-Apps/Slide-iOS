@@ -2546,9 +2546,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
-                        var flairDicitonary = self.link?.flairDictionary ?? [:]
-                        flairDicitonary[(text != nil && !text!.isEmpty) ? text! : flair.text] = NSDictionary()
-                        self.link!.flairJSON = flairDicitonary.jsonString()
+                        var flairDictionary = NSMutableDictionary()
+                        flairDictionary[(text != nil && !text!.isEmpty) ? text! : flair.text] = NSDictionary()
+                        self.link!.flairJSON = flairDictionary.jsonString()
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {

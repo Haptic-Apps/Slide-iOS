@@ -39,15 +39,16 @@ public extension Submission {
         }
         return nil
     }
-    
     //Takes a Link from reddift and turns it into a Realm model
     static func linkToSubmission(submission: Link) -> Submission {
-        let submissionModel = Submission()
-        submissionModel.update(submission: submission)
-        return submissionModel
+        let managedContext = SlideCoreData.sharedInstance.backgroundContext
+        let submissionEntity = NSEntityDescription.entity(forEntityName: "Submission", in: managedContext)!
+        let submissionModel = NSManagedObject(entity: submissionEntity, insertInto: managedContext) as! Submission
+        
+        return submissionModel.update(submission: submission, context: SlideCoreData.sharedInstance.backgroundContext)
     }
     
-    func update(submission: Link) -> Submission {
+    func update(submission: Link, context: NSManagedObjectContext) -> Submission {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
@@ -176,7 +177,7 @@ public extension Submission {
         self.hasVoted = submission.likes != .none
         self.upvoteRatio = submission.upvoteRatio
         self.voteDirection = submission.likes == .up
-        self.name = submission.id
+        self.name = submission.name
         do {
             try self.videoPreview = (videoPreview ?? "").convertHtmlSymbols() ?? ""
         } catch {
@@ -302,6 +303,8 @@ public extension Submission {
         self.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         self.isApproved = !(self.approvedBy ?? "").isEmpty()
         
+        self.isCrosspost = false
+
         if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
             self.isCrosspost = true
             let sub = (crosspostParent.first as? [String: Any])?["subreddit"] as? String ?? ""
@@ -325,7 +328,15 @@ public extension Submission {
             galleryDict["images"] = galleryImages
             self.galleryJSON = galleryDict.jsonString()
         }
+        
+        context.performAndWait {
+            do {
+                try context.save()
+            } catch let error as NSError {
+                print(error)
+            }
 
+        }
         return self
     }
     

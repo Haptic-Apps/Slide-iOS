@@ -12,9 +12,14 @@ import reddift
 
 public extension FriendModel {
     static func friendToRealm(user: User) -> FriendModel {
-        let friendModel = FriendModel()
+        let managedContext = SlideCoreData.sharedInstance.backgroundContext
+        let friendEntity = NSEntityDescription.entity(forEntityName: "FriendModel", in: managedContext)!
+        let friendModel = NSManagedObject(entity: friendEntity, insertInto: managedContext) as! FriendModel
+        
         friendModel.name = user.name
         friendModel.friendSince = Date(timeIntervalSince1970: TimeInterval(user.date))
+        
+        //todo do we want to save friends in CoreData?
         return friendModel
     }
 }

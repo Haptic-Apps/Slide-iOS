@@ -12,6 +12,15 @@ import Foundation
 class SlideCoreData: NSObject {
     static let sharedInstance = SlideCoreData()
     private override init() {}
+    
+    lazy var backgroundContext: NSManagedObjectContext = {
+        let backgroundContext = persistentContainer.newBackgroundContext()
+        backgroundContext.automaticallyMergesChangesFromParent = true
+        backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        return backgroundContext
+    }()
+    
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -19,7 +28,20 @@ class SlideCoreData: NSObject {
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
         */
+        class DeleteEntityPolicy: NSEntityMigrationPolicy {
+            override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
+                // Get all current entities and delete them before mapping begins
+                let entityName = "Submission"
+                let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
+                let context = manager.sourceContext
+                let results = try context.fetch(request)
+                results.forEach(context.delete)
+                try super.begin(mapping, with: manager)
+            }
+        }
+
         let container = NSPersistentContainer(name: "Reddit")
+        container.viewContext.mergePolicy = DeleteEntityPolicy()
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
