@@ -6,8 +6,8 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-
 import reddift
 
 protocol SubmissionDataSouceDelegate: class {
@@ -35,8 +35,7 @@ class SubmissionsDataSource {
     var sorting: LinkSortType
     var time: TimeFilterWithin
     var isReset = false
-    var realmListing: RListing?
-    var updated = NSDate()
+    var updated = Date()
     var contentIDs = [String]()
     
     weak var currentSession: URLSessionDataTask?
@@ -191,39 +190,44 @@ class SubmissionsDataSource {
                     self.isReset = false
                     switch result {
                     case .failure:
-                        print(result.error!)
-                        //test if realm exists and show that
-                        DispatchQueue.main.async {
-                            do {
-                                let realm = try Realm()
-                                self.updated = NSDate()
-                                if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
-                                    return item.subreddit == self.subreddit
-                                }).first {
-                                    self.content = []
-                                    self.contentIDs = []
-                                    for i in listing.links {
-                                        self.content.append(i)
-                                    }
-                                    self.updated = listing.updated
+                        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubredditPosts")
+                        let sort = NSSortDescriptor(key: #keyPath(SubredditPosts.time), ascending: false)
+                        let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
+                        fetchRequest.sortDescriptors = [sort]
+                        fetchRequest.predicate = predicate
+                        do {
+                            let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubredditPosts]
+                            self.content = []
+                            self.contentIDs = []
+
+                            if let first = results.first {
+                                let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Submission")
+                                let postPredicate = NSPredicate(format: "id in %@", first.posts?.split(",") ?? [])
+                                postsRequest.predicate = postPredicate
+                                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [Submission]
+
+                                for i in links {
+                                    self.content.append(i)
                                 }
-                                var paths = [IndexPath]()
-                                for i in 0..<self.content.count {
-                                    paths.append(IndexPath.init(item: i, section: 0))
-                                }
-                                
-                                self.loading = false
-                                self.nomore = true
-                                self.offline = true
-                                
-                                if let delegate = self.delegate {
-                                    delegate.loadOffline()
-                                }
-                            } catch {
-                                
+                                self.updated = first.time ?? Date()
+                            }
+                            var paths = [IndexPath]()
+                            for i in 0..<self.content.count {
+                                paths.append(IndexPath.init(item: i, section: 0))
+                            }
+                            
+                            self.loading = false
+                            self.nomore = true
+                            self.offline = true
+                            
+                            if let delegate = self.delegate {
+                                delegate.loadOffline()
                             }
 
+                        } catch let error as NSError {
+
                         }
+
                     case .success(let listing):
                         self.loading = false
                         self.tries = 0

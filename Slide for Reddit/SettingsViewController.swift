@@ -493,17 +493,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
     
     func checkRealmFileSize() -> Double {
-        if let realmPath = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
-            do {
-                let attributes = try FileManager.default.attributesOfItem(atPath: realmPath)
-                if let fileSize = attributes[FileAttributeKey.size] as? Double {
-
-                    return fileSize
-                }
-            } catch let error {
-                print(error)
-            }
-        }
+        //todo get CoreData size
         return 0
     }
 
@@ -747,25 +737,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 5:
                 ch = CacheSettings()
             case 6:
-                do {
-                    let realm = try Realm()
-
-                    try! realm.write {
-                        realm.deleteAll()
-                    }
-                    if let path = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
-                        do {
-                            try FileManager().removeItem(atPath: path)
-                        } catch {
-                        }
-                    } else {
-                        print("Realm file not found")
-                    }
-                    
-                } catch let error as NSError {
-                    print("error - \(error.localizedDescription)")
-                }
-                
+                //todo clear CoreData
                 let activity = UIActivityIndicatorView()
                 activity.color = ColorUtil.theme.navIconColor
                 activity.hidesWhenStopped = true
@@ -796,10 +768,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                         print(error)
                     }
                     
-                    let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
-                    let defaultParentURL = defaultURL.deletingLastPathComponent()
-                    let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
-
                     let countBytes = ByteCountFormatter()
                     countBytes.allowedUnits = [.useMB]
                     countBytes.countStyle = .file

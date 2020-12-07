@@ -43,21 +43,18 @@ public class AutoCache: NSObject {
         cacheSub(0, progress: progress, completion: completion, total: 0, failed: 0)
     }
 
-    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [Submission], realmListing: RListing, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
+    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [Submission], subredditPosts: SubredditPosts, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
         if cancel {
             return
         }
 
         if commentIndex >= currentLinks.count {
             do {
-                let realm = try! Realm()
-                realm.beginWrite()
-                for submission in currentLinks {
-                    realmListing.links.append(submission)
-                }
-                realmListing.comments = true
-                realm.create(type(of: realmListing), value: realmListing, update: .all)
-                try realm.commitWrite()
+                subredditPosts.posts = currentLinks.map({ (submission) -> String in
+                    return submission.getId()
+                }).joined(separator: ",")
+                //realmListing.comments = true
+                //todo save this?
             } catch {
                 print(error)
             }
@@ -89,34 +86,19 @@ public class AutoCache: NSObject {
                         let incoming = AutoCache.extendKeepMore(in: child, current: startDepth)
                         allIncoming.append(contentsOf: incoming)
                         for i in incoming {
-                            let item = CommentModel.commentToRealm(comment: i.0, depth: i.1)
-                            content[item.getId()] = item
-                            comments.append(item.getId())
-                        }
-                    }
-
-                    if !comments.isEmpty {
-                        do {
-                            if let realm = try? Realm() {
-                                realm.beginWrite()
-                                for comment in comments {
-                                    realm.create(type(of: content[comment]!), value: content[comment]!, update: .all)
-                                    if content[comment]! is CommentModel {
-                                        link.comments.append(content[comment] as! CommentModel)
-                                    }
-                                }
-                                realm.create(type(of: link), value: link, update: .all)
-                                try realm.commitWrite()
+                            if let item = CommentModel.thingToCommentOrMore(thing: i.0, depth: i.1) {
+                                content[item.getId()] = item
+                                comments.append(item.getId())
                             }
-                        } catch {
-
                         }
                     }
+
+
                     var newCurrent = currentLinks
                     newCurrent.remove(at: commentIndex)
                     newCurrent.insert(link, at: commentIndex)
                     DispatchQueue.main.async {
-                        cacheComments(index, commentIndex: commentIndex + 1, currentLinks: newCurrent, realmListing: realmListing, done: done, failed: failed, progress: progress, completion: completion)
+                        cacheComments(index, commentIndex: commentIndex + 1, currentLinks: newCurrent, subredditPosts: subredditPosts, done: done, failed: failed, progress: progress, completion: completion)
                     }
                 }
             })
@@ -157,9 +139,9 @@ public class AutoCache: NSObject {
                     if cancel {
                         return
                     }
-                    let realmListing = RListing()
-                    realmListing.subreddit = sub
-                    realmListing.updated = NSDate()
+                    let subredditPosts = SubredditPosts()
+                    subredditPosts.subreddit = sub
+                    subredditPosts.time = NSDate() as Date
 
                     let newLinks = listing.children.compactMap({ $0 as? Link })
                     var converted: [Submission] = []
@@ -170,7 +152,7 @@ public class AutoCache: NSObject {
                     let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! Submission }
                     AutoCache.preloadImages(values)
                     DispatchQueue.main.async {
-                        cacheComments(index, commentIndex: 0, currentLinks: values, realmListing: realmListing, done: 0, failed: 0, progress: progress, completion: completion)
+                        cacheComments(index, commentIndex: 0, currentLinks: values, subredditPosts: subredditPosts, done: 0, failed: 0, progress: progress, completion: completion)
                     }
                 }
             })
@@ -347,27 +329,27 @@ public class AutoCache: NSObject {
         return buf
     }
 
-    static func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
+    static func extendForMore(parentID: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
         for thing in comments {
             let pId = thing is Comment ? (thing as! Comment).parentId : (thing as! More).parentId
-            if pId == parentId {
+            if pId == parentID {
                 if let comment = thing as? Comment {
                     var relativeDepth = 0
                     for parent in buf {
-                        if comment.parentId == parentId {
+                        if comment.parentId == parentID {
                             relativeDepth = parent.1 - depth
                             break
                         }
                     }
                     buf.append((comment, depth + relativeDepth))
-                    buf.append(contentsOf: extendForMore(parentId: comment.id, comments: comments, current: depth + relativeDepth + 1))
+                    buf.append(contentsOf: extendForMore(parentID: comment.id, comments: comments, current: depth + relativeDepth + 1))
                 } else if let more = thing as? More {
                     var relativeDepth = 0
                     for parent in buf {
-                        let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
-                        if more.parentId == parentId {
+                        let parentID = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
+                        if more.parentId == parentID {
                             relativeDepth = parent.1 - depth
                             break
                         }

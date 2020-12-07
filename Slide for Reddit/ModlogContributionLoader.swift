@@ -50,7 +50,7 @@ class ModlogContributionLoader: ContributionLoader {
                             if let thing = thing as? ModAction {
                                 let item = ModlogModel()
                                 item.action = thing.action
-                                item.created = Date(timeIntervalSince1970: thing.createdUtc
+                                item.created = Date(timeIntervalSince1970: thing.createdUtc)
                                 item.details = thing.details
                                 item.id = thing.id
                                 item.mod = thing.mod

@@ -274,12 +274,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             for i in incoming {
                                 if i.1 == 1 {
                                     //TODO check if more or comment
-                                    let item = CommentModel.commentToCommentModel(comment: i.0, depth: i.1)
-                                    if self.content[item.getId()] == nil {
-                                        self.content[item.getId()] = item
-                                        self.cDepth[item.getId()] = i.1
-                                        queue.append(item)
-                                        self.updateStrings([i])
+                                    if let item = CommentModel.thingToCommentOrMore(thing: i.0, depth: i.1) {
+                                        if self.content[item.getId()] == nil {
+                                            self.content[item.getId()] = item
+                                            self.cDepth[item.getId()] = i.1
+                                            queue.append(item)
+                                            self.updateStrings([i])
+                                        }
                                     }
                                 }
                             }
@@ -767,9 +768,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.loaded = true
         DispatchQueue.main.async {
             self.offline = true
-            do {
+                /*TODO offline data do {
                 
-                let realm = try Realm()
+                 let realm = try Realm()
                 if let listing = realm.objects(Submission.self).filter({ (item) -> Bool in
                     return item.getId() == self.submission!.id
                 }).first {
@@ -821,7 +822,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }
             } catch {
                 BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-            }
+            }*/
         }
 
     }
@@ -884,49 +885,23 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 var currentOP = ""
                                 
                                 for i in incoming {
-                                    let item = CommentModel.commentToRealm(comment: i.0, depth: i.1)
-                                    self.content[item.getId()] = item
-                                    self.comments.append(item.getId())
-                                    if item is CommentModel {
-                                        self.submission!.comments.append(item as! CommentModel)
+                                    if let item = CommentModel.thingToCommentOrMore(thing: i.0, depth: i.1) {
+                                        self.content[item.getId()] = item
+                                        self.comments.append(item.getId())
+                                        if i.1 == 1 && item is CommentModel {
+                                            currentOP = (item as! CommentModel).author
+                                        }
+                                        self.parents[item.getId()] = currentOP
+                                        currentIndex += 1
+                                        
+                                        self.cDepth[item.getId()] = i.1
                                     }
-                                    if i.1 == 1 && item is CommentModel {
-                                        currentOP = (item as! CommentModel).author
-                                    }
-                                    self.parents[item.getId()] = currentOP
-                                    currentIndex += 1
-                                    
-                                    self.cDepth[item.getId()] = i.1
                                 }
                             }
                             
                             var time = timeval(tv_sec: 0, tv_usec: 0)
                             gettimeofday(&time, nil)
                             self.paginator = listing.paginator
-                            
-                            if !self.comments.isEmpty {
-                                do {
-                                    let realm = try Realm()
-                                   // TODO: - insert
-                                    realm.beginWrite()
-                                    for comment in self.comments {
-                                        if let content = self.content[comment] {
-                                            if content is CommentModel {
-                                                realm.create(CommentModel.self, value: content, update: .all)
-                                            } else {
-                                                realm.create(MoreModel.self, value: content, update: .all)
-                                            }
-                                            if content is CommentModel {
-                                                self.submission!.comments.append(content as! CommentModel)
-                                            }
-                                        }
-                                    }
-                                    realm.create(type(of: self.submission!), value: self.submission!, update: .all)
-                                    try realm.commitWrite()
-                                } catch {
-                                    
-                                }
-                            }
                             
                             if !allIncoming.isEmpty {
                                 self.updateStrings(allIncoming)
@@ -1789,27 +1764,27 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return buf
     }
 
-    public func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
+    public func extendForMore(parentID: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
         for thing in comments {
             let pId = thing is Comment ? (thing as! Comment).parentId : (thing as! More).parentId
-            if pId == parentId {
+            if pId == parentID {
                 if let comment = thing as? Comment {
                     var relativeDepth = 0
                     for parent in buf {
-                        if comment.parentId == parentId {
+                        if comment.parentId == parentID {
                             relativeDepth = parent.1 - depth
                             break
                         }
                     }
                     buf.append((comment, depth + relativeDepth))
-                    buf.append(contentsOf: extendForMore(parentId: comment.id, comments: comments, current: depth + relativeDepth + 1))
+                    buf.append(contentsOf: extendForMore(parentID: comment.id, comments: comments, current: depth + relativeDepth + 1))
                 } else if let more = thing as? More {
                     var relativeDepth = 0
                     for parent in buf {
-                        let parentId = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
-                        if more.parentId == parentId {
+                        let parentID = parent.0 is Comment ? (parent.0 as! Comment).parentId : (parent.0 as! More).parentId
+                        if more.parentId == parentID {
                             relativeDepth = parent.1 - depth
                             break
                         }
@@ -2370,9 +2345,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func parentHidden(comment: NSManagedObject) -> Bool {
         var n: String = ""
         if comment is CommentModel {
-            n = (comment as! CommentModel).parentId
+            n = (comment as! CommentModel).parentID
         } else {
-            n = (comment as! MoreModel).parentId
+            n = (comment as! MoreModel).parentID
         }
         return hiddenPersons.contains(n) || hidden.contains(n)
     }
@@ -2698,7 +2673,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 var count = 0
                 let hiddenP = hiddenPersons.contains(thing)
                 if hiddenP {
-                    count = getChildNumber(n: innerContent!.id)
+                    count = getChildNumber(n: innerContent!.getId())
                 }
                 var t = text[thing]!
                 if isSearching {
@@ -2909,7 +2884,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                let startDepth = self.cDepth[more.id] ?? 0
 
                                var queue: [NSManagedObject] = []
-                               for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
+                               for i in self.extendForMore(parentID: more.parentID, comments: list, current: startDepth) {
                                    let item = i.0 is Comment ? CommentModel.commentToCommentModel(comment: i.0 as! Comment, depth: i.1) : MoreModel.moreToMoreModel(more: i.0 as! More)
                                    queue.append(item)
                                    self.cDepth[item.getId()] = i.1
@@ -3122,7 +3097,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     if let more = content[dataArray[datasetPosition]] as? MoreModel, let link = self.submission {
                         let children = more.childrenString.split(",")
                         if children.isEmpty {
-                            VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.navigationController, self)
+                            VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentID.substring(3, length: more.parentID.length - 3), self.navigationController, self)
                         } else {
                             do {
                                 var strings: [String] = []
@@ -3139,7 +3114,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                             let startDepth = self.cDepth[more.id] ?? 0
 
                                             var queue: [NSManagedObject] = []
-                                            for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
+                                            for i in self.extendForMore(parentID: more.parentID, comments: list, current: startDepth) {
                                                 let item = i.0 is Comment ? CommentModel.commentToCommentModel(comment: i.0 as! Comment, depth: i.1) : MoreModel.moreToMoreModel(more: i.0 as! More)
                                                 queue.append(item)
                                                 self.cDepth[item.getId()] = i.1

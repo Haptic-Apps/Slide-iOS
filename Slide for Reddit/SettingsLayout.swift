@@ -259,7 +259,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.permalink = ""
         fakesub.bannerUrl = "http://i.imgur.com/mAs9Lk3.png"
         fakesub.thumbnailUrl = "http://i.imgur.com/mAs9Lk3s.png"
-        fakesub.lqUrl = "http://i.imgur.com/mAs9Lk3m.png"
+        fakesub.lqURL = "http://i.imgur.com/mAs9Lk3m.png"
         fakesub.isLQ = false
         fakesub.hasThumbnail = true
         fakesub.hasBanner = true

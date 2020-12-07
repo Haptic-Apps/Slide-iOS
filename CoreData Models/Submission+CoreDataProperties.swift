@@ -45,13 +45,14 @@ extension Submission {
     @NSManaged public var reportsJSON: String?
     @NSManaged public var awardsJSON: String?
     @NSManaged public var flairJSON: String?
-    @NSManaged public var galleryJSON: String
+    @NSManaged public var galleryJSON: String?
     @NSManaged public var pollJSON: String?
     @NSManaged public var removedBy: String?
     @NSManaged public var isRemoved: Bool
     @NSManaged public var approvedBy: String?
     @NSManaged public var isApproved: Bool
     @NSManaged public var removalReason: String?
+    @NSManaged public var smallPreview: String?
     @NSManaged public var removalNote: String?
     @NSManaged public var isEdited: Bool
     @NSManaged public var commentCount: Int32

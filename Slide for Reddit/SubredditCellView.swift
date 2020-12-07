@@ -296,7 +296,7 @@ class SubredditCellView: UITableViewCell {
                         thumbView.edgeAnchors /==/ submissionView.edgeAnchors
 
                         shadowView.edgeAnchors /==/ thumbView.edgeAnchors
-                        thumbView.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.bannerUrl), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                        thumbView.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? submission.thumbnailUrl ?? "" : submission.bannerUrl ?? ""), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                         thumbView.alpha = 0.7
                         textView.textColor = .white
                         subName.textColor = .white

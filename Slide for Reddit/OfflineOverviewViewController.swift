@@ -22,16 +22,7 @@ class OfflineOverviewViewController: UITableViewController {
         self.subComments = [:]
         self.subTime = [:]
         super.init(style: .plain)
-        do {
-            let realm = try Realm()
-            realm.objects(RListing.self).forEach({ (listing) in
-                self.subComments[listing.subreddit] = listing.comments
-                self.subs.append(listing.subreddit)
-                self.subTime[listing.subreddit] = listing.updated
-            })
-        } catch {
-            
-        }
+        //TODO load all offline subs here
     }
     
     required init?(coder aDecoder: NSCoder) {

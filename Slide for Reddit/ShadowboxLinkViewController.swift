@@ -453,7 +453,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                         thumbImage.image = LinkCellImageCache.web
                     }
                 } else {
-                    let thumbURL = submission.hasThumbnailUrl ?? ""
+                    let thumbURL = submission.thumbnailUrl ?? ""
                     if let url = URL(string: thumbURL) {
                         DispatchQueue.global(qos: .userInteractive).async {
                             self.thumbImage.sd_setImage(with: url, placeholderImage: LinkCellImageCache.web)

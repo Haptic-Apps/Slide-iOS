@@ -169,7 +169,7 @@ public extension Submission {
         self.hasThumbnail = thumb
         self.isNSFW = submission.over18
         self.hasBanner = big
-        self.lqUrl = String.init(htmlEncodedString: lqUrl)
+        self.lqURL = String.init(htmlEncodedString: lqUrl)
         self.domain = submission.domain
         self.isLQ = lowq
         self.score = Int32(submission.score)
@@ -447,6 +447,10 @@ public extension Submission {
     
     var reportsDictionary: [String: AnyObject] {
         return reportsJSON?.dictionaryValue() ?? [String: AnyObject]()
+    }
+    
+    var flair: String {
+        return flairDictionary.keys.joined(separator: ",")
     }
 }
 

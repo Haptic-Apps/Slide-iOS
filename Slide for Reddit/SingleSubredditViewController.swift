@@ -1666,7 +1666,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         
         if big {
-            let imageSize = CGSize(width: submission.imageWidth == 0 ? 400 : submission.imageWidth, height: ((SettingValues.postImageMode == .CROPPED_IMAGE) && !isGallery && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) ? 200 : (submission.imageHeight == 0 ? 275 : Double(submission.imageHeight))))
+            let imageSize = CGSize(width: submission.imageWidth == 0 ? 400 : Double(submission.imageWidth), height: ((SettingValues.postImageMode == .CROPPED_IMAGE) && !isGallery && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) ? 200 : (submission.imageHeight == 0 ? 275 : Double(submission.imageHeight))))
             
             var aspect = imageSize.width / imageSize.height
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
@@ -2100,7 +2100,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
                     self.emptyStateView.setText(title: "No offline content found!", message: "When online, you can set up subreddit caching in Settings > Auto Cache")
                     self.emptyStateView.isHidden = false
                 } else {
-                    self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: self.dataSource.updated, numericDates: true)) old")
+                    self.navigationItem.titleView = self.setTitle(title: self.sub, subtitle: "Content \(DateFormatter().timeSince(from: self.dataSource.updated as NSDate, numericDates: true)) old")
                 }
             }
         }

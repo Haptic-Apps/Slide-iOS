@@ -1382,7 +1382,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         hasText = true
         textView.estimatedWidth = width
         textView.estimatedHeight = 0
-        textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: link.htmlBody)
+        textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: link.htmlBody ?? "")
     }
     
     func addTouch(view: UIView, action: Selector) {
@@ -1820,7 +1820,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview!), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                 if let round = thumbImage as? RoundedImageView {
                     round.setCornerRadius()
                 }
@@ -1911,7 +1911,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     round.setCornerRadius()
                 }
             } else {
-                let bannerImageUrl = URL(string: shouldShowLq ? submission.lqUrl : submission.bannerUrl)
+                let bannerImageUrl = URL(string: shouldShowLq ? submission.lqURL ?? "": submission.bannerUrl ?? "")
                 loadedImage = bannerImageUrl
                 bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
             }
@@ -2546,7 +2546,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
-                        self.link!.flair = (text != nil && !text!.isEmpty) ? text! : flair.text
+                        var flairDicitonary = self.link?.flairDictionary ?? [:]
+                        flairDicitonary[(text != nil && !text!.isEmpty) ? text! : flair.text] = NSDictionary()
+                        self.link!.flairJSON = flairDicitonary.jsonString()
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
                         self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                         if self.textView != nil {

@@ -19,7 +19,7 @@ extension CommentModel {
 
     @NSManaged public var approvedBy: String?
     @NSManaged public var author: String
-    @NSManaged public var awardsJSON: String
+    @NSManaged public var awardsJSON: String?
     @NSManaged public var controversality: Int32
     @NSManaged public var created: Date
     @NSManaged public var edited: Date
@@ -40,8 +40,9 @@ extension CommentModel {
     @NSManaged public var isStickied: Bool
     @NSManaged public var locked: Bool
     @NSManaged public var markdownBody: String
+    @NSManaged public var linkID: String
     @NSManaged public var name: String
-    @NSManaged public var parentId: String?
+    @NSManaged public var parentID: String
     @NSManaged public var permalink: String
     @NSManaged public var removalNote: String?
     @NSManaged public var removalReason: String?
