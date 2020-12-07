@@ -104,7 +104,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     
     var lsC: [NSLayoutConstraint] = []
 
-    func setLogItem(logItem: RModlogItem, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
+    func setLogItem(logItem: ModlogModel, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
         if navViewController == nil && nav != nil {
             navViewController = nav
@@ -137,7 +137,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     public static func getTitleText(item: ModlogModel) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created, numericDates: true))  •  removed by \(item.mod)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created as NSDate, numericDates: true))  •  removed by \(item.mod)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
         
         var color = ColorUtil.getColorForSub(sub: item.subreddit)
         if color == ColorUtil.baseColor {
@@ -211,7 +211,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
         fatalError("init(coder:) has not been implemented")
     }
 
-    var logItem: RModlogItem?
+    var logItem: ModlogModel?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 }

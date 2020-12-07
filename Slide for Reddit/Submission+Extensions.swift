@@ -42,7 +42,7 @@ public extension Submission {
     
     //Takes a Link from reddift and turns it into a Realm model
     static func linkToSubmission(submission: Link) -> Submission {
-        let submissionModel = submissionModel()
+        let submissionModel = Submission()
         submissionModel.update(submission: submission)
         return submissionModel
     }
@@ -157,7 +157,7 @@ public extension Submission {
         } catch {
             self.contentUrl = (submission.url?.absoluteString) ?? ""
         }
-        self.contentUrl = self.contentUrl.removingPercentEncoding ?? submissionModel.contentUrl
+        self.contentUrl = self.contentUrl?.removingPercentEncoding ?? self.contentUrl
         
         self.title = submission.title
         self.commentCount = Int32(submission.numComments)
@@ -210,7 +210,7 @@ public extension Submission {
         self.removedBy = submission.baseJson["banned_by"] as? String ?? ""
         self.removalReason = submission.baseJson["ban_note"] as? String ?? ""
         self.removalNote = submission.baseJson["mod_note"] as? String ?? ""
-        self.isRemoved = !self.removedBy?.isEmpty() ?? false
+        self.isRemoved = !(self.removedBy ?? "").isEmpty()
         self.isCakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
         self.hidden = submission.baseJson["hidden"] as? Bool ?? false
 
@@ -293,11 +293,14 @@ public extension Submission {
                 }
             }
         }
-        
+        if let pollTotal = (submission.baseJson["poll_data"] as? JSONDictionary)?["total_vote_count"] as? Int {
+            pollsDict["total"] = pollTotal
+        }
+
         self.pollJSON = pollsDict.jsonString()
         
         self.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
-        self.isApproved = !self.approvedBy?.isEmpty() ?? false
+        self.isApproved = !(self.approvedBy ?? "").isEmpty()
         
         if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
             self.isCrosspost = true
@@ -421,10 +424,19 @@ public extension Submission {
     var hasPoll: Bool {
         return pollDictionary.keys.count > 0
     }
+    
+    var pollTotal: Int {
+        return pollDictionary["total"] as? Int ?? 0
+    }
+    
     var flairDictionary: [String: AnyObject] {
         return flairJSON?.dictionaryValue() ?? [String: AnyObject]()
     }
     
+    var galleryDictionary: [String: AnyObject] {
+        return galleryJSON?.dictionaryValue() ?? [String: AnyObject]()
+    }
+
     var pollDictionary: [String: AnyObject] {
         return pollJSON?.dictionaryValue() ?? [String: AnyObject]()
     }

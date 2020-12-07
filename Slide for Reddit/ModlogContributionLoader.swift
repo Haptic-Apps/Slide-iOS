@@ -48,11 +48,11 @@ class ModlogContributionLoader: ContributionLoader {
 
                         listing.children.forEach { (thing) in
                             if let thing = thing as? ModAction {
-                                let item = RModlogItem()
+                                let item = ModlogModel()
                                 item.action = thing.action
-                                item.created = Date(timeIntervalSince1970: thing.createdUtc) as NSDate
+                                item.created = Date(timeIntervalSince1970: thing.createdUtc
                                 item.details = thing.details
-                                item.getId() = thing.id
+                                item.id = thing.id
                                 item.mod = thing.mod
                                 item.permalink = thing.targetPermalink
                                 item.subreddit = thing.subreddit

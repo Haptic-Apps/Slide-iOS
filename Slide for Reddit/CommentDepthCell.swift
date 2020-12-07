@@ -1323,21 +1323,23 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     func mod(_ par: CommentViewController) {
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil, themeColor: GMColor.lightGreen500Color())
-
-        alertController.addAction(title: "\(comment!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
-            var reports = ""
-            for report in self.comment!.reports {
-                reports += report + "\n"
+        
+        if let reportsDictionary = comment?.reportsDictionary {
+            alertController.addAction(title: "\(reportsDictionary.keys.count > 0) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
+                var reports = ""
+                for reporter in reportsDictionary.keys {
+                    reports += "\(reporter): \(reportsDictionary[reporter] as? String ?? "")\n"
+                }
+                let alert = UIAlertController(title: "Reports",
+                                              message: reports,
+                                              preferredStyle: UIAlertController.Style.alert)
+                
+                let cancelAction = UIAlertAction(title: "OK",
+                                                 style: .cancel, handler: nil)
+                
+                alert.addAction(cancelAction)
+                par.present(alert, animated: true, completion: nil)
             }
-            let alert = UIAlertController(title: "Reports",
-                                          message: reports,
-                                          preferredStyle: UIAlertController.Style.alert)
-            
-            let cancelAction = UIAlertAction(title: "OK",
-                                             style: .cancel, handler: nil)
-            
-            alert.addAction(cancelAction)
-            self.parent?.present(alert, animated: true, completion: nil)
         }
 
         alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
@@ -1561,7 +1563,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         var attr = NSAttributedString()
-        if more.children.isEmpty {
+        if more.childrenString.isEmpty {
             attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Continue thread</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
         } else {
             attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
@@ -1729,7 +1731,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let new = date != 0 && date < Double(comment.created.timeIntervalSince1970)
-        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited as NSDate, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         
         if new {
             endString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.accentColorForSub(sub: comment.subreddit), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
@@ -1807,7 +1809,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if comment.removedBy == "true" {
                 infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(comment.removalReason ?? "").isEmpty() ? ":\(comment.removalReason!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
             } else {
-                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!comment.removalNote.isEmpty() ? " \(comment.removalNote ?? "")" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy!)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!(comment.removalNote ?? "").isEmpty() ? " \(comment.removalNote!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
             }
         } else if parent!.approved.contains(comment.id) || (!(comment.approvedBy ?? "").isEmpty() && !parent!.removed.contains(comment.id)) {
             let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.green500Color()] as [String: Any]

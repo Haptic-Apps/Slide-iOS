@@ -59,35 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
     }()
 
-    let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
-        if oldSchemaVersion < 13 {
-            /*
-             - Property 'CommentModel.gilded' has been changed from 'int' to 'bool'.
-             - Property 'CommentModel.gold' has been added.
-             - Property 'CommentModel.silver' has been added.
-             - Property 'CommentModel.platinum' has been added.
-             - Property 'Submission.gilded' has been changed from 'int' to 'bool'.
-             - Property 'Submission.gold' has been added.
-             - Property 'Submission.silver' has been added.
-             */
-            migration.enumerateObjects(ofType: CommentModel.className(), { (old, new) in
-                // Change gilded from Int to Bool
-                guard let gildedCount = old?["gilded"] as? Int else {
-                    fatalError("Old gilded value should Int, but is not.")
-                }
-                new?["gilded"] = gildedCount > 0
-
-                // Set new properties
-                new?["gold"] = gildedCount
-                new?["silver"] = 0
-                new?["platinum"] = 0
-
-            })
-        }
-        if oldSchemaVersion < 26 {
-        }
-    }
-
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return self.orientationLock
     }
@@ -148,12 +119,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         iconsFile = documentDirectory.appending("/icons.plist")
         colorsFile = documentDirectory.appending("/subcolors.plist")
 
-        let config = Realm.Configuration(
-                schemaVersion: 30,
-                migrationBlock: migrationBlock,
-                deleteRealmIfMigrationNeeded: true)
-
-        Realm.Configuration.defaultConfiguration = config
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: seenFile!) {
             if let bundlePath = Bundle.main.path(forResource: "seen", ofType: "plist") {

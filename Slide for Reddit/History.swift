@@ -85,7 +85,7 @@ class History {
     //mark Comments
     public static func commentsSince(s: Submission) -> Int {
         if let comments = commentCounts.object(forKey: s.id) {
-            return s.commentCount - (comments as! Int)
+            return Int(s.commentCount) - (comments as! Int)
         } else {
             return 0
         }

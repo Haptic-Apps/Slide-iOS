@@ -69,7 +69,7 @@ class PostFilter {
             PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
             PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
             contains(PostFilter.flairs, value: link.flair) ||
-            containedIn(PostFilter.selftext, value: link.htmlBody) ||
+            containedIn(PostFilter.selftext, value: link.htmlBody ?? "") ||
             containedIn(PostFilter.titles, value: link.title) ||
             (link.isNSFW && !SettingValues.nsfwEnabled) || (link.isNSFW && gallery && !(SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSubreddit))) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
         

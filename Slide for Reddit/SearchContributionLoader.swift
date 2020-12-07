@@ -54,9 +54,9 @@ class SearchContributionLoader: ContributionLoader {
                         let before = self.content.count
                         for item in listing.children.compactMap({ $0 }) {
                             if item is Comment {
-                                self.content.append(RealmDataWrapper.commentToCommentModel(comment: item as! Comment, depth: 0))
+                                self.content.append(CommentModel.commentToCommentModel(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(RealmDataWrapper.linkToSubmission(submission: item as! Link))
+                                self.content.append(Submission.linkToSubmission(submission: item as! Link))
                             }
                         }
                         self.paginator = listing.paginator

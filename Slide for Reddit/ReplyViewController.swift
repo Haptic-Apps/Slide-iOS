@@ -7,9 +7,9 @@
 //
 
 import Anchorage
+import CoreData
 import MobileCoreServices
 import Photos
-
 import reddift
 import SDCAlertView
 import SwiftyJSON
@@ -50,7 +50,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var text: [UITextView]?
     var extras: [UIView]?
     var toolbar: ToolbarTextView?
-    var toReplyTo: Object?
+    var toReplyTo: NSManagedObject?
     var replyingView: UIView?
     var replyButtons: UIScrollView?
     var replies: UIStateButton?
@@ -577,7 +577,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let alert = UIAlertController(title: "Select post flair", message: nil, preferredStyle: .alert)
         for item in flairs {
             alert.addAction(UIAlertAction(title: item.title, style: .default, handler: { (_) in
-                self.selectedFlair = item.getId()
+                self.selectedFlair = item.id
                 self.text?[0].placeholder = item.title
             }))
         }
@@ -897,7 +897,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 }
             } else {
                 stack.addArrangedSubviews(text1, text2, text3)
-                text3.text = (toReplyTo as! Submission).body
+                text3.text = (toReplyTo as! Submission).markdownBody
                 text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 text1.heightAnchor />=/ CGFloat(70)
                 text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
@@ -915,7 +915,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
 
         } else if type.isComment() {
-            if (toReplyTo as! Submission).type == .SELF && !(toReplyTo as! Submission).htmlBody.trimmed().isEmpty {
+            if (toReplyTo as! Submission).type == .SELF && !((toReplyTo as! Submission).htmlBody ?? "").trimmed().isEmpty {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.theme.fontColor
@@ -926,7 +926,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.font = UIFont.systemFont(ofSize: 16)
                 })
                 extras?.append(text1)
-                let html = (toReplyTo as! Submission).htmlBody
+                let html = (toReplyTo as! Submission).htmlBody ?? ""
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
                 // TODO: - this
@@ -1054,7 +1054,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.isScrollEnabled = false
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                 $0.delegate = self
-                $0.text = (toReplyTo as! Submission).body
+                $0.text = (toReplyTo as! Submission).markdownBody ?? ""
             })
 
             stack.addArrangedSubviews(text1, text3)
@@ -1413,7 +1413,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
         } else {
             do {
-                let name = toReplyTo!.id
+                let name = toReplyTo!.getId()
                 try self.session?.replyMessage(body, parentName: name, completion: { (result) -> Void in
                     switch result {
                     case .failure(let error):
@@ -1444,7 +1444,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         do {
-            let name = toReplyTo!.id
+            let name = toReplyTo!.getId()
             try self.session?.postComment(body.text, parentName: name, completion: { (result) -> Void in
                 switch result {
                 case .failure(let error):

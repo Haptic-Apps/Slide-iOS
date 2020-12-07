@@ -14,7 +14,7 @@ public extension FriendModel {
     static func friendToRealm(user: User) -> FriendModel {
         let friendModel = FriendModel()
         friendModel.name = user.name
-        friendModel.friendSince = NSDate(timeIntervalSince1970: TimeInterval(user.date))
+        friendModel.friendSince = Date(timeIntervalSince1970: TimeInterval(user.date))
         return friendModel
     }
 }

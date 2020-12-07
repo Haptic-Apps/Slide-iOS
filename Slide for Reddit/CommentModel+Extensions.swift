@@ -32,12 +32,69 @@ public extension CommentModel {
         commentModel.removalReason = comment.baseJson["ban_note"] as? String ?? ""
         commentModel.removalNote = comment.baseJson["mod_note"] as? String ?? ""
         commentModel.removedBy = comment.baseJson["banned_by"] as? String ?? ""
-        commentModel.isRemoved = !commentModel.removedBy?.isEmpty()
+        commentModel.isRemoved = !(commentModel.removedBy ?? "").isEmpty()
         commentModel.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
-        commentModel.isApproved = !commentModel.approvedBy?.isEmpty()
+        commentModel.isRemoved = !(commentModel.approvedBy ?? "").isEmpty()
         commentModel.isStickied = comment.stickied
-        //todo flairs and awards
-        //todo reports
+        let jsonDict = NSMutableDictionary()
+        for item in comment.baseJson["all_awardings"] as? [AnyObject] ?? [] {
+            if let award = item as? JSONDictionary {
+                if award["icon_url"] != nil && award["count"] != nil {
+                    let name = award["name"] as? String ?? ""
+                    var awardArray = [name]
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
+                    awardArray.append("\(award["count"] as? Int ?? 0)")
+                    awardArray.append(award["description"] as? String ?? "")
+                    awardArray.append("\(award["coin_price"] as? Int ?? 0)")
+                    
+                    //HD icon
+                    if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
+                        awardArray.append(url.unescapeHTML)
+                    } else {
+                        awardArray.append(award["icon_url"] as? String ?? "")
+                    }
+                    jsonDict[name] = awardArray
+                }
+            }
+        }
+        commentModel.awardsJSON = jsonDict.jsonString()
+        
+        let flairDict = NSMutableDictionary()
+        for item in comment.baseJson["author_flair_richtext"] as? [AnyObject] ?? [] {
+            if let flair = item as? JSONDictionary {
+                if flair["e"] as? String == "text" {
+                    if let title = (flair["t"] as? String)?.unescapeHTML {
+                        if let color = comment.baseJson["link_flair_background_color"] as? String, !color.isEmpty {
+                            flairDict[title.trimmed()] = ["color": color]
+                        } else {
+                            flairDict[title.trimmed()] = [:]
+                        }
+                    }
+                } else if flair["e"] as? String == "emoji" {
+                    if let title = (flair["a"] as? String)?.unescapeHTML, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
+                        flairDict[title.trimmed()] = ["url": url, "fallback": fallback]
+                    }
+                }
+            }
+        }
+        commentModel.flairJSON = flairDict.jsonString()
+
+        var reportsDict = NSMutableDictionary()
+        
+        for item in comment.baseJson["mod_reports"] as? [AnyObject] ?? [] {
+            let array = item as! [Any]
+            reportsDict[array[0]] = array[1]
+        }
+        for item in comment.baseJson["user_reports"] as? [AnyObject] ?? [] {
+            let array = item as! [Any]
+            reportsDict[array[0]] = array[1]
+        }
+        commentModel.reportsJSON = reportsDict.jsonString()
+
         commentModel.isCakeday = comment.baseJson["author_cakeday"] as? Bool ?? false
 
 
@@ -78,10 +135,21 @@ public extension CommentModel {
             moreModel.id = more.id
         }
         moreModel.name = more.name
-        moreModel.parentId = more.parentId
+        moreModel.parentID = more.parentId
         moreModel.count = Int32(more.count)
         moreModel.childrenString = more.children.joined()
         return moreModel
     }
-
+    
+    var flairDictionary: [String: AnyObject] {
+        return flairJSON?.dictionaryValue() ?? [String: AnyObject]()
+    }
+    
+    var awardsDictionary: [String: AnyObject] {
+        return awardsJSON?.dictionaryValue() ?? [String: AnyObject]()
+    }
+    
+    var reportsDictionary: [String: AnyObject] {
+        return reportsJSON?.dictionaryValue() ?? [String: AnyObject]()
+    }
 }

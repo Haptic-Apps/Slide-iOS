@@ -162,21 +162,22 @@ class PostActions: NSObject {
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
        // TODO: - remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
-        let reportsDictionary = cell.link?.reportsDictionary ?? [String: Any]
-        alertController.addAction(title: "\(reportsDictionary.keys.count > 0) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
-            var reports = ""
-            for reporter in reportsDictionary.keys {
-                reports += reporter + ": " + reportsDictionary[reporter] + "\n"
+        if let reportsDictionary = cell.link?.reportsDictionary {
+            alertController.addAction(title: "\(reportsDictionary.keys.count > 0) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
+                var reports = ""
+                for reporter in reportsDictionary.keys {
+                    reports += "\(reporter): \(reportsDictionary[reporter] as? String ?? "")\n"
+                }
+                let alert = UIAlertController(title: "Reports",
+                                              message: reports,
+                                              preferredStyle: UIAlertController.Style.alert)
+                
+                let cancelAction = UIAlertAction(title: "OK",
+                                                 style: .cancel, handler: nil)
+                
+                alert.addAction(cancelAction)
+                parent.present(alert, animated: true, completion: nil)
             }
-            let alert = UIAlertController(title: "Reports",
-                                          message: reports,
-                                          preferredStyle: UIAlertController.Style.alert)
-            
-            let cancelAction = UIAlertAction(title: "OK",
-                                             style: .cancel, handler: nil)
-            
-            alert.addAction(cancelAction)
-            parent.present(alert, animated: true, completion: nil)
         }
         
         if cell.link!.isApproved {

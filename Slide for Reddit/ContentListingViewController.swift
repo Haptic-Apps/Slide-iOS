@@ -314,7 +314,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else {
             //Is mod log item
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
-            c.setLogItem(logItem: (thing as! RModlogItem), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setLogItem(logItem: (thing as! ModlogModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         }
         

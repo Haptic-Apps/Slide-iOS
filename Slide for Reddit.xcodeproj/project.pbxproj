@@ -19,7 +19,6 @@
 		0965260920E2982A00EA53BE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260820E2982A00EA53BE /* UIImage+Extensions.swift */; };
 		0965260B20E2987800EA53BE /* UISearchBar+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260A20E2987800EA53BE /* UISearchBar+Extensions.swift */; };
 		0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260C20E2989600EA53BE /* UITableView+Extensions.swift */; };
-		0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965260E20E298BB00EA53BE /* Object+Extensions.swift */; };
 		0965261120E2AA5400EA53BE /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0965261020E2AA5400EA53BE /* String+Extensions.swift */; };
 		096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */; };
 		096A7D172215EC920067106C /* SettingsAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A7D162215EC920067106C /* SettingsAudio.swift */; };
@@ -516,7 +515,6 @@
 		0965260820E2982A00EA53BE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		0965260A20E2987800EA53BE /* UISearchBar+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISearchBar+Extensions.swift"; sourceTree = "<group>"; };
 		0965260C20E2989600EA53BE /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
-		0965260E20E298BB00EA53BE /* Object+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Object+Extensions.swift"; sourceTree = "<group>"; };
 		0965261020E2AA5400EA53BE /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioSession+Extensions.swift"; sourceTree = "<group>"; };
 		096A7D162215EC920067106C /* SettingsAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAudio.swift; sourceTree = "<group>"; };
@@ -1018,7 +1016,6 @@
 				0965260820E2982A00EA53BE /* UIImage+Extensions.swift */,
 				0965260A20E2987800EA53BE /* UISearchBar+Extensions.swift */,
 				0965260C20E2989600EA53BE /* UITableView+Extensions.swift */,
-				0965260E20E298BB00EA53BE /* Object+Extensions.swift */,
 				0965261020E2AA5400EA53BE /* String+Extensions.swift */,
 				098FC80E20E52D1A00F819F3 /* CGSize+Extensions.swift */,
 				098B5A4020EFC58300FE201B /* UIApplication+Extensions.swift */,
@@ -2448,7 +2445,6 @@
 				BE35217E1E3D325A00C30B8D /* SettingsFont.swift in Sources */,
 				BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */,
 				098FC80F20E52D1A00F819F3 /* CGSize+Extensions.swift in Sources */,
-				0965260F20E298BB00EA53BE /* Object+Extensions.swift in Sources */,
 				09C5A40D212B09A8000339FD /* BottomMenuPresentationController.swift in Sources */,
 				BED7B6BA1F2258E700E31A82 /* CachedTitle.swift in Sources */,
 				BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */,

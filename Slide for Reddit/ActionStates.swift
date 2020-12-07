@@ -155,7 +155,7 @@ class ActionStates {
         } else if Collections.isSavedCollectionAny(link: s) {
             return true
         } else {
-            return s.saved
+            return s.isSaved
         }
     }
     
@@ -222,7 +222,7 @@ class ActionStates {
         } else if unSavedFullnames.contains(s.id) {
             return false
         } else {
-            return s.saved
+            return s.isSaved
         }
     }
     

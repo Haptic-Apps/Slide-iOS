@@ -1626,7 +1626,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
         
-        if big || !submission.thumbnail {
+        if big || !submission.hasThumbnail {
             thumb = false
         }
         
@@ -1655,7 +1655,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             big = false
         }
         
-        if (thumb || big) && submission.spoiler {
+        if (thumb || big) && submission.isSpoiler {
             thumb = true
             big = false
         }
@@ -1666,7 +1666,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         
         if big {
-            let imageSize = CGSize.init(width: submission.imageWidth == 0 ? 400 : submission.imageWidth, height: ((SettingValues.postImageMode == .CROPPED_IMAGE) && !isGallery && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) ? 200 : (submission.imageHeight == 0 ? 275 : submission.imageHeight)))
+            let imageSize = CGSize(width: submission.imageWidth == 0 ? 400 : submission.imageWidth, height: ((SettingValues.postImageMode == .CROPPED_IMAGE) && !isGallery && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) ? 200 : (submission.imageHeight == 0 ? 275 : Double(submission.imageHeight))))
             
             var aspect = imageSize.width / imageSize.height
             if aspect == 0 || aspect > 10000 || aspect.isNaN {

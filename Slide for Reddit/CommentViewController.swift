@@ -273,7 +273,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             let incoming = self.extendKeepMore(in: child, current: startDepth)
                             for i in incoming {
                                 if i.1 == 1 {
-                                    let item = CommentModel.commentToNSManagedObject(comment: i.0, depth: i.1)
+                                    //TODO check if more or comment
+                                    let item = CommentModel.commentToCommentModel(comment: i.0, depth: i.1)
                                     if self.content[item.getId()] == nil {
                                         self.content[item.getId()] = item
                                         self.cDepth[item.getId()] = i.1
@@ -429,7 +430,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = (self.cDepth[cell!.comment!.id] ?? 0) + 1
 
-                let queue: [Object] = [RealmDataWrapper.commentToCommentModel(comment: comment!, depth: startDepth)]
+                let queue: [NSManagedObject] = [CommentModel.commentToCommentModel(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.id] = startDepth
 
                 var realPosition = 0
@@ -470,7 +471,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             DispatchQueue.main.async(execute: { () -> Void in
                 let startDepth = 1
 
-                let queue: [Object] = [RealmDataWrapper.commentToCommentModel(comment: comment!, depth: startDepth)]
+                let queue: [NSManagedObject] = [CommentModel.commentToCommentModel(comment: comment!, depth: startDepth)]
                 self.cDepth[comment!.id] = startDepth
 
                 let realPosition = 0
@@ -521,7 +522,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     insertIndex += 1
                 }
 
-                comment = RealmDataWrapper.commentToCommentModel(comment: cr!, depth: self.cDepth[comment.id] ?? 1)
+                comment = CommentModel.commentToCommentModel(comment: cr!, depth: self.cDepth[comment.id] ?? 1)
                 self.dataArray.remove(at: insertIndex)
                 self.dataArray.insert(comment.id, at: insertIndex)
                 self.comments.remove(at: realPosition)
@@ -774,7 +775,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 }).first {
                     self.comments = []
                     self.hiddenPersons = []
-                    var temp: [Object] = []
+                    var temp: [NSManagedObject] = []
                     self.hidden = []
                     self.text = [:]
                     var currentIndex = 0
@@ -883,7 +884,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 var currentOP = ""
                                 
                                 for i in incoming {
-                                    let item = RealmDataWrapper.commentToRealm(comment: i.0, depth: i.1)
+                                    let item = CommentModel.commentToRealm(comment: i.0, depth: i.1)
                                     self.content[item.getId()] = item
                                     self.comments.append(item.getId())
                                     if item is CommentModel {
@@ -1788,7 +1789,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         return buf
     }
 
-    public func extendFoMoreModel(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
+    public func extendForMore(parentId: String, comments: [Thing], current depth: Int) -> ([(Thing, Int)]) {
         var buf: [(Thing, Int)] = []
 
         for thing in comments {
@@ -1880,7 +1881,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
     var text: [String: NSAttributedString]
 
-    func updateStringsSingle(_ newComments: [Object]) {
+    func updateStringsSingle(_ newComments: [NSManagedObject]) {
         let color = ColorUtil.accentColorForSub(sub: ((newComments[0] as! CommentModel).subreddit))
         for thing in newComments {
             if let comment = thing as? CommentModel {
@@ -2081,7 +2082,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 return false
             }
         case .GILDED:
-            if comment.gilded {
+            if comment.awardsDictionary.keys.count > 0 {
                 return true
             } else {
                 return false
@@ -2366,7 +2367,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
     }
 
-    func parentHidden(comment: Object) -> Bool {
+    func parentHidden(comment: NSManagedObject) -> Bool {
         var n: String = ""
         if comment is CommentModel {
             n = (comment as! CommentModel).parentId
@@ -2890,13 +2891,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             return
         }
         if let more = content[dataArray[datasetPosition]] as? MoreModel, let link = self.submission {
-           if more.children.isEmpty {
+            let children = more.childrenString.split(",")
+           if children.isEmpty {
                loadMoreWithCallback(datasetPosition + 1)
            } else {
                do {
                    var strings: [String] = []
-                   for c in more.children {
-                       strings.append(c.value)
+                   for c in children {
+                       strings.append(c)
                    }
                    try session?.getMoreChildren(strings, name: link.id, sort: .top, id: more.id, completion: { (result) -> Void in
                        switch result {
@@ -2908,7 +2910,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                var queue: [NSManagedObject] = []
                                for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
-                                   let item = i.0 is Comment ? RealmDataWrapper.commentToCommentModel(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToMoreModel(more: i.0 as! More)
+                                   let item = i.0 is Comment ? CommentModel.commentToCommentModel(comment: i.0 as! Comment, depth: i.1) : MoreModel.moreToMoreModel(more: i.0 as! More)
                                    queue.append(item)
                                    self.cDepth[item.getId()] = i.1
                                    self.updateStrings([i])
@@ -3022,7 +3024,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     for c in self.dataArray {
                         let comment = content[c]
                         if comment is CommentModel && (comment as! CommentModel).id.contains(self.context) {
-                            self.menuId = comment!.id
+                            self.menuId = comment!.getId()
                             self.tableView.reloadData()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 self.goToCell(i: index)
@@ -3118,13 +3120,14 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         return
                     }
                     if let more = content[dataArray[datasetPosition]] as? MoreModel, let link = self.submission {
-                        if more.children.isEmpty {
+                        let children = more.childrenString.split(",")
+                        if children.isEmpty {
                             VCPresenter.openRedditLink("https://www.reddit.com" + submission!.permalink + more.parentId.substring(3, length: more.parentId.length - 3), self.navigationController, self)
                         } else {
                             do {
                                 var strings: [String] = []
-                                for c in more.children {
-                                    strings.append(c.value)
+                                for c in children {
+                                    strings.append(c)
                                 }
                                 cell.animateMore()
                                 try session?.getMoreChildren(strings, name: link.id, sort: .top, id: more.id, completion: { (result) -> Void in
@@ -3137,7 +3140,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
                                             var queue: [NSManagedObject] = []
                                             for i in self.extendForMore(parentId: more.parentId, comments: list, current: startDepth) {
-                                                let item = i.0 is Comment ? RealmDataWrapper.commentToCommentModel(comment: i.0 as! Comment, depth: i.1) : RealmDataWrapper.moreToMoreModel(more: i.0 as! More)
+                                                let item = i.0 is Comment ? CommentModel.commentToCommentModel(comment: i.0 as! Comment, depth: i.1) : MoreModel.moreToMoreModel(more: i.0 as! More)
                                                 queue.append(item)
                                                 self.cDepth[item.getId()] = i.1
                                                 self.updateStrings([i])

@@ -152,8 +152,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
 
             }
             if ContentType.isGif(uri: url) {
-                if !link.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url) {
-                    doShow(url: URL.init(string: link.videoPreview)!, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
+                if !(link.videoPreview ?? "").isEmpty() && !ContentType.isGfycat(uri: url) {
+                    doShow(url: URL.init(string: link.videoPreview!)!, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 } else {
                     doShow(url: url, heroView: heroView, finalSize: finalSize, heroVC: heroVC, link: link)
                 }
@@ -180,7 +180,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if type == ContentType.CType.ALBUM && SettingValues.internalAlbumView {
             return AlbumViewController(urlB: contentUrl!)
         } else if type == ContentType.CType.REDDIT_GALLERY {
-            return AlbumViewController(galleryItems: link.gallery)
+            return AlbumViewController(galleryItems: link.galleryDictionary["images"] as? [String] ?? [String]())
         } else if contentUrl != nil && ContentType.displayImage(t: type) && SettingValues.internalImageView || (type == ContentType.CType.VIDEO && SettingValues.internalYouTube) {
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if contentUrl != nil && type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {

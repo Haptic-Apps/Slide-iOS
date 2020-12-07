@@ -184,7 +184,7 @@ class CachedTitle {
             attributedTitle.append(info)
         }
 
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited as? NSDate ?? NSDate(), numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
@@ -306,14 +306,14 @@ class CachedTitle {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: GMColor.red500Color()] as [NSAttributedString.Key: Any]
             extraLine.append(spacer)
             if submission.removedBy == "true" {
-                extraLine.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!submission.removalReason.isEmpty() ? ":\(submission.removalReason)" : "")", attributes: attrs))
+                extraLine.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(submission.removalReason ?? "").isEmpty() ? ":\(submission.removalReason!)" : "")", attributes: attrs))
             } else {
-                extraLine.append(NSMutableAttributedString.init(string: "Removed\(!submission.removedBy.isEmpty() ? "by \(submission.removedBy)" : "")\(!submission.removalReason.isEmpty() ? " for \(submission.removalReason)" : "")\(!(submission.removalNote?? "").isEmpty() ? " \(submission.removalNote!)" : "")", attributes: attrs))
+                extraLine.append(NSMutableAttributedString.init(string: "Removed\(!(submission.removedBy ?? "").isEmpty() ? "by \(submission.removedBy!)" : "")\(!(submission.removalReason ?? "").isEmpty() ? " for \(submission.removalReason!)" : "")\(!(submission.removalNote ?? "").isEmpty() ? " \(submission.removalNote!)" : "")", attributes: attrs))
             }
-        } else if approved.contains(submission.id) || (!(submission.approvedBy?? "").isEmpty() && !removed.contains(submission.id)) {
+        } else if approved.contains(submission.id) || (!(submission.approvedBy ?? "").isEmpty() && !removed.contains(submission.id)) {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: GMColor.green500Color()] as [NSAttributedString.Key: Any]
             extraLine.append(spacer)
-            extraLine.append(NSMutableAttributedString.init(string: "Approved\(!(submission.approvedBy?? "").isEmpty() ? " by \(submission.approvedBy!)":"")", attributes: attrs))
+            extraLine.append(NSMutableAttributedString.init(string: "Approved\(!(submission.approvedBy ?? "").isEmpty() ? " by \(submission.approvedBy!)":"")", attributes: attrs))
         }
         
         if submission.isCrosspost && !full {
@@ -348,7 +348,7 @@ class CachedTitle {
             extraLine.append(crosspost)
         }
 
-        if submission.pollOptions.count > 0 {
+        if submission.pollDictionary.keys.count > 0 {
             if extraLine.string.length > 0 {
                 extraLine.append(NSAttributedString.init(string: "\n"))
             }
@@ -359,11 +359,9 @@ class CachedTitle {
                         
             poll.append(finalText)
 
-            for option in submission.pollOptions {
-                let split = option.split(";")
+            for option in submission.pollDictionary.keys {
                 poll.append(NSAttributedString.init(string: "\n"))
-                let option = split[0]
-                let count = Int(split[1]) ?? -1
+                let count = submission.pollDictionary[option] as? Int ?? -1
                                 
                 if count != -1 {
                     poll.append(NSAttributedString(string: "\(count)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: submission.subreddit), NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]))
@@ -383,9 +381,9 @@ class CachedTitle {
             extraLine.append(poll)
         }
         
-        if SettingValues.showFirstParagraph && submission.isSelf && !submission.isSpoiler && !submission.isNSFW && !full && !submission.body.trimmed().isEmpty {
-            let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
-            let text = submission.htmlBody.substring(0, length: length).trimmed()
+        if SettingValues.showFirstParagraph && submission.isSelf && !submission.isSpoiler && !submission.isNSFW && !full && !(submission.markdownBody ?? "").trimmed().isEmpty {
+            let length = (submission.htmlBody ?? "").indexOf("\n") ?? (submission.htmlBody ?? "").length
+            let text = submission.htmlBody?.substring(0, length: length).trimmed() ?? ""
 
             if !text.isEmpty() {
                 extraLine.append(NSAttributedString.init(string: "\n")) //Extra space for body
@@ -557,7 +555,7 @@ class CachedTitle {
         }
         if !SettingValues.hideAwards {
             let to = 3
-            if !link.awardsDictionary.allKeys.isEmpty {
+            if !link.awardsDictionary.keys.isEmpty {
                 var awardCount = 0
                 let awardDict = link.awardsDictionary
 

@@ -756,7 +756,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func showAwardMenu() {
         guard let link = link else { return }
-        let awardDict = link.awardsJSON.dictionaryValue()
+        let awardDict = link.awardsDictionary
 
         let alertController = DragDownAlertMenu(title: "Post awards", subtitle: "", icon: nil)
         var coinTotal = 0
@@ -1722,14 +1722,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
         }
         let checkWifi = LinkCellView.checkWiFi()
-        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && checkWifi)
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.isLQ && !(SettingValues.dataSavingDisableWiFi && checkWifi)
         if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf {
             big = false
             thumb = false
         }
         
-        if big || !submission.thumbnail {
+        if big || !submission.hasThumbnail {
             thumb = false
         }
         
@@ -1759,7 +1759,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = true
         }
         
-        if (thumb || big) && submission.spoiler {
+        if (thumb || big) && submission.isSpoiler {
             thumb = true
             big = false
         }
@@ -1787,7 +1787,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 thumbImage.image = SettingValues.thumbTag ? LinkCellImageCache.nsfwUp : LinkCellImageCache.nsfw
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-            } else if submission.spoiler {
+            } else if submission.isSpoiler {
                 thumbImage.image = LinkCellImageCache.spoiler
             } else if type == .REDDIT {
                 thumbImage.image = LinkCellImageCache.reddit
@@ -1806,8 +1806,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 if let round = thumbImage as? RoundedImageView {
                     round.setCornerRadius()
                 }
-            } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
-                if submission.spoiler {
+            } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty || submission.isSpoiler {
+                if submission.isSpoiler {
                     thumbImage.image = LinkCellImageCache.spoiler
                 } else if type == .REDDIT {
                     thumbImage.image = LinkCellImageCache.reddit
@@ -1820,7 +1820,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                 if let round = thumbImage as? RoundedImageView {
                     round.setCornerRadius()
                 }
@@ -1858,7 +1858,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     doLoadVideo()
                 } else {
                     self.videoCompletion = nil
-                    if let url = (!link!.videoPreview.isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview) : link!.url {
+                    if let url = (!(link!.videoPreview ?? "").isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview ?? "") : link!.url {
                             self.preloadVideo(url)
                     }
                 }
@@ -1883,7 +1883,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 videoOverride = true
             }
             
-            let imageSize = CGSize.init(width: submission.imageWidth == 0 ? 400 : submission.imageWidth, height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) && !((self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay))) ? 200 : (submission.imageHeight == 0 ? 275 : submission.imageHeight))
+            let imageSize = CGSize(width: submission.imageWidth == 0 ? 400 : Double(submission.imageWidth), height: ((full && !SettingValues.commentFullScreen) || (!full && SettingValues.postImageMode == .CROPPED_IMAGE)) && !((self is AutoplayBannerLinkCellView || self is FullLinkCellView || self is GalleryLinkCellView) && (ContentType.displayVideo(t: type) && type != .VIDEO) && (SettingValues.autoPlayMode == .TAP || (SettingValues.autoPlayMode == .WIFI && !shouldAutoplay))) ? 200 : (submission.imageHeight == 0 ? 275 : Double(submission.imageHeight)))
             
             aspect = imageSize.width / imageSize.height
             if aspect == 0 || aspect > 10000 || aspect.isNaN {
@@ -2038,14 +2038,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
             
             let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-            let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit)
+            let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
             }
             
             let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
             
-            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor ?? "", small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
             
             /* Maybe enable this later
              let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
@@ -2059,7 +2059,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             boldString.append(endString)
             
             outer.addTapGestureRecognizer { (_) in
-                VCPresenter.openRedditLink(submission.crosspostPermalink, self.parentViewController?.navigationController, self.parentViewController)
+                VCPresenter.openRedditLink(submission.crosspostPermalink ?? "", self.parentViewController?.navigationController, self.parentViewController)
             }
             popup.attributedText = boldString
             
@@ -2087,7 +2087,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             Post type is \(submission.type.rawValue).
             Posted in \(submission.subreddit) by \(submission.author).
             The score is \(submission.score) and there are \(submission.commentCount) comments.
-            \(full ? "Post body: \(submission.body)" : "")
+            \(full ? "Post body: \(submission.markdownBody)" : "")
         """
         if full {
             switch submission.type {
@@ -2236,7 +2236,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 videoCompletion = {
                     self.playVideo()
                 }
-                if let url = (!link!.videoPreview.isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview) : link!.url {
+                if let url = (!(link!.videoPreview ?? "").isEmpty() && (!ContentType.isGfycat(uri: link!.url!) || !SettingValues.gfycatAPI)) ? URL.init(string: link!.videoPreview ?? "") : link!.url {
                         self.preloadVideo(url)
                 }
             }
@@ -2438,7 +2438,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: RealmDataWrapper.linkToSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
+                self.setLink(submission: Submission.linkToSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                 self.showBody(width: self.innerView.frame.size.width - 24)
             })
         }
@@ -2535,7 +2535,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.flaiSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.id, text: text ?? "") { result in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairSubmission(link!.subreddit, flairId: flair.id, submissionFullname: link!.id, text: text ?? "") { result in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -2569,7 +2569,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         menu.image = LinkCellImageCache.menu
 
         save.image = ActionStates.isSaved(s: link) ? LinkCellImageCache.saveTinted : LinkCellImageCache.save
-        mod.image = link.reports.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted
+        mod.image = link.reportsDictionary.keys.isEmpty ? LinkCellImageCache.mod : LinkCellImageCache.modTinted
         readLater.image = ReadLater.isReadLater(id: link.id) ? LinkCellImageCache.readLaterTinted : LinkCellImageCache.readLater
 
         var attrs: [NSAttributedString.Key: Any] = [:]
@@ -2679,7 +2679,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 let finalText: NSMutableAttributedString!
                 let firstPart = NSMutableAttributedString.init(string: type.getTitle(link.url), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                let secondPart = NSMutableAttributedString.init(string: "\n" + link.urlString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                let secondPart = NSMutableAttributedString.init(string: "\n" + (link.contentUrl ?? ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
                 firstPart.append(secondPart)
                 finalText = firstPart
                 popup.attributedText = finalText
@@ -2942,12 +2942,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
             if type == .SELF && full {
-                if let image = URL(string: link.bannerUrl) {
+                if let image = URL(string: link.bannerUrl ?? "") {
                     self.parentViewController?.doShow(url: image, heroView: nil, finalSize: nil, heroVC: nil, link: link)
                     return
                 }
             }
-            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: link.width, height: link.height), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: Double(link.imageWidth), height: Double(link.imageHeight)), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }

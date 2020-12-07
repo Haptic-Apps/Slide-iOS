@@ -4,8 +4,8 @@
 //
 
 import Anchorage
+import CoreData
 import MaterialComponents.MDCProgressView
-
 import reddift
 import SDCAlertView
 import SDWebImage
@@ -83,7 +83,7 @@ public class AutoCache: NSObject {
                     let startDepth = 1
                     var allIncoming: [(Thing, Int)] = []
                     var comments = [String]()
-                    var content: Dictionary = [String: Object]()
+                    var content: Dictionary = [String: NSManagedObject]()
 
                     for child in tuple.1.children {
                         let incoming = AutoCache.extendKeepMore(in: child, current: startDepth)
@@ -164,7 +164,7 @@ public class AutoCache: NSObject {
                     let newLinks = listing.children.compactMap({ $0 as? Link })
                     var converted: [Submission] = []
                     for link in newLinks {
-                        let newRS = RealmDataWrapper.linkToSubmission(submission: link)
+                        let newRS = Submission.linkToSubmission(submission: link)
                         converted.append(newRS)
                     }
                     let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! Submission }
