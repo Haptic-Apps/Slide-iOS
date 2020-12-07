@@ -275,6 +275,9 @@ class SubmissionsDataSource {
                         
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
+                        
+                        SlideCoreData.sharedInstance.saveContext()
+
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
 

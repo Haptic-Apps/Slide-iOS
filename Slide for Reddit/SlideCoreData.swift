@@ -39,7 +39,7 @@ class SlideCoreData: NSObject {
     
         let container = NSPersistentContainer(name: "Reddit")
         //Un comment to wipe database
-        try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
+        //try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             container.viewContext.mergePolicy = NSMergePolicy.overwrite

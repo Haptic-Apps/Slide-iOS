@@ -1018,6 +1018,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.shouldAnimateLoad = true
                                     }
                                 }
+                                SlideCoreData.sharedInstance.saveContext()
                                 self.loaded = true
                             })
                         }
