@@ -8,6 +8,7 @@
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="depth" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="distinguished" optional="YES" attributeType="String"/>
+        <attribute name="edited" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="flairJSON" optional="YES" attributeType="String"/>
         <attribute name="hasVoted" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="hidden" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -126,7 +127,7 @@
         <attribute name="removalReason" optional="YES" attributeType="String"/>
         <attribute name="removedBy" optional="YES" attributeType="String"/>
         <attribute name="reportsJSON" optional="YES" attributeType="String"/>
-        <attribute name="score" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="score" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="subreddit" attributeType="String"/>
         <attribute name="subredditIcon" optional="YES" attributeType="String"/>
         <attribute name="thumbnailUrl" optional="YES" attributeType="String"/>
@@ -139,13 +140,13 @@
     <entity name="SubredditModel" representedClassName="SubredditModel" syncable="YES"/>
     <entity name="SubredditPosts" representedClassName="SubredditPosts" syncable="YES"/>
     <elements>
-        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="539"/>
+        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="554"/>
+        <element name="FriendModel" positionX="72" positionY="171" width="128" height="59"/>
         <element name="MessageModel" positionX="160" positionY="192" width="128" height="224"/>
+        <element name="ModlogModel" positionX="81" positionY="180" width="128" height="194"/>
+        <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
         <element name="Submission" positionX="-63" positionY="-18" width="128" height="914"/>
         <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
         <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="29"/>
-        <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
-        <element name="FriendModel" positionX="72" positionY="171" width="128" height="59"/>
-        <element name="ModlogModel" positionX="81" positionY="180" width="128" height="194"/>
     </elements>
 </model>

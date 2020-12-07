@@ -61,7 +61,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.icon.verticalAnchors /==/ self.contentView.verticalAnchors + 20
     }
     
-    func setFriend(friend: RFriend, parent: UIViewController & MediaVCDelegate) {
+    func setFriend(friend: FriendModel, parent: UIViewController & MediaVCDelegate) {
         parentViewController = parent
         self.friend = friend
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
@@ -111,7 +111,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var friend: RFriend?
+    var friend: FriendModel?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 }

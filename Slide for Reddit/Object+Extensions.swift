@@ -14,12 +14,12 @@ extension Object {
     func getIdentifier() -> String {
         if self is CommentModel {
             return (self as! CommentModel).id
-        } else if self is RMore {
-            return (self as! RMore).id
+        } else if self is MoreModel {
+            return (self as! MoreModel).id
         } else if self is Submission {
             return (self as! Submission).id
         } else {
-            return (self as! RMessage).id
+            return (self as! MessageModel).id
         }
     }
 }

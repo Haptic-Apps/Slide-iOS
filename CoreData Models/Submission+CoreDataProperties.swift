@@ -67,7 +67,7 @@ extension Submission {
     @NSManaged public var hasThumbnail: Bool
     @NSManaged public var hasBanner: Bool
     @NSManaged public var isNSFW: Bool
-    @NSManaged public var score: Double
+    @NSManaged public var score: Int32
     @NSManaged public var upvoteRatio: Double
     @NSManaged public var domain: String
     @NSManaged public var hasVoted: Bool

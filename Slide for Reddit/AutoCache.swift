@@ -205,7 +205,7 @@ public class AutoCache: NSObject {
             } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
             } else if big && (SettingValues.postImageMode == .SHORT_IMAGE) {
-                height = Int(UIScreen.main.bounds.height / 2)
+                height = Int32(Int(UIScreen.main.bounds.height / 2))
             }
 
             if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {
@@ -224,7 +224,7 @@ public class AutoCache: NSObject {
                 thumb = false
             }
 
-            if big || !submission.thumbnail {
+            if big || !submission.hasThumbnail {
                 thumb = false
             }
 
@@ -234,16 +234,16 @@ public class AutoCache: NSObject {
 
             if thumb && !big {
                 if submission.thumbnailUrl == "nsfw" {
-                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty {
                 } else {
-                    if let url = URL.init(string: submission.thumbnailUrl) {
+                    if let url = URL.init(string: (submission.thumbnailUrl ?? "")) {
                         urls.append(url)
                     }
                 }
             }
 
             if big {
-                if let url = URL.init(string: submission.bannerUrl) {
+                if let url = URL.init(string: (submission.bannerUrl ?? "")) {
                     urls.append(url)
                 }
             }

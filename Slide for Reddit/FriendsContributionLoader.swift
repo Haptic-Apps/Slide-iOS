@@ -47,7 +47,7 @@ class FriendsContributionLoader: ContributionLoader {
                         }
                         let before = self.content.count
                         for user in listing {
-                            self.content.append(RealmDataWrapper.friendToRealm(user: user))
+                            self.content.append(FriendModel.friendToRealm(user: user))
                         }
                         //self.paginator = listing.paginator
                         //self.canGetMore = listing.paginator.hasMore()

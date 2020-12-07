@@ -118,7 +118,7 @@ class PostActions: NSObject {
                 $0.textColor = ColorUtil.theme.fontColor
                 $0.backgroundColor = .clear
                 $0.isEditable = false
-                $0.text = cell.link!.body.decodeHTML()
+                $0.text = cell.link?.markdownBody?.decodeHTML() ?? ""
             }
             
             alert.contentView.addSubview(text)
@@ -129,7 +129,7 @@ class PostActions: NSObject {
             
             alert.addCloseButton()
             alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
-                UIPasteboard.general.string = cell.link!.body.decodeHTML()
+                UIPasteboard.general.string = cell.link?.markdownBody?.decodeHTML() ?? ""
             }))
             
             alert.addBlurView()
@@ -162,11 +162,11 @@ class PostActions: NSObject {
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
        // TODO: - remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
-        
-        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
+        let reportsDictionary = cell.link?.reportsDictionary ?? [String: Any]
+        alertController.addAction(title: "\(reportsDictionary.keys.count > 0) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
             var reports = ""
-            for report in cell.link!.reports {
-                reports += report + "\n"
+            for reporter in reportsDictionary.keys {
+                reports += reporter + ": " + reportsDictionary[reporter] + "\n"
             }
             let alert = UIAlertController(title: "Reports",
                                           message: reports,
@@ -179,7 +179,7 @@ class PostActions: NSObject {
             parent.present(alert, animated: true, completion: nil)
         }
         
-        if cell.link!.approved {
+        if cell.link!.isApproved {
             alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
             }
         } else {
@@ -188,7 +188,7 @@ class PostActions: NSObject {
             }
         }
         
-        if cell.link!.removed {
+        if cell.link!.isRemoved {
             alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
             }
         } else {
@@ -215,7 +215,7 @@ class PostActions: NSObject {
             }
         }
         
-        if !cell.link!.spoiler {
+        if !cell.link!.isSpoiler {
             alertController.addAction(title: "Mark as spoiler", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, true)
             }
@@ -241,7 +241,7 @@ class PostActions: NSObject {
             }
         }
         
-        if cell.link!.stickied {
+        if cell.link!.isStickied {
             alertController.addAction(title: "Un-sticky post", icon: UIImage(sfString: SFSymbol.pinSlashFill, overrideString: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: false)
             }
@@ -307,7 +307,7 @@ class PostActions: NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Spoiler tag set!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.spoiler = set
+                        cell.link!.isSpoiler = set
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -406,7 +406,7 @@ class PostActions: NSObject {
                 case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(sticky ? "" : "un-")stickied!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.stickied = sticky
+                        cell.link!.isStickied = sticky
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }

@@ -383,7 +383,7 @@ class CachedTitle {
             extraLine.append(poll)
         }
         
-        if SettingValues.showFirstParagraph && submission.isSelf && !submission.spoiler && !submission.isNSFW && !full && !submission.body.trimmed().isEmpty {
+        if SettingValues.showFirstParagraph && submission.isSelf && !submission.isSpoiler && !submission.isNSFW && !full && !submission.body.trimmed().isEmpty {
             let length = submission.htmlBody.indexOf("\n") ?? submission.htmlBody.length
             let text = submission.htmlBody.substring(0, length: length).trimmed()
 
@@ -416,7 +416,7 @@ class CachedTitle {
             attributedTitle.append(oc)
         }
 
-        let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited! as NSDate, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)

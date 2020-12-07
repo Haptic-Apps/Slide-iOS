@@ -122,7 +122,7 @@ class GalleryCellView: UITableViewCell {
         
     }
     
-    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
+    func getHeightFromAspectRatio(imageHeight: Int32, imageWidth: Int32) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(contentView.frame.size.width)
         return Int(width * ratio)

@@ -154,8 +154,8 @@ class PostFilter {
                 if !mainMatch {
                     toReturn.append(link)
                 }
-            } else if link is RMessage {
-                let message = link as! RMessage
+            } else if link is MessageModel {
+                let message = link as! MessageModel
                 let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(message.author) == .orderedSame })
                 if !mainMatch {
                     toReturn.append(link)

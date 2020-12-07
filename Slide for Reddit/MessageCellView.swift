@@ -102,7 +102,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     
     var lsC: [NSLayoutConstraint] = []
 
-    func setMessage(message: RMessage, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
+    func setMessage(message: MessageModel, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
         if navViewController == nil && nav != nil {
             navViewController = nav
@@ -137,7 +137,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var timer: Timer?
     var cancelled = false
     
-    public static func getTitleText(message: RMessage) -> NSAttributedString {
+    public static func getTitleText(message: MessageModel) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.linkTitle.unescapeHTML : message.subject.unescapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor]))
         
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
@@ -253,7 +253,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         fatalError("init(coder:) has not been implemented")
     }
 
-    var message: RMessage?
+    var message: MessageModel?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 

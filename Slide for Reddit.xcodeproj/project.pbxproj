@@ -1410,6 +1410,7 @@
 		BE84B28D257DAC6100A90C5D /* CoreData Models */ = {
 			isa = PBXGroup;
 			children = (
+				BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */,
 				BE84B281257DAC5A00A90C5D /* ModlogModel+CoreDataClass.swift */,
 				BE84B282257DAC5A00A90C5D /* ModlogModel+CoreDataProperties.swift */,
 				BE84B26B257DAB3E00A90C5D /* FriendModel+CoreDataClass.swift */,
@@ -1434,7 +1435,6 @@
 			isa = PBXGroup;
 			children = (
 				BE84B28D257DAC6100A90C5D /* CoreData Models */,
-				BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */,
 				BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */,
 				BED90FF0250C017C00090DF5 /* Favorite SubredditsExtension.entitlements */,
 				BE77470720367D98006C72E8 /* Credits.plist */,

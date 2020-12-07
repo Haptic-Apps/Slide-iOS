@@ -22,14 +22,14 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var bottomScroll = UIScrollView()
     var failureCallback: ((_ url: URL) -> Void)?
     var albumHash: String = ""
-    var galleryItems: List<String> = List<String>()
+    var galleryItems: [String] = [String]()
     
     init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         self.baseURL = urlB
     }
     
-    init(galleryItems: List<String>) {
+    init(galleryItems: [String]) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         self.galleryItems = galleryItems
     }

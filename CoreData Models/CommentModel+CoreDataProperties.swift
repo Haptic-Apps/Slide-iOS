@@ -22,6 +22,7 @@ extension CommentModel {
     @NSManaged public var awardsJSON: String
     @NSManaged public var controversality: Int32
     @NSManaged public var created: Date
+    @NSManaged public var edited: Date
     @NSManaged public var depth: Int32
     @NSManaged public var distinguished: String?
     @NSManaged public var flairJSON: String?

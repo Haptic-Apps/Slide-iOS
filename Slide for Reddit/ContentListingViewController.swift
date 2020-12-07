@@ -303,9 +303,9 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.setComment(comment: (thing as! CommentModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
-        } else if thing is RFriend {
+        } else if thing is FriendModel {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
-            c.setFriend(friend: (thing as! RFriend), parent: self)
+            c.setFriend(friend: (thing as! FriendModel), parent: self)
             cell = c
         } else if thing is MessageModel {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView

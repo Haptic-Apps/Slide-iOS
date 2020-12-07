@@ -8,12 +8,13 @@
 
 import CoreData
 import Foundation
+import reddift
 
 public extension FriendModel {
     static func friendToRealm(user: User) -> FriendModel {
-        let rFriend = RFriend()
-        rFriend.name = user.name
-        rFriend.friendSince = NSDate(timeIntervalSince1970: TimeInterval(user.date))
-        return rFriend
+        let friendModel = FriendModel()
+        friendModel.name = user.name
+        friendModel.friendSince = NSDate(timeIntervalSince1970: TimeInterval(user.date))
+        return friendModel
     }
 }

@@ -134,7 +134,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     var timer: Timer?
     var cancelled = false
     
-    public static func getTitleText(item: RModlogItem) -> NSAttributedString {
+    public static func getTitleText(item: ModlogModel) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created, numericDates: true))  •  removed by \(item.mod)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))

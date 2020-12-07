@@ -635,7 +635,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.numberOfLines = 0
                 })
                 extras?.append(text1)
-                let html = (toReplyTo as! RMessage).htmlBody
+                let html = (toReplyTo as! MessageModel).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
                 // TODO: - this
@@ -718,9 +718,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 
                 if toReplyTo != nil {
-                    text1.text = "re: \((toReplyTo as! RMessage).subject.escapeHTML)"
+                    text1.text = "re: \((toReplyTo as! MessageModel).subject.escapeHTML)"
                     text1.isEditable = false
-                    text2.text = ((toReplyTo as! RMessage).author)
+                    text2.text = ((toReplyTo as! MessageModel).author)
                     text2.isEditable = false
                 }
                 
@@ -1101,7 +1101,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         if type.isMessage() {
             title = "New message"
             if type == ReplyType.REPLY_MESSAGE {
-                let author = (toReplyTo is RMessage) ? ((toReplyTo as! RMessage).author) : ((toReplyTo as! Submission).author)
+                let author = (toReplyTo is MessageModel) ? ((toReplyTo as! MessageModel).author) : ((toReplyTo as! Submission).author)
                 title = "Reply to \(author)"
             }
         } else {
@@ -1243,7 +1243,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
 
             do {
-                let name = toReplyTo is RMessage ? (toReplyTo as! RMessage).id : toReplyTo is CommentModel ? (toReplyTo as! CommentModel).id : (toReplyTo as! Submission).id
+                let name = toReplyTo is MessageModel ? (toReplyTo as! MessageModel).id : toReplyTo is CommentModel ? (toReplyTo as! CommentModel).id : (toReplyTo as! Submission).id
                 try self.session?.editCommentOrLink(name, newBody: body.text, completion: { (_) in
                     self.getSubmissionEdited(name)
                 })

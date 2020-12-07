@@ -57,7 +57,7 @@ class ActionStates {
         }
     }
     
-    static func isRead(s: RMessage) -> Bool {
+    static func isRead(s: MessageModel) -> Bool {
         if savedFullnames.contains(s.id) {
             return true
         } else if unSavedFullnames.contains(s.id) {
@@ -67,7 +67,7 @@ class ActionStates {
         }
     }
     
-    static func setRead(s: RMessage, read: Bool) {
+    static func setRead(s: MessageModel, read: Bool) {
         let fullname = s.id
         if let index = savedFullnames.firstIndex(of: fullname) {
             savedFullnames.remove(at: index)

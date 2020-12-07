@@ -70,7 +70,7 @@ public extension CommentModel {
     }
     
     //Takes a More from reddift and turns it into a Realm model
-    static func moreToRMore(more: More) -> MoreModel {
+    static func moreToMoreModel(more: More) -> MoreModel {
         let moreModel = MoreModel()
         if more.id.endsWith("_") {
             moreModel.id = "more_\(NSUUID().uuidString)"
