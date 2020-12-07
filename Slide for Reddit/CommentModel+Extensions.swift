@@ -164,7 +164,7 @@ public extension CommentModel {
 public extension MoreModel {
     //Takes a More from reddift and turns it into a Realm model
     static func moreToMoreModel(more: More) -> MoreModel {
-        let managedContext = SlideCoreData.sharedInstance.persistentContainer.viewContext
+        let managedContext = SlideCoreData.sharedInstance.backgroundContext
         let moreEntity = NSEntityDescription.entity(forEntityName: "MoreModel", in: managedContext)!
         let moreModel = NSManagedObject(entity: moreEntity, insertInto: managedContext) as! MoreModel
 

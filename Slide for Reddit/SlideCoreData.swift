@@ -16,11 +16,19 @@ class SlideCoreData: NSObject {
     lazy var backgroundContext: NSManagedObjectContext = {
         let backgroundContext = persistentContainer.newBackgroundContext()
         backgroundContext.automaticallyMergesChangesFromParent = true
-        backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        backgroundContext.mergePolicy = NSMergePolicy.overwrite
 
         return backgroundContext
     }()
     
+    private static let url: URL = {
+        let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Reddit.sqlite")
+
+        assert(FileManager.default.fileExists(atPath: url.path))
+
+        return url
+    }()
+
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -28,21 +36,14 @@ class SlideCoreData: NSObject {
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
         */
-        class DeleteEntityPolicy: NSEntityMigrationPolicy {
-            override func begin(_ mapping: NSEntityMapping, with manager: NSMigrationManager) throws {
-                // Get all current entities and delete them before mapping begins
-                let entityName = "Submission"
-                let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
-                let context = manager.sourceContext
-                let results = try context.fetch(request)
-                results.forEach(context.delete)
-                try super.begin(mapping, with: manager)
-            }
-        }
-
+    
         let container = NSPersistentContainer(name: "Reddit")
-        container.viewContext.mergePolicy = DeleteEntityPolicy()
+        //Un comment to wipe database
+        try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
+
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            container.viewContext.mergePolicy = NSMergePolicy.overwrite
+
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.

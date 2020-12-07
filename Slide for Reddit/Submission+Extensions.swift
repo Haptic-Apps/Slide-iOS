@@ -472,6 +472,8 @@ extension NSManagedObject {
             return object.id
         } else if let object = self as? CommentModel {
             return object.id
+        } else if let object = self as? MoreModel {
+            return object.id
         } else if let object = self as? MessageModel {
             return object.id
         } else {
