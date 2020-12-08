@@ -123,7 +123,6 @@ class SubmissionObject: RedditObject {
     }
     
     func update(submission: Link) {
-        let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
         

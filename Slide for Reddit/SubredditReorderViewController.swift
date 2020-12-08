@@ -257,7 +257,7 @@ class SubredditReorderViewController: UITableViewController {
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         switch section {
         case 0: label.text = pinned.isEmpty ? "All Subreddits" : "Pinned"
-        case 1: label.text =  "All Subreddits"
+        case 1: label.text = "All Subreddits"
         default: label.text  = ""
         }
         return toReturn

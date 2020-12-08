@@ -82,7 +82,7 @@ extension ReachabilityStatus {
                 self = .Online(.WiFi)
             }
         } else {
-            self =  .Offline
+            self = .Offline
         }
     }
 }

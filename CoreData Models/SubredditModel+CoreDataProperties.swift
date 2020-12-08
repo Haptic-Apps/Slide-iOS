@@ -16,6 +16,4 @@ extension SubredditModel {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<SubredditModel> {
         return NSFetchRequest<SubredditModel>(entityName: "SubredditModel")
     }
-
-
 }

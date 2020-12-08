@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension SubmissionModel {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<SubmissionModel> {

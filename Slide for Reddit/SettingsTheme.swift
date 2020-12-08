@@ -310,9 +310,9 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.night.textLabel?.text = "Night Mode"
         if #available(iOS 13, *) {
-            self.night.detailTextLabel?.text =  "Night mode follows iOS Dark Mode automatically"
+            self.night.detailTextLabel?.text = "Night mode follows iOS Dark Mode automatically"
         } else {
-            self.night.detailTextLabel?.text =  "Tap to change night hours"
+            self.night.detailTextLabel?.text = "Tap to change night hours"
         }
         self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.night.accessoryType = .none

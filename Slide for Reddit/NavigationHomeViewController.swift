@@ -10,9 +10,9 @@ import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
+import reddift
 import SDCAlertView
 import SwiftyJSON
-import reddift
 import SDWebImage
 import Then
 import UIKit

@@ -47,7 +47,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         super.init(frame: frame)
     }
     
-    var imageAnchors =  [NSLayoutConstraint]()
+    var imageAnchors = [NSLayoutConstraint]()
     
     var lsC: [NSLayoutConstraint] = []
     var url = ""

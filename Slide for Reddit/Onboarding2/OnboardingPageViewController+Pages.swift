@@ -140,7 +140,7 @@ class OnboardingSplashPageViewController: UIViewController {
         let time = Int.random(in: 5...10)
         UIView.animate(withDuration: Double(time), delay: 0, options: .curveLinear, animations: { () -> Void in
             view.frame = self.getFinalFrame(for: view, in: chosenLane)
-        }, completion: { [weak self] (Bool) -> Void in
+        }, completion: { [weak self] (_) -> Void in
             guard let self = self else { return }
             if self.shouldMove {
                 view.randomizeColors()
@@ -481,8 +481,6 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
         self.subButton.alpha = 0 //Hide for now
         self.subButton.heightAnchor /==/ 0
     }
-    
-    
 }
 
 /**

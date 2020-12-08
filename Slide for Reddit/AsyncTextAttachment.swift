@@ -15,7 +15,6 @@ import UIKit
 import MobileCoreServices
 import SDWebImage
 
-
 @objc public protocol AsyncTextAttachmentDelegate {
     /// Called when the image has been loaded
     func textAttachmentDidLoadImage(textAttachment: AsyncTextAttachment, displaySizeChanged: Bool)
@@ -148,7 +147,7 @@ extension NSLayoutManager {
         
         var refreshRanges = [NSRange]()
         
-        attributedString.enumerateAttribute(NSAttributedString.Key.attachment, in: range, options: []) { (value, effectiveRange, nil) in
+        attributedString.enumerateAttribute(NSAttributedString.Key.attachment, in: range, options: []) { (value, effectiveRange, _) in
             
             guard let foundAttachment = value as? NSTextAttachment, foundAttachment == attachment else {
                 return

@@ -102,7 +102,7 @@ class SettingsData: BubbleSettingTableViewController {
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Data settings"
-        headers =  ["Data Saving"]
+        headers = ["Data Saving"]
 
         createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Enable Data Saving mode")
         createCell(disableOnWifiCell, disableOnWifi, isOn: !SettingValues.dataSavingDisableWiFi, text: "Data Saving mode on WiFi")
