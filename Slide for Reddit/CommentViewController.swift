@@ -766,65 +766,99 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func loadOffline() {
         self.loaded = true
-        DispatchQueue.main.async {
-            self.offline = true
-            /*TODO offline data do {
-             
-             let realm = try Realm()
-             if let listing = realm.objects(Submission.self).filter({ (item) -> Bool in
-             return item.getId() == self.submission!.getId()
-             }).first {
-             self.comments = []
-             self.hiddenPersons = []
-             var temp: [NSManagedObject] = []
-             self.hidden = []
-             self.text = [:]
-             var currentIndex = 0
-             self.parents = [:]
-             var currentOP = ""
-             for child in listing.comments {
-             if child.depth == 1 {
-             currentOP = child.author
-             }
-             self.parents[child.getId()] = currentOP
-             currentIndex += 1
-             
-             temp.append(child)
-             self.content[child.getId()] = child
-             self.comments.append(child.getId())
-             self.cDepth[child.getId()] = child.depth
-             }
-             if !self.comments.isEmpty {
-             self.updateStringsSingle(temp)
-             self.doArrays()
-             if !self.offline {
-             self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
-             }
-             }
-             
-             DispatchQueue.main.async(execute: { () -> Void in
-             self.refreshControl?.endRefreshing()
-             self.indicator.stopAnimating()
-             
-             if !self.comments.isEmpty {
-             var time = timeval(tv_sec: 0, tv_usec: 0)
-             gettimeofday(&time, nil)
-             
-             self.tableView.reloadData()
-             }
-             if self.comments.isEmpty {
-             BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-             } else {
-             // BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
-             }
-             
-             })
-             }
-             } catch {
-             BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-             }*/
+        self.offline = true
+        //We might not need to even fetch this, if we added commentsString to SubmissionObject
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionComments")
+        let predicate = NSPredicate(format: "submissionId = %@", self.submission?.getId() ?? "")
+        fetchRequest.predicate = predicate
+        do {
+            let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubmissionComments]
+            self.comments = []
+            self.hiddenPersons = []
+            var temp: [CommentObject] = []
+            self.hidden = []
+            self.text = [:]
+            var currentIndex = 0
+            self.parents = [:]
+            var currentOP = ""
+            
+            if let first = results.first, let commentsString = first.commentsString {
+                let commentsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CommentModel")
+                let commentsPredicate = NSPredicate(format: "id in %@", commentsString.split(","))
+                commentsRequest.predicate = commentsPredicate
+                let comments = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(commentsRequest) as! [CommentModel]
+                var commentObjects = comments.map { (model) -> CommentObject in
+                    return CommentObject(model: model)
+                }
+                
+                let order = commentsString.split()
+                commentObjects = commentObjects.sorted { (a, b) -> Bool in
+                    guard let first = order.firstIndex(of: a.getId()) else {
+                        return false
+                    }
+
+                    guard let second = order.firstIndex(of: b.getId()) else {
+                        return true
+                    }
+
+                    return first < second
+                }
+                for child in commentObjects {
+                    if child.depth == 1 {
+                        currentOP = child.author
+                    }
+                    self.parents[child.getId()] = currentOP
+                    currentIndex += 1
+                    
+                    temp.append(child)
+                    self.content[child.getId()] = child
+                    self.comments.append(child.getId())
+                    self.cDepth[child.getId()] = child.depth
+                }
+                if !self.comments.isEmpty {
+                    self.updateStringsSingle(temp)
+                    self.doArrays()
+                    if !self.offline {
+                        self.lastSeen = (self.context.isEmpty ? History.getSeenTime(s: self.submission!) : Double(0))
+                    }
+                }
+                DispatchQueue.main.async(execute: { () -> Void in
+                    self.refreshControl?.endRefreshing()
+                    self.indicator.stopAnimating()
+                    
+                    if !self.comments.isEmpty {
+                        var time = timeval(tv_sec: 0, tv_usec: 0)
+                        gettimeofday(&time, nil)
+                        
+                        self.tableView.reloadData()
+                    }
+                    if self.comments.isEmpty {
+                        self.refreshControl?.endRefreshing()
+                        self.indicator.stopAnimating()
+                        BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
+                    } else {
+                        //Success
+                        // BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
+                    }
+                    
+                })
+
+            } else {
+                DispatchQueue.main.async(execute: { () -> Void in
+                    self.refreshControl?.endRefreshing()
+                    self.indicator.stopAnimating()
+                    BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
+                })
+
+            }
+        } catch let e {
+            print(e)
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.refreshControl?.endRefreshing()
+                self.indicator.stopAnimating()
+                BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
+            })
         }
-        
     }
     
     @objc func refresh(_ sender: AnyObject) {
@@ -2241,6 +2275,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.isHiding = true
         self.liveTimer.invalidate()
         self.removeJumpButton()
+        if !offline {
+            self.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
+        }
     }
     
     func collapseAll() {
@@ -3512,5 +3549,43 @@ extension CommentViewController: UINavigationControllerDelegate {
 extension CommentViewController: TapBehindModalViewControllerDelegate {
     func shouldDismiss() -> Bool {
         return false
+    }
+}
+
+extension CommentViewController: Cacheable {
+    func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
+        context.performAndWaitReturnable {
+            if let submission = self.submission {
+                let submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as! SubmissionComments
+                submissionComments.submissionId = submission.getId()
+                submissionComments.saveDate = Date()
+                
+                var ids = [String]()
+                var validIDs = [String]()
+                for comment in content.values {
+                    if let comment = comment as? CommentObject { //ignore more objects for offline
+                        _ = comment.insertSelf(into: context, andSave: false)
+                        validIDs.append(comment.getId())
+                    }
+                }
+                
+                ids = dataArray.filter({ (a) -> Bool in
+                    return !validIDs.contains(a)
+                })
+                
+                submissionComments.commentsString = ids.joined(separator: ",")
+                
+                if andSave {
+                    do {
+                        try context.save()
+                    } catch let error as NSError {
+                        print("Failed to save managed context \(error): \(error.userInfo)")
+                        return nil
+                    }
+                }
+                return submissionComments
+            }
+            return nil
+        }
     }
 }

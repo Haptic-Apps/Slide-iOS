@@ -76,5 +76,6 @@ extension SubmissionModel {
     @NSManaged public var voteDirection: Bool
     @NSManaged public var isArchived: Bool
     @NSManaged public var isLocked: Bool
+    @NSManaged public var saveDate: Date
 
 }

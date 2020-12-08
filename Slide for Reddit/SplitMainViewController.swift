@@ -401,8 +401,10 @@ class SplitMainViewController: MainViewController {
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
+            /* TODO replace this?
             let offlineVC = OfflineOverviewViewController(subs: finalSubs)
             VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
+             */
         }
         
         if MainViewController.needsRestart {

@@ -201,13 +201,13 @@ class SubmissionsDataSource {
                             self.contentIDs = []
 
                             if let first = results.first {
-                                let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Submission")
+                                let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionModel")
                                 let postPredicate = NSPredicate(format: "id in %@", first.posts?.split(",") ?? [])
                                 postsRequest.predicate = postPredicate
-                                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionObject]
+                                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionModel]
 
                                 for i in links {
-                                    self.content.append(i)
+                                    self.content.append(SubmissionObject.fromModel(i))
                                 }
                                 self.updated = first.time ?? Date()
                             }
@@ -221,10 +221,11 @@ class SubmissionsDataSource {
                             self.offline = true
                             
                             if let delegate = self.delegate {
-                                delegate.loadOffline()
+                                DispatchQueue.main.async {
+                                    delegate.loadOffline()
+                                }
                             }
-
-                        } catch let error as NSError {
+                        } catch let _ as NSError {
 
                         }
 
@@ -292,5 +293,35 @@ class SubmissionsDataSource {
     
     func loadMore() {
         getData(reload: false)
+    }
+    
+}
+
+extension SubmissionsDataSource: Cacheable {
+    func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
+        context.performAndWaitReturnable {
+            var ids = [String]()
+            for link in content {
+                ids.append(link.getId())
+                
+                _ = link.insertSelf(into: context, andSave: false)
+            }
+            
+            let subredditPosts = NSEntityDescription.insertNewObject(forEntityName: "SubredditPosts", into: context) as! SubredditPosts
+            subredditPosts.posts = ids.joined(separator: ",")
+            subredditPosts.time = Date()
+            subredditPosts.subreddit = subreddit
+            
+            if andSave {
+                do {
+                    try context.save()
+                } catch let error as NSError {
+                    print("Failed to save managed context \(error): \(error.userInfo)")
+                    return nil
+                }
+            }
+            
+            return subredditPosts
+        }
     }
 }

@@ -33,6 +33,7 @@
         <attribute name="removalReason" optional="YES" attributeType="String"/>
         <attribute name="removedBy" optional="YES" attributeType="String"/>
         <attribute name="reportsJSON" optional="YES" attributeType="String"/>
+        <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="score" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="scoreHidden" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="submissionTitle" optional="YES" attributeType="String"/>
@@ -55,6 +56,11 @@
                 <constraint value="id"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="SubmissionComments" representedClassName="SubmissionComments" syncable="YES">
+        <attribute name="commentsString" optional="YES" attributeType="String"/>
+        <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="submissionId" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SubmissionModel" representedClassName="SubmissionModel" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
@@ -107,6 +113,7 @@
         <attribute name="removalReason" optional="YES" attributeType="String"/>
         <attribute name="removedBy" optional="YES" attributeType="String"/>
         <attribute name="reportsJSON" optional="YES" attributeType="String"/>
+        <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="score" optional="YES" attributeType="Integer 32" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="smallPreview" optional="YES" attributeType="String"/>
         <attribute name="subreddit" optional="YES" attributeType="String"/>
@@ -130,10 +137,11 @@
         <attribute name="time" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <elements>
-        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="584"/>
+        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="599"/>
         <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
-        <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="929"/>
+        <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="944"/>
         <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
         <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="74"/>
+        <element name="SubmissionComments" positionX="0" positionY="144" width="128" height="14"/>
     </elements>
 </model>

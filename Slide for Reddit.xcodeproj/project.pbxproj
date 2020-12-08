@@ -211,6 +211,7 @@
 		BE325C98257EFABB00BD2468 /* MessageObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE325C97257EFABB00BD2468 /* MessageObject.swift */; };
 		BE325CAA257EFB5000BD2468 /* FriendObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE325CA9257EFB5000BD2468 /* FriendObject.swift */; };
 		BE325CB4257EFB5A00BD2468 /* ModLogObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE325CB3257EFB5A00BD2468 /* ModLogObject.swift */; };
+		BE325CCE257F32B000BD2468 /* Cacheable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE325CCD257F32B000BD2468 /* Cacheable.swift */; };
 		BE35216A1E3D22B000C30B8D /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */; };
 		BE35216B1E3D22B000C30B8D /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521661E3D22B000C30B8D /* Roboto-Light.ttf */; };
 		BE35216C1E3D22B000C30B8D /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE3521671E3D22B000C30B8D /* Roboto-Medium.ttf */; };
@@ -331,6 +332,8 @@
 		BE9BFF1C25182D8700C9F7EC /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFF1825182D8600C9F7EC /* OnboardingViewController.swift */; };
 		BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9BFF1925182D8600C9F7EC /* OnboardingPageViewController.swift */; };
 		BE9BFF2725182EDB00C9F7EC /* v6howtonavigate.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */; };
+		BE9E23C5257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E23C3257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift */; };
+		BE9E23C6257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E23C4257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift */; };
 		BEA86AD5257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */; };
 		BEA86AD6257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */; };
 		BEA86AD7257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */; };
@@ -713,6 +716,7 @@
 		BE325C97257EFABB00BD2468 /* MessageObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageObject.swift; sourceTree = "<group>"; };
 		BE325CA9257EFB5000BD2468 /* FriendObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendObject.swift; sourceTree = "<group>"; };
 		BE325CB3257EFB5A00BD2468 /* ModLogObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModLogObject.swift; sourceTree = "<group>"; };
+		BE325CCD257F32B000BD2468 /* Cacheable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cacheable.swift; sourceTree = "<group>"; };
 		BE3521651E3D22B000C30B8D /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		BE3521661E3D22B000C30B8D /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
 		BE3521671E3D22B000C30B8D /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
@@ -843,6 +847,8 @@
 		BE9BFF1825182D8600C9F7EC /* OnboardingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingViewController.swift; path = "Slide for Reddit/Onboarding2/OnboardingViewController.swift"; sourceTree = SOURCE_ROOT; };
 		BE9BFF1925182D8600C9F7EC /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OnboardingPageViewController.swift; path = "Slide for Reddit/Onboarding2/OnboardingPageViewController.swift"; sourceTree = SOURCE_ROOT; };
 		BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = v6howtonavigate.mp4; sourceTree = "<group>"; };
+		BE9E23C3257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubmissionComments+CoreDataClass.swift"; sourceTree = "<group>"; };
+		BE9E23C4257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubmissionComments+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		BEA86AD4257C3AF700770A62 /* Reddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Reddit.xcdatamodel; sourceTree = "<group>"; };
 		BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditThemeEditViewController.swift; sourceTree = "<group>"; };
 		BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModLogCellView.swift; sourceTree = "<group>"; };
@@ -1425,6 +1431,7 @@
 			isa = PBXGroup;
 			children = (
 				BE84B200257C5F5C00A90C5D /* SlideCoreData.swift */,
+				BE325CCD257F32B000BD2468 /* Cacheable.swift */,
 				BE325C7A257EF31900BD2468 /* CD Extensions */,
 				BE325C79257EF2F000BD2468 /* RedditObjects */,
 			);
@@ -1435,6 +1442,8 @@
 			isa = PBXGroup;
 			children = (
 				BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */,
+				BE9E23C3257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift */,
+				BE9E23C4257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift */,
 				BE84B2F3257DE73800A90C5D /* SubredditPosts+CoreDataClass.swift */,
 				BE84B2F4257DE73800A90C5D /* SubredditPosts+CoreDataProperties.swift */,
 				BE84B2DB257DE6F200A90C5D /* SubredditModel+CoreDataClass.swift */,
@@ -2461,6 +2470,7 @@
 				BE7439ED1E201C22008BB63B /* SubredditCellView.swift in Sources */,
 				096A7D152215D9AB0067106C /* AVAudioSession+Extensions.swift in Sources */,
 				BE3E5C211E18227500749C0C /* CommentDepthCell.swift in Sources */,
+				BE9E23C6257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift in Sources */,
 				BE7A2D3E22AD99600005F74F /* DragDownAlertMenu.swift in Sources */,
 				0965260720E28FEE00EA53BE /* UIStackView+Extensions.swift in Sources */,
 				0984BE4E2114C4040091C2E1 /* PostContentPresentationManager.swift in Sources */,
@@ -2468,6 +2478,7 @@
 				BE1DA3961E26AD5700EC0A04 /* SearchViewController.swift in Sources */,
 				09F411CF20F3EEB900D23A42 /* ImageMediaViewController.swift in Sources */,
 				BEC4A1A8232EA30B00EE5114 /* ProfileInfoPresentationManager.swift in Sources */,
+				BE325CCE257F32B000BD2468 /* Cacheable.swift in Sources */,
 				BE6EA6E81E1DA86100E9E709 /* ProfileViewController.swift in Sources */,
 				BE35217E1E3D325A00C30B8D /* SettingsFont.swift in Sources */,
 				BE780B601E32CA8F00DAA1EB /* RelatedContributionLoader.swift in Sources */,
@@ -2610,6 +2621,7 @@
 				B776BB2D5B79A707C1A41B8C /* LiveThreadUpdate.swift in Sources */,
 				B776B2D12CF5BF9AC64427BA /* AutoCache.swift in Sources */,
 				B776B1DF80711B443ED76B61 /* SettingsPro.swift in Sources */,
+				BE9E23C5257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift in Sources */,
 				BE17A24C215FFD91002C6CE6 /* ReadLater.swift in Sources */,
 				BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */,
 				09328D7820F9547B00A48983 /* VideoScrubberView.swift in Sources */,

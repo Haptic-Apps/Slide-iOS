@@ -53,5 +53,6 @@ extension CommentModel {
     @NSManaged public var submissionTitle: String
     @NSManaged public var subreddit: String
     @NSManaged public var voteDirection: Bool
+    @NSManaged public var saveDate: Date
 
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import reddift
 
@@ -30,5 +31,29 @@ class MoreObject: RedditObject {
         self.parentID = more.parentId
         self.count = Int32(more.count)
         self.childrenString = more.children.joined()
+    }
+}
+
+extension MoreObject: Cacheable {
+    func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
+        context.performAndWaitReturnable {
+            let moreModel = NSEntityDescription.insertNewObject(forEntityName: "MoreModel", into: context) as! MoreModel
+            moreModel.id = self.id
+            moreModel.name = self.name
+            moreModel.parentID = self.parentID
+            moreModel.childrenString = self.childrenString
+            moreModel.count = self.count
+            
+            if andSave {
+                do {
+                    try context.save()
+                } catch let error as NSError {
+                    print("Failed to save managed context \(error): \(error.userInfo)")
+                    return nil
+                }
+            }
+            
+            return moreModel
+        }
     }
 }

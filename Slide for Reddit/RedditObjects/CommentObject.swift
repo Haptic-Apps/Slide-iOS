@@ -6,6 +6,7 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import reddift
 
@@ -60,13 +61,48 @@ class CommentObject: RedditObject {
     static func commentToCommentObject(comment: Comment, depth: Int) -> CommentObject {
         return CommentObject(comment: comment, depth: depth)
     }
+    
+    convenience init() {
+        self.init(comment: Comment(id: ""), depth: -1)
+    }
+    
+    convenience init(model: CommentModel) {
+        self.init()
+        
+        self.approvedBy = model.approvedBy
+        self.author = model.author
+        self.awardsJSON = model.awardsJSON
+        self.controversality = model.controversality
+        self.created = model.created
+        self.depth = Int(model.depth)
+        self.distinguished = model.distinguished
+        self.edited = model.edited
+        self.flairJSON = model.flairJSON
+        self.hasVoted = model.hasVoted
+        self.hidden = model.hidden
+        self.htmlBody = model.htmlBody
+        self.id = model.id
+        self.isApproved = model.isApproved
+        self.isArchived = model.isArchived
+        self.isCakeday = model.isCakeday
+        self.isEdited = model.isEdited
+        self.isMod = model.isMod
+        self.isRemoved = model.isRemoved
+        self.isSaved = model.isSaved
+        self.isStickied = model.isStickied
+        self.linkID = model.linkID
+        self.locked = model.locked
+        self.markdownBody = model.markdownBody
+        self.name = model.name
+        self.parentID = model.parentID
+        self.permalink = model.permalink
+        self.removalNote = model.removalNote
+    }
 
     public init(comment: Comment, depth: Int) {
-        let flair = comment.authorFlairText.isEmpty ? comment.authorFlairCssClass : comment.authorFlairText
         var bodyHtml = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
 
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
-        let json = comment.baseJson
         self.id = comment.getId()
         self.author = comment.author
         self.created = Date(timeIntervalSince1970: TimeInterval(comment.createdUtc))
@@ -129,6 +165,7 @@ class CommentObject: RedditObject {
                 }
             }
         }
+        
         self.flairJSON = flairDict.jsonString()
 
         let reportsDict = NSMutableDictionary()
@@ -185,5 +222,52 @@ class CommentObject: RedditObject {
     var flair: String {
         return flairDictionary.keys.joined(separator: ",")
     }
+}
 
+extension CommentObject: Cacheable {    
+    func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
+        context.performAndWaitReturnable {
+            let commentModel = NSEntityDescription.insertNewObject(forEntityName: "CommentModel", into: context) as! CommentModel
+            commentModel.approvedBy = self.approvedBy
+            commentModel.author = self.author
+            commentModel.awardsJSON = self.awardsJSON
+            commentModel.controversality = self.controversality
+            commentModel.created = self.created
+            commentModel.depth = Int32(self.depth)
+            commentModel.distinguished = self.distinguished
+            commentModel.edited = self.edited ?? Date()
+            commentModel.flairJSON = self.flairJSON
+            commentModel.hasVoted = self.hasVoted
+            commentModel.hidden = self.hidden
+            commentModel.htmlBody = self.htmlBody
+            commentModel.id = self.id
+            commentModel.isApproved = self.isApproved
+            commentModel.isArchived = self.isArchived
+            commentModel.isCakeday = self.isCakeday
+            commentModel.isEdited = self.isEdited
+            commentModel.isMod = self.isMod
+            commentModel.isRemoved = self.isRemoved
+            commentModel.isSaved = self.isSaved
+            commentModel.isStickied = self.isStickied
+            commentModel.linkID = self.linkID
+            commentModel.locked = self.locked
+            commentModel.markdownBody = self.markdownBody
+            commentModel.name = self.name
+            commentModel.parentID = self.parentID
+            commentModel.permalink = self.permalink
+            commentModel.removalNote = self.removalNote
+            commentModel.saveDate = Date()
+            
+            if andSave {
+                do {
+                    try context.save()
+                } catch let error as NSError {
+                    print("Failed to save managed context \(error): \(error.userInfo)")
+                    return nil
+                }
+            }
+            
+            return commentModel
+        }
+    }
 }

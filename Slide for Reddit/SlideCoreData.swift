@@ -16,7 +16,7 @@ class SlideCoreData: NSObject {
     lazy var backgroundContext: NSManagedObjectContext = {
         let backgroundContext = persistentContainer.newBackgroundContext()
         backgroundContext.automaticallyMergesChangesFromParent = true
-        backgroundContext.mergePolicy = NSMergePolicy.overwrite
+        backgroundContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
 
         return backgroundContext
     }()
@@ -38,11 +38,20 @@ class SlideCoreData: NSObject {
         */
     
         let container = NSPersistentContainer(name: "Reddit")
-        //Un comment to wipe database
+        
+        /*
+         ██████╗  █████╗ ███╗   ██╗ ██████╗ ███████╗██████╗     ███████╗ ██████╗ ███╗   ██╗███████╗
+         ██╔══██╗██╔══██╗████╗  ██║██╔════╝ ██╔════╝██╔══██╗    ╚══███╔╝██╔═══██╗████╗  ██║██╔════╝
+         ██║  ██║███████║██╔██╗ ██║██║  ███╗█████╗  ██████╔╝      ███╔╝ ██║   ██║██╔██╗ ██║█████╗
+         ██║  ██║██╔══██║██║╚██╗██║██║   ██║██╔══╝  ██╔══██╗     ███╔╝  ██║   ██║██║╚██╗██║██╔══╝
+         ██████╔╝██║  ██║██║ ╚████║╚██████╔╝███████╗██║  ██║    ███████╗╚██████╔╝██║ ╚████║███████╗
+         ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+         */
+        //Un comment to wipe database, useful for debugging and easy to forget :D
         //try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            container.viewContext.mergePolicy = NSMergePolicy.overwrite
+            container.viewContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
 
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.

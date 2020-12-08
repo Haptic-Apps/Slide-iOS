@@ -6,6 +6,7 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import reddift
 
@@ -111,6 +112,78 @@ class SubmissionObject: RedditObject {
     convenience init() {
         self.init(link: Link(id: ""))
     }
+    
+    convenience init(model: SubmissionModel) {
+        self.init()
+
+        self.id = model.id
+        self.smallPreview = model.smallPreview
+        self.subredditIcon = model.subredditIcon
+
+        self.author = model.author
+        self.created = model.created
+        self.isEdited = model.isEdited
+        self.edited = model.edited
+        self.htmlBody = model.htmlBody
+        self.subreddit = model.subreddit
+        self.isArchived = model.isArchived
+        self.isLocked = model.isLocked
+        self.contentUrl = model.contentUrl
+        
+        self.title = model.title
+        self.commentCount = Int(model.commentCount)
+        self.isSaved = model.isSaved
+        self.isStickied = model.isStickied
+        self.isVisited = model.isVisited
+        self.bannerUrl = model.bannerUrl
+        self.thumbnailUrl = model.thumbnailUrl
+        self.hasThumbnail = model.hasThumbnail
+        self.isNSFW = model.isNSFW
+        self.hasBanner = model.hasBanner
+        self.lqURL = model.lqURL
+        self.domain = model.domain
+        self.isLQ = model.isLQ
+        self.score = Int(model.score)
+        self.hasVoted = model.hasVoted
+        self.upvoteRatio = model.upvoteRatio
+        self.voteDirection = model.voteDirection
+        self.name = model.name
+        self.videoPreview = model.videoPreview
+                
+        self.videoMP4 = model.videoMP4
+        
+        self.imageHeight = Int(model.imageHeight)
+        self.imageWidth = Int(model.imageWidth)
+        self.distinguished = model.distinguished
+        self.isMod = model.isMod
+        self.isSelf = model.isSelf
+        self.markdownBody = model.markdownBody
+        self.permalink = model.permalink
+
+        self.isSpoiler = model.isSpoiler
+        self.isOC = model.isOC
+        self.removedBy = model.removedBy
+        self.removalReason = model.removalReason
+        self.removalNote = model.removalNote
+        self.isRemoved = model.isRemoved
+        self.isCakeday = model.isCakeday
+        self.hidden = model.hidden
+
+        self.reportsJSON = model.reportsJSON
+        self.awardsJSON = model.awardsJSON
+        self.flairJSON = model.flairJSON
+        self.galleryJSON = model.galleryJSON
+        self.pollJSON = model.pollJSON
+        
+        self.approvedBy = model.approvedBy
+        self.isApproved = model.isApproved
+        
+        self.isCrosspost = model.isCrosspost
+
+        self.crosspostSubreddit = model.crosspostSubreddit
+        self.crosspostAuthor = model.crosspostAuthor
+        self.crosspostPermalink = model.crosspostPermalink
+    }
 
     convenience init(id: String, title: String, postsSince: String) {
         self.init(link: Link(id: ""))
@@ -120,6 +193,10 @@ class SubmissionObject: RedditObject {
         self.title = title
         self.author = "PAGE_SEPARATOR"
         self.subreddit = postsSince
+    }
+    
+    static func fromModel(_ model: SubmissionModel) -> SubmissionObject {
+        return SubmissionObject(model: model)
     }
     
     func update(submission: Link) {
@@ -527,4 +604,92 @@ class SubmissionObject: RedditObject {
         return flairDictionary.keys.joined(separator: ",")
     }
 
+}
+
+extension SubmissionObject: Cacheable {
+    func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
+        context.performAndWaitReturnable {
+            let submissionModel = NSEntityDescription.insertNewObject(forEntityName: "SubmissionModel", into: context) as! SubmissionModel
+
+            submissionModel.id = self.id
+            submissionModel.smallPreview = self.smallPreview
+            submissionModel.subredditIcon = self.subredditIcon
+
+            submissionModel.author = self.author
+            submissionModel.created = self.created
+            submissionModel.isEdited = self.isEdited
+            submissionModel.edited = self.edited
+            submissionModel.htmlBody = self.htmlBody
+            submissionModel.subreddit = self.subreddit
+            submissionModel.isArchived = self.isArchived
+            submissionModel.isLocked = self.isLocked
+            submissionModel.contentUrl = self.contentUrl
+            
+            submissionModel.title = self.title
+            submissionModel.commentCount = Int32(self.commentCount)
+            submissionModel.isSaved = self.isSaved
+            submissionModel.isStickied = self.isStickied
+            submissionModel.isVisited = self.isVisited
+            submissionModel.bannerUrl = self.bannerUrl
+            submissionModel.thumbnailUrl = self.thumbnailUrl
+            submissionModel.hasThumbnail = self.hasThumbnail
+            submissionModel.isNSFW = self.isNSFW
+            submissionModel.hasBanner = self.hasBanner
+            submissionModel.lqURL = self.lqURL
+            submissionModel.domain = self.domain
+            submissionModel.isLQ = self.isLQ
+            submissionModel.score = Int32(self.score)
+            submissionModel.hasVoted = self.hasVoted
+            submissionModel.upvoteRatio = self.upvoteRatio
+            submissionModel.voteDirection = self.voteDirection
+            submissionModel.name = self.name
+            submissionModel.videoPreview = self.videoPreview
+                    
+            submissionModel.videoMP4 = self.videoMP4
+            
+            submissionModel.imageHeight = Int32(self.imageHeight)
+            submissionModel.imageWidth = Int32(self.imageWidth)
+            submissionModel.distinguished = self.distinguished
+            submissionModel.isMod = self.isMod
+            submissionModel.isSelf = self.isSelf
+            submissionModel.markdownBody = self.markdownBody
+            submissionModel.permalink = self.permalink
+
+            submissionModel.isSpoiler = self.isSpoiler
+            submissionModel.isOC = self.isOC
+            submissionModel.removedBy = self.removedBy
+            submissionModel.removalReason = self.removalReason
+            submissionModel.removalNote = self.removalNote
+            submissionModel.isRemoved = self.isRemoved
+            submissionModel.isCakeday = self.isCakeday
+            submissionModel.hidden = self.hidden
+
+            submissionModel.reportsJSON = self.reportsJSON
+            submissionModel.awardsJSON = self.awardsJSON
+            submissionModel.flairJSON = self.flairJSON
+            submissionModel.galleryJSON = self.galleryJSON
+            submissionModel.pollJSON = self.pollJSON
+            
+            submissionModel.approvedBy = self.approvedBy
+            submissionModel.isApproved = self.isApproved
+            
+            submissionModel.isCrosspost = self.isCrosspost
+
+            submissionModel.crosspostSubreddit = self.crosspostSubreddit
+            submissionModel.crosspostAuthor = self.crosspostAuthor
+            submissionModel.crosspostPermalink = self.crosspostPermalink
+            submissionModel.saveDate = Date()
+
+            if andSave {
+                do {
+                    try context.save()
+                } catch let error as NSError {
+                    print("Failed to save managed context \(error): \(error.userInfo)")
+                    return nil
+                }
+            }
+            
+            return submissionModel
+        }
+    }
 }

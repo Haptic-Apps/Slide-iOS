@@ -424,6 +424,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        if !dataSource.offline {
+            self.dataSource.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
+        }
+        
         for index in tableView.indexPathsForVisibleItems {
             if let cell = tableView.cellForItem(at: index) as? LinkCellView {
                 cell.endVideos()
