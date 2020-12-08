@@ -131,10 +131,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var childrenCount: UIView!
     var childrenCountLabel: UILabel!
-    var comment: CommentModel?
+    var comment: CommentObject?
     var depth: Int = 0
     
-    var content: NSManagedObject?
+    var content: RedditObject?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -313,7 +313,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! CommentModel).id)) {
+        if !(parent?.isSearching ?? true ) && ((SettingValues.swapLongPress && !isMore) || (self.parent!.isMenuShown() && self.parent!.getMenuShown() == (content as! CommentObject).id)) {
             self.showMenu(nil)
         } else {
             self.pushedSingleTap(nil)
@@ -595,7 +595,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func doShowMenu() {
         if let del = self.parent {
-            if del.isMenuShown() && del.getMenuShown() == (content as! CommentModel).id {
+            if del.isMenuShown() && del.getMenuShown() == (content as! CommentObject).id {
                 hideMenuAnimated()
             } else {
                 showMenuAnimated()
@@ -1086,7 +1086,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func vote() {
-        if content is CommentModel {
+        if content is CommentObject {
             let current = ActionStates.getVoteDirection(s: comment!)
             let dir = (current == VoteDirection.none) ? VoteDirection.up : VoteDirection.none
             var direction = dir
@@ -1114,12 +1114,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 print(error)
             }
             ActionStates.setVoteDirection(s: comment!, direction: direction)
-            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
     func modApprove() {
-        if content is CommentModel {
+        if content is CommentObject {
             do {
                 try parent?.session?.approve(comment!.id, completion: { (result) -> Void in
                     switch result {
@@ -1142,12 +1142,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
     
     func modDistinguish() {
-        if content is CommentModel {
+        if content is CommentObject {
             do {
                 try parent?.session?.distinguish(comment!.id, how: "yes", completion: { (result) -> Void in
                     switch result {
@@ -1165,12 +1165,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
     func modSticky(sticky: Bool) {
-        if content is CommentModel {
+        if content is CommentObject {
             do {
                 try parent?.session?.distinguish(comment!.id, how: "yes", sticky: sticky, completion: { (result) -> Void in
                     switch result {
@@ -1188,12 +1188,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
     
     func modRemove(_ spam: Bool = false) {
-        if content is CommentModel {
+        if content is CommentObject {
             do {
                 try parent?.session?.remove(comment!.id, spam: spam, completion: { (result) -> Void in
                     switch result {
@@ -1217,12 +1217,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
     func modBan(why: String, duration: Int?) {
-        if content is CommentModel {
+        if content is CommentObject {
             do {
                 try parent?.session?.ban(comment!.author, banReason: why, duration: duration == nil ? 999 /*forever*/ : duration!, completion: { (result) -> Void in
                     switch result {
@@ -1241,7 +1241,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             } catch {
                 print(error)
             }
-            refresh(comment: content as! CommentModel, submissionAuthor: savedAuthor, text: cellContent!)
+            refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
 
@@ -1517,7 +1517,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    func setMore(more: MoreModel, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
+    func setMore(more: MoreObject, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
         if title == nil {
             configureInit()
         }
@@ -1605,7 +1605,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     public var isCollapsed = false
     var dtap: UIShortTapGestureRecognizer?
 
-    func setComment(comment: CommentModel, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath, width: CGFloat) {
+    func setComment(comment: CommentObject, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath, width: CGFloat) {
         if title == nil {
             configureInit()
         }
@@ -1709,7 +1709,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
     var savedAuthor: String = ""
 
-    func refresh(comment: CommentModel, submissionAuthor: String?, text: NSAttributedString, _ date: Double = 0) {
+    func refresh(comment: CommentObject, submissionAuthor: String?, text: NSAttributedString, _ date: Double = 0) {
         var color: UIColor
         
         savedAuthor = submissionAuthor!
@@ -1731,7 +1731,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let new = date != 0 && date < Double(comment.created.timeIntervalSince1970)
-        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: comment.edited as NSDate, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         
         if new {
             endString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.accentColorForSub(sub: comment.subreddit), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
@@ -1845,7 +1845,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
     }
 
-    func getScoreText(comment: CommentModel) -> Double {
+    func getScoreText(comment: CommentObject) -> Double {
         var submissionScore = comment.score
         switch ActionStates.getVoteDirection(s: comment) {
         case .up:
@@ -1879,7 +1879,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         if let (url, rect) = getInfo(locationInTextView: locationInTextView) {
             previewingContext.sourceRect = title.convert(rect, from: title)
-            if let controller = parent?.getControllerForUrl(baseUrl: url, link: Submission()) {
+            if let controller = parent?.getControllerForUrl(baseUrl: url, link: SubmissionObject()) {
                 return controller
             }
         }
@@ -1938,7 +1938,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         if !text.isEmpty {
             self.parent?.showSpoiler(text)
         } else {
-            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+            self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
         }
     }
 
@@ -2177,8 +2177,8 @@ extension CommentDepthCell: UIPopoverPresentationControllerDelegate {
 }
 
 class CommentActionsManager {
-    var submission: Submission
-    var comment: CommentModel
+    var submission: SubmissionObject
+    var comment: CommentObject
 
     private lazy var networkActionsArePossible: Bool = {
         return AccountController.isLoggedIn && LinkCellView.checkInternet()
@@ -2212,7 +2212,7 @@ class CommentActionsManager {
         return networkActionsArePossible && submission.isMod
     }
 
-    init(comment: CommentModel, submission: Submission) {
+    init(comment: CommentObject, submission: SubmissionObject) {
         self.comment = comment
         self.submission = submission
     }
@@ -2273,14 +2273,14 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
-                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+                        self.parent?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                     }
                 } else if vc is ParentCommentViewController && self.parent != nil {
                     let context = (vc as! ParentCommentViewController).parentContext
                     var index = 0
                     for c in self.parent!.dataArray {
                         let comment = self.parent!.content[c]
-                        if comment is CommentModel && (comment as! CommentModel).id.contains(context) {
+                        if comment is CommentObject && (comment as! CommentObject).id.contains(context) {
                             self.parent!.menuId = comment!.getId()
                             self.parent!.tableView.reloadData()
                             if !SettingValues.dontHideTopBar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
@@ -2412,7 +2412,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
-            if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: Submission()) {
+            if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: SubmissionObject()) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
                     return SwipeForwardNavigationController(rootViewController: vc)
@@ -2468,19 +2468,19 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         
         var contents = commentParent.content[commentParent.dataArray[topCell]]
         
-        while (contents is CommentModel ? (contents as! CommentModel).depth >= self.depth : true) && commentParent.dataArray.count > topCell && topCell - 1 >= 0 {
+        while (contents is CommentObject ? (contents as! CommentObject).depth >= self.depth : true) && commentParent.dataArray.count > topCell && topCell - 1 >= 0 {
             topCell -= 1
             contents = commentParent.content[commentParent.dataArray[topCell]]
         }
 
         let parentCell = CommentDepthCell(style: .default, reuseIdentifier: "test")
         
-        if let comment = contents as? CommentModel {
+        if let comment = contents as? CommentObject {
             parentCell.contentView.layer.cornerRadius = 10
             parentCell.contentView.clipsToBounds = true
             parentCell.commentBody.ignoreHeight = false
             parentCell.commentBody.estimatedWidth = UIScreen.main.bounds.size.width * 0.85 - 36
-            if contents is CommentModel {
+            if contents is CommentObject {
                 var count = 0
                 let hiddenP = commentParent.hiddenPersons.contains(comment.id)
                 if hiddenP {
@@ -2491,9 +2491,9 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                     t = commentParent.highlight(t)
                 }
                 
-                parentCell.setComment(comment: contents as! CommentModel, depth: 0, parent: commentParent, hiddenCount: count, date: commentParent.lastSeen, author: commentParent.submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentParent.commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
+                parentCell.setComment(comment: contents as! CommentObject, depth: 0, parent: commentParent, hiddenCount: count, date: commentParent.lastSeen, author: commentParent.submission?.author, text: t, isCollapsed: hiddenP, parentOP: "", depthColors: commentParent.commentDepthColors, indexPath: indexPath, width: UIScreen.main.bounds.size.width * 0.85)
             } else {
-                parentCell.setMore(more: (contents as! MoreModel), depth: commentParent.cDepth[comment.id]!, depthColors: commentParent.commentDepthColors, parent: commentParent)
+                parentCell.setMore(more: (contents as! MoreObject), depth: commentParent.cDepth[comment.id]!, depthColors: commentParent.commentDepthColors, parent: commentParent)
             }
             parentCell.content = comment
             parentCell.contentView.isUserInteractionEnabled = false

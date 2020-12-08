@@ -44,38 +44,6 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="FriendModel" representedClassName="FriendModel" syncable="YES">
-        <attribute name="friendSince" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="name" attributeType="String"/>
-    </entity>
-    <entity name="MessageModel" representedClassName="MessageModel" syncable="YES">
-        <attribute name="author" attributeType="String"/>
-        <attribute name="context" optional="YES" attributeType="String"/>
-        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="htmlBody" optional="YES" attributeType="String"/>
-        <attribute name="id" attributeType="String"/>
-        <attribute name="isNew" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="markdownBody" optional="YES" attributeType="String"/>
-        <attribute name="name" attributeType="String"/>
-        <attribute name="permalink" attributeType="String"/>
-        <attribute name="subject" attributeType="String"/>
-        <attribute name="submissionTitle" optional="YES" attributeType="String"/>
-        <attribute name="subreddit" attributeType="String"/>
-        <attribute name="wasComment" attributeType="Boolean" usesScalarValueType="YES"/>
-    </entity>
-    <entity name="ModlogModel" representedClassName="ModlogModel" syncable="YES">
-        <attribute name="action" optional="YES" attributeType="String"/>
-        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="details" optional="YES" attributeType="String"/>
-        <attribute name="id" attributeType="String"/>
-        <attribute name="mod" attributeType="String"/>
-        <attribute name="permalink" optional="YES" attributeType="String"/>
-        <attribute name="subject" optional="YES" attributeType="String"/>
-        <attribute name="subreddit" optional="YES" attributeType="String"/>
-        <attribute name="targetAuthor" optional="YES" attributeType="String"/>
-        <attribute name="targetBody" optional="YES" attributeType="String"/>
-        <attribute name="targetTitle" optional="YES" attributeType="String"/>
-    </entity>
     <entity name="MoreModel" representedClassName="MoreModel" syncable="YES">
         <attribute name="childrenString" optional="YES" attributeType="String"/>
         <attribute name="count" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -88,7 +56,7 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="Submission" representedClassName="Submission" syncable="YES">
+    <entity name="SubmissionModel" representedClassName="SubmissionModel" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
         <attribute name="archived" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="author" optional="YES" attributeType="String"/>
@@ -163,11 +131,8 @@
     </entity>
     <elements>
         <element name="CommentModel" positionX="-45" positionY="144" width="128" height="584"/>
-        <element name="FriendModel" positionX="72" positionY="171" width="128" height="59"/>
-        <element name="MessageModel" positionX="160" positionY="192" width="128" height="224"/>
-        <element name="ModlogModel" positionX="81" positionY="180" width="128" height="194"/>
         <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
-        <element name="Submission" positionX="-63" positionY="-18" width="128" height="929"/>
+        <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="929"/>
         <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
         <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="74"/>
     </elements>

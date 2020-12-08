@@ -211,7 +211,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var submissionHeight: CGFloat = 0
     var addTouch = false
     
-    var link: Submission?
+    var link: SubmissionObject?
     var aspectWidth = CGFloat(0.1)
     
     var tempConstraints: [NSLayoutConstraint] = []
@@ -1362,7 +1362,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
-    func configure(submission: Submission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+    func configure(submission: SubmissionObject, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if videoTask != nil {
             videoTask!.cancel()
         }
@@ -1399,7 +1399,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
 
-    func refreshLink(_ submission: Submission, np: Bool) {
+    func refreshLink(_ submission: SubmissionObject, np: Bool) {
         self.link = submission
         
         guard self.link != nil else {
@@ -1609,7 +1609,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var shouldLoadVideo = false
     
-    private func setLink(submission: Submission, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
+    private func setLink(submission: SubmissionObject, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
             self.endVideos()
             do {
@@ -2080,7 +2080,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
     }
 
-    private func refreshAccessibility(submission: Submission) {
+    private func refreshAccessibility(submission: SubmissionObject) {
         //let postTimeAgo = (submission.created as Date).timeAgoString Was causing lag
         accessibilityView.accessibilityValue = """
             \(submission.title).
@@ -2438,7 +2438,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: Submission.linkToSubmission(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
+                self.setLink(submission: SubmissionObject.linkToSubmissionObject(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
                 self.showBody(width: self.innerView.frame.size.width - 24)
             })
         }
@@ -3150,7 +3150,7 @@ public extension UIImageView {
 }
 
 class PostActionsManager {
-    var submission: Submission
+    var submission: SubmissionObject
 
     private lazy var networkActionsArePossible: Bool = {
         return AccountController.isLoggedIn && LinkCellView.checkInternet()
@@ -3196,7 +3196,7 @@ class PostActionsManager {
         return networkActionsArePossible && submission.isMod
     }
 
-    init(submission: Submission) {
+    init(submission: SubmissionObject) {
         self.submission = submission
     }
 }

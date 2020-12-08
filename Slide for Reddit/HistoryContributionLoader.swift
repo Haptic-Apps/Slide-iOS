@@ -26,7 +26,7 @@ class HistoryContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [NSManagedObject]
+    var content: [RedditObject]
     var delegate: ContentListingViewController?
     var paging = true
     var ids = [Link]()
@@ -67,7 +67,7 @@ class HistoryContributionLoader: ContributionLoader {
                         for item in baseContent {
                             if item is Link {
                                 if !(item as! Link).over18 || SettingValues.saveNSFWHistory {
-                                    self.content.append(Submission.linkToSubmission(submission: item as! Link))
+                                    self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                                 }
                             }
                         }

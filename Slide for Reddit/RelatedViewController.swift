@@ -11,7 +11,7 @@ import UIKit
 
 class RelatedViewController: ContentListingViewController {
     
-    init(thing: Submission) {
+    init(thing: SubmissionObject) {
         super.init(dataSource: RelatedContributionLoader.init(thing: thing, sub: thing.subreddit))
         baseData.delegate = self
         self.title = "Other discussions"

@@ -18,9 +18,9 @@ class GalleryTableViewController: MediaTableViewController {
     public var blurView: UIVisualEffectView?
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
 
-    var items: [Submission] = []
+    var items: [SubmissionObject] = []
     
-    func setLinks(links: [Submission]) {
+    func setLinks(links: [SubmissionObject]) {
         self.items = links
         tableView.reloadData()
     }
@@ -119,7 +119,7 @@ class GalleryTableViewController: MediaTableViewController {
         
     }
     
-    func getHeightFromAspectRatio(imageHeight: Int32, imageWidth: Int32) -> Int {
+    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(tableView.frame.size.width)
         return Int(width * ratio)

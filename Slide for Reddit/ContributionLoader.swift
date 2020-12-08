@@ -15,7 +15,7 @@ protocol ContributionLoader {
     var paginator: Paginator { get }
     var delegate: ContentListingViewController? { get set }
     func getData(reload: Bool)
-    var content: [NSManagedObject] { get set }
+    var content: [RedditObject] { get set }
     var color: UIColor { get set }
     var paging: Bool { get }
     var canGetMore: Bool { get }

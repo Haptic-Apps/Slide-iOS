@@ -57,7 +57,7 @@ class ActionStates {
         }
     }
     
-    static func isRead(s: MessageModel) -> Bool {
+    static func isRead(s: MessageObject) -> Bool {
         if savedFullnames.contains(s.id) {
             return true
         } else if unSavedFullnames.contains(s.id) {
@@ -67,7 +67,7 @@ class ActionStates {
         }
     }
     
-    static func setRead(s: MessageModel, read: Bool) {
+    static func setRead(s: MessageObject, read: Bool) {
         let fullname = s.id
         if let index = savedFullnames.firstIndex(of: fullname) {
             savedFullnames.remove(at: index)
@@ -107,7 +107,7 @@ class ActionStates {
     }
     
     //Realm
-    static func getVoteDirection(s: Submission) -> VoteDirection {
+    static func getVoteDirection(s: SubmissionObject) -> VoteDirection {
         if upVotedFullnames.contains(s.id) {
             return .up
         } else if downVotedFullnames.contains(s.id) {
@@ -119,7 +119,7 @@ class ActionStates {
         }
     }
     
-    static func setVoteDirection(s: Submission, direction: VoteDirection) {
+    static func setVoteDirection(s: SubmissionObject, direction: VoteDirection) {
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionComplete()
         }
@@ -147,7 +147,7 @@ class ActionStates {
         }
     }
     
-    static func isSaved(s: Submission) -> Bool {
+    static func isSaved(s: SubmissionObject) -> Bool {
         if savedFullnames.contains(s.id) {
             return true
         } else if unSavedFullnames.contains(s.id) {
@@ -159,7 +159,7 @@ class ActionStates {
         }
     }
     
-    static func setSaved(s: Submission, saved: Bool) {
+    static func setSaved(s: SubmissionObject, saved: Bool) {
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         }
@@ -176,7 +176,7 @@ class ActionStates {
     }
     
     //Realm comments
-    static func getVoteDirection(s: CommentModel) -> VoteDirection {
+    static func getVoteDirection(s: CommentObject) -> VoteDirection {
         if upVotedFullnames.contains(s.id) {
             return .up
         } else if downVotedFullnames.contains(s.id) {
@@ -188,7 +188,7 @@ class ActionStates {
         }
     }
     
-    static func setVoteDirection(s: CommentModel, direction: VoteDirection) {
+    static func setVoteDirection(s: CommentObject, direction: VoteDirection) {
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionComplete()
         }
@@ -216,7 +216,7 @@ class ActionStates {
         }
     }
     
-    static func isSaved(s: CommentModel) -> Bool {
+    static func isSaved(s: CommentObject) -> Bool {
         if savedFullnames.contains(s.id) {
             return true
         } else if unSavedFullnames.contains(s.id) {
@@ -226,7 +226,7 @@ class ActionStates {
         }
     }
     
-    static func setSaved(s: CommentModel, saved: Bool) {
+    static func setSaved(s: CommentObject, saved: Bool) {
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         }

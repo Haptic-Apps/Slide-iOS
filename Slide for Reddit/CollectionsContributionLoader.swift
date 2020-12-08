@@ -28,7 +28,7 @@ class CollectionsContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [NSManagedObject]
+    var content: [RedditObject]
     var delegate: ContentListingViewController?
     var paging = true
     var ids = [Link]()
@@ -53,7 +53,7 @@ class CollectionsContributionLoader: ContributionLoader {
                         let baseContent = listing.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Link {
-                                self.content.append(Submission.linkToSubmission(submission: item as! Link))
+                                self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                             }
                         }
                         self.canGetMore = self.content.count < self.ids.count

@@ -16,11 +16,11 @@ class RelatedContributionLoader: ContributionLoader {
         content = []
     }
     
-    var thing: Submission
+    var thing: SubmissionObject
     var sub: String
     var color: UIColor
     
-    init(thing: Submission, sub: String) {
+    init(thing: SubmissionObject, sub: String) {
         self.thing = thing
         self.sub = sub
         color = ColorUtil.getColorForUser(name: sub)
@@ -29,7 +29,7 @@ class RelatedContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [NSManagedObject]
+    var content: [RedditObject]
     var delegate: ContentListingViewController?
     var paging = false
     var canGetMore = false
@@ -54,9 +54,9 @@ class RelatedContributionLoader: ContributionLoader {
                         let baseContent = listing.1.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
-                                self.content.append(CommentModel.commentToCommentModel(comment: item as! Comment, depth: 0))
+                                self.content.append(CommentObject.commentToCommentObject(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(Submission.linkToSubmission(submission: item as! Link))
+                                self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                             }
                         }
 

@@ -50,7 +50,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var text: [UITextView]?
     var extras: [UIView]?
     var toolbar: ToolbarTextView?
-    var toReplyTo: NSManagedObject?
+    var toReplyTo: RedditObject?
     var replyingView: UIView?
     var replyButtons: UIScrollView?
     var replies: UIStateButton?
@@ -117,7 +117,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     //New message reply
-    init(message: MessageModel?, completion: @escaping (String?) -> Void) {
+    init(message: MessageObject?, completion: @escaping (String?) -> Void) {
         type = .REPLY_MESSAGE
         toReplyTo = message
         super.init(nibName: nil, bundle: nil)
@@ -153,7 +153,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var errorText = ""
 
     //Edit selftext
-    init(submission: Submission, sub: String, completion: @escaping (Link?) -> Void) {
+    init(submission: SubmissionObject, sub: String, completion: @escaping (Link?) -> Void) {
         type = .EDIT_SELFTEXT
         toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
@@ -186,7 +186,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
     
     //Crosspost
-    init(submission: Submission, completion: @escaping (Link?) -> Void) {
+    init(submission: SubmissionObject, completion: @escaping (Link?) -> Void) {
         type = .CROSSPOST
         toReplyTo = submission
         super.init(nibName: nil, bundle: nil)
@@ -219,7 +219,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     //Reply to submission
-    init(submission: Submission, sub: String, delegate: ReplyDelegate) {
+    init(submission: SubmissionObject, sub: String, delegate: ReplyDelegate) {
         subreddit = sub
         type = .REPLY_SUBMISSION
         self.isMod = AccountController.modSubs.contains(sub)
@@ -248,7 +248,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     
     var modText: String?
     
-    init(submission: Submission, sub: String, modMessage: String, completion: @escaping (Comment?) -> Void) {
+    init(submission: SubmissionObject, sub: String, modMessage: String, completion: @escaping (Comment?) -> Void) {
         type = .REPLY_SUBMISSION
         toReplyTo = submission
         self.isMod = true
@@ -489,7 +489,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 finalWidth = width
             }
         } else {
-            if isMod || (toReplyTo != nil && (toReplyTo as! Submission).isMod) {
+            if isMod || (toReplyTo != nil && (toReplyTo as! SubmissionObject).isMod) {
                 finalWidth = CGFloat(8 * 2) + width + widthI + widthS
             } else {
                 sticky!.isHidden = true
@@ -635,7 +635,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.numberOfLines = 0
                 })
                 extras?.append(text1)
-                let html = (toReplyTo as! MessageModel).htmlBody
+                let html = (toReplyTo as! MessageObject).htmlBody
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
                 // TODO: - this
@@ -651,7 +651,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                                     return
                                 }
                             }
@@ -718,9 +718,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 
                 if toReplyTo != nil {
-                    text1.text = "re: \((toReplyTo as! MessageModel).subject.escapeHTML)"
+                    text1.text = "re: \((toReplyTo as! MessageObject).subject.escapeHTML)"
                     text1.isEditable = false
-                    text2.text = ((toReplyTo as! MessageModel).author)
+                    text2.text = ((toReplyTo as! MessageObject).author)
                     text2.isEditable = false
                 }
                 
@@ -798,9 +798,9 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             })
 
             if toReplyTo != nil && type != .CROSSPOST {
-                text1.text = "\((toReplyTo as! Submission).title)"
+                text1.text = "\((toReplyTo as! SubmissionObject).title)"
                 text1.isEditable = false
-                text2.text = ((toReplyTo as! Submission).subreddit)
+                text2.text = ((toReplyTo as! SubmissionObject).subreddit)
                 text2.isEditable = false
             }
 
@@ -849,7 +849,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             if type != .EDIT_SELFTEXT {
                 doButtons()
                 if type == .CROSSPOST {
-                    let link = toReplyTo as! Submission
+                    let link = toReplyTo as! SubmissionObject
                     let linkCV = link.isSelf ? TextLinkCellView(frame: CGRect.zero) : ThumbnailLinkCellView(frame: CGRect.zero)
                     linkCV.aspectWidth = self.view.frame.size.width - 16
                     linkCV.configure(submission: link, parent: self, nav: nil, baseSub: "all", embedded: true, parentWidth: self.view.frame.size.width - 16, np: false)
@@ -897,7 +897,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 }
             } else {
                 stack.addArrangedSubviews(text1, text2, text3)
-                text3.text = (toReplyTo as! Submission).markdownBody
+                text3.text = (toReplyTo as! SubmissionObject).markdownBody
                 text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 text1.heightAnchor />=/ CGFloat(70)
                 text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
@@ -915,7 +915,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
 
         } else if type.isComment() {
-            if (toReplyTo as! Submission).type == .SELF && !((toReplyTo as! Submission).htmlBody ?? "").trimmed().isEmpty {
+            if (toReplyTo as! SubmissionObject).type == .SELF && !((toReplyTo as! SubmissionObject).htmlBody ?? "").trimmed().isEmpty {
                 //two
                 let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.textColor = ColorUtil.theme.fontColor
@@ -926,7 +926,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     $0.font = UIFont.systemFont(ofSize: 16)
                 })
                 extras?.append(text1)
-                let html = (toReplyTo as! Submission).htmlBody ?? ""
+                let html = (toReplyTo as! SubmissionObject).htmlBody ?? ""
                 let content = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 
                 // TODO: - this
@@ -943,7 +943,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
                                 if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                                     return
                                 }
                             }
@@ -967,7 +967,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 
                 if modText != nil {
-                    text3.text = "Hi u/\((toReplyTo as! Submission).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
+                    text3.text = "Hi u/\((toReplyTo as! SubmissionObject).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
                 }
                 doButtons()
                 stack.addArrangedSubviews(text1, replyButtons!, text3)
@@ -1003,7 +1003,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 })
                 
                 if modText != nil {
-                    text3.text = "Hi u/\((toReplyTo as! Submission).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
+                    text3.text = "Hi u/\((toReplyTo as! SubmissionObject).author),\n\nYour submission has been removed for the following reason:\n\n\(modText!.replacingOccurrences(of: "\n", with: "\n\n"))\n\n"
                 }
 
                 doButtons()
@@ -1037,7 +1037,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             })
 
             if toReplyTo != nil {
-                text1.text = "\((toReplyTo as! Submission).title)"
+                text1.text = "\((toReplyTo as! SubmissionObject).title)"
                 text1.isEditable = false
             }
 
@@ -1054,7 +1054,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 $0.isScrollEnabled = false
                 $0.textContainerInset = UIEdgeInsets.init(top: 24, left: 8, bottom: 8, right: 8)
                 $0.delegate = self
-                $0.text = (toReplyTo as! Submission).markdownBody ?? ""
+                $0.text = (toReplyTo as! SubmissionObject).markdownBody ?? ""
             })
 
             stack.addArrangedSubviews(text1, text3)
@@ -1101,14 +1101,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         if type.isMessage() {
             title = "New message"
             if type == ReplyType.REPLY_MESSAGE {
-                let author = (toReplyTo is MessageModel) ? ((toReplyTo as! MessageModel).author) : ((toReplyTo as! Submission).author)
+                let author = (toReplyTo is MessageObject) ? ((toReplyTo as! MessageObject).author) : ((toReplyTo as! SubmissionObject).author)
                 title = "Reply to \(author)"
             }
         } else {
             if type == .EDIT_SELFTEXT {
                 title = "Editing"
             } else if type.isComment() {
-                title = "Replying to \((toReplyTo as! Submission).author)"
+                title = "Replying to \((toReplyTo as! SubmissionObject).author)"
             } else if type == .CROSSPOST {
                 title = "Crosspost submission"
             } else {
@@ -1243,7 +1243,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             session = (UIApplication.shared.delegate as! AppDelegate).session
 
             do {
-                let name = toReplyTo is MessageModel ? (toReplyTo as! MessageModel).id : toReplyTo is CommentModel ? (toReplyTo as! CommentModel).id : (toReplyTo as! Submission).id
+                let name = toReplyTo is MessageObject ? (toReplyTo as! MessageObject).id : toReplyTo is CommentObject ? (toReplyTo as! CommentObject).id : (toReplyTo as! SubmissionObject).id
                 try self.session?.editCommentOrLink(name, newBody: body.text, completion: { (_) in
                     self.getSubmissionEdited(name)
                 })
@@ -1307,7 +1307,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     func crosspost() {
         let title = text![0]
         let subreddit = text![1]
-        let cLink = toReplyTo as! Submission
+        let cLink = toReplyTo as! SubmissionObject
         
         if title.text.isEmpty() {
             BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)

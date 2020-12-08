@@ -1,5 +1,5 @@
 //
-//  Submission+CoreDataProperties.swift
+//  SubmissionModel+CoreDataProperties.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/5/20.
@@ -11,10 +11,10 @@ import Foundation
 import CoreData
 
 
-extension Submission {
+extension SubmissionModel {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Submission> {
-        return NSFetchRequest<Submission>(entityName: "Submission")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<SubmissionModel> {
+        return NSFetchRequest<SubmissionModel>(entityName: "SubmissionModel")
     }
 
     @NSManaged public var id: String

@@ -1,5 +1,5 @@
 //
-//  Submission+CoreDataClass.swift
+//  SubmissionModel+CoreDataClass.swift
 //  Slide for Reddit
 //
 //  Created by Carlos Crane on 12/5/20.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(Submission)
-public class Submission: NSManagedObject {
+@objc(SubmissionModel)
+public class SubmissionModel: NSManagedObject {
 
 }

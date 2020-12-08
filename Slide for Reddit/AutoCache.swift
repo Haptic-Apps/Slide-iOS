@@ -43,7 +43,7 @@ public class AutoCache: NSObject {
         cacheSub(0, progress: progress, completion: completion, total: 0, failed: 0)
     }
 
-    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [Submission], subredditPosts: SubredditPosts, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
+    static func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [SubmissionObject], subredditPosts: SubredditPosts, done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
         if cancel {
             return
         }
@@ -80,13 +80,13 @@ public class AutoCache: NSObject {
                     let startDepth = 1
                     var allIncoming: [(Thing, Int)] = []
                     var comments = [String]()
-                    var content: Dictionary = [String: NSManagedObject]()
+                    var content: Dictionary = [String: RedditObject]()
 
                     for child in tuple.1.children {
                         let incoming = AutoCache.extendKeepMore(in: child, current: startDepth)
                         allIncoming.append(contentsOf: incoming)
                         for i in incoming {
-                            if let item = CommentModel.thingToCommentOrMore(thing: i.0, depth: i.1) {
+                            if let item = CommentObject.thingToCommentOrMore(thing: i.0, depth: i.1) {
                                 content[item.getId()] = item
                                 comments.append(item.getId())
                             }
@@ -144,12 +144,12 @@ public class AutoCache: NSObject {
                     subredditPosts.time = NSDate() as Date
 
                     let newLinks = listing.children.compactMap({ $0 as? Link })
-                    var converted: [Submission] = []
+                    var converted: [SubmissionObject] = []
                     for link in newLinks {
-                        let newRS = Submission.linkToSubmission(submission: link)
+                        let newRS = SubmissionObject.linkToSubmissionObject(submission: link)
                         converted.append(newRS)
                     }
-                    let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! Submission }
+                    let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! SubmissionObject}
                     AutoCache.preloadImages(values)
                     DispatchQueue.main.async {
                         cacheComments(index, commentIndex: 0, currentLinks: values, subredditPosts: subredditPosts, done: 0, failed: 0, progress: progress, completion: completion)
@@ -161,7 +161,7 @@ public class AutoCache: NSObject {
         }
     }
 
-    static func preloadImages(_ values: [Submission]) {
+    static func preloadImages(_ values: [SubmissionObject]) {
         var urls: [URL] = []
         for submission in values {
             if cancel {
@@ -187,7 +187,7 @@ public class AutoCache: NSObject {
             } else if big && (SettingValues.postImageMode == .CROPPED_IMAGE) {
                 height = 200
             } else if big && (SettingValues.postImageMode == .SHORT_IMAGE) {
-                height = Int32(Int(UIScreen.main.bounds.height / 2))
+                height = Int(UIScreen.main.bounds.height / 2)
             }
 
             if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big || type == .SELF {

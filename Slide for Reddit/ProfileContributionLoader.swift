@@ -30,7 +30,7 @@ class ProfileContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [NSManagedObject]
+    var content: [RedditObject]
     var delegate: ContentListingViewController?
     var paging = true
     
@@ -53,9 +53,9 @@ class ProfileContributionLoader: ContributionLoader {
                         let baseContent = listing.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
-                                self.content.append(CommentModel.commentToCommentModel(comment: item as! Comment, depth: 0))
+                                self.content.append(CommentObject.commentToCommentObject(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(Submission.linkToSubmission(submission: item as! Link))
+                                self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                             }
                         }
                         self.canGetMore = listing.paginator.hasMore()

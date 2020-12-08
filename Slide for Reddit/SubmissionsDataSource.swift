@@ -15,7 +15,7 @@ protocol SubmissionDataSouceDelegate: class {
     func generalError(title: String, message: String)
     func loadSuccess(before: Int, count: Int)
     func preLoadItems()
-    func doPreloadImages(values: [Submission])
+    func doPreloadImages(values: [SubmissionObject])
     func loadOffline()
     
     func emptyState(_ listing: Listing)
@@ -51,7 +51,7 @@ class SubmissionsDataSource {
     }
     
     var paginator: Paginator
-    var content: [Submission]
+    var content: [SubmissionObject]
     weak var delegate: SubmissionDataSouceDelegate?
     
     var loading = false
@@ -94,7 +94,7 @@ class SubmissionsDataSource {
     }
     func hideReadPostsPermanently(callback: @escaping (_ indexPaths: [IndexPath]) -> Void) {
         var indexPaths: [IndexPath] = []
-        var toRemove: [Submission] = []
+        var toRemove: [SubmissionObject] = []
         
         var index = 0
         var count = 0
@@ -204,7 +204,7 @@ class SubmissionsDataSource {
                                 let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Submission")
                                 let postPredicate = NSPredicate(format: "id in %@", first.posts?.split(",") ?? [])
                                 postsRequest.predicate = postPredicate
-                                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [Submission]
+                                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionObject]
 
                                 for i in links {
                                     self.content.append(i)
@@ -242,31 +242,23 @@ class SubmissionsDataSource {
                         let before = self.content.count
 
                         let newLinks = listing.children.compactMap({ $0 as? Link })
-                        var converted: [Submission] = []
+                        var converted: [SubmissionObject] = []
                         var ids = [String]()
                         for link in newLinks {
                             ids.append(link.id)
-                            let newRS = Submission.linkToSubmission(submission: link)
+                            let newRS = SubmissionObject.linkToSubmissionObject(submission: link)
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
                         
                         self.delegate?.doPreloadImages(values: converted)
-                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! Submission }
+                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! SubmissionObject}
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
-                            let managedContext = SlideCoreData.sharedInstance.persistentContainer.viewContext
-                            let submissionEntity = NSEntityDescription.entity(forEntityName: "Submission", in: managedContext)!
-                            let pageItem = NSManagedObject(entity: submissionEntity, insertInto: managedContext) as! Submission
-                            pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
-                            pageItem.author = "PAGE_SEPARATOR"
-                            pageItem.title = "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts"
+                            let uuid = UUID().uuidString
+                            
+                            let pageItem = SubmissionObject(id: uuid, title: "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts", postsSince: DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true))
                             values.insert(pageItem, at: 0)
-                            do {
-                                try managedContext.save()
-                            } catch let error as NSError {
-                                print(error)
-                            }
                         }
                         self.page += 1
                         

@@ -17,9 +17,9 @@ class GalleryCellView: UITableViewCell {
     var commentsImage = UIImageView()
     
     var estimatedHeight = CGFloat(0)
-    var link: Submission?
+    var link: SubmissionObject?
     
-    func setLink(_ link: Submission, parent: UIViewController & MediaVCDelegate) {
+    func setLink(_ link: SubmissionObject, parent: UIViewController & MediaVCDelegate) {
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.clipsToBounds = true
         bannerImage.contentMode = UIView.ContentMode.scaleAspectFit
@@ -122,7 +122,7 @@ class GalleryCellView: UITableViewCell {
         
     }
     
-    func getHeightFromAspectRatio(imageHeight: Int32, imageWidth: Int32) -> Int {
+    func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(contentView.frame.size.width)
         return Int(width * ratio)

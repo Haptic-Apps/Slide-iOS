@@ -11,7 +11,7 @@ import Foundation
 import reddift
 
 class FriendsContributionLoader: ContributionLoader {
-    var content: [NSManagedObject]
+    var content: [RedditObject]
     
     var color: UIColor
     var canGetMore: Bool
@@ -47,7 +47,7 @@ class FriendsContributionLoader: ContributionLoader {
                         }
                         let before = self.content.count
                         for user in listing {
-                            self.content.append(FriendModel.friendToRealm(user: user))
+                            self.content.append(FriendObject.userToFriendObject(user: user))
                         }
                         //self.paginator = listing.paginator
                         //self.canGetMore = listing.paginator.hasMore()

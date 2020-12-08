@@ -198,7 +198,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var isSearch = false
     var searchSubreddit = ""
     var isSearchComplete = false
-    var results = [Submission]()
+    var results = [SubmissionObject]()
     var timer: Timer?
     var isSearching = false
     var taskSearch: URLSessionDataTask?
@@ -655,7 +655,7 @@ extension DragDownAlertMenu {
                     for item in listing.children.compactMap({ $0 }) {
                         if item is Comment {
                         } else if self.results.count < 10 {
-                            self.results.append(Submission.linkToSubmission(submission: item as! Link))
+                            self.results.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                         }
                     }
                     DispatchQueue.main.async {

@@ -19,7 +19,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
         } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
         }
     }
 
@@ -97,7 +97,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
-    func setComment(comment: CommentModel, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
+    func setComment(comment: CommentObject, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         text.estimatedWidth = self.contentView.frame.size.width - 16
         parentViewController = parent
@@ -114,7 +114,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody)
     }
     
-    public static func getTitle(_ comment: CommentModel) -> NSAttributedString {
+    public static func getTitle(_ comment: CommentObject) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
                 
         var uC: UIColor
@@ -160,7 +160,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment: CommentModel?
+    var comment: CommentObject?
     public weak var parentViewController: (UIViewController & MediaVCDelegate)?
     public weak var navViewController: UIViewController?
     

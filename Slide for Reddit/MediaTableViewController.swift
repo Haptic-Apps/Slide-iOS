@@ -58,7 +58,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     var isUpvoted = false
     var failureCallback: ((_ url: URL) -> Void)?
 
-    public func setLink(link: Submission, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil) { //lq is should load lq and did load lq
+    public func setLink(link: SubmissionObject, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil) { //lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: link, skipDuplicates: true)
         }
@@ -133,7 +133,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         }
     }
     
-    func getControllerForUrl(baseUrl: URL, lq: URL? = nil, link: Submission) -> UIViewController? {
+    func getControllerForUrl(baseUrl: URL, lq: URL? = nil, link: SubmissionObject) -> UIViewController? {
         contentUrl = baseUrl.absoluteString.startsWith("//") ? URL(string: "https:\(baseUrl.absoluteString)") ?? baseUrl : baseUrl
 
         if shouldTruncate(url: contentUrl!) {
@@ -211,7 +211,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         controller.parentController!.dismiss(animated: true)
     }
 
-    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: Submission) {
+    func doShow(url: URL, lq: URL? = nil, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, link: SubmissionObject) {
         failureCallback = {[weak self] (url: URL) in
             guard let strongSelf = self else { return }
             let vc: UIViewController

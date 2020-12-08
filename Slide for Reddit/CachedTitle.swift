@@ -27,14 +27,14 @@ class CachedTitle {
 
     static let baseFontSize: CGFloat = 18
 
-    static func addTitle(s: Submission) {
+    static func addTitle(s: SubmissionObject) {
         titles[s.id] = titleFoSubmission(submission: s, full: false, white: false, gallery: false)
     }
 
     static var titleFont = FontGenerator.fontOfSize(size: baseFontSize, submission: true)
     static var titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
 
-    static func getTitle(submission: Submission, full: Bool, _ refresh: Bool, _ white: Bool = false, gallery: Bool) -> Title {
+    static func getTitle(submission: SubmissionObject, full: Bool, _ refresh: Bool, _ white: Bool = false, gallery: Bool) -> Title {
         let title = titles[submission.id]
         if title == nil || refresh || full || white || gallery {
             if white {
@@ -51,11 +51,11 @@ class CachedTitle {
         }
     }
     
-    static func getTitleForMedia(submission: Submission) -> Title {
+    static func getTitleForMedia(submission: SubmissionObject) -> Title {
         return titleForMedia(submission: submission)
     }
 
-    static func titleFoSubmission(submission: Submission, full: Bool, white: Bool, gallery: Bool) -> Title {
+    static func titleFoSubmission(submission: SubmissionObject, full: Bool, white: Bool, gallery: Bool) -> Title {
         var colorF = ColorUtil.theme.fontColor
         if white {
             colorF = .white
@@ -394,7 +394,7 @@ class CachedTitle {
         return Title(mainTitle: finalTitle, infoLine: infoLine, extraLine: extraLine, color: colorF)
     }
 
-    static func titleForMedia(submission: Submission) -> Title {
+    static func titleForMedia(submission: SubmissionObject) -> Title {
 
         let colorF = UIColor.white
 
@@ -476,7 +476,7 @@ class CachedTitle {
         return rect
     }
 
-    static func getTitleAttributedString(_ link: Submission, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true) -> NSAttributedString {
+    static func getTitleAttributedString(_ link: SubmissionObject, force: Bool, gallery: Bool, full: Bool, white: Bool = false, loadImages: Bool = true) -> NSAttributedString {
         let titleStrings = CachedTitle.getTitle(submission: link, full: full, force, white, gallery: gallery)
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
         let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)

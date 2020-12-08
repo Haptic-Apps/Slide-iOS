@@ -16,7 +16,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var tableView = UITableView(frame: CGRect.zero, style: .plain)
     var filteredContent: [String] = []
     var suggestions = [String]()
-    var results = [Submission]()
+    var results = [SubmissionObject]()
     weak var parentController: SingleSubredditViewController?
     var backgroundView = UIView()
     var topView: UIView?
@@ -947,7 +947,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                     for item in listing.children.compactMap({ $0 }) {
                         if item is Comment {
                         } else if self.results.count < 10 {
-                            self.results.append(Submission.linkToSubmission(submission: item as! Link))
+                            self.results.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                         }
                     }
                     DispatchQueue.main.async {

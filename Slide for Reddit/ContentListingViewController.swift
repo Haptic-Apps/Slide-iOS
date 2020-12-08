@@ -31,7 +31,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         return 0
     }
     
-    func subscribe(link: Submission) {
+    func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
         let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
@@ -271,10 +271,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
-        if thing is Submission {
+        if thing is SubmissionObject {
             let tableWidth = self.tableView.frame.size.width
             var c: LinkCellView?
-            switch SingleSubredditViewController.cellType(foSubmission: thing as! Submission, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
+            switch SingleSubredditViewController.cellType(foSubmission: thing as! SubmissionObject, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
             case .thumb:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
             case .banner:
@@ -282,7 +282,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && (thing as! Submission).imageHeight > 0 {
+                if !SettingValues.hideImageSelftext && (thing as! SubmissionObject).imageHeight > 0 {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
                 } else {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
@@ -292,24 +292,24 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
             
-            (c)!.configure(submission: thing as! Submission, parent: self, nav: self.navigationController, baseSub: "", np: false)
+            (c)!.configure(submission: thing as! SubmissionObject, parent: self, nav: self.navigationController, baseSub: "", np: false)
                         
             if self is ReadLaterViewController {
                 c?.readLater.isHidden = false
             }
             
             cell = c
-        } else if thing is CommentModel {
+        } else if thing is CommentObject {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
-            c.setComment(comment: (thing as! CommentModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setComment(comment: (thing as! CommentObject), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         } else if thing is FriendModel {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.setFriend(friend: (thing as! FriendModel), parent: self)
             cell = c
-        } else if thing is MessageModel {
+        } else if thing is MessageObject {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
-            c.setMessage(message: (thing as! MessageModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setMessage(message: (thing as! MessageObject), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         } else {
             //Is mod log item
@@ -333,11 +333,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if indexPath.row < baseData.content.count {
             let thing = baseData.content[indexPath.row]
             
-            if thing is Submission {
-                let submission = thing as! Submission
+            if thing is SubmissionObject {
+                let submission = thing as! SubmissionObject
                 return SingleSubredditViewController.sizeWith(submission, width, false, false)
-            } else if thing is CommentModel {
-                let comment = thing as! CommentModel
+            } else if thing is CommentObject {
+                let comment = thing as! CommentObject
                 if estimatedHeights[comment.id] == nil {
                     let titleText = CommentCellView.getTitle(comment)
                     
@@ -348,8 +348,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is FriendModel {
                 return CGSize(width: itemWidth, height: 70)
-            } else if thing is MessageModel {
-                let message = thing as! MessageModel
+            } else if thing is MessageObject {
+                let message = thing as! MessageObject
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message)
                     
@@ -619,7 +619,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 alert.addAction(UIAlertAction(title: "Remove", style: UIAlertAction.Style.destructive, handler: { (_) in
                     Collections.removeFromCollection(link: cell.link!, title: ctitle)
                     self.baseData.content = self.baseData.content.filter { (object) -> Bool in
-                        if let link = object as? Submission {
+                        if let link = object as? SubmissionObject{
                             if link.id == cell.link!.id {
                                 return false
                             }

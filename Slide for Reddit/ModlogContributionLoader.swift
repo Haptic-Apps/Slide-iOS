@@ -28,7 +28,7 @@ class ModlogContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [NSManagedObject]
+    var content: [RedditObject]
     var delegate: ContentListingViewController?
     var paging = true
     
@@ -48,18 +48,7 @@ class ModlogContributionLoader: ContributionLoader {
 
                         listing.children.forEach { (thing) in
                             if let thing = thing as? ModAction {
-                                let item = ModlogModel()
-                                item.action = thing.action
-                                item.created = Date(timeIntervalSince1970: thing.createdUtc)
-                                item.details = thing.details
-                                item.id = thing.id
-                                item.mod = thing.mod
-                                item.permalink = thing.targetPermalink
-                                item.subreddit = thing.subreddit
-                                item.targetAuthor = thing.targetAuthor
-                                item.targetBody = thing.targetBody
-                                item.targetTitle = thing.targetTitle
-                                self.content.append(item)
+                                self.content.append(ModLogObject.modActionToModLogObject(thing: thing))
                             }
                         }
                         self.paginator = listing.paginator

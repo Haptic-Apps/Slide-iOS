@@ -19,7 +19,7 @@ protocol SubmissionMoreDelegate: class {
     func showFilterMenu(_ cell: LinkCellView)
     func applyFilters()
     func hide(index: Int)
-    func subscribe(link: Submission)
+    func subscribe(link: SubmissionObject)
 }
 
 class PostActions: NSObject {
@@ -564,7 +564,7 @@ class PostActions: NSObject {
     static var subText: String?
     static var titleText: String?
     
-    static func crosspost(_ thing: Submission, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
+    static func crosspost(_ thing: SubmissionObject, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
         VCPresenter.showVC(viewController: ReplyViewController.init(submission: thing, completion: { (submission) in
             VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
         }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
@@ -572,7 +572,7 @@ class PostActions: NSObject {
     
     static var reportText: String?
     
-    static func report(_ thing: NSManagedObject, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
+    static func report(_ thing: RedditObject, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
         let alert = AlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
         if !AccountController.isLoggedIn {
@@ -627,7 +627,7 @@ class PostActions: NSObject {
             alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""
                 do {
-                    let name = (thing is CommentModel) ? (thing as! CommentModel).id : (thing as! Submission).id
+                    let name = (thing is CommentObject) ? (thing as! CommentObject).id : (thing as! SubmissionObject).id
                     try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)

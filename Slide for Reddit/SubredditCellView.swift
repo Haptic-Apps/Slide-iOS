@@ -212,7 +212,7 @@ class SubredditCellView: UITableViewCell {
         selectedBackgroundView = selectedView
     }
 
-    func setResults(subreddit: String, nav: UIViewController?, results: [Submission]?, complete: Bool) {
+    func setResults(subreddit: String, nav: UIViewController?, results: [SubmissionObject]?, complete: Bool) {
         title.textColor = ColorUtil.theme.fontColor
         self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
         self.navController = nav

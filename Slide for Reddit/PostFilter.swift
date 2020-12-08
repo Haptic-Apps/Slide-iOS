@@ -64,7 +64,7 @@ class PostFilter {
         return false
     }
 
-    public static func matches(_ link: Submission, baseSubreddit: String, gallery: Bool) -> Bool {
+    public static func matches(_ link: SubmissionObject, baseSubreddit: String, gallery: Bool) -> Bool {
         let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
             PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
             PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
@@ -121,7 +121,7 @@ class PostFilter {
         return mainMatch || contentMatch
     }
 
-    public static func openExternally(_ link: Submission) -> Bool {
+    public static func openExternally(_ link: SubmissionObject) -> Bool {
         return (PostFilter.openExternally.contains(where: {
             $0.containedIn(base: link.domain)
         }))
@@ -137,25 +137,25 @@ class PostFilter {
         return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
     }
 
-    public static func filter(_ input: [NSManagedObject], previous: [String]?, baseSubreddit: String, gallery: Bool = false) -> [NSManagedObject] {
+    public static func filter(_ input: [RedditObject], previous: [String]?, baseSubreddit: String, gallery: Bool = false) -> [RedditObject] {
         let ids = previous ?? []
-        var toReturn: [NSManagedObject] = []
+        var toReturn: [RedditObject] = []
 
         for link in input {
-            if link is Submission {
-                if !matches(link as! Submission, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! Submission).id) {
+            if link is SubmissionObject {
+                if !matches(link as! SubmissionObject, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! SubmissionObject).id) {
                     toReturn.append(link)
                 }
-            } else if link is CommentModel {
-                let comment = link as! CommentModel
+            } else if link is CommentObject {
+                let comment = link as! CommentObject
                 let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) ||
                     PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(comment.subreddit) == .orderedSame }) ||
                     contains(PostFilter.flairs, value: comment.flair)
                 if !mainMatch {
                     toReturn.append(link)
                 }
-            } else if link is MessageModel {
-                let message = link as! MessageModel
+            } else if link is MessageObject {
+                let message = link as! MessageObject
                 let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(message.author) == .orderedSame })
                 if !mainMatch {
                     toReturn.append(link)

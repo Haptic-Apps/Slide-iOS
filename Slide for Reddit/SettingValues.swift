@@ -763,7 +763,7 @@ class SettingValues {
         case MODERATE = "moderate"
         case SUBSCRIBE = "subscribe"
         
-        public static func getMenu(_ link: Submission, mutableList: Bool) -> [PostOverflowAction] {
+        public static func getMenu(_ link: SubmissionObject, mutableList: Bool) -> [PostOverflowAction] {
             var toReturn = [PostOverflowAction]()
             for item in getMenuNone() {
                 if item == .CHROME {
@@ -798,7 +798,7 @@ class SettingValues {
             return toReturn
         }
 
-        public func getTitle(_ link: Submission? = nil) -> String {
+        public func getTitle(_ link: SubmissionObject? = nil) -> String {
             switch self {
             case .PROFILE:
                 if link == nil {
@@ -851,7 +851,7 @@ class SettingValues {
             }
         }
         
-        public func getImage(_ link: Submission? = nil) -> UIImage {
+        public func getImage(_ link: SubmissionObject? = nil) -> UIImage {
             switch self {
             case .PROFILE:
                 return UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
@@ -1151,7 +1151,7 @@ class SettingValues {
         }
         
         //TODO pre ios 13 icons
-        public func getImage(_ link: Submission? = nil) -> UIImage {
+        public func getImage(_ link: SubmissionObject? = nil) -> UIImage {
             switch self {
             case .HOME:
                 return UIImage(sfString: SFSymbol.houseFill, overrideString: "world")!.menuIcon()

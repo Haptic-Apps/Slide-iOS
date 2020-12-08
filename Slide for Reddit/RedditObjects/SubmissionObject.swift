@@ -1,16 +1,76 @@
 //
-//  submissionModel+Extensions.swift
+//  SubmissionObject.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 12/5/20.
+//  Created by Carlos Crane on 12/7/20.
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
-import CoreData
+import Foundation
 import reddift
-import UIKit
 
-public extension Submission {
+class SubmissionObject: RedditObject {
+    public var id: String = ""
+    public var name: String = ""
+    public var author: String = ""
+    public var created: Date = Date()
+    public var edited: Date?
+    public var htmlBody: String?
+    public var markdownBody: String?
+    public var title: String = ""
+    public var subreddit: String = ""
+    public var archived: Bool = false
+    public var locked: Bool = false
+    public var hidden: Bool = false
+    public var contentUrl: String?
+    public var distinguished: String?
+    public var videoPreview: String?
+    public var videoMP4: String?
+    public var isCrosspost: Bool = false
+    public var isSpoiler: Bool = false
+    public var isOC: Bool = false
+    public var isMod: Bool = false
+    public var crosspostAuthor: String?
+    public var crosspostSubreddit: String?
+    public var crosspostPermalink: String?
+    public var isCakeday: Bool = false
+    public var subredditIcon: String?
+    public var reportsJSON: String?
+    public var awardsJSON: String?
+    public var flairJSON: String?
+    public var galleryJSON: String?
+    public var pollJSON: String?
+    public var removedBy: String?
+    public var isRemoved: Bool = false
+    public var approvedBy: String?
+    public var isApproved: Bool = false
+    public var removalReason: String?
+    public var smallPreview: String?
+    public var removalNote: String?
+    public var isEdited: Bool = false
+    public var commentCount: Int = 0
+    public var isSaved: Bool = false
+    public var isStickied: Bool = false
+    public var isVisited: Bool = false
+    public var isSelf: Bool = false
+    public var permalink: String = ""
+    public var bannerUrl: String?
+    public var thumbnailUrl: String?
+    public var lqURL: String?
+    public var isLQ: Bool = false
+    public var hasThumbnail: Bool = false
+    public var hasBanner: Bool = false
+    public var isNSFW: Bool = false
+    public var score: Int = 0
+    public var upvoteRatio: Double = 0
+    public var domain: String = ""
+    public var hasVoted: Bool = false
+    public var imageHeight: Int = 0
+    public var imageWidth: Int = 0
+    public var voteDirection: Bool = false
+    public var isArchived: Bool = false
+    public var isLocked: Bool = false
+    
     var likes: VoteDirection {
         if hasVoted {
             if voteDirection {
@@ -39,16 +99,30 @@ public extension Submission {
         }
         return nil
     }
-    //Takes a Link from reddift and turns it into a Realm model
-    static func linkToSubmission(submission: Link) -> Submission {
-        let managedContext = SlideCoreData.sharedInstance.backgroundContext
-        let submissionEntity = NSEntityDescription.entity(forEntityName: "Submission", in: managedContext)!
-        let submissionModel = NSManagedObject(entity: submissionEntity, insertInto: managedContext) as! Submission
-        
-        return submissionModel.update(submission: submission, context: SlideCoreData.sharedInstance.backgroundContext)
+    
+    static func linkToSubmissionObject(submission: Link) -> SubmissionObject {
+        return SubmissionObject(link: submission)
     }
     
-    func update(submission: Link, context: NSManagedObjectContext) -> Submission {
+    public init(link: Link) {
+        self.update(submission: link)
+    }
+    
+    convenience init() {
+        self.init(link: Link(id: ""))
+    }
+
+    convenience init(id: String, title: String, postsSince: String) {
+        self.init(link: Link(id: ""))
+
+        self.id = id
+        self.name = id
+        self.title = title
+        self.author = "PAGE_SEPARATOR"
+        self.subreddit = postsSince
+    }
+    
+    func update(submission: Link) {
         let flair = submission.linkFlairText.isEmpty ? submission.linkFlairCssClass : submission.linkFlairText
         var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
         bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
@@ -161,7 +235,7 @@ public extension Submission {
         self.contentUrl = self.contentUrl?.removingPercentEncoding ?? self.contentUrl
         
         self.title = submission.title
-        self.commentCount = Int32(submission.numComments)
+        self.commentCount = submission.numComments
         self.isSaved = submission.saved
         self.isStickied = submission.stickied
         self.isVisited = submission.visited
@@ -170,10 +244,10 @@ public extension Submission {
         self.hasThumbnail = thumb
         self.isNSFW = submission.over18
         self.hasBanner = big
-        self.lqURL = String.init(htmlEncodedString: lqUrl)
+        self.lqURL = String(htmlEncodedString: lqUrl)
         self.domain = submission.domain
         self.isLQ = lowq
-        self.score = Int32(submission.score)
+        self.score = submission.score
         self.hasVoted = submission.likes != .none
         self.upvoteRatio = submission.upvoteRatio
         self.voteDirection = submission.likes == .up
@@ -198,8 +272,8 @@ public extension Submission {
             }
         }
 
-        self.imageHeight = Int32(h)
-        self.imageWidth = Int32(w)
+        self.imageHeight = h
+        self.imageWidth = w
         self.distinguished = submission.distinguished.type
         self.isMod = submission.canMod
         self.isSelf = submission.isSelf
@@ -328,16 +402,6 @@ public extension Submission {
             galleryDict["images"] = galleryImages
             self.galleryJSON = galleryDict.jsonString()
         }
-        
-        context.performAndWait {
-            do {
-                try context.save()
-            } catch let error as NSError {
-                print(error)
-            }
-
-        }
-        return self
     }
     
     internal func getLinkView() -> LinkCellView {
@@ -463,21 +527,5 @@ public extension Submission {
     var flair: String {
         return flairDictionary.keys.joined(separator: ",")
     }
-}
 
-extension NSManagedObject {
-    
-    func getId() -> String {
-        if let object = self as? Submission {
-            return object.id
-        } else if let object = self as? CommentModel {
-            return object.id
-        } else if let object = self as? MoreModel {
-            return object.id
-        } else if let object = self as? MessageModel {
-            return object.id
-        } else {
-            return ""
-        }
-    }
 }

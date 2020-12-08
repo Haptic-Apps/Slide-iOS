@@ -20,7 +20,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     var web = WKWebView()
     
     func attributedLabel(_ label: YYTextView!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
     }
     
     override func layoutSubviews() {
@@ -89,7 +89,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
                             if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+                                self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                                 return
                             }
                         }
@@ -254,12 +254,12 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment: CommentModel?
+    var comment: CommentObject?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
     
     @objc func openContent(sender: UITapGestureRecognizer? = nil) {
-        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, finalSize: nil, heroVC: nil, link: Submission())
+        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
     }
 }
 
