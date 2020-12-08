@@ -609,7 +609,19 @@ class SubmissionObject: RedditObject {
 extension SubmissionObject: Cacheable {
     func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
         context.performAndWaitReturnable {
-            let submissionModel = NSEntityDescription.insertNewObject(forEntityName: "SubmissionModel", into: context) as! SubmissionModel
+            var submissionModel: SubmissionModel! = nil
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionModel")
+            let predicate = NSPredicate(format: "id = %@", self.getId() ?? "")
+            fetchRequest.predicate = predicate
+            do {
+                let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubmissionModel]
+                submissionModel = results.first
+            } catch {
+                
+            }
+            if submissionModel == nil {
+                submissionModel = NSEntityDescription.insertNewObject(forEntityName: "SubmissionModel", into: context) as! SubmissionModel
+            }
 
             submissionModel.id = self.id
             submissionModel.smallPreview = self.smallPreview

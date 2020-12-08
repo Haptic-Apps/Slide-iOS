@@ -227,7 +227,20 @@ class CommentObject: RedditObject {
 extension CommentObject: Cacheable {    
     func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
         context.performAndWaitReturnable {
-            let commentModel = NSEntityDescription.insertNewObject(forEntityName: "CommentModel", into: context) as! CommentModel
+            var commentModel: CommentModel! = nil
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CommentModel")
+            let predicate = NSPredicate(format: "id = %@", self.getId())
+            fetchRequest.predicate = predicate
+            do {
+                let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [CommentModel]
+                commentModel = results.first
+            } catch {
+                
+            }
+            if commentModel == nil {
+                commentModel = NSEntityDescription.insertNewObject(forEntityName: "CommentModel", into: context) as! CommentModel
+            }
+
             commentModel.approvedBy = self.approvedBy
             commentModel.author = self.author
             commentModel.awardsJSON = self.awardsJSON

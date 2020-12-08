@@ -3556,7 +3556,20 @@ extension CommentViewController: Cacheable {
     func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
         context.performAndWaitReturnable {
             if let submission = self.submission {
-                let submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as! SubmissionComments
+                var submissionComments: SubmissionComments! = nil
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionComments")
+                let predicate = NSPredicate(format: "submissionId = %@", self.submission?.getId() ?? "")
+                fetchRequest.predicate = predicate
+                do {
+                    let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubmissionComments]
+                    submissionComments = results.first
+                } catch {
+                    
+                }
+                if submissionComments == nil {
+                    submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as! SubmissionComments
+                }
+
                 submissionComments.submissionId = submission.getId()
                 submissionComments.saveDate = Date()
                 

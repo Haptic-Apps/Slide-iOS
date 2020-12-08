@@ -307,7 +307,20 @@ extension SubmissionsDataSource: Cacheable {
                 _ = link.insertSelf(into: context, andSave: false)
             }
             
-            let subredditPosts = NSEntityDescription.insertNewObject(forEntityName: "SubredditPosts", into: context) as! SubredditPosts
+            var subredditPosts: SubredditPosts! = nil
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubredditPosts")
+            let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
+            fetchRequest.predicate = predicate
+            do {
+                let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubredditPosts]
+                subredditPosts = results.first
+            } catch {
+                
+            }
+            if subredditPosts == nil {
+                subredditPosts = NSEntityDescription.insertNewObject(forEntityName: "SubredditPosts", into: context) as! SubredditPosts
+            }
+
             subredditPosts.posts = ids.joined(separator: ",")
             subredditPosts.time = Date()
             subredditPosts.subreddit = subreddit

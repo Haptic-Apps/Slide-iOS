@@ -61,6 +61,11 @@
         <attribute name="commentsString" optional="YES" attributeType="String"/>
         <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="submissionId" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="submissionId"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="SubmissionModel" representedClassName="SubmissionModel" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
@@ -135,6 +140,11 @@
         <attribute name="posts" attributeType="String"/>
         <attribute name="subreddit" attributeType="String"/>
         <attribute name="time" attributeType="Date" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="subreddit"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <elements>
         <element name="CommentModel" positionX="-45" positionY="144" width="128" height="599"/>
@@ -142,6 +152,6 @@
         <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="944"/>
         <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
         <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="74"/>
-        <element name="SubmissionComments" positionX="0" positionY="144" width="128" height="14"/>
+        <element name="SubmissionComments" positionX="0" positionY="144" width="128" height="74"/>
     </elements>
 </model>

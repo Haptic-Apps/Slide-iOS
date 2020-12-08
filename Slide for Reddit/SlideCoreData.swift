@@ -15,8 +15,7 @@ class SlideCoreData: NSObject {
     
     lazy var backgroundContext: NSManagedObjectContext = {
         let backgroundContext = persistentContainer.newBackgroundContext()
-        backgroundContext.automaticallyMergesChangesFromParent = true
-        backgroundContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
+        backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
         return backgroundContext
     }()
@@ -47,11 +46,11 @@ class SlideCoreData: NSObject {
          ██████╔╝██║  ██║██║ ╚████║╚██████╔╝███████╗██║  ██║    ███████╗╚██████╔╝██║ ╚████║███████╗
          ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
          */
-        //Un comment to wipe database, useful for debugging and easy to forget :D
+        //Un comment to wipe database, useful for debugging and easy to forget :D. If you disable this, know that the client will crash if you were solving for a crash
         //try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            container.viewContext.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
+            container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
@@ -65,6 +64,8 @@ class SlideCoreData: NSObject {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
+                
+                //TODO check this and resolve if possible
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
