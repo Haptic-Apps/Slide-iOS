@@ -264,6 +264,7 @@ extension CommentObject: Cacheable {
             commentModel.isStickied = self.isStickied
             commentModel.linkID = self.linkID
             commentModel.locked = self.locked
+            commentModel.score = Int32(self.score)
             commentModel.markdownBody = self.markdownBody
             commentModel.name = self.name
             commentModel.parentID = self.parentID

@@ -206,9 +206,20 @@ class SubmissionsDataSource {
                                 postsRequest.predicate = postPredicate
                                 let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionModel]
 
-                                for i in links {
-                                    self.content.append(SubmissionObject.fromModel(i))
+                                var linksDict = [String: SubmissionObject]() //Use dictionary to sort values below
+                                for model in links {
+                                    let object = SubmissionObject.fromModel(model)
+                                    linksDict[object.getId()] = object
                                 }
+
+                                let order = first.posts?.split(",") ?? []
+                                
+                                for id in order {
+                                    if let link = linksDict[id] {
+                                        self.content.append(link)
+                                    }
+                                }
+
                                 self.updated = first.time ?? Date()
                             }
                             var paths = [IndexPath]()

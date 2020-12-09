@@ -787,22 +787,22 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 let commentsPredicate = NSPredicate(format: "id in %@", commentsString.split(","))
                 commentsRequest.predicate = commentsPredicate
                 let comments = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(commentsRequest) as! [CommentModel]
-                var commentObjects = comments.map { (model) -> CommentObject in
-                    return CommentObject(model: model)
-                }
                 
-                let order = commentsString.split()
-                commentObjects = commentObjects.sorted { (a, b) -> Bool in
-                    guard let first = order.firstIndex(of: a.getId()) else {
-                        return false
-                    }
-
-                    guard let second = order.firstIndex(of: b.getId()) else {
-                        return true
-                    }
-
-                    return first < second
+                var commentsDict = [String: CommentObject]() //Use dictionary to sort values below
+                for model in comments {
+                    let object = CommentObject(model: model)
+                    commentsDict[object.getId()] = object
                 }
+
+                let order = commentsString.split(",")
+                var commentObjects = [CommentObject]()
+                
+                for id in order {
+                    if let comment = commentsDict[id] {
+                        commentObjects.append(comment)
+                    }
+                }
+
                 for child in commentObjects {
                     if child.depth == 1 {
                         currentOP = child.author
@@ -3583,7 +3583,7 @@ extension CommentViewController: Cacheable {
                 }
                 
                 ids = dataArray.filter({ (a) -> Bool in
-                    return !validIDs.contains(a)
+                    return validIDs.contains(a)
                 })
                 
                 submissionComments.commentsString = ids.joined(separator: ",")
