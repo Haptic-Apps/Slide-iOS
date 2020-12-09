@@ -1470,8 +1470,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     if let first = rects.first {
                         let imageView = UIImageView(frame: first)
                         title.addSubview(imageView)
-                        imageView.sd_setImage(with: url, completed: nil)
-                        
+                        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)])
+                                                
                         if attachment.rounded {
                             imageView.backgroundColor = attachment.backgroundColor
                             imageView.clipsToBounds = true
@@ -3102,7 +3102,7 @@ public extension UIImageView {
         startPulsingAnimation()
 
         DispatchQueue.global(qos: .userInteractive).async {
-            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates], context: [:], progress: nil) { (_, _, cacheType, _) in
+            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: overrideSize != nil ? [.imageThumbnailPixelSize: CGSize(width: overrideSize!.width * UIScreen.main.scale, height: overrideSize!.height * UIScreen.main.scale)] : [:], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
                 self.backgroundColor = oldBackgroundColor
                 
