@@ -15,10 +15,17 @@ class SlideCoreData: NSObject {
     
     lazy var backgroundContext: NSManagedObjectContext = {
         let backgroundContext = persistentContainer.newBackgroundContext()
+        backgroundContext.automaticallyMergesChangesFromParent = true
         backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-
         return backgroundContext
     }()
+    
+    func newBackgroundContext() -> NSManagedObjectContext {
+        let backgroundContext = persistentContainer.newBackgroundContext()
+        backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return backgroundContext
+    }
+
     
     private static let url: URL = {
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Reddit.sqlite")
@@ -50,7 +57,6 @@ class SlideCoreData: NSObject {
         //try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
 
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
@@ -67,6 +73,9 @@ class SlideCoreData: NSObject {
                 
                 //TODO check this and resolve if possible
                 fatalError("Unresolved error \(error), \(error.userInfo)")
+            } else {
+                container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+                container.viewContext.automaticallyMergesChangesFromParent = true
             }
         })
         return container

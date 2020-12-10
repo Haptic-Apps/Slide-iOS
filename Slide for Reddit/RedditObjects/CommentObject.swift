@@ -232,7 +232,7 @@ extension CommentObject: Cacheable {
             let predicate = NSPredicate(format: "id = %@", self.getId())
             fetchRequest.predicate = predicate
             do {
-                let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [CommentModel]
+                let results = try context.fetch(fetchRequest) as! [CommentModel]
                 commentModel = results.first
             } catch {
                 

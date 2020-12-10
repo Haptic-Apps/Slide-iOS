@@ -1977,6 +1977,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
     
     func showIndicator() {
         if indicator == nil {
+            //TODO implement something like this and get rid of Google https://medium.com/better-programming/lets-build-a-circular-loading-indicator-in-swift-5-b06fcdf1260d
             indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
             indicator?.strokeWidth = 5
             indicator?.radius = 15
@@ -2356,7 +2357,7 @@ extension SingleSubredditViewController {
         }
 
         alertController.addAction(title: "Cache for offline viewing", icon: UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")!.menuIcon()) {
-            _ = AutoCache.init(baseController: self, subs: [self.sub])
+            _ = AutoCache.init(subs: [self.sub])
         }
 
         alertController.addAction(title: "Shadowbox", icon: UIImage(named: "shadowbox")!.menuIcon()) {

@@ -1725,7 +1725,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
-        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(getScoreText(comment: comment))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(Int(getScoreText(comment: comment)))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2.75
         

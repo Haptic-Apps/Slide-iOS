@@ -620,7 +620,7 @@ extension SubmissionObject: Cacheable {
             let predicate = NSPredicate(format: "id = %@", self.getId() ?? "")
             fetchRequest.predicate = predicate
             do {
-                let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubmissionModel]
+                let results = try context.fetch(fetchRequest) as! [SubmissionModel]
                 submissionModel = results.first
             } catch {
                 

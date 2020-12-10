@@ -10,10 +10,9 @@ import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
+import MaterialComponents.MDCActivityIndicator
 import SDWebImage
 import SwiftyJSON
-import MaterialComponents.MaterialTabs
-
 import reddift
 import SDCAlertView
 import StoreKit
@@ -26,6 +25,8 @@ import WidgetKit
 class SplitMainViewController: MainViewController {
 
     static var isFirst = true
+    
+    var autoCacheProgress: MDCActivityIndicator?
 
     override func handleToolbars() {
     }
@@ -37,7 +38,6 @@ class SplitMainViewController: MainViewController {
     override var childForHomeIndicatorAutoHidden: UIViewController? {
         return nil
     }
-
 
     override func redoSubs() {
         setupTabBar(finalSubs)
@@ -94,6 +94,8 @@ class SplitMainViewController: MainViewController {
             let interaction = UIContextMenuInteraction(delegate: self)
             self.accountB.customView?.addInteraction(interaction)
         }
+        self.autoCacheProgress = nil
+
         didUpdate()
     }
     
@@ -240,7 +242,7 @@ class SplitMainViewController: MainViewController {
         
         if SettingValues.autoCache {
             if UserDefaults.standard.string(forKey: "DAY_LAUNCH") != today {
-                _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+                _ = AutoCache.init(subs: Subscriptions.offline)
                 UserDefaults.standard.setValue(today, forKey: "DAY_LAUNCH")
             }
         }
@@ -251,6 +253,10 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(autoCacheStarted(_:)), name: .autoCacheStarted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(autoCacheFinished(_:)), name: .autoCacheFinished, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(autoCacheProgress(_:)), name: .autoCacheProgress, object: nil)
 
         if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
@@ -944,7 +950,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
             doOpen(OpenState.POPOVER_ANY, homeViewController, toExecute: nil, toPresent: alert)
         } else {
             doOpen(OpenState.POPOVER_AFTER_NAVIGATION, homeViewController, toExecute: {
-                _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+                _ = AutoCache.init(subs: Subscriptions.offline)
             }, toPresent: nil)
         }
     }
@@ -1137,6 +1143,96 @@ extension MainViewController: PagingTitleDelegate {
     func didSetWidth() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.doToolbarOffset()
+        }
+    }
+}
+
+extension SplitMainViewController: AutoCacheDelegate {
+    @objc func autoCacheStarted(_ notification: Notification) {
+        DispatchQueue.main.async {
+            self.doSubCachingIcon(notification)
+        }
+    }
+    
+    @objc func autoCacheFinished(_ notification: Notification) {
+        DispatchQueue.main.async {
+            self.autoCacheProgress?.removeFromSuperview()
+            self.autoCacheProgress = nil
+            self.doProfileIcon()
+        }
+    }
+    
+    func doSubCachingIcon(_ notification: Notification) {
+        let backView = UIView()
+        let subIcon = UIImageView()
+        let subreddit = notification.userInfo?["subreddit"] as? String ?? "all"
+        subIcon.contentMode = .scaleAspectFit
+
+        if let icon = Subscriptions.icon(for: subreddit) {
+            subIcon.contentMode = .scaleAspectFill
+            subIcon.image = UIImage()
+            subIcon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+        } else {
+            subIcon.contentMode = .center
+            if subreddit.contains("m/") {
+                subIcon.image = SubredditCellView.defaultIconMulti
+            } else if subreddit.lowercased() == "all" {
+                subIcon.image = SubredditCellView.allIcon
+                subIcon.backgroundColor = GMColor.blue500Color()
+            } else if subreddit.lowercased() == "frontpage" {
+                subIcon.image = SubredditCellView.frontpageIcon
+                subIcon.backgroundColor = GMColor.green500Color()
+            } else if subreddit.lowercased() == "popular" {
+                subIcon.image = SubredditCellView.popularIcon
+                subIcon.backgroundColor = GMColor.purple500Color()
+            } else {
+                subIcon.image = SubredditCellView.defaultIcon
+            }
+        }
+
+        backView.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        backView.sizeAnchors /==/ CGSize.square(size: 30)
+        subIcon.layer.cornerRadius = 10
+        subIcon.clipsToBounds = true
+        
+        self.autoCacheProgress = MDCActivityIndicator()
+        self.autoCacheProgress?.indicatorMode = .indeterminate
+        self.autoCacheProgress?.progress = 0
+        self.autoCacheProgress?.strokeWidth = 5
+        self.autoCacheProgress?.radius = 15
+        self.autoCacheProgress?.cycleColors = [ColorUtil.baseAccent]
+        self.autoCacheProgress?.tintColor = ColorUtil.baseAccent
+
+        backView.addSubview(subIcon)
+        subIcon.sizeAnchors /==/ CGSize.square(size: 20)
+        subIcon.centerAnchors /==/ backView.centerAnchors
+        
+        backView.addSubview(self.autoCacheProgress!)
+        self.autoCacheProgress!.edgeAnchors /==/ backView.edgeAnchors
+
+        backView.bringSubviewToFront(self.autoCacheProgress!)
+        self.autoCacheProgress?.startAnimating()
+
+        self.accountB = UIBarButtonItem(customView: backView)
+        self.accountB.accessibilityIdentifier = "Account button"
+        self.accountB.accessibilityLabel = "Account"
+        self.accountB.accessibilityHint = "Open account page"
+        self.accountB.addTargetForAction(target: self, action: #selector(self.openDrawer(_:)))
+
+        self.navigationItem.leftBarButtonItem = self.accountB
+    }
+    
+    @objc func autoCacheProgress(_ notification: Notification) {
+        DispatchQueue.main.async {
+            if self.autoCacheProgress == nil {
+                self.doSubCachingIcon(notification)
+            }
+            if self.autoCacheProgress?.indicatorMode ?? .determinate == .indeterminate {
+                self.autoCacheProgress?.stopAnimating()
+                self.autoCacheProgress?.indicatorMode = .determinate
+                self.autoCacheProgress?.startAnimating()
+            }
+            self.autoCacheProgress?.progress = notification.userInfo?["progress"] as? Float ?? 0
         }
     }
 }

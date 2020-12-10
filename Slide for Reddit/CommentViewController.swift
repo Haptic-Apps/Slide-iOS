@@ -763,11 +763,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var reset = false
     var indicatorSet = false
+    var offlineSince: Date?
+    
+    @objc func showOfflineSince() {
+        if let saveDate = offlineSince {
+            BannerUtil.makeBanner(text: "Cached \(DateFormatter().timeSince(from: saveDate as NSDate, numericDates: true)) ago", color: ColorUtil.getColorForSub(sub: self.submission?.subreddit ?? ""), seconds: 3, context: self, top: true, callback: nil)
+        } else {
+            BannerUtil.makeBanner(text: "No offline comments found", color: ColorUtil.getColorForSub(sub: self.submission?.subreddit ?? ""), seconds: 3, context: self, top: true, callback: nil)
+        }
+    }
     
     func loadOffline() {
         self.loaded = true
         self.offline = true
-        //We might not need to even fetch this, if we added commentsString to SubmissionObject
+        
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionComments")
         let predicate = NSPredicate(format: "submissionId = %@", self.submission?.getId() ?? "")
         fetchRequest.predicate = predicate
@@ -783,6 +792,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             var currentOP = ""
             
             if let first = results.first, let commentsString = first.commentsString {
+                self.offlineSince = first.saveDate
                 let commentsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CommentModel")
                 let commentsPredicate = NSPredicate(format: "id in %@", commentsString.split(","))
                 commentsRequest.predicate = commentsPredicate
@@ -833,31 +843,36 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                         self.tableView.reloadData()
                     }
                     if self.comments.isEmpty {
-                        self.refreshControl?.endRefreshing()
-                        self.indicator.stopAnimating()
-                        BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
+                        self.endLoadingOffline(error: true)
                     } else {
-                        //Success
-                        // BannerUtil.makeBanner(text: "Showing cached comments", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self)
+                        self.endLoadingOffline(error: false)
                     }
                     
                 })
 
             } else {
-                DispatchQueue.main.async(execute: { () -> Void in
-                    self.refreshControl?.endRefreshing()
-                    self.indicator.stopAnimating()
-                    BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-                })
-
+                DispatchQueue.main.async {
+                    self.endLoadingOffline(error: true)
+                }
             }
         } catch let e {
             print(e)
-            DispatchQueue.main.async(execute: { () -> Void in
-                self.refreshControl?.endRefreshing()
-                self.indicator.stopAnimating()
-                BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
-            })
+            DispatchQueue.main.async {
+                self.endLoadingOffline(error: true)
+            }
+        }
+    }
+    
+    func endLoadingOffline(error: Bool) {
+        self.refreshControl?.endRefreshing()
+        self.indicator.stopAnimating()
+        let offline = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.wifiSlash, overrideString: "offline"))
+        offline.addTarget(self, action: #selector(self.showOfflineSince), for: UIControl.Event.touchUpInside)
+        let offlineB = UIBarButtonItem.init(customView: offline)
+
+        self.navigationItem.rightBarButtonItems = [offlineB]
+        if error {
+            BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
         }
     }
     
@@ -887,12 +902,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     name = name.replacingOccurrences(of: "t3_", with: "")
                 }
                 if offline {
-                    self.loadOffline()
+                    DispatchQueue.main.async {
+                        self.loadOffline()
+                    }
                 } else {
                     try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: SettingValues.commentLimit, completion: { (result) -> Void in
                         switch result {
                         case .failure(let error):
-                            print(error)
                             self.loadOffline()
                         case .success(let tuple):
                             let startDepth = 1
@@ -3561,7 +3577,7 @@ extension CommentViewController: Cacheable {
                 let predicate = NSPredicate(format: "submissionId = %@", self.submission?.getId() ?? "")
                 fetchRequest.predicate = predicate
                 do {
-                    let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubmissionComments]
+                    let results = try context.fetch(fetchRequest) as! [SubmissionComments]
                     submissionComments = results.first
                 } catch {
                     

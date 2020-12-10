@@ -1077,6 +1077,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
 
     func updateProgress(_ oldPercent: CGFloat, _ total: String, buffering: Bool) {
+        if  (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false {
+            return
+        }
         var percent = oldPercent
         if percent == -1 {
             percent = 1
@@ -2244,42 +2247,47 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     func playVideo() {
-        if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
-            if self.playView != nil {
-                self.playView.isHidden = false
-                self.spinner.isHidden = true
-                self.playView.alpha = 0
-                UIView.animate(withDuration: 0.1) { [weak self] in
-                    guard let strongSelf = self else { return }
-                    strongSelf.playView.alpha = 1
-                }
-            }
-            return
-        }
-        
-        let strongSelf = self
-        
-        strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
-        strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
-        //strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
-//                Is currently causing issues with not resuming after buffering
-//                if #available(iOS 10.0, *) {
-//                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
-//                }
-        strongSelf.setOnce = false
-        strongSelf.videoID = strongSelf.link?.id ?? ""
-        if SettingValues.muteInlineVideos {
-            strongSelf.videoView?.player?.isMuted = true
+        if (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false && self.playView != nil {
+            self.playView.isHidden = false
+            self.playView.image = UIImage(sfString: SFSymbol.wifiSlash, overrideString: "offline")?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
         } else {
-            strongSelf.videoView?.player?.isMuted = false
-        }
+            if !shouldLoadVideo || !AnyModalViewController.linkID.isEmpty() {
+                if self.playView != nil {
+                    self.playView.isHidden = false
+                    self.spinner.isHidden = true
+                    self.playView.alpha = 0
+                    UIView.animate(withDuration: 0.1) { [weak self] in
+                        guard let strongSelf = self else { return }
+                        strongSelf.playView.alpha = 1
+                    }
+                }
+                return
+            }
+            
+            let strongSelf = self
+            
+            strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
+            strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
+            //strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
+    //                Is currently causing issues with not resuming after buffering
+    //                if #available(iOS 10.0, *) {
+    //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
+    //                }
+            strongSelf.setOnce = false
+            strongSelf.videoID = strongSelf.link?.id ?? ""
+            if SettingValues.muteInlineVideos {
+                strongSelf.videoView?.player?.isMuted = true
+            } else {
+                strongSelf.videoView?.player?.isMuted = false
+            }
 
-        strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
-        
-        if strongSelf.updater == nil {
-            strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
-            strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
-            strongSelf.updater?.isPaused = false
+            strongSelf.sound.addTarget(strongSelf, action: #selector(strongSelf.unmute), for: .touchUpInside)
+            
+            if strongSelf.updater == nil {
+                strongSelf.updater = CADisplayLink(target: strongSelf, selector: #selector(strongSelf.displayLinkDidUpdate))
+                strongSelf.updater?.add(to: .current, forMode: RunLoop.Mode.common)
+                strongSelf.updater?.isPaused = false
+            }
         }
     }
     
@@ -2963,31 +2971,35 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func openLinkVideo(sender: UITapGestureRecognizer? = nil) {
-        if !playView.isHidden {
-            shouldLoadVideo = true
-            doLoadVideo()
-            playView.isHidden = true
-            self.spinner.isHidden = false
-            self.progressDot.isHidden = false
-        } else if self.videoView.player != nil && self.videoView.player?.currentItem != nil && self.videoView.player!.currentItem!.presentationSize.width != 0 {
-            let upvoted = ActionStates.getVoteDirection(s: link!) == VoteDirection.up
-            let controller = AnyModalViewController(cellView: self, full ? nil : {[weak self] in
-                if let strongSelf = self {
-                    strongSelf.doOpenComment()
-                }
-            }, upvoteCallback: {[weak self] in
-                if let strongSelf = self {
-                    strongSelf.upvote()
-                }
-            }, isUpvoted: upvoted, failure: nil)
-            updater?.isPaused = true
-            let postContentTransitioningDelegate = PostContentPresentationManager()
-            postContentTransitioningDelegate.sourceImageView = self.videoView
-            controller.transitioningDelegate = postContentTransitioningDelegate
-            controller.modalPresentationStyle = .custom
-            controller.forceStartUnmuted = !self.videoView.player!.isMuted
-            
-            parentViewController?.present(controller, animated: true, completion: nil)
+        if (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false {
+            BannerUtil.makeBanner(text: "Can't play this video offline", seconds: 3, context: self.parentViewController)
+        } else {
+            if !playView.isHidden {
+                shouldLoadVideo = true
+                doLoadVideo()
+                playView.isHidden = true
+                self.spinner.isHidden = false
+                self.progressDot.isHidden = false
+            } else if self.videoView.player != nil && self.videoView.player?.currentItem != nil && self.videoView.player!.currentItem!.presentationSize.width != 0 {
+                let upvoted = ActionStates.getVoteDirection(s: link!) == VoteDirection.up
+                let controller = AnyModalViewController(cellView: self, full ? nil : {[weak self] in
+                    if let strongSelf = self {
+                        strongSelf.doOpenComment()
+                    }
+                }, upvoteCallback: {[weak self] in
+                    if let strongSelf = self {
+                        strongSelf.upvote()
+                    }
+                }, isUpvoted: upvoted, failure: nil)
+                updater?.isPaused = true
+                let postContentTransitioningDelegate = PostContentPresentationManager()
+                postContentTransitioningDelegate.sourceImageView = self.videoView
+                controller.transitioningDelegate = postContentTransitioningDelegate
+                controller.modalPresentationStyle = .custom
+                controller.forceStartUnmuted = !self.videoView.player!.isMuted
+                
+                parentViewController?.present(controller, animated: true, completion: nil)
+            }
         }
     }
     
@@ -3100,7 +3112,6 @@ public extension UIImageView {
     func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize?  = nil, isBannerView: Bool) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
         self.backgroundColor = ColorUtil.theme.fontColor
-
         startPulsingAnimation()
 
         DispatchQueue.global(qos: .userInteractive).async {

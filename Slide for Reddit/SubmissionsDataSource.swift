@@ -156,7 +156,7 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading || force {
+        if (!loading || force) && (!offline || content.count == 0) {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()
@@ -190,56 +190,7 @@ class SubmissionsDataSource {
                     self.isReset = false
                     switch result {
                     case .failure:
-                        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubredditPosts")
-                        let sort = NSSortDescriptor(key: #keyPath(SubredditPosts.time), ascending: false)
-                        let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
-                        fetchRequest.sortDescriptors = [sort]
-                        fetchRequest.predicate = predicate
-                        do {
-                            let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubredditPosts]
-                            self.content = []
-                            self.contentIDs = []
-
-                            if let first = results.first {
-                                let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionModel")
-                                let postPredicate = NSPredicate(format: "id in %@", first.posts?.split(",") ?? [])
-                                postsRequest.predicate = postPredicate
-                                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionModel]
-
-                                var linksDict = [String: SubmissionObject]() //Use dictionary to sort values below
-                                for model in links {
-                                    let object = SubmissionObject.fromModel(model)
-                                    linksDict[object.getId()] = object
-                                }
-
-                                let order = first.posts?.split(",") ?? []
-                                
-                                for id in order {
-                                    if let link = linksDict[id] {
-                                        self.content.append(link)
-                                    }
-                                }
-
-                                self.updated = first.time ?? Date()
-                            }
-                            var paths = [IndexPath]()
-                            for i in 0..<self.content.count {
-                                paths.append(IndexPath.init(item: i, section: 0))
-                            }
-                            
-                            self.loading = false
-                            self.nomore = true
-                            self.offline = true
-                            
-                            if let delegate = self.delegate {
-                                DispatchQueue.main.async {
-                                    delegate.loadOffline()
-                                }
-                            }
-                        } catch let _ as NSError {
-
-                        }
-
+                        self.loadOffline()
                     case .success(let listing):
                         self.loading = false
                         self.tries = 0
@@ -323,7 +274,7 @@ extension SubmissionsDataSource: Cacheable {
             let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
             fetchRequest.predicate = predicate
             do {
-                let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubredditPosts]
+                let results = try context.fetch(fetchRequest) as! [SubredditPosts]
                 subredditPosts = results.first
             } catch {
                 
@@ -347,5 +298,58 @@ extension SubmissionsDataSource: Cacheable {
             
             return subredditPosts
         }
+    }
+    
+    func loadOffline() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubredditPosts")
+        let sort = NSSortDescriptor(key: #keyPath(SubredditPosts.time), ascending: false)
+        let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
+        fetchRequest.sortDescriptors = [sort]
+        fetchRequest.predicate = predicate
+        do {
+            let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubredditPosts]
+            self.content = []
+            self.contentIDs = []
+
+            if let first = results.first {
+                let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionModel")
+                let postPredicate = NSPredicate(format: "id in %@", first.posts?.split(",") ?? [])
+                postsRequest.predicate = postPredicate
+                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionModel]
+
+                var linksDict = [String: SubmissionObject]() //Use dictionary to sort values below
+                for model in links {
+                    let object = SubmissionObject.fromModel(model)
+                    linksDict[object.getId()] = object
+                }
+
+                let order = first.posts?.split(",") ?? []
+                
+                for id in order {
+                    if let link = linksDict[id] {
+                        self.content.append(link)
+                    }
+                }
+
+                self.updated = first.time ?? Date()
+            }
+            var paths = [IndexPath]()
+            for i in 0..<self.content.count {
+                paths.append(IndexPath.init(item: i, section: 0))
+            }
+            
+            self.loading = false
+            self.nomore = true
+            self.offline = true
+            
+            if let delegate = self.delegate {
+                DispatchQueue.main.async {
+                    delegate.loadOffline()
+                }
+            }
+        } catch let _ as NSError {
+
+        }
+
     }
 }
