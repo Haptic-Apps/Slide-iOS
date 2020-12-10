@@ -85,6 +85,12 @@ class RealmDataWrapper {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
+                    preview = (previews!.last as? [String: Any])?["url"] as? String ?? preview
+                    burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
+
+                    w = (previews!.last as? [String: Any])?["width"] as? Int ?? w
+                    h = (previews!.last as? [String: Any])?["height"] as? Int ??  h
+                    
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
@@ -100,6 +106,11 @@ class RealmDataWrapper {
             }
             
         }
+        
+        if (preview ?? "").contains(".gif?") {
+            preview = nil
+        }
+
         let rSubmission = RSubmission()
         do {
             try rSubmission.smallPreview = ((previews?.first as? [String: Any])?["url"] as? String)?.convertHtmlSymbols() ?? ""
@@ -308,7 +319,7 @@ class RealmDataWrapper {
         var lqUrl: String = "" //lq banner url
         
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
-        let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+        var preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
         
         var videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["hls_url"] as? String)
         if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
@@ -360,6 +371,12 @@ class RealmDataWrapper {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
+                    preview = (previews!.last as? [String: Any])?["url"] as? String ?? preview
+                    burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
+
+                    w = (previews!.last as? [String: Any])?["width"] as? Int ?? w
+                    h = (previews!.last as? [String: Any])?["height"] as? Int ??  h
+                    
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
@@ -376,6 +393,10 @@ class RealmDataWrapper {
             
         }
         
+        if (preview ?? "").contains(".gif?") {
+            preview = nil
+        }
+
         let jsonDict = NSMutableDictionary()
         for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
             if let award = item as? JSONDictionary {
