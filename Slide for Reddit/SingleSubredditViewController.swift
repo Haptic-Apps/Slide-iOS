@@ -90,7 +90,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var translatingCell: LinkCellView?
     var isGallery = false
 
-    var parentController: MainViewController?
+    weak var parentController: MainViewController?
     var accentChosen: UIColor?
     var primaryChosen: UIColor?
 

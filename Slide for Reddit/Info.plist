@@ -404,7 +404,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>213</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
