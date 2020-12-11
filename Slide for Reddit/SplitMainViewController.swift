@@ -1219,15 +1219,18 @@ extension SplitMainViewController: AutoCacheDelegate {
         self.accountB.accessibilityHint = "Open account page"
 
         backView.addTapGestureRecognizer { (_) in
-            self.showTopCachingView()
+            self.showCacheDetails()
         }
         self.navigationItem.leftBarButtonItem = self.accountB
     }
     
-    func showTopCachingView() {
+    func showCacheDetails() {
+        if getHeaderView() != nil {
+            return
+        }
+        
         let oldView = self.navigationItem.titleView
         let oldRight = self.navigationItem.rightBarButtonItems
-        
         
         self.navigationItem.titleView = ProgressHeaderView()
         getHeaderView()?.sizeToFit()
@@ -1238,20 +1241,35 @@ extension SplitMainViewController: AutoCacheDelegate {
             self.getHeaderView()?.alpha = 1
             self.autoCacheProgress?.alpha = 0
         } completion: { (_) in
+            self.autoCacheProgress?.stopAnimating()
             self.autoCacheProgress?.isHidden = true
         }
-
+        
+        getHeaderView()?.addTapGestureRecognizer(action: { (_) in
+            self.hideCacheDetails(oldView)
+        })
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
-            self.navigationItem.titleView = oldView
-            self.autoCacheProgress?.isHidden = false
-
-            UIView.animate(withDuration: 0.5) {
-                self.navigationItem.titleView?.alpha = 1
-                self.autoCacheProgress?.alpha = 1
-            } completion: { (_) in
-            }
+            self.hideCacheDetails(oldView)
         }
+    }
+    
+    func hideCacheDetails(_ oldView: UIView?) {
+        if !(self.navigationItem.titleView is ProgressHeaderView) {
+            return
+        }
+        self.navigationItem.titleView = oldView
+        self.navigationItem.titleView?.alpha = 0
+        self.autoCacheProgress?.isHidden = false
+        self.autoCacheProgress?.alpha = 0
+        self.autoCacheProgress?.startAnimating()
+
+        UIView.animate(withDuration: 0.5) {
+            self.navigationItem.titleView?.alpha = 1
+            self.autoCacheProgress?.alpha = 1
+        } completion: { (_) in
+        }
+
     }
     
     func getHeaderView() -> ProgressHeaderView? {
@@ -1284,13 +1302,13 @@ class ProgressHeaderView: UIView {
         title = UILabel().then {
             $0.textColor = ColorUtil.theme.fontColor
             $0.font = UIFont.systemFont(ofSize: 14)
-            $0.text = "Caching \(AutoCache.current?.subs[1])"
+            $0.text = ""
             $0.textAlignment = .center
         }
         
         progress = UIProgressView().then {
             $0.progressTintColor = ColorUtil.baseAccent
-            $0.progress = 0.5
+            $0.progress = 0
         }
         
         super.init(frame: .zero)

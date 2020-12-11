@@ -14,7 +14,7 @@ class CommentObject: RedditObject {
     public var approvedBy: String?
     public var author: String = ""
     public var awardsJSON: String?
-    public var controversality: Int32
+    public var controversality: Int
     public var created: Date = Date()
     public var edited: Date?
     public var depth: Int = -1
@@ -72,7 +72,7 @@ class CommentObject: RedditObject {
         self.approvedBy = model.approvedBy
         self.author = model.author
         self.awardsJSON = model.awardsJSON
-        self.controversality = model.controversality
+        self.controversality = Int(model.controversality)
         self.created = model.created
         self.depth = Int(model.depth)
         self.distinguished = model.distinguished
@@ -188,7 +188,7 @@ class CommentObject: RedditObject {
         self.linkID = comment.linkId
         self.isArchived = comment.archived
         self.distinguished = comment.distinguished.type
-        self.controversality = Int32(comment.controversiality)
+        self.controversality = comment.controversiality
         self.hasVoted = comment.likes != .none
         self.voteDirection = comment.likes == .up
         self.name = comment.name
@@ -244,9 +244,9 @@ extension CommentObject: Cacheable {
             commentModel.approvedBy = self.approvedBy
             commentModel.author = self.author
             commentModel.awardsJSON = self.awardsJSON
-            commentModel.controversality = self.controversality
+            commentModel.controversality = Int64(self.controversality)
             commentModel.created = self.created
-            commentModel.depth = Int32(self.depth)
+            commentModel.depth = Int64(self.depth)
             commentModel.distinguished = self.distinguished
             commentModel.edited = self.edited ?? Date()
             commentModel.flairJSON = self.flairJSON
@@ -264,7 +264,7 @@ extension CommentObject: Cacheable {
             commentModel.isStickied = self.isStickied
             commentModel.linkID = self.linkID
             commentModel.locked = self.locked
-            commentModel.score = Int32(self.score)
+            commentModel.score = Int64(self.score)
             commentModel.markdownBody = self.markdownBody
             commentModel.name = self.name
             commentModel.parentID = self.parentID

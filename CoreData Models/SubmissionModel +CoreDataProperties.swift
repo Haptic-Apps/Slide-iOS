@@ -54,7 +54,7 @@ extension SubmissionModel {
     @NSManaged public var smallPreview: String?
     @NSManaged public var removalNote: String?
     @NSManaged public var isEdited: Bool
-    @NSManaged public var commentCount: Int32
+    @NSManaged public var commentCount: Int64
     @NSManaged public var isSaved: Bool
     @NSManaged public var isStickied: Bool
     @NSManaged public var isVisited: Bool
@@ -67,12 +67,12 @@ extension SubmissionModel {
     @NSManaged public var hasThumbnail: Bool
     @NSManaged public var hasBanner: Bool
     @NSManaged public var isNSFW: Bool
-    @NSManaged public var score: Int32
+    @NSManaged public var score: Int64
     @NSManaged public var upvoteRatio: Double
     @NSManaged public var domain: String
     @NSManaged public var hasVoted: Bool
-    @NSManaged public var imageHeight: Int32
-    @NSManaged public var imageWidth: Int32
+    @NSManaged public var imageHeight: Int64
+    @NSManaged public var imageWidth: Int64
     @NSManaged public var voteDirection: Bool
     @NSManaged public var isArchived: Bool
     @NSManaged public var isLocked: Bool

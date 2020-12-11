@@ -26,7 +26,6 @@ class SlideCoreData: NSObject {
         return backgroundContext
     }
 
-    
     private static let url: URL = {
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("Reddit.sqlite")
 

@@ -264,7 +264,6 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.hasThumbnail = true
         fakesub.hasBanner = true
         fakesub.score = 52314
-        //TODO flair?
         fakesub.domain = "imgur.com"
         fakesub.hasVoted = false
         fakesub.imageHeight = 288

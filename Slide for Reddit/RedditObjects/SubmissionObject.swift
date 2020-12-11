@@ -10,7 +10,7 @@ import CoreData
 import Foundation
 import reddift
 
-class SubmissionObject: RedditObject {
+class SubmissionObject: RedditObject {    
     public var id: String = ""
     public var name: String = ""
     public var author: String = ""
@@ -644,7 +644,7 @@ extension SubmissionObject: Cacheable {
             submissionModel.contentUrl = self.contentUrl
             
             submissionModel.title = self.title
-            submissionModel.commentCount = Int32(self.commentCount)
+            submissionModel.commentCount = Int64(self.commentCount)
             submissionModel.isSaved = self.isSaved
             submissionModel.isStickied = self.isStickied
             submissionModel.isVisited = self.isVisited
@@ -656,7 +656,7 @@ extension SubmissionObject: Cacheable {
             submissionModel.lqURL = self.lqURL
             submissionModel.domain = self.domain
             submissionModel.isLQ = self.isLQ
-            submissionModel.score = Int32(self.score)
+            submissionModel.score = Int64(self.score)
             submissionModel.hasVoted = self.hasVoted
             submissionModel.upvoteRatio = self.upvoteRatio
             submissionModel.voteDirection = self.voteDirection
@@ -665,8 +665,8 @@ extension SubmissionObject: Cacheable {
                     
             submissionModel.videoMP4 = self.videoMP4
             
-            submissionModel.imageHeight = Int32(self.imageHeight)
-            submissionModel.imageWidth = Int32(self.imageWidth)
+            submissionModel.imageHeight = Int64(self.imageHeight)
+            submissionModel.imageWidth = Int64(self.imageWidth)
             submissionModel.distinguished = self.distinguished
             submissionModel.isMod = self.isMod
             submissionModel.isSelf = self.isSelf

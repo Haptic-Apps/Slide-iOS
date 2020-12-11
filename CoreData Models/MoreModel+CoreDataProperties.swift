@@ -20,7 +20,7 @@ extension MoreModel {
     @NSManaged public var id: String
     @NSManaged public var name: String
     @NSManaged public var parentID: String
-    @NSManaged public var count: Int32
+    @NSManaged public var count: Int64
     @NSManaged public var childrenString: String
 
 }
