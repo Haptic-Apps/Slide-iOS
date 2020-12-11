@@ -1217,9 +1217,45 @@ extension SplitMainViewController: AutoCacheDelegate {
         self.accountB.accessibilityIdentifier = "Account button"
         self.accountB.accessibilityLabel = "Account"
         self.accountB.accessibilityHint = "Open account page"
-        self.accountB.addTargetForAction(target: self, action: #selector(self.openDrawer(_:)))
 
+        backView.addTapGestureRecognizer { (_) in
+            self.showTopCachingView()
+        }
         self.navigationItem.leftBarButtonItem = self.accountB
+    }
+    
+    func showTopCachingView() {
+        let oldView = self.navigationItem.titleView
+        let oldRight = self.navigationItem.rightBarButtonItems
+        
+        
+        self.navigationItem.titleView = ProgressHeaderView()
+        getHeaderView()?.sizeToFit()
+        getHeaderView()?.alpha = 0
+        getHeaderView()?.title.text = "Caching \(AutoCache.current?.currentSubreddit ?? "")"
+        getHeaderView()?.progress.progress = AutoCache.current?.cacheProgress ?? 0
+        UIView.animate(withDuration: 0.5) {
+            self.getHeaderView()?.alpha = 1
+            self.autoCacheProgress?.alpha = 0
+        } completion: { (_) in
+            self.autoCacheProgress?.isHidden = true
+        }
+
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+            self.navigationItem.titleView = oldView
+            self.autoCacheProgress?.isHidden = false
+
+            UIView.animate(withDuration: 0.5) {
+                self.navigationItem.titleView?.alpha = 1
+                self.autoCacheProgress?.alpha = 1
+            } completion: { (_) in
+            }
+        }
+    }
+    
+    func getHeaderView() -> ProgressHeaderView? {
+        return self.navigationItem.titleView as? ProgressHeaderView
     }
     
     @objc func autoCacheProgress(_ notification: Notification) {
@@ -1227,12 +1263,50 @@ extension SplitMainViewController: AutoCacheDelegate {
             if self.autoCacheProgress == nil {
                 self.doSubCachingIcon(notification)
             }
+            
             if self.autoCacheProgress?.indicatorMode ?? .determinate == .indeterminate {
                 self.autoCacheProgress?.stopAnimating()
                 self.autoCacheProgress?.indicatorMode = .determinate
                 self.autoCacheProgress?.startAnimating()
             }
             self.autoCacheProgress?.progress = notification.userInfo?["progress"] as? Float ?? 0
+            self.getHeaderView()?.title.text = "Caching \(AutoCache.current?.currentSubreddit ?? "")"
+            self.getHeaderView()?.progress.progress = AutoCache.current?.cacheProgress ?? 0
         }
+    }
+}
+
+class ProgressHeaderView: UIView {
+    var title = UILabel()
+    var progress = UIProgressView()
+    
+    init() {
+        title = UILabel().then {
+            $0.textColor = ColorUtil.theme.fontColor
+            $0.font = UIFont.systemFont(ofSize: 14)
+            $0.text = "Caching \(AutoCache.current?.subs[1])"
+            $0.textAlignment = .center
+        }
+        
+        progress = UIProgressView().then {
+            $0.progressTintColor = ColorUtil.baseAccent
+            $0.progress = 0.5
+        }
+        
+        super.init(frame: .zero)
+        
+        self.addSubviews(title, progress)
+        
+        title.topAnchor /==/ self.topAnchor
+        title.horizontalAnchors /==/ self.horizontalAnchors
+        
+        progress.topAnchor /==/ title.bottomAnchor + 4
+        progress.horizontalAnchors /==/ self.horizontalAnchors + 20
+        progress.bottomAnchor /==/ self.bottomAnchor
+        progress.heightAnchor /==/ 3
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

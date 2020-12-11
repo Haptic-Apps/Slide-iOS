@@ -95,4 +95,9 @@ class SlideCoreData: NSObject {
             }
         }
     }
+    
+    static func getCoreDataDBPath() -> URL? {
+        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).last
+    }
+
 }

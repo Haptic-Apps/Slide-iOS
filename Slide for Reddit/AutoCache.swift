@@ -29,6 +29,8 @@ protocol AutoCacheDelegate {
 public class AutoCache: NSObject {
     var subs = [String]()
     var cancel = false
+    var currentSubreddit = ""
+    var cacheProgress = Float(0)
     static var current: AutoCache?
 
     init(subs: [String]) {
@@ -40,6 +42,7 @@ public class AutoCache: NSObject {
                 doCache(subs: subs, progress: { sub, post, total, failed in
                     DispatchQueue.main.async {
                         NotificationCenter.default.post(name: .autoCacheProgress, object: nil, userInfo: ["subreddit": sub, "progress": Float(post) / Float(total)])
+                        self.cacheProgress = Float(post) / Float(total)
                     }
                 }, completion: { (total, failed) in
                     DispatchQueue.main.async {
@@ -122,7 +125,8 @@ public class AutoCache: NSObject {
         }
         
         NotificationCenter.default.post(name: .autoCacheStarted, object: nil, userInfo: ["subreddit": self.subs[index]])
-
+        self.currentSubreddit = self.subs[index]
+        
         if index >= subs.count {
             completion(total, failed)
             return

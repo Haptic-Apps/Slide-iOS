@@ -493,7 +493,17 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
     
     func checkRealmFileSize() -> Double {
-        //todo get CoreData size
+        if let realmPath = SlideCoreData.getCoreDataDBPath() {
+            do {
+                let attributes = try FileManager.default.attributesOfItem(atPath: realmPath.absoluteString)
+                if let fileSize = attributes[FileAttributeKey.size] as? Double {
+
+                    return fileSize
+                }
+            } catch let error {
+                print(error)
+            }
+        }
         return 0
     }
 
@@ -737,7 +747,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 5:
                 ch = CacheSettings()
             case 6:
-                //todo clear CoreData
                 let activity = UIActivityIndicatorView()
                 activity.color = ColorUtil.theme.navIconColor
                 activity.hidesWhenStopped = true
@@ -767,6 +776,23 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                     } catch {
                         print(error)
                     }
+                    
+                    do {
+                        let fileManager = FileManager.default
+
+                        let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                        let directoryContents = try fileManager.contentsOfDirectory(atPath: dirPath)
+
+                        for path in directoryContents {
+                            if path.contains("realm") {
+                                let writePath = URL(fileURLWithPath: dirPath).appendingPathComponent(path)
+                                try fileManager.removeItem(at: writePath)
+                            }
+                        }
+                    } catch {
+                        
+                    }
+
                     
                     let countBytes = ByteCountFormatter()
                     countBytes.allowedUnits = [.useMB]

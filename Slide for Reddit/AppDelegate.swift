@@ -238,6 +238,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let currentVersionInt: Int = Int(build) ?? 0
         
         if lastVersionInt < currentVersionInt {
+            //Clean up Realm
+            do {
+                let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                let directoryContents = try fileManager.contentsOfDirectory(atPath: dirPath)
+
+                for path in directoryContents {
+                    if path.contains("realm") {
+                        let writePath = URL(fileURLWithPath: dirPath).appendingPathComponent(path)
+                        try fileManager.removeItem(at: writePath)
+                    }
+                }
+            } catch {
+                
+            }
+
             //Clean up broken videos
             do {
                 var dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
@@ -332,7 +347,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if DEBUG
-        SettingValues.isPro = false
+        SettingValues.isPro = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         UIApplication.shared.isIdleTimerDisabled = true
