@@ -253,7 +253,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
                     keyWindow = UIApplication.shared.connectedScenes
                         .filter({ $0.activationState == .foregroundActive })
                         .map({ $0 as? UIWindowScene })
-                        .compactMap({$0})
+                        .compactMap({ $0 })
                         .first?.windows
                         .filter({ $0.isKeyWindow }).first
                 }
@@ -262,7 +262,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
                 fatalError("Window must exist when resetting the stack!")
             }
 
-            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
+            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
         } else if indexPath.section == 1 && indexPath.row == 1 {

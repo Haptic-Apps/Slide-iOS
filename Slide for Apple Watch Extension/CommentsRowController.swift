@@ -28,7 +28,6 @@ public class CommentsRowController: NSObject {
    
     func setData(dictionary: NSDictionary) {
         self.dictionary = dictionary
-        let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
         //let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
         id = dictionary["context"] as? String ?? ""

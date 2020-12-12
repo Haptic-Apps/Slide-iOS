@@ -82,7 +82,7 @@ class AnyModalViewController: UIViewController {
     
     var scrubber = VideoScrubberView()
     
-    var didStartPan : (_ panStart: Bool) -> Void = { result in }
+    var didStartPan : (_ panStart: Bool) -> Void = { _ in }
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
     
     private var savedColor: UIColor?
@@ -716,7 +716,7 @@ class AnyModalViewController: UIViewController {
     }
     
     func connectGestures() {
-        didStartPan = { [weak self] result in
+        didStartPan = { [weak self] _ in
             if let strongSelf = self {
                 strongSelf.unFullscreen(strongSelf.videoView)
             }
@@ -963,7 +963,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         
         let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
         let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
-        self.videoView.player?.seek(to: newCMTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { _ in
+        self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
             self.videoView.player?.play()
         }
     }
@@ -974,7 +974,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
         let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
-        self.videoView.player?.seek(to: targetTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
+        self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
     }
     
     func sliderDidBeginDragging() {

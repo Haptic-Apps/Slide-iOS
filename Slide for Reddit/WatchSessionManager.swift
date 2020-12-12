@@ -23,7 +23,6 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
     }
     
     public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        print(error)
         print("Activate Complete")
     }
         
@@ -91,8 +90,8 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                     print(vote)
                     try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(vote, name: fullname, completion: { (result) in
                         switch result {
-                        case .success(_):
-                            var message = ["upvoted": (vote == .up), "downvoted": (vote == .down)]
+                        case .success:
+                            let message = ["upvoted": (vote == .up), "downvoted": (vote == .down)]
                             print(message)
                             replyHandler(message)
                             if let index = ActionStates.upVotedFullnames.firstIndex(of: fullname) {
@@ -143,7 +142,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                     }
                 }
                 print("REPLY SUBLIST")
-                replyHandler(["subs": colorDict as? NSDictionary, "orderedsubs": sublist as? NSArray, "pro": SettingValues.isPro])
+                replyHandler(["subs": colorDict, "orderedsubs": sublist, "pro": SettingValues.isPro])
             } else if message["links"] != nil {
                 if message["reset"] as? Bool ?? true {
                     self.paginator = Paginator()
@@ -172,7 +171,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                 for link in listing.children {
                                     let dict = NSMutableDictionary()
                                     for item in ((link as! Link).baseJson) {
-                                        if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created"  || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
+                                        if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created" || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
                                             if item.key == "created" {
                                                 dict["created"] = DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval((link as! Link).createdUtc)), numericDates: true)
                                             } else {

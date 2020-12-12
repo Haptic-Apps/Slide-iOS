@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDelegate {
     

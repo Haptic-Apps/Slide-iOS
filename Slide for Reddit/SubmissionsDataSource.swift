@@ -215,7 +215,7 @@ class SubmissionsDataSource {
                         }
                         
                         self.delegate?.doPreloadImages(values: converted)
-                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! SubmissionObject}
+                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! SubmissionObject }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
                             let uuid = UUID().uuidString
@@ -280,7 +280,7 @@ extension SubmissionsDataSource: Cacheable {
                 
             }
             if subredditPosts == nil {
-                subredditPosts = NSEntityDescription.insertNewObject(forEntityName: "SubredditPosts", into: context) as! SubredditPosts
+                subredditPosts = NSEntityDescription.insertNewObject(forEntityName: "SubredditPosts", into: context) as? SubredditPosts
             }
 
             subredditPosts.posts = ids.joined(separator: ",")
@@ -347,7 +347,7 @@ extension SubmissionsDataSource: Cacheable {
                     delegate.loadOffline()
                 }
             }
-        } catch let _ as NSError {
+        } catch {
 
         }
 

@@ -50,7 +50,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
             alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
             }
         }
         
@@ -104,7 +104,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     
     var lsC: [NSLayoutConstraint] = []
 
-    func setLogItem(logItem: ModlogModel, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
+    func setLogItem(logItem: ModLogObject, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, width: CGFloat) {
         parentViewController = parent
         if navViewController == nil && nav != nil {
             navViewController = nav
@@ -134,7 +134,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     var timer: Timer?
     var cancelled = false
     
-    public static func getTitleText(item: ModlogModel) -> NSAttributedString {
+    public static func getTitleText(item: ModLogObject) -> NSAttributedString {
         let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
         
         let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created as NSDate, numericDates: true))  •  removed by \(item.mod)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
@@ -211,7 +211,7 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
         fatalError("init(coder:) has not been implemented")
     }
 
-    var logItem: ModlogModel?
+    var logItem: ModLogObject?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
 }

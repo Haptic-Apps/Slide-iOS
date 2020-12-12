@@ -50,7 +50,7 @@ extension TitleUITextView: UIGestureRecognizerDelegate {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         var toReturn = false
         self.layoutManager.textStorage?.enumerateAttribute(.urlAction, in: NSRange(location: 0, length: self.attributedText.length)) { attr, bgStyleRange, _ in
-            if let link = attr as? URL {
+            if attr is URL {
                 let bgStyleGlyphRange = self.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
                 self.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
                     let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)

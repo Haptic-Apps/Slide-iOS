@@ -37,7 +37,7 @@ class ModalMediaViewController: UIViewController {
     var spinnerIndicator = UIActivityIndicatorView()
     var titleView = YYLabel()
     
-    var didStartPan : (_ panStart: Bool) -> Void = { result in }
+    var didStartPan : (_ panStart: Bool) -> Void = { _ in }
 
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
@@ -400,7 +400,7 @@ class ModalMediaViewController: UIViewController {
     }
 
     func connectGestures() {
-        didStartPan = { [weak self] result in
+        didStartPan = { [weak self] _ in
             if let strongSelf = self {
                 strongSelf.unFullscreen(strongSelf.embeddedVC.view)
             }

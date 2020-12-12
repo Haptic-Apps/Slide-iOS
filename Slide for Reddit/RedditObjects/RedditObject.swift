@@ -13,7 +13,6 @@ protocol RedditObject {
     var name: String { get set }
 }
 
-
 extension RedditObject {
     func getId() -> String {
         if let object = self as? SubmissionObject {

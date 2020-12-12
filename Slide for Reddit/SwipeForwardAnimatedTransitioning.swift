@@ -50,7 +50,7 @@ class SwipeForwardAnimatedTransitioning: NSObject, UIViewControllerAnimatedTrans
                 UIView.animate(withDuration: transitionDuration(using: transitionContext), delay: 0, options: .curveLinear, animations: {
                     snapshotToView!.frame = fromView.frame
                     fromView.frame = fromViewFinalFrame
-                }, completion: { (finished) in
+                }, completion: { (_) in
                     snapshotToView!.layer.shadowOpacity = 0
 
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)

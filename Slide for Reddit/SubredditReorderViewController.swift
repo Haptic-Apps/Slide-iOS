@@ -258,7 +258,7 @@ class SubredditReorderViewController: UITableViewController {
         switch section {
         case 0: label.text = pinned.isEmpty ? "All Subreddits" : "Pinned"
         case 1: label.text = "All Subreddits"
-        default: label.text  = ""
+        default: label.text = ""
         }
         return toReturn
     }

@@ -710,7 +710,6 @@ class SettingValues {
         settings.set(title, forKey: "vtitle")
         settings.set(submission.permalink, forKey: "vlink")
         settings.synchronize()
-        let finalTitle = title + "\nTap to view Changelog"
         
         var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: CGFloat.greatestFiniteMagnitude)
         let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)

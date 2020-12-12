@@ -9,8 +9,6 @@
 import Anchorage
 import AudioToolbox
 import BadgeSwift
-import MaterialComponents.MaterialTabs
-
 import reddift
 import SDCAlertView
 import StoreKit
@@ -22,7 +20,7 @@ import WidgetKit
 
 class MainViewController: ColorMuxPagingViewController, UINavigationControllerDelegate, ReadLaterDelegate {
 
-    //MARK: - Variables
+    // MARK: - Variables
     /*
     Corresponds to USR_DOMAIN in info.plist, which derives its value
     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
@@ -112,7 +110,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     var currentTitle = "Slide"
 
-    //MARK: - Shared functions
+    // MARK: - Shared functions
     func didUpdate() {
         let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
         suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
@@ -747,7 +745,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func showMenu(_ sender: AnyObject) {
         getSubredditVC()?.showMore(sender, parentVC: self)
     }
-    //MARK: - Overrides
+    // MARK: - Overrides
     func handleToolbars() {
     }
     
@@ -796,7 +794,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func showDrawer(_ sender: AnyObject) {
     }
 
-    //MARK: - Other stuff
+    // MARK: - Other stuff
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
@@ -880,43 +878,6 @@ extension MainViewController: UIPageViewControllerDelegate {
         let prevSub = getSubredditVC()?.sub ?? ""
         color2 = ColorUtil.getColorForSub(sub: pendingSub, true)
         color1 = ColorUtil.getColorForSub(sub: prevSub, true)
-    }
-}
-
-class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
-    func indicatorAttributes(
-        for context: MDCTabBarIndicatorContext
-        ) -> MDCTabBarIndicatorAttributes {
-        let bounds = context.bounds
-        let attributes = MDCTabBarIndicatorAttributes()
-        let underlineFrame = CGRect.init(x: bounds.minX,
-                                         y: bounds.height - (UIDevice.current.userInterfaceIdiom == .pad ? 9 : 7),
-                                         width: bounds.width,
-                                         height: UIDevice.current.userInterfaceIdiom == .pad ? 4 : 5)
-        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIDevice.current.userInterfaceIdiom == .pad ? UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight, UIRectCorner.bottomLeft, UIRectCorner.bottomRight) : UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: UIDevice.current.userInterfaceIdiom == .pad ? CGSize.init(width: 2, height: 2) : CGSize.init(width: 8, height: 8))
-        return attributes
-    }
-}
-
-extension MainViewController: MDCTabBarDelegate {
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
-        selected = true
-        let firstViewController = SingleSubredditViewController(subName: finalSubs[tabBar.items.firstIndex(of: item)!], parent: self)
-
-        weak var weakPageVc = self
-        setViewControllers([firstViewController],
-                           direction: .forward,
-                           animated: false,
-                           completion: { (_) in
-                                guard let pageVc = weakPageVc else {
-                                    return
-                                }
-
-                                DispatchQueue.main.async {
-                                    pageVc.doCurrentPage(tabBar.items.firstIndex(of: item)!)
-                                }
-                            })
-
     }
 }
 

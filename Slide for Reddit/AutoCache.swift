@@ -221,7 +221,7 @@ public class AutoCache: NSObject {
                 
             }
             if submissionComments == nil {
-                submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as! SubmissionComments
+                submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as? SubmissionComments
             }
 
             submissionComments.submissionId = submission.getId()

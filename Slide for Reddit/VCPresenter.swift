@@ -43,7 +43,7 @@ public class VCPresenter {
             override13 = false
         }
         
-        var respectedOverride13 = override13
+        let respectedOverride13 = override13
 
         override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
         
@@ -124,7 +124,7 @@ public class VCPresenter {
         button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withSize: CGSize.square(size: 20)), for: UIControl.State.normal)
         button.frame = CGRect.init(x: -10, y: 0, width: 35, height: 35)
         button.clipsToBounds = true
-        button.layer.cornerRadius = 35/2
+        button.layer.cornerRadius = 35 / 2
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         let barButton = UIBarButtonItem.init(customView: button)

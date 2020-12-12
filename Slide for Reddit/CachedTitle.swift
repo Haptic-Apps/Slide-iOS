@@ -184,7 +184,7 @@ class CachedTitle {
             attributedTitle.append(info)
         }
 
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited as? NSDate ?? NSDate(), numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited as NSDate? ?? NSDate(), numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
@@ -236,7 +236,6 @@ class CachedTitle {
         let extraLine = NSMutableAttributedString()
         finalTitle.append(attributedTitle)
         infoLine.append(endString)
-        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
 
         if !full {
             if SettingValues.scoreInTitle {
@@ -586,8 +585,6 @@ class CachedTitle {
                         let url = award[1]
                         let testString = NSMutableAttributedString(string: "test", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                         if let urlAsURL = URL(string: url) {
-                            let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
-
                             let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
                             attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
                             attachments.append(attachment)
@@ -637,7 +634,7 @@ extension NSAttributedString {
 extension UIImage {
     func centerImage(with finalSize: CGSize) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(finalSize, false, self.scale)
-        let _ = UIGraphicsGetCurrentContext()
+        _ = UIGraphicsGetCurrentContext()
         
         let selfSize = self.size
         let left = (finalSize.width - selfSize.width) / 2

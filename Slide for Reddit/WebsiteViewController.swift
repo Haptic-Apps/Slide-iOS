@@ -158,7 +158,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     @objc func readerMode(_ sender: AnyObject) {
         if let url = webView.url ?? url {
-            let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: true)
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+            let safariVC = SFHideSafariViewController(url: url, configuration: config)
             present(safariVC, animated: true, completion: nil)
         }
     }
@@ -480,7 +482,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             URLQueryItem(name: "redirect_uri", value: "https://www.reddit.com"),
             URLQueryItem(name: "response_type", value: "code id_token"),
             URLQueryItem(name: "scope", value: "email"),
-            URLQueryItem(name: "response_mode", value: "form_post")
+            URLQueryItem(name: "response_mode", value: "form_post"),
         ]
 
         var urlComps = URLComponents(string: "https://appleid.apple.com/auth/authorize")!
@@ -524,7 +526,7 @@ extension WKWebView {
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
             if error == nil {
                 if result != nil {
-                    resultString = result as! String
+                    resultString = result as? String
                 }
             } else {
                 resultString = "\(error.debugDescription)"
@@ -569,10 +571,10 @@ extension WebsiteViewController: WKScriptMessageHandler {
 
 extension WKWebView {
 
-    private var httpCookieStore: WKHTTPCookieStore  { return WKWebsiteDataStore.default().httpCookieStore }
+    private var httpCookieStore: WKHTTPCookieStore { return WKWebsiteDataStore.default().httpCookieStore }
 
-    func getCookies(for domain: String? = nil, completion: @escaping ([String : Any])->())  {
-        var cookieDict = [String : AnyObject]()
+    func getCookies(for domain: String? = nil, completion: @escaping ([String: Any]) -> ()) {
+        var cookieDict = [String: AnyObject]()
         httpCookieStore.getAllCookies { cookies in
             for cookie in cookies {
                 if let domain = domain {

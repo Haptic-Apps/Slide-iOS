@@ -245,7 +245,7 @@ extension CommentObject: Cacheable {
                 
             }
             if commentModel == nil {
-                commentModel = NSEntityDescription.insertNewObject(forEntityName: "CommentModel", into: context) as! CommentModel
+                commentModel = NSEntityDescription.insertNewObject(forEntityName: "CommentModel", into: context) as? CommentModel
             }
 
             commentModel.approvedBy = self.approvedBy

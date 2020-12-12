@@ -455,67 +455,67 @@ extension UIView {
 
     // Set our computed property type to a closure
     private var tapGestureRecognizerAction: Action? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer) as? Action
-            return tapGestureRecognizerActionInstance
-        }
     }
 
     private var longTapGestureRecognizerAction: Action? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer) as? Action
-            return tapGestureRecognizerActionInstance
-        }
     }
     
     private var longTapGestureRecognizer: UIGestureRecognizer? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance) as? UIGestureRecognizer
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance) as? UIGestureRecognizer
-            return tapGestureRecognizerActionInstance
-        }
     }
 
     private var timer: Timer? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer) as? Timer
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer) as? Timer
-            return tapGestureRecognizerActionInstance
-        }
     }
 
     private var cancelled: Bool? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled) as? Bool
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
-        }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled) as? Bool
-            return tapGestureRecognizerActionInstance
         }
     }
 

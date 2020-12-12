@@ -6,9 +6,8 @@
 //  Copyright © 2019 Haptic Apps. All rights reserved.
 //
 
-import Foundation
-
 import Anchorage
+import Foundation
 import MaterialComponents.MaterialTabs
 import reddift
 import UIKit
@@ -62,7 +61,7 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
         self.navigationController?.popViewController(animated: true)
     }
 
-    var tabBar = MDCTabBar()
+    var tabBar = MDCTabBarView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,20 +77,22 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
             items.append(i)
         }
 
-        tabBar = MDCTabBar.init(frame: CGRect.zero)
+        tabBar = MDCTabBarView(frame: CGRect.zero)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
-        tabBar.itemAppearance = .titles
-        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white)
-        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45)
-
+        
         tabBar.items = titles.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
         tabBar.delegate = self
-        tabBar.inkColor = UIColor.clear
-        tabBar.selectedItem = tabBar.items[0]
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-
+        tabBar.rippleColor = UIColor.clear
+        tabBar.setSelectedItem(tabBar.items[0], animated: false)
+        tabBar.showsHorizontalScrollIndicator = false
+        
+        tabBar.selectionIndicatorStrokeColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white.withAlphaComponent(0.75), for: .normal)
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white, for: .selected)
+        tabBar.preferredLayoutStyle = .scrollableCentered
+        
         self.view.addSubview(tabBar)
         tabBar.heightAnchor /==/ 48
         setupBaseBarColors()
@@ -230,9 +231,9 @@ class CollectionsViewController: UIPageViewController, UIPageViewControllerDataS
 
 }
 
-extension CollectionsViewController: MDCTabBarDelegate {
+extension CollectionsViewController: MDCTabBarViewDelegate {
 
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+    func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem) {
         let firstViewController = vCs[tabBar.items.firstIndex(of: item)!]
         currentIndex = tabBar.items.firstIndex(of: item)!
         setViewControllers([firstViewController],

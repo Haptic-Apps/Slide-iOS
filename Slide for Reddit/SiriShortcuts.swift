@@ -55,7 +55,7 @@ extension AppDelegate {
         } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
             VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         } else if let url = userActivity.webpageURL {
-            handleURL(url)
+            _ = handleURL(url)
         }
         return true
     }

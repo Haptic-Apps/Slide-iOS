@@ -20,9 +20,11 @@ class ModMailContributionLoader: ContributionLoader {
     
     var unread = false
     var canGetMore = true
+    var subreddit: String
     
-    init(_ unread: Bool) {
+    init(_ unread: Bool, sub: String) {
         self.unread = unread
+        self.subreddit = sub
         paginator = Paginator()
         content = []
         color = ColorUtil.getColorForSub(sub: "")

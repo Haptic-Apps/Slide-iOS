@@ -67,7 +67,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 animated: true,
                                 completion: { [weak self] (_) in
                                     guard let self = self else { return }
-                                    var currentVc = firstViewController
+                                    let currentVc = firstViewController
                                     if currentVc.embeddedVC == nil {
                                         self.viewToMove = currentVc.view
                                     } else {
@@ -147,7 +147,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                         animated: true,
                                         completion: { [weak self] (_) in
                                             guard let self = self else { return }
-                                            var currentVc = firstViewController
+                                            let currentVc = firstViewController
                                             if currentVc.embeddedVC == nil {
                                                 self.viewToMove = currentVc.view
                                             } else {
@@ -189,7 +189,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             animated: true,
                                             completion: { [weak self] (_) in
                                                 guard let self = self else { return }
-                                                var currentVc = firstViewController
+                                                let currentVc = firstViewController
                                                 if currentVc.embeddedVC == nil {
                                                     self.viewToMove = currentVc.view
                                                 } else {
@@ -367,7 +367,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                     animated: true,
                                     completion: { [weak self] (_) in
                                         guard let self = self else { return }
-                                        var currentVc = firstViewController
+                                        let currentVc = firstViewController
                                         if currentVc.embeddedVC == nil {
                                             self.viewToMove = currentVc.view
                                         } else {
@@ -426,7 +426,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                         animated: true,
                                         completion: { [weak self] (_) in
                                             guard let self = self else { return }
-                                            var currentVc = firstViewController
+                                            let currentVc = firstViewController
                                             if currentVc.embeddedVC == nil {
                                                 self.viewToMove = currentVc.view
                                             } else {

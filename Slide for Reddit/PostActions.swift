@@ -181,7 +181,7 @@ class PostActions: NSObject {
         }
         
         if cell.link!.isApproved {
-            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
+            alertController.addAction(title: "Approved by \(cell.link!.approvedBy ?? "unknown")", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
             }
         } else {
             alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
@@ -190,7 +190,7 @@ class PostActions: NSObject {
         }
         
         if cell.link!.isRemoved {
-            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
+            alertController.addAction(title: "Removed by \(cell.link!.approvedBy ?? "unknown")", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
             }
         } else {
             alertController.addAction(title: "Remove", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {

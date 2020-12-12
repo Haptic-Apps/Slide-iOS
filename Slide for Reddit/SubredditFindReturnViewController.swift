@@ -266,9 +266,9 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
-        case 0: label.text  = "Preview"
-        case 1: label.text  = "Trending"
-        default: label.text  = ""
+        case 0: label.text = "Preview"
+        case 1: label.text = "Trending"
+        default: label.text = ""
         }
         return toReturn
     }

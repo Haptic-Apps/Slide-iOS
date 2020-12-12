@@ -87,7 +87,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
             alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
             }
         }
         
@@ -117,13 +117,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func share(sender: UITapGestureRecognizer? = nil) {
         let url = self.link!.url ?? URL(string: self.link!.permalink)
-        
-        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [bannerImage?.image] : [url], applicationActivities: nil)
-        if let presenter = activityViewController.popoverPresentationController {
-            presenter.sourceView = self.innerView
-            presenter.sourceRect = self.innerView.bounds
+        if let strongImage = bannerImage?.image {
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [strongImage] : [url], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = self.innerView
+                presenter.sourceRect = self.innerView.bounds
+            }
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
         }
-        self.parentViewController?.present(activityViewController, animated: true, completion: nil)
     }
 
     @objc func downvote(sender: UITapGestureRecognizer? = nil) {
@@ -840,7 +841,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let open = OpenInChromeController.init()
             if open.isChromeInstalled() {
                 alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
                 }
             }
             if #available(iOS 10.0, *) {
@@ -2040,7 +2041,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
@@ -2090,7 +2091,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             Post type is \(submission.type.rawValue).
             Posted in \(submission.subreddit) by \(submission.author).
             The score is \(submission.score) and there are \(submission.commentCount) comments.
-            \(full ? "Post body: \(submission.markdownBody)" : "")
+            \(full ? "Post body: \(submission.markdownBody ?? "")" : "")
         """
         if full {
             switch submission.type {
@@ -3109,7 +3110,7 @@ private extension UIView {
 }
 
 public extension UIImageView {
-    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize?  = nil, isBannerView: Bool) {
+    func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize? = nil, isBannerView: Bool) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
         self.backgroundColor = ColorUtil.theme.fontColor
         startPulsingAnimation()
@@ -3432,7 +3433,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             let open = OpenInChromeController.init()
             if open.isChromeInstalled() {
                 children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
-                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
                 })
             }
 

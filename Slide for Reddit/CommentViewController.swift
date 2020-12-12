@@ -306,7 +306,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             let contentHeight = self.tableView.contentSize.height
                             let offsetY = self.tableView.contentOffset.y
-                            let bottomOffset = contentHeight - offsetY
                             if #available(iOS 11.0, *) {
                                 CATransaction.begin()
                                 CATransaction.setDisableActions(true)
@@ -908,7 +907,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 } else {
                     try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: SettingValues.commentLimit, completion: { (result) -> Void in
                         switch result {
-                        case .failure(let error):
+                        case .failure:
+                            //TODO show error code?
                             self.loadOffline()
                         case .success(let tuple):
                             let startDepth = 1
@@ -975,7 +975,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     self.tableView.tableHeaderView = UIView(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.width, height: 0.01))
                                     
                                     if let tableHeaderView = self.headerCell {
-                                        var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
+                                        let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: tableHeaderView.estimateHeight(true, np: self.np))
                                         if self.tableView.tableHeaderView == nil || !frame.equalTo(tableHeaderView.frame) {
                                             tableHeaderView.frame = frame
                                             tableHeaderView.layoutIfNeeded()
@@ -997,7 +997,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.headerCell?.showBody(width: self.view.frame.size.width - 24)
                                     }
                                     
-                                    var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
+                                    let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: self.headerCell!.estimateHeight(true, true, np: self.np))
                                     
                                     self.headerCell!.contentView.frame = frame
                                     self.headerCell!.contentView.layoutIfNeeded()
@@ -1548,7 +1548,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 configuredOnce = true
             }
             
-            var frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
+            let frame = CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: headerCell.estimateHeight(true, np: self.np))
             
             if self.tableView.tableHeaderView == nil || !frame.equalTo(headerCell.contentView.frame) {
                 headerCell.contentView.frame = frame
@@ -2292,7 +2292,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.liveTimer.invalidate()
         self.removeJumpButton()
         if !offline {
-            self.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
+            _ = self.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
         }
     }
     
@@ -2590,7 +2590,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         coordinator.animate(
             alongsideTransition: { [unowned self] _ in
-                if let header = self.tableView.tableHeaderView {
+                if self.tableView.tableHeaderView != nil {
                     var newWidth = size.width
                     
                     //There is a bug on iOS 14 that sends the view to the split first, which is 1/3 the full width. Detect this by checking if width * inverse (0.33) == physical screen height, with small margin of error for rounding errors

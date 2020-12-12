@@ -100,7 +100,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
         self.navigationController?.popViewController(animated: true)
     }
 
-    var tabBar = MDCTabBar()
+    var tabBar = MDCTabBarView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,19 +116,20 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
             items.append(i.description)
         }
 
-        tabBar = MDCTabBar.init(frame: CGRect.zero)
+        tabBar = MDCTabBarView(frame: CGRect.zero)
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
-        tabBar.itemAppearance = .titles
-        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white)
-        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45)
+        tabBar.setImageTintColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white, for: .selected)
+        tabBar.setImageTintColor((SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45), for: .normal)
 
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
         tabBar.delegate = self
-        tabBar.inkColor = UIColor.clear
+        tabBar.rippleColor = UIColor.clear
         tabBar.selectedItem = tabBar.items[0]
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        tabBar.selectionIndicatorStrokeColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white.withAlphaComponent(0.75), for: .normal)
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white, for: .normal)
 
         self.view.addSubview(tabBar)
         tabBar.heightAnchor /==/ 48
@@ -269,7 +270,7 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
 extension InboxViewController: MDCTabBarDelegate {
 
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+    func tabBarView(_ tabBarView: MDCTabBar, didSelect item: UITabBarItem) {
         let firstViewController = vCs[tabBar.items.firstIndex(of: item)!]
         currentIndex = tabBar.items.firstIndex(of: item)!
         setViewControllers([firstViewController],

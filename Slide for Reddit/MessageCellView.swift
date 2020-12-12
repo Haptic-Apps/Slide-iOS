@@ -50,7 +50,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
             alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
             }
         }
         

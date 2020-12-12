@@ -41,15 +41,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         self.match = scrollView
     }
     
-    var lastContentOffset: CGPoint = CGPoint.zero
-
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        var isRight = false //scroll to right
-        if self.lastContentOffset.x > scrollView.contentOffset.x {
-            isRight = true
-        }
-        
-        self.lastContentOffset = scrollView.contentOffset
 
         let point = scrollView.contentOffset
         var percentComplete: CGFloat

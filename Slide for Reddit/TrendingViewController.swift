@@ -39,8 +39,8 @@ class TrendingViewController: UITableViewController {
                     let json = try JSON(data: data)
                     if let searches = json["trending_searches"].array {
                         for searchLinkJSON in searches {
-                            var searchItem = TrendingItem()
-                            var results = searchLinkJSON["results"]["data"]["children"].array
+                            let searchItem = TrendingItem()
+                            let results = searchLinkJSON["results"]["data"]["children"].array
                             if results != nil && results?.count ?? 0 > 0 {
                                 let linkData = results?[0]["data"]
                                 
@@ -48,8 +48,8 @@ class TrendingViewController: UITableViewController {
                                 searchItem.title = linkData?["title"].stringValue ?? ""
                                 searchItem.subreddit = linkData?["subreddit"].stringValue ?? ""
                                 searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
-                                searchItem.searchTerm = searchLinkJSON["query_string"].stringValue ?? ""
-                                searchItem.searchTitle = searchLinkJSON["display_string"].stringValue ?? ""
+                                searchItem.searchTerm = searchLinkJSON["query_string"].stringValue
+                                searchItem.searchTitle = searchLinkJSON["display_string"].stringValue
                                 self.trendingSearches.append(searchItem)
                             }
                         }

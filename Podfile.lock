@@ -62,6 +62,11 @@ PODS:
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
     - MDFInternationalization
+  - "MaterialComponents/Tabs+TabBarView (119.1.0)":
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/private/Math
+    - MaterialComponents/Ripple
+    - MDFInternationalization
   - MaterialComponents/Typography (119.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
@@ -98,6 +103,7 @@ DEPENDENCIES:
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/ProgressView
   - MaterialComponents/Tabs
+  - "MaterialComponents/Tabs+TabBarView"
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
   - OpalImagePicker
@@ -203,6 +209,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 922b6388b2a09dc65358bca9fb3ad13b5de908da
+PODFILE CHECKSUM: 8a7f8c8af729ba9c240de328d4749a637221e662
 
 COCOAPODS: 1.10.0

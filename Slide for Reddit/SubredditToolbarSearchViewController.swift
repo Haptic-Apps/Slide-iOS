@@ -310,7 +310,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         
         self.view.endEditing(true)
         
-        let completionBlock: (Bool) -> Void = { [weak self] finished in
+        let completionBlock: (Bool) -> Void = { [weak self] _ in
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             strongSelf.backgroundView.isHidden = true
@@ -347,7 +347,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         
         self.view.endEditing(true)
         
-        let completionBlock: (Bool) -> Void = { [weak self] finished in
+        let completionBlock: (Bool) -> Void = { [weak self] _ in
             guard let strongSelf = self else { return }
             strongSelf.topView?.layer.cornerRadius = 0
             strongSelf.callbacks.didCollapse?()
@@ -385,7 +385,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             self.callbacks.didCollapse?()
             self.view.endEditing(true)
             
-            let completionBlock: (Bool) -> Void = { [weak self] finished in
+            let completionBlock: (Bool) -> Void = { [weak self] _ in
                 guard let strongSelf = self else { return }
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
                 strongSelf.backgroundView.isHidden = true
@@ -441,7 +441,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.topView?.backgroundColor = strongSelf.headerView.backgroundColor
         }
         
-        let completionBlock: (Bool) -> Void = { [weak self] finished in
+        let completionBlock: (Bool) -> Void = { [weak self] _ in
             guard let strongSelf = self else { return }
             if SettingValues.autoKeyboard && !strongSelf.doneOnce {
                 strongSelf.doneOnce = true
@@ -813,7 +813,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
         let label = UILabel()
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
-        var titles: [String]? = nil
+        var titles: [String]?
         
         if isSearching {
             titles = []

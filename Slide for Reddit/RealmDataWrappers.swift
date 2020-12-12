@@ -68,7 +68,7 @@ extension String {
                 print("Error converting to JSON")
             }
         }
-        return NSDictionary() as! [String : AnyObject]
+        return NSDictionary() as! [String: AnyObject]
     }
 }
 

@@ -56,4 +56,3 @@ private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: 
 	guard let input = input else { return nil }
 	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
-

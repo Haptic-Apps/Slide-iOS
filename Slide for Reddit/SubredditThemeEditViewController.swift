@@ -9,7 +9,7 @@
 import Anchorage
 import UIKit
 
-protocol SubredditThemeEditViewControllerDelegate {
+protocol SubredditThemeEditViewControllerDelegate: AnyObject {
     func didChangeColors(_ isAccent: Bool, color: UIColor)
     func didClear() -> Bool
 }

@@ -425,7 +425,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewWillDisappear(animated)
         
         if !dataSource.offline {
-            self.dataSource.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
+            _ = self.dataSource.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
         }
         
         for index in tableView.indexPathsForVisibleItems {
@@ -449,7 +449,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
                 do {
                     try session.setVisited(names: History.currentSeen) { [weak self] (result) in
-                        guard let self = self else { return }
+                        guard self != nil else { return }
 
                         History.currentSeen.removeAll()
                     }
@@ -473,7 +473,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             cancelRotationOffset = tableView.contentOffset
         }
         
-        var indexPathRect = CGRect(x: tableView.contentOffset.x, y: tableView.contentOffset.y, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
+        let indexPathRect = CGRect(x: tableView.contentOffset.x, y: tableView.contentOffset.y, width: tableView.bounds.size.width, height: tableView.bounds.size.height)
         let indexToPin = self.tableView.indexPathForItem(at: CGPoint(x: indexPathRect.width / (CGFloat(flowLayout.numberOfColumns) * 2), y: indexPathRect.midY))
         
         coordinator.animate(
@@ -1387,7 +1387,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         let actionSheetController = DragDownAlertMenu(title: "Sorting", subtitle: "", icon: nil, extraView: group, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
         
-        let defaultSort = SettingValues.getLinkSorting(forSubreddit: self.sub)
+        // TODO: show sort default? let defaultSort = SettingValues.getLinkSorting(forSubreddit: self.sub)
         
         for link in LinkSortType.cases {
             if link == LinkSortType.best && sub.lowercased() != "frontpage"{
@@ -1760,7 +1760,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             submissionHeight = 200
         } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
-            var tempHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.imageHeight == 0 ? 275 : submission.imageHeight), imageWidth: CGFloat(submission.imageWidth == 0 ? 400 : submission.imageWidth), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
+            let tempHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.imageHeight == 0 ? 275 : submission.imageHeight), imageWidth: CGFloat(submission.imageWidth == 0 ? 400 : submission.imageWidth), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
             submissionHeight = tempHeight > halfScreen ? halfScreen : tempHeight
         } else if big {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
@@ -2560,7 +2560,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         }
         
         var numberOfColumns = CGFloat.zero
-        var portraitCount = SettingValues.portraitMultiColumnCount
+        let portraitCount = SettingValues.portraitMultiColumnCount
         
         let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
         

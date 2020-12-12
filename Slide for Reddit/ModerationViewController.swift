@@ -72,7 +72,7 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
         self.navigationController?.popViewController(animated: true)
     }
 
-    var tabBar = MDCTabBar()
+    var tabBar = MDCTabBarView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,22 +88,23 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
             items.append(i.description)
         }
 
-        tabBar = MDCTabBar.init(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
+        tabBar = MDCTabBarView(frame: CGRect.init(x: 0, y: -8, width: self.view.frame.size.width, height: 45))
         
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
-        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white)
-        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45)
+        tabBar.setImageTintColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white, for: .selected)
+        tabBar.setImageTintColor((SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45), for: .normal)
 
-        tabBar.itemAppearance = .titles
         tabBar.items = content.enumerated().map { index, source in
             return UITabBarItem(title: source.description, image: nil, tag: index)
         }
         tabBar.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
 
         tabBar.selectedItem = tabBar.items[0]
-        tabBar.inkColor = UIColor.clear
+        tabBar.rippleColor = UIColor.clear
         tabBar.delegate = self
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
+        tabBar.selectionIndicatorStrokeColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white.withAlphaComponent(0.75), for: .normal)
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white, for: .normal)
         // 5
 
         self.view.addSubview(tabBar)
@@ -237,9 +238,9 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
 
 }
 
-extension ModerationViewController: MDCTabBarDelegate {
+extension ModerationViewController: MDCTabBarViewDelegate {
 
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+    func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem) {
         selected = true
         let firstViewController = vCs[tabBar.items.firstIndex(of: item)!]
 

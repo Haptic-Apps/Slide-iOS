@@ -314,7 +314,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         } else {
             //Is mod log item
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
-            c.setLogItem(logItem: (thing as! ModlogModel), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setLogItem(logItem: (thing as! ModLogObject), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
             cell = c
         }
         
@@ -359,7 +359,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             } else {
-                let logItem = thing as! ModlogModel
+                let logItem = thing as! ModLogObject
                 if estimatedHeights[logItem.id] == nil {
                     let titleText = ModlogCellView.getTitleText(item: logItem)
                     
@@ -619,7 +619,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 alert.addAction(UIAlertAction(title: "Remove", style: UIAlertAction.Style.destructive, handler: { (_) in
                     Collections.removeFromCollection(link: cell.link!, title: ctitle)
                     self.baseData.content = self.baseData.content.filter { (object) -> Bool in
-                        if let link = object as? SubmissionObject{
+                        if let link = object as? SubmissionObject {
                             if link.id == cell.link!.id {
                                 return false
                             }

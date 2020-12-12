@@ -12,6 +12,7 @@ target 'Slide for Reddit' do
   pod 'OpalImagePicker'
   pod 'MaterialComponents/ActivityIndicator'
   pod 'MaterialComponents/Tabs'
+  pod 'MaterialComponents/Tabs+TabBarView'
   pod 'MaterialComponents/ProgressView'
   pod 'SwiftEntryKit', :git => 'https://github.com/ccrama/SwiftEntryKit'
   pod 'SubtleVolume'

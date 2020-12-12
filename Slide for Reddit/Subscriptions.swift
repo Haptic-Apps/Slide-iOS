@@ -32,7 +32,7 @@ class Subscriptions {
     public static var subIcons: NSMutableDictionary = NSMutableDictionary()
     
     public static func icon(for sub: String) -> String? {
-        var subString = sub.lowercased()
+        let subString = sub.lowercased()
         if let icon = subIcons.object(forKey: subString) as? String, icon != "" {
             return icon
         }

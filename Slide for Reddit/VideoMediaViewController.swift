@@ -554,7 +554,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var lastTracks = false
     
-    func getQualityURL(urlToLoad: String, qualityList: [String],  callback: @escaping (_ realURL: String) -> Void) {
+    func getQualityURL(urlToLoad: String, qualityList: [String], callback: @escaping (_ realURL: String) -> Void) {
         if qualityList.isEmpty {
             BannerUtil.makeBanner(text: "Error finding video URL", color: GMColor.red500Color(), seconds: 5, context: self.parent ?? nil, top: false, callback: nil)
         } else {
@@ -631,7 +631,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                     }
                 }
             } else {
-                print(response.error)
                 self.parent?.dismiss(animated: true, completion: {
                     self.failureCallback?(URL.init(string: toLoad)!)
                 })
@@ -733,7 +732,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
-        print("Wanting to play " +  getKeyFromURL())
         if let videoUrl = SettingValues.streamVideos ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
             let playerItem = AVPlayerItem(url: videoUrl)
             videoView.player = AVPlayer(playerItem: playerItem)
@@ -976,7 +974,7 @@ extension VideoMediaViewController {
         } else {
             let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
             let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
-            self.videoView.player?.seek(to: newCMTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { _ in
+            self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
                 self.videoView.player?.play()
             }
         }
@@ -1360,7 +1358,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
             let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
-            self.videoView.player?.seek(to: targetTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
+            self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
 

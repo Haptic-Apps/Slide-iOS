@@ -274,7 +274,7 @@ class SubmissionObject: RedditObject {
                     burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
 
                     w = (previews!.last as? [String: Any])?["width"] as? Int ?? w
-                    h = (previews!.last as? [String: Any])?["height"] as? Int ??  h
+                    h = (previews!.last as? [String: Any])?["height"] as? Int ?? h
 
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
@@ -371,7 +371,7 @@ class SubmissionObject: RedditObject {
         self.isCakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
         self.hidden = submission.baseJson["hidden"] as? Bool ?? false
 
-        var reportsDict = NSMutableDictionary()
+        let reportsDict = NSMutableDictionary()
         
         for item in submission.baseJson["mod_reports"] as? [AnyObject] ?? [] {
             let array = item as! [Any]
@@ -430,7 +430,7 @@ class SubmissionObject: RedditObject {
         }
         self.flairJSON = flairDict.jsonString()
 
-        var galleryDict = NSMutableDictionary()
+        let galleryDict = NSMutableDictionary()
         var galleryImages = [String]()
         for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
             if let image = (submission.baseJson["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
@@ -442,7 +442,7 @@ class SubmissionObject: RedditObject {
         galleryDict["images"] = galleryImages
         self.galleryJSON = galleryDict.jsonString()
 
-        var pollsDict = NSMutableDictionary()
+        let pollsDict = NSMutableDictionary()
         for item in (submission.baseJson["poll_data"] as? JSONDictionary)?["options"] as? [AnyObject] ?? [] {
             if let poll = item as? JSONDictionary {
                 if poll["text"] != nil {
@@ -470,7 +470,7 @@ class SubmissionObject: RedditObject {
             self.crosspostAuthor = author
             self.crosspostPermalink = permalink
             
-            var galleryDict = NSMutableDictionary()
+            let galleryDict = NSMutableDictionary()
             var galleryImages = [String]()
             galleryDict["images"] = galleryImages
             self.galleryJSON = galleryDict.jsonString()
@@ -617,7 +617,7 @@ extension SubmissionObject: Cacheable {
         context.performAndWaitReturnable {
             var submissionModel: SubmissionModel! = nil
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionModel")
-            let predicate = NSPredicate(format: "id = %@", self.getId() ?? "")
+            let predicate = NSPredicate(format: "id = %@", self.getId())
             fetchRequest.predicate = predicate
             do {
                 let results = try context.fetch(fetchRequest) as! [SubmissionModel]
@@ -626,7 +626,7 @@ extension SubmissionObject: Cacheable {
                 
             }
             if submissionModel == nil {
-                submissionModel = NSEntityDescription.insertNewObject(forEntityName: "SubmissionModel", into: context) as! SubmissionModel
+                submissionModel = NSEntityDescription.insertNewObject(forEntityName: "SubmissionModel", into: context) as? SubmissionModel
             }
 
             submissionModel.id = self.id

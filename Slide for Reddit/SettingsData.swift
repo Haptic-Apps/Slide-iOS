@@ -76,8 +76,8 @@ class SettingsData: BubbleSettingTableViewController {
         toReturn.backgroundColor = ColorUtil.theme.backgroundColor
         
         switch section {
-        case 0: label.text  = ""
-        default: label.text  = ""
+        case 0: label.text = ""
+        default: label.text = ""
         }
         return toReturn
     }

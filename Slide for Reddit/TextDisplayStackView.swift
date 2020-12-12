@@ -60,7 +60,7 @@ public class TextDisplayStackView: UIStackView {
         super.init(frame: CGRect.zero)
         self.distribution = .fill
 
-        self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+        self.touchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
                     if let value = attr.value as? YYTextHighlight {
@@ -74,7 +74,7 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
-        self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+        self.longTouchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                 for attr in attrs {
                     if let value = attr.value as? YYTextHighlight {
@@ -134,7 +134,7 @@ public class TextDisplayStackView: UIStackView {
         overflow.horizontalAnchors /==/ self.horizontalAnchors
         links.horizontalAnchors /==/ self.horizontalAnchors
 
-        self.touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+        self.touchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
                 for attr in attrs {
                     if let value = attr.value as? YYTextHighlight {
@@ -148,7 +148,7 @@ public class TextDisplayStackView: UIStackView {
                 }
             })
         }
-        self.longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+        self.longTouchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
             text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                 for attr in attrs {
                     if let value = attr.value as? YYTextHighlight {

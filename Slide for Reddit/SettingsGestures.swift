@@ -307,7 +307,6 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.sideGesture.description()
         self.sideShortcutActionCell.imageView?.layer.cornerRadius = 5
         
-
         createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
         self.doubleTapSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
         self.doubleTapSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping

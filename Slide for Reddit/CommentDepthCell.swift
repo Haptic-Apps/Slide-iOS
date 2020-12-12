@@ -1296,7 +1296,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 $0.textColor = ColorUtil.theme.fontColor
                 $0.backgroundColor = .clear
                 $0.isEditable = false
-                $0.text = self.comment!.markdownBody.decodeHTML() ?? ""
+                $0.text = self.comment!.markdownBody.decodeHTML()
             }
             
             alert.contentView.addSubview(text)
@@ -1307,7 +1307,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             alert.addCloseButton()
             alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
-                UIPasteboard.general.string = self.comment!.markdownBody.decodeHTML() ?? ""
+                UIPasteboard.general.string = self.comment!.markdownBody.decodeHTML()
             }))
             
             alert.addBlurView()
@@ -1739,12 +1739,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.isCakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
         if comment.author != "[deleted]" && comment.author != "[removed]" {
-            authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
+            authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])
         }
         let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): parent?.authorColor ?? ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
         
         if comment.author != "[deleted]" && comment.author != "[removed]" {
-            authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)"), "profile": comment.author])
+            authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])
         }
 
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair.unescapeHTML)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
@@ -1789,7 +1789,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         infoString.append(scoreString)
         infoString.append(spacerString)
         infoString.append(endString)
-
 
         if comment.isStickied {
             infoString.append(spacer)
@@ -1972,7 +1971,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         let open = OpenInChromeController.init()
         if open.isChromeInstalled() {
             alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
             }
         }
         
@@ -2442,7 +2441,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             let open = OpenInChromeController.init()
             if open.isChromeInstalled() {
                 children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
-                    _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
                 })
             }
 

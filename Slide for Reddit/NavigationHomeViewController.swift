@@ -219,7 +219,7 @@ class NavigationHomeViewController: UIViewController {
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
-        let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        //let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
         //if !landscape {
             self.view.addSubview(inHeadView)
         //}
@@ -501,8 +501,8 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         }
         if isSearching {
             switch section {
-            case 0: label.text  = ""
-            default: label.text  = "REDDIT SUGGESTIONS"
+            case 0: label.text = ""
+            default: label.text = "REDDIT SUGGESTIONS"
             }
         } else {
             let sectionTitle = subsSource.sortedSectionTitles[section]
@@ -775,9 +775,9 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
             }
         } else if lastY < self.headerView.frame.size.height * 0.5 && !(self.tableView.sectionIndexView?.isHidden ?? true) {
             tableView.sectionIndexView?.alpha = 1
-            UIView.animate(withDuration: 0.2, animations: {
+            UIView.animate(withDuration: 0.2) {
                 self.tableView.sectionIndexView?.alpha = 0
-            }) { (_) in
+            } completion: { (_) in
                 self.tableView.sectionIndexView?.isHidden = true
             }
         }
@@ -1110,7 +1110,6 @@ extension CurrentAccountHeaderView {
     }
     
     func configureForCurrentAccount() {
-        
         updateMailBadge()
         updateModBadge()
         

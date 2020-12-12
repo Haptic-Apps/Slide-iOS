@@ -7,7 +7,7 @@
 //
 
 import Anchorage
-import MaterialComponents.MDCTabBar
+import MaterialComponents.MaterialTabs
 import MKColorPicker
 import reddift
 import RLBAlertsPickers
@@ -23,6 +23,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     var openTo = 0
     var newColor = UIColor.white
     var friends = false
+    var tabBar: MDCTabBarView
 
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         newColor = colorPickerView.colors[indexPath.row]
@@ -132,7 +133,7 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             self.vCs.append(ContentListingViewController.init(dataSource: ProfileContributionLoader.init(name: name, whereContent: place)))
         }
         
-        tabBar = MDCTabBar()
+        tabBar = MDCTabBarView()
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         let sort = UIButton(buttonImage: UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white"))
         sort.addTarget(self, action: #selector(self.showSortMenu(_:)), for: UIControl.Event.touchUpInside)
@@ -192,8 +193,6 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         navigationController?.popViewController(animated: true)
     }
     
-    var tabBar: MDCTabBar
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -212,15 +211,14 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
             items.append(i.title)
         }
 
-        tabBar = MDCTabBar.init(frame: CGRect.zero)
-        tabBar.itemAppearance = .titles
+        tabBar = MDCTabBarView(frame: CGRect.zero)
         tabBar.items = items.enumerated().map { index, source in
             return UITabBarItem(title: source, image: nil, tag: index)
         }
         
         tabBar.backgroundColor = ColorUtil.getColorForSub(sub: "", true)
-        tabBar.selectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white)
-        tabBar.unselectedItemTintColor = (SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45)
+        tabBar.setImageTintColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white, for: .selected)
+        tabBar.setImageTintColor((SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white).withAlphaComponent(0.45), for: .normal)
 
         if friends {
             openTo += 1
@@ -229,9 +227,11 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
         
         tabBar.selectedItem = tabBar.items[openTo]
         tabBar.delegate = self
-        tabBar.inkColor = UIColor.clear
-        tabBar.tintColor = ColorUtil.accentColorForSub(sub: "NONE")
-        
+        tabBar.rippleColor = UIColor.clear
+        tabBar.selectionIndicatorStrokeColor = SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white.withAlphaComponent(0.75), for: .normal)
+        tabBar.setTitleColor(SettingValues.reduceColor ? ColorUtil.accentColorForSub(sub: "NONE") : UIColor.white, for: .normal)
+
         self.view.addSubview(tabBar)
         tabBar.heightAnchor /==/ 48
 
@@ -385,9 +385,9 @@ class ProfileViewController: UIPageViewController, UIPageViewControllerDataSourc
     }
 
 }
-extension ProfileViewController: MDCTabBarDelegate {
+extension ProfileViewController: MDCTabBarViewDelegate {
     
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
+    func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem) {
         selected = true
         let firstViewController = vCs[tabBar.items.firstIndex(of: item)!]
         currentIndex = tabBar.items.firstIndex(of: item)!

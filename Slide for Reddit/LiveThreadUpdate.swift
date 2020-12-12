@@ -84,7 +84,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.title.topAnchor /==/ self.image.bottomAnchor + 4
             self.title.bottomAnchor /==/ self.contentView.bottomAnchor - 4
             
-            let touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            let touchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
                 text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
@@ -97,7 +97,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 })
             }
             
-            let longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+            let longTouchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
                 text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                     for attr in attrs {
                         if attr.value is YYTextHighlight {
@@ -127,7 +127,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                                 let open = OpenInChromeController.init()
                                 if open.isChromeInstalled() {
                                     alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                                        open.openInChrome(url, callbackURL: nil, createNewTab: true)
                                     }
                                 }
                                 
