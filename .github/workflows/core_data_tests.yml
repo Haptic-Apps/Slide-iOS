@@ -1,8 +1,8 @@
 name: CI
 on:
   pull_request:
-    branches:
-      - develop
+    branches-ignore: #All branches
+      - ignore
 jobs:
   validate-and-test:
     runs-on: macOS-latest
