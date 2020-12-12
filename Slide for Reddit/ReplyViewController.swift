@@ -67,13 +67,13 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var username: String?
 
     //Callbacks
-    var messageCallback: (Any?, Error?) -> Void = { (comment, error) in
+    var messageCallback: (Any?, Error?) -> Void = { (_, _) in
     }
 
-    var submissionCallback: (Link?, Error?) -> Void = { (link, error) in
+    var submissionCallback: (Link?, Error?) -> Void = { (_, _) in
     }
 
-    var commentReplyCallback: (Comment?, Error?) -> Void = { (comment, error) in
+    var commentReplyCallback: (Comment?, Error?) -> Void = { (_, _) in
     }
 
     //New message no reply
@@ -646,7 +646,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 */
                 text1.attributedText = content
-                text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                text1.highlightTapAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
                     text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                         for attr in attrs {
                             if attr.value is YYTextHighlight {
@@ -938,7 +938,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 */
                 
                 text1.attributedText = content
-                text1.highlightTapAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
+                text1.highlightTapAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
                     text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
                         for attr in attrs {
                             if attr.value is YYTextHighlight {

@@ -442,7 +442,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
+                    .compactMap({ $0 })
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
@@ -453,7 +453,7 @@ class SplitMainViewController: MainViewController {
 
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
+            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
     }
 
@@ -489,7 +489,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
+                    .compactMap({ $0 })
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }

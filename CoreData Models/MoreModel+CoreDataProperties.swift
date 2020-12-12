@@ -7,12 +7,10 @@
 //
 //
 
-import Foundation
 import CoreData
-
+import Foundation
 
 extension MoreModel {
-
     @nonobjc public class func fetchRequest() -> NSFetchRequest<MoreModel> {
         return NSFetchRequest<MoreModel>(entityName: "MoreModel")
     }

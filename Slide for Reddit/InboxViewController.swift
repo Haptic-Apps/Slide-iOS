@@ -268,9 +268,9 @@ class InboxViewController: UIPageViewController, UIPageViewControllerDataSource,
 
 }
 
-extension InboxViewController: MDCTabBarDelegate {
-
-    func tabBarView(_ tabBarView: MDCTabBar, didSelect item: UITabBarItem) {
+extension InboxViewController: MDCTabBarViewDelegate {
+    
+    func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem) {
         let firstViewController = vCs[tabBar.items.firstIndex(of: item)!]
         currentIndex = tabBar.items.firstIndex(of: item)!
         setViewControllers([firstViewController],

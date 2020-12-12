@@ -169,7 +169,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
             }
         }
         
-        let completionBlock: (Bool) -> Void = { finished in
+        let completionBlock: (Bool) -> Void = { _ in
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
 

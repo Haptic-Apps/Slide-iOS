@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import reddift
 
 extension String {

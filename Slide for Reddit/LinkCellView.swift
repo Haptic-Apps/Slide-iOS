@@ -117,8 +117,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     @objc func share(sender: UITapGestureRecognizer? = nil) {
         let url = self.link!.url ?? URL(string: self.link!.permalink)
-        if let strongImage = bannerImage?.image {
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [strongImage] : [url], applicationActivities: nil)
+        if let strongImage = bannerImage?.image, let strongUrl = url {
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: self is BannerLinkCellView ? [strongImage] : [strongUrl], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.innerView
                 presenter.sourceRect = self.innerView.bounds
@@ -1464,7 +1464,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
                         var rect = self.title.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
                         var baseline = 0
-                        baseline = Int(self.title.layoutManager.textStorage!.attribute(.baselineOffset, at: self.title.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                        baseline = Int(truncating: self.title.layoutManager.textStorage!.attribute(.baselineOffset, at: self.title.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
 
                         rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2) + (attachment.bounds.size.height < 20 ? 2 : 0)
                         rect.size = attachment.bounds.size
@@ -2555,7 +2555,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentViewController)
-                        var flairDictionary = NSMutableDictionary()
+                        let flairDictionary = NSMutableDictionary()
                         flairDictionary[(text != nil && !text!.isEmpty) ? text! : flair.text] = NSDictionary()
                         self.link!.flairJSON = flairDictionary.jsonString()
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
@@ -3521,7 +3521,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             var children = [UIMenuElement]()
             
             if let baseUrl = self.videoURL ?? self.link?.url ?? URL(string: self.link?.videoPreview ?? ""), let parent = self.parentViewController {
-                var finalUrl = baseUrl
+                let finalUrl = baseUrl
                 children.append(UIAction(title: "Save Video", image: UIImage(sfString: SFSymbol.squareAndArrowDown, overrideString: "save")!.menuIcon()) { _ in
                     VideoMediaDownloader(urlToLoad: finalUrl).getVideoWithCompletion(completion: { (fileURL) in
                         if fileURL != nil {

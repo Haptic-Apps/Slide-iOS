@@ -448,7 +448,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
             if AccountController.isLoggedIn && AccountController.isGold && !History.currentSeen.isEmpty {
                 do {
-                    try session.setVisited(names: History.currentSeen) { [weak self] (result) in
+                    try session.setVisited(names: History.currentSeen) { [weak self] (_) in
                         guard self != nil else { return }
 
                         History.currentSeen.removeAll()
@@ -2870,7 +2870,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
     }
     
     func applyFilters() {
-        self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject}
+        self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject }
         self.reloadDataReset()
     }
 
@@ -2884,7 +2884,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts by u/\(link.author)", style: .default) { _ -> Void in
             PostFilter.profiles.append(link.author as NSString)
             PostFilter.saveAndUpdate()
-            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject}
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -2892,7 +2892,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { _ -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
-            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject}
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)
@@ -2900,7 +2900,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         cancelActionButton = UIAlertAction(title: "Posts linking to \(link.domain)", style: .default) { _ -> Void in
             PostFilter.domains.append(link.domain as NSString)
             PostFilter.saveAndUpdate()
-            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject}
+            self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject }
             self.reloadDataReset()
         }
         actionSheetController.addAction(cancelActionButton)

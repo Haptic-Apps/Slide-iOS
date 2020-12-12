@@ -1184,7 +1184,6 @@ extension AppDelegate: UIWindowSceneDelegate {
     
     //Siri shortcuts and deep links
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        print(userActivity.userInfo)
         if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
             VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
         } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
@@ -1198,7 +1197,7 @@ extension AppDelegate: UIWindowSceneDelegate {
     }
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let _ = (scene as? UIWindowScene) else { return }
+        guard (scene as? UIWindowScene) != nil else { return }
 
         if let url = connectionOptions.urlContexts.first?.url {
             launchedURL = url

@@ -6,8 +6,8 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
-import Anchorage
 import Alamofire
+import Anchorage
 import reddift
 import SDWebImage
 import SwiftyJSON

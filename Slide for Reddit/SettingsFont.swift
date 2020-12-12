@@ -7,8 +7,8 @@
 //
 
 import Anchorage
-import TGPControls
 import reddift
+import TGPControls
 import UIKit
 
 class SettingsFont: BubbleSettingTableViewController {

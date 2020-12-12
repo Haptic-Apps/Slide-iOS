@@ -666,7 +666,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SubredditReorderViewController()
             case 2:
                 if !SettingValues.isPro {
-                    VCPresenter.proDialogShown(feature: true, self)
+                    _ = VCPresenter.proDialogShown(feature: true, self)
                 } else {
                     ch = SettingsViewMode()
                 }
@@ -793,7 +793,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                         
                     }
 
-                    
                     let countBytes = ByteCountFormatter()
                     countBytes.allowedUnits = [.useMB]
                     countBytes.countStyle = .file

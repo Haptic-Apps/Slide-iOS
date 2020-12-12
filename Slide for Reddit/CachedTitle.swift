@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import SDWebImage
 import Proton
+import SDWebImage
 import YYText
 
 struct Title {

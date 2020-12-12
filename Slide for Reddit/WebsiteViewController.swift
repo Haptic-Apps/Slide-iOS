@@ -573,7 +573,7 @@ extension WKWebView {
 
     private var httpCookieStore: WKHTTPCookieStore { return WKWebsiteDataStore.default().httpCookieStore }
 
-    func getCookies(for domain: String? = nil, completion: @escaping ([String: Any]) -> ()) {
+    func getCookies(for domain: String? = nil, completion: @escaping ([String: Any]) -> Void) {
         var cookieDict = [String: AnyObject]()
         httpCookieStore.getAllCookies { cookies in
             for cookie in cookies {

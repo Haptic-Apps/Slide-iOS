@@ -12,8 +12,8 @@ import AudioToolbox
 import BadgeSwift
 import reddift
 import SDCAlertView
-import SwiftyJSON
 import SDWebImage
+import SwiftyJSON
 import Then
 import UIKit
 

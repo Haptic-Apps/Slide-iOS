@@ -6,7 +6,6 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
-
 import reddift
 import UIKit
 import UserNotifications

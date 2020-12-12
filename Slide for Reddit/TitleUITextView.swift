@@ -85,7 +85,7 @@ class BadgeLayoutManager: NSLayoutManager {
                     let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
                     var rect = self.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
                     var baseline = 0
-                    baseline = Int(textStorage.attribute(.baselineOffset, at: self.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                    baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: self.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
                     // Glyphs can take space outside of the line fragment, and we cannot draw outside of it.
                     // So it is best to restrict the height just to the line fragment.
                     

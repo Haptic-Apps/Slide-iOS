@@ -7,9 +7,9 @@
 //
 
 import Anchorage
-import SDCAlertView
-import RLBAlertsPickers
 import reddift
+import RLBAlertsPickers
+import SDCAlertView
 import UIKit
 import UserNotifications
 
@@ -383,7 +383,6 @@ class SettingsGeneral: BubbleSettingTableViewController {
             self.buttonType.detailTextLabel?.text = SettingValues.fabType.getTitle()
         }
     }
-
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: InsetCell
