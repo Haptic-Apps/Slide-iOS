@@ -97,6 +97,13 @@ class CommentObject: RedditObject {
         self.parentID = model.parentID
         self.permalink = model.permalink
         self.removalNote = model.removalNote
+        
+        self.removalReason = model.removalReason
+        self.removedBy = model.removedBy
+        self.reportsJSON = model.reportsJSON
+        self.score = Int(model.score)
+        self.submissionTitle = model.submissionTitle
+        self.subreddit = model.subreddit
     }
 
     public init(comment: Comment, depth: Int) {
@@ -118,7 +125,7 @@ class CommentObject: RedditObject {
         self.removedBy = comment.baseJson["banned_by"] as? String ?? ""
         self.isRemoved = !(self.removedBy ?? "").isEmpty()
         self.approvedBy = comment.baseJson["approved_by"] as? String ?? ""
-        self.isRemoved = !(self.approvedBy ?? "").isEmpty()
+        self.isApproved = !(self.approvedBy ?? "").isEmpty()
         self.isStickied = comment.stickied
         let jsonDict = NSMutableDictionary()
         for item in comment.baseJson["all_awardings"] as? [AnyObject] ?? [] {
@@ -270,8 +277,16 @@ extension CommentObject: Cacheable {
             commentModel.parentID = self.parentID
             commentModel.permalink = self.permalink
             commentModel.removalNote = self.removalNote
+            commentModel.removalReason = self.removalReason
             commentModel.saveDate = Date()
             
+            commentModel.removalReason = self.removalReason
+            commentModel.removedBy = self.removedBy
+            commentModel.reportsJSON = self.reportsJSON
+            commentModel.score = Int64(self.score)
+            commentModel.submissionTitle = self.submissionTitle
+            commentModel.subreddit = self.subreddit
+
             if andSave {
                 do {
                     try context.save()

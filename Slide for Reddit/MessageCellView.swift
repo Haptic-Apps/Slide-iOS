@@ -221,7 +221,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
             if self.message!.wasComment {
                 alertController.addAction(title: "View comment thread", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
-                    let url = "https://www.reddit.com\(self.message!.context)"
+                    let url = "https://www.reddit.com\(self.message!.context ?? "")"
                     VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
                 }
             }
@@ -276,7 +276,7 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
 
         } else {
             if (message?.wasComment)! {
-                let url = "https://www.reddit.com\(message!.context)"
+                let url = "https://www.reddit.com\(message!.context ?? "")"
                 let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!)
                 VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: parentViewController?.navigationController, parentViewController: parentViewController)
             } else {
