@@ -35,8 +35,8 @@ class ModerationViewController: UIPageViewController, UIPageViewControllerDataSo
     public init(_ subreddit: String) {
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         self.subreddit = subreddit
-        vCs.append(ContentListingViewController.init(dataSource: ModMailContributionLoader(false)))
-        vCs.append(ContentListingViewController.init(dataSource: ModMailContributionLoader(true)))
+        vCs.append(ContentListingViewController.init(dataSource: ModMailContributionLoader(false, sub: subreddit)))
+        vCs.append(ContentListingViewController.init(dataSource: ModMailContributionLoader(true, sub: subreddit)))
 
         content.append("Mod Queue")
         vCs.append(ContentListingViewController.init(dataSource: ModQueueContributionLoader(subreddit: subreddit)))
