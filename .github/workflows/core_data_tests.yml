@@ -1,8 +1,8 @@
 name: CI
 on:
   pull_request:
-    branches:
-      - develop
+    branches-ignore: #All branches
+      - ignore
 jobs:
   validate-and-test:
     runs-on: macOS-latest
@@ -14,15 +14,26 @@ jobs:
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gem-
+          restore-keys: |
+            ${{ runner.os }}-gem-
+      - name: Cache Pods
+        uses: actions/cache@v2.1.3
+        with:
+          path: Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
       - name: Cache Mint packages
         uses: actions/cache@v2.1.3
         with:
           path: ${{ env.MINT_PATH }}
           key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
-          restore-keys: ${{ runner.os }}-mint-
+          restore-keys: |
+            ${{ runner.os }}-mint-
       - name: Install dependencies
-        run: sh ./bootstrap.sh
+        run: |
+          sh ./bootstrap.sh
+          pod install
       #Disable for now, too many swift lint items :/
       #- name: Run code validation 
         #run: bundle exec danger
