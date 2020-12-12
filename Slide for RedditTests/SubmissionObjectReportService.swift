@@ -92,73 +92,28 @@ class SubmissionObjectReportService: XCTestCase {
             //Create new SubmissionObject from previously converted model
             let newSubmissionObject = SubmissionObject(model: coreDataItem!)
             
-            XCTAssertEqual(submissionObject.id, newSubmissionObject.id, "id not equal")
-            XCTAssertEqual(submissionObject.smallPreview, newSubmissionObject.smallPreview, "smallPreview not equal")
-            XCTAssertEqual(submissionObject.subredditIcon, newSubmissionObject.subredditIcon, "subredditIcon not equal")
+            let mirroredOriginal = Mirror(reflecting: submissionObject!)
+            let mirroredNew = Mirror(reflecting: newSubmissionObject)
 
-            XCTAssertEqual(submissionObject.author, newSubmissionObject.author, "author not equal")
-            XCTAssertEqual(submissionObject.created, newSubmissionObject.created, "created not equal")
-            XCTAssertEqual(submissionObject.isEdited, newSubmissionObject.isEdited, "isEdited not equal")
-            XCTAssertEqual(submissionObject.edited, newSubmissionObject.edited, "edited not equal")
-            XCTAssertEqual(submissionObject.htmlBody, newSubmissionObject.htmlBody, "htmlBody not equal")
-            XCTAssertEqual(submissionObject.subreddit, newSubmissionObject.subreddit, "subreddit not equal")
-            XCTAssertEqual(submissionObject.isArchived, newSubmissionObject.isArchived, "isArchived not equal")
-            XCTAssertEqual(submissionObject.isLocked, newSubmissionObject.isLocked, "isLocked not equal")
-            XCTAssertEqual(submissionObject.contentUrl, newSubmissionObject.contentUrl, "contentUrl not equal")
-            
-            XCTAssertEqual(submissionObject.title, newSubmissionObject.title, "title not equal")
-            XCTAssertEqual(submissionObject.commentCount, newSubmissionObject.commentCount, "commentCount not equal")
-            XCTAssertEqual(submissionObject.isSaved, newSubmissionObject.isSaved, "isSaved not equal")
-            XCTAssertEqual(submissionObject.isStickied, newSubmissionObject.isStickied, "isStickied not equal")
-            XCTAssertEqual(submissionObject.isVisited, newSubmissionObject.isVisited, "isVisited not equal")
-            XCTAssertEqual(submissionObject.bannerUrl, newSubmissionObject.bannerUrl, "bannerUrl not equal")
-            XCTAssertEqual(submissionObject.thumbnailUrl, newSubmissionObject.thumbnailUrl, "thumbnailUrl not equal")
-            XCTAssertEqual(submissionObject.hasThumbnail, newSubmissionObject.hasThumbnail, "hasThumbnail not equal")
-            XCTAssertEqual(submissionObject.isNSFW, newSubmissionObject.isNSFW, "isNSFW not equal")
-            XCTAssertEqual(submissionObject.hasBanner, newSubmissionObject.hasBanner, "hasBanner not equal")
-            XCTAssertEqual(submissionObject.lqURL, newSubmissionObject.lqURL, "lqURL not equal")
-            XCTAssertEqual(submissionObject.domain, newSubmissionObject.domain, "domain not equal")
-            XCTAssertEqual(submissionObject.isLQ, newSubmissionObject.isLQ, "isLQ not equal")
-            XCTAssertEqual(submissionObject.score, newSubmissionObject.score, "score not equal")
-            XCTAssertEqual(submissionObject.hasVoted, newSubmissionObject.hasVoted, "hasVoted not equal")
-            XCTAssertEqual(submissionObject.upvoteRatio, newSubmissionObject.upvoteRatio, "upvoteRatio not equal")
-            XCTAssertEqual(submissionObject.voteDirection, newSubmissionObject.voteDirection, "voteDirection not equal")
-            XCTAssertEqual(submissionObject.name, newSubmissionObject.name, "name not equal")
-            XCTAssertEqual(submissionObject.videoPreview, newSubmissionObject.videoPreview, "videoPreview not equal")
-                    
-            XCTAssertEqual(submissionObject.videoMP4, newSubmissionObject.videoMP4, "videoMP4 not equal")
-            
-            XCTAssertEqual(submissionObject.imageHeight, newSubmissionObject.imageHeight, "imageHeight not equal")
-            XCTAssertEqual(submissionObject.imageWidth, newSubmissionObject.imageWidth, "imageWidth not equal")
-            XCTAssertEqual(submissionObject.distinguished, newSubmissionObject.distinguished, "distinguished not equal")
-            XCTAssertEqual(submissionObject.isMod, newSubmissionObject.isMod, "isMod not equal")
-            XCTAssertEqual(submissionObject.isSelf, newSubmissionObject.isSelf, "isSelf not equal")
-            XCTAssertEqual(submissionObject.markdownBody, newSubmissionObject.markdownBody, "markdownBody not equal")
-            XCTAssertEqual(submissionObject.permalink, newSubmissionObject.permalink, "permalink not equal")
-
-            XCTAssertEqual(submissionObject.isSpoiler, newSubmissionObject.isSpoiler, "isSpoiler not equal")
-            XCTAssertEqual(submissionObject.isOC, newSubmissionObject.isOC, "isOC not equal")
-            XCTAssertEqual(submissionObject.removedBy, newSubmissionObject.removedBy, "removalReason not equal")
-            XCTAssertEqual(submissionObject.removalReason, newSubmissionObject.removalReason, "removalReason not equal")
-            XCTAssertEqual(submissionObject.removalNote, newSubmissionObject.removalNote, "removalNote not equal")
-            XCTAssertEqual(submissionObject.isRemoved, newSubmissionObject.isRemoved, "isRemoved not equal")
-            XCTAssertEqual(submissionObject.isCakeday, newSubmissionObject.isCakeday, "isCakeday not equal")
-            XCTAssertEqual(submissionObject.hidden, newSubmissionObject.hidden, "hidden not equal")
-
-            XCTAssertEqual(submissionObject.reportsJSON, newSubmissionObject.reportsJSON, "reportsJSON not equal")
-            XCTAssertEqual(submissionObject.awardsJSON, newSubmissionObject.awardsJSON, "awardsJSON not equal")
-            XCTAssertEqual(submissionObject.flairJSON, newSubmissionObject.flairJSON, "flairJSON not equal")
-            XCTAssertEqual(submissionObject.galleryJSON, newSubmissionObject.galleryJSON, "galleryJSON not equal")
-            XCTAssertEqual(submissionObject.pollJSON, newSubmissionObject.pollJSON, "pollJSON not equal")
-            
-            XCTAssertEqual(submissionObject.approvedBy, newSubmissionObject.approvedBy, "approvedBy not equal")
-            XCTAssertEqual(submissionObject.isApproved, newSubmissionObject.isApproved, "isApproved not equal")
-            
-            XCTAssertEqual(submissionObject.isCrosspost, newSubmissionObject.isCrosspost, "isCrosspost not equal")
-
-            XCTAssertEqual(submissionObject.crosspostSubreddit, newSubmissionObject.crosspostSubreddit, "crosspostSubreddit not equal")
-            XCTAssertEqual(submissionObject.crosspostAuthor, newSubmissionObject.crosspostAuthor, "crosspostAuthor not equal")
-            XCTAssertEqual(submissionObject.crosspostPermalink, newSubmissionObject.crosspostPermalink, "crosspostPermalink not equal")
+            //Test from SubmissionObject -> SubmissionObject, using reflection. Will catch changes to SubmissionObject that aren't reflected in CD Model
+            for (_, attr) in mirroredOriginal.children.enumerated() {
+                if let property_name = attr.label, (attr.value is String || attr.value is Int || attr.value is Date || attr.value is Double) {
+                    let firstValue = attr.value
+                    if let secondValue = mirroredNew.children.first{ $0.label == property_name }?.value {
+                        if firstValue is String {
+                            XCTAssertEqual(firstValue as! String, secondValue as? String, "\(property_name) not equal")
+                        } else if firstValue is Int {
+                            XCTAssertEqual(firstValue as! Int, secondValue as? Int, "\(property_name) not equal")
+                        } else if firstValue is Date {
+                            XCTAssertEqual(firstValue as! Date, secondValue as? Date, "\(property_name) not equal")
+                        } else if firstValue is Double {
+                            XCTAssertEqual(firstValue as! Double, secondValue as? Double, "\(property_name) not equal")
+                        }
+                    } else {
+                        XCTAssert(false, "\(property_name) doesnt have a value in new object")
+                    }
+                }
+            }
         }
     }
     
