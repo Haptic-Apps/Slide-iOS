@@ -25,8 +25,8 @@ jobs:
         run: sh ./bootstrap.sh
       - name: Run code validation
         run: bundle exec danger
-        env:
-          DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
+        #env: Disable for now, too many comments D: 
+        #  DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
       - name: Run tests
         run: bundle exec fastlane scan
     env:
