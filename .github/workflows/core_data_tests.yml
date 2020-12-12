@@ -10,9 +10,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache RubyGems
-        path: vendor/bundle
         uses: actions/cache@v2.1.3
         with:
+          path: vendor/bundle
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-gem-
