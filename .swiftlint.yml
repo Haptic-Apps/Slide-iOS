@@ -35,7 +35,7 @@ excluded:
   - Pods
 
 control_statement:
-  severity: error
+  severity: warning
 
 shorthand_operator:
   severity: warning
