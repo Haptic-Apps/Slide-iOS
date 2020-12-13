@@ -23,7 +23,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var needsReload = false
     var completionFound = false
     var csrfToken = ""
-    
+    var progressObservation: NSKeyValueObservation?
+
     var savedChallengeURL: String? //Used for login with Apple
     public var reloadCallback: (() -> Void)?
     
@@ -245,17 +246,13 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var setObserver = false
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-        setObserver = true
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "estimatedProgress" {
-            myProgressView.progress = Float(webView.estimatedProgress)
+        
+        progressObservation = webView.observe(\.estimatedProgress, options: .new, changeHandler: { (webView, _) in
+            self.myProgressView.progress = Float(webView.estimatedProgress)
             if webView.estimatedProgress > 0.98 {
-                myProgressView.isHidden = true
-                if needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
-                    needsReload = false
+                self.myProgressView.isHidden = true
+                if self.needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
+                    self.needsReload = false
                     webView.alpha = 0
                     webView.superview?.backgroundColor = ColorUtil.theme.backgroundColor
                     let pending = UIAlertController(title: "Syncing with Reddit...", message: nil, preferredStyle: .alert)
@@ -269,7 +266,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
                     self.present(pending, animated: true, completion: nil)
                     
-                    checkCookiesUntilCompletion {
+                    self.checkCookiesUntilCompletion {
                         self.completionFound = true
 
                         self.webView.reload()
@@ -278,9 +275,10 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                     }
                 }
             } else {
-                myProgressView.isHidden = false
+                self.myProgressView.isHidden = false
             }
-        }
+        })
+        setObserver = true
     }
     
     func checkCookiesUntilCompletion(tries: Int = 0, _ completion: @escaping () -> Void) {

@@ -7,8 +7,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(SubmissionModel)
 public class SubmissionModel: NSManagedObject {

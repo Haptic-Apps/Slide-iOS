@@ -11,11 +11,11 @@ import Anchorage
 import AudioToolbox
 import BadgeSwift
 import MaterialComponents.MDCActivityIndicator
-import SDWebImage
-import SwiftyJSON
 import reddift
 import SDCAlertView
+import SDWebImage
 import StoreKit
+import SwiftyJSON
 import UIKit
 import WatchConnectivity
 #if canImport(WidgetKit)
@@ -443,7 +443,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
+                    .compactMap({ $0 })
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
@@ -490,7 +490,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
+                    .compactMap({ $0 })
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
