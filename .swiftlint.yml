@@ -30,6 +30,8 @@ opt_in_rules:
   
 excluded:
   - CoreData_Models
+  - "*+CoreDataClass.swift"
+  - "*+CoreDataProperties.swift"
   - Pods
 
 control_statement:
