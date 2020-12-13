@@ -27,6 +27,10 @@ opt_in_rules:
   - operator_usage_whitespace
   - sorted_first_last
   - sorted_imports
+  
+excluded:
+  - CoreData\ Models
+  - Pods
 
 control_statement:
   severity: error
