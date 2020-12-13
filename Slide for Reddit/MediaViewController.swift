@@ -105,7 +105,9 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         failureCallback = { (url: URL) in
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-                let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+                let safariVC = SFHideSafariViewController(url: url, configuration: config)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
@@ -186,7 +188,9 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         } else if contentUrl != nil && type == .GIF && SettingValues.internalGifView || type == .STREAMABLE || type == .VID_ME {
             if !ContentType.isGifLoadInstantly(uri: contentUrl!) && type == .GIF {
                 if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-                    let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+                    let config = SFSafariViewController.Configuration()
+                    config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+                    let safariVC = SFHideSafariViewController(url: contentUrl!, configuration: config)
                     if #available(iOS 10.0, *) {
                         safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                         safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
@@ -195,12 +199,14 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                     }
                     return safariVC
                 }
-                return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+                return WebsiteViewController(url: contentUrl!, subreddit: link.subreddit)
             }
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-                let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+                let safariVC = SFHideSafariViewController(url: contentUrl!, configuration: config)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
@@ -209,13 +215,15 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 }
                 return safariVC
             }
-            let web = WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+            let web = WebsiteViewController(url: contentUrl!, subreddit: link.subreddit)
             return web
         } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
         }
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-            let safariVC = SFHideSafariViewController(url: contentUrl!, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+            let safariVC = SFHideSafariViewController(url: contentUrl!, configuration: config)
             if #available(iOS 10.0, *) {
                 safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                 safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
@@ -224,7 +232,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             }
             return safariVC
         }
-        return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+        return WebsiteViewController(url: contentUrl!, subreddit: link.subreddit)
     }
 
     var contentUrl: URL?
@@ -250,7 +258,9 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             guard let strongSelf = self else { return }
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-                let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+                let safariVC = SFHideSafariViewController(url: url, configuration: config)
                 if #available(iOS 10.0, *) {
                     safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
                     safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
@@ -306,7 +316,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 UIApplication.shared.openURL(newUrl)
             }
         } else if url.scheme == "slide" {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else {
             var urlString = url.absoluteString
             if urlString.startsWith("//") {

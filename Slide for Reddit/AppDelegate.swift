@@ -835,7 +835,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         if let url = launchedURL {
-            handleURL(url)
+            _ = handleURL(url)
             launchedURL = nil
         }
         
@@ -1134,7 +1134,7 @@ class CustomSplitController: UISplitViewController {
 extension AppDelegate: UIWindowSceneDelegate {
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
-            handleURL(url)
+            _ = handleURL(url)
         }
     }
         
@@ -1189,7 +1189,7 @@ extension AppDelegate: UIWindowSceneDelegate {
         } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
             VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         } else if let url = userActivity.webpageURL {
-            handleURL(url)
+            _ = handleURL(url)
         } else if let permalink = userActivity.userInfo?["permalink"] as? String {
             VCPresenter.openRedditLink(permalink, window?.rootViewController as? UINavigationController, window?.rootViewController)
         }
@@ -1204,8 +1204,8 @@ extension AppDelegate: UIWindowSceneDelegate {
         }
         
         if let notification = connectionOptions.notificationResponse {
-            let userInfo = notification.notification.request.content.userInfo as? NSDictionary
-            if let url = userInfo?["permalink"] as? String {
+            let userInfo = notification.notification.request.content.userInfo
+            if let url = userInfo["permalink"] as? String {
                 launchedURL = URL(string: url)
             }
         }
@@ -1233,7 +1233,7 @@ extension AppDelegate: UIWindowSceneDelegate {
             } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
                 VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
             } else if let url = userActivity.webpageURL {
-                handleURL(url)
+                _ = handleURL(url)
             }
 
         }
@@ -1243,18 +1243,18 @@ extension AppDelegate: UIWindowSceneDelegate {
 @available(iOS 10.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo as? NSDictionary
+        let userInfo = response.notification.request.content.userInfo
 
-        if let url = userInfo?["permalink"] as? String {
+        if let url = userInfo["permalink"] as? String {
             if #available(iOS 13, *) {
-                guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
+                guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
                 VCPresenter.openRedditLink(url, rootViewController as? UINavigationController, rootViewController)
             } else {
                 VCPresenter.openRedditLink(url, window?.rootViewController as? UINavigationController, window?.rootViewController)
             }
         } else {
             if #available(iOS 13, *) {
-                guard var rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
+                guard let rootViewController = (UIApplication.shared.connectedScenes.first?.delegate as? AppDelegate)?.window?.rootViewController else { return }
                 VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: rootViewController as? UINavigationController, parentViewController: rootViewController)
             } else {
                 VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)

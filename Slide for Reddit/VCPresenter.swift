@@ -104,7 +104,7 @@ public class VCPresenter {
             viewController.navigationItem.leftBarButtonItem = barButton
 
             if !(parentViewController is SplitMainViewController) && !(parentViewController?.parent is SplitMainViewController) {
-                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
+                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = nil
                 viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
             }
         }

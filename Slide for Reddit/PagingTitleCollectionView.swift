@@ -370,7 +370,7 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
     }
 
     override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) as? UICollectionViewLayoutAttributes {
+        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) {
             attributes.alpha = 0
             return attributes
         }
@@ -378,7 +378,7 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
     }
 
     override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) as? UICollectionViewLayoutAttributes {
+        if let attributes = super.layoutAttributesForItem(at: itemIndexPath) {
             attributes.alpha = 0
             return attributes
         }
