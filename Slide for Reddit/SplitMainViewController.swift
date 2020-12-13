@@ -11,11 +11,11 @@ import Anchorage
 import AudioToolbox
 import BadgeSwift
 import MaterialComponents.MDCActivityIndicator
+import SDWebImage
+import SwiftyJSON
 import reddift
 import SDCAlertView
-import SDWebImage
 import StoreKit
-import SwiftyJSON
 import UIKit
 import WatchConnectivity
 #if canImport(WidgetKit)
@@ -442,7 +442,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({ $0 })
+                    .compactMap({$0})
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
@@ -453,7 +453,7 @@ class SplitMainViewController: MainViewController {
 
         if soft && false { //in case we need to not destroy the stack, disable for now
         } else {
-            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
+            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
     }
 
@@ -489,7 +489,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({ $0 })
+                    .compactMap({$0})
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
@@ -1232,6 +1232,9 @@ extension SplitMainViewController: AutoCacheDelegate {
         let oldView = self.navigationItem.titleView
         let oldRight = self.navigationItem.rightBarButtonItems
         
+        let cancel = UIBarButtonItem(title: "Cancel AutoCache", style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCache))
+        self.navigationItem.rightBarButtonItem = cancel
+        
         self.navigationItem.titleView = ProgressHeaderView()
         getHeaderView()?.sizeToFit()
         getHeaderView()?.alpha = 0
@@ -1246,15 +1249,19 @@ extension SplitMainViewController: AutoCacheDelegate {
         }
         
         getHeaderView()?.addTapGestureRecognizer(action: { (_) in
-            self.hideCacheDetails(oldView)
+            self.hideCacheDetails(oldView, oldButtons: oldRight)
         })
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
-            self.hideCacheDetails(oldView)
+            self.hideCacheDetails(oldView, oldButtons: oldRight)
         }
     }
     
-    func hideCacheDetails(_ oldView: UIView?) {
+    @objc func cancelCache() {
+        NotificationCenter.default.post(name: .cancelAutoCache, object: nil, userInfo: [:])
+    }
+    
+    func hideCacheDetails(_ oldView: UIView?, oldButtons: [UIBarButtonItem]?) {
         if !(self.navigationItem.titleView is ProgressHeaderView) {
             return
         }
@@ -1267,6 +1274,7 @@ extension SplitMainViewController: AutoCacheDelegate {
         UIView.animate(withDuration: 0.5) {
             self.navigationItem.titleView?.alpha = 1
             self.autoCacheProgress?.alpha = 1
+            self.navigationItem.rightBarButtonItems = oldButtons
         } completion: { (_) in
         }
 

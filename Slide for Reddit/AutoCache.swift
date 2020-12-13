@@ -51,7 +51,12 @@ public class AutoCache: NSObject {
                     }
                 })
             }
+            NotificationCenter.default.addObserver(self, selector: #selector(cancelAutoCache), name: .cancelAutoCache, object: nil)
         }
+    }
+    
+    @objc func cancelAutoCache() {
+        cancel = true
     }
 
     func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
