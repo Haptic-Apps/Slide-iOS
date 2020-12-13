@@ -95,7 +95,7 @@ class GalleryCellView: UITableViewCell {
     override func updateConstraints() {
         super.updateConstraints()
         
-        let views=["banner": bannerImage, "comments": commentsImage, "type": typeImage] as [String: Any]
+        let views = ["banner": bannerImage, "comments": commentsImage, "type": typeImage] as [String: Any]
 
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[banner]-2-|",
                                                           options: NSLayoutConstraint.FormatOptions(rawValue: 0),

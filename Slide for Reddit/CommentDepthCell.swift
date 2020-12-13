@@ -1962,7 +1962,7 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         
         alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
@@ -2435,7 +2435,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             })
 
             children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
-                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             })
             
             let open = OpenInChromeController.init()

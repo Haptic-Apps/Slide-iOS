@@ -196,7 +196,6 @@
 		BE2DEAB21E26916700FBF0B5 /* SubSidebarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */; };
 		BE2DEAB41E2693C100FBF0B5 /* SubredditHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */; };
 		BE2E9F0823492B4300FE07B4 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE2E9F0723492B4300FE07B4 /* CloudKit.framework */; };
-		BE2F3BEA253D37EF00FB21EC /* UIResponder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3BE9253D37EF00FB21EC /* UIResponder+Extensions.swift */; };
 		BE2F3F4C1EF62021003C1B28 /* SettingsLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F4B1EF62020003C1B28 /* SettingsLayout.swift */; };
 		BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F571EF886D9003C1B28 /* Reachability.swift */; };
 		BE2F3F5A1EF8DD3D003C1B28 /* SettingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2F3F591EF8DD3D003C1B28 /* SettingsData.swift */; };
@@ -2613,7 +2612,6 @@
 				B776B5282EE4DA559E97F9B3 /* ModerationViewController.swift in Sources */,
 				09F48EBC20F652CF00BAC8AC /* VideoView.swift in Sources */,
 				BE77638A211B732B002F2969 /* SubredditFindReturnViewController.swift in Sources */,
-				BE2F3BEA253D37EF00FB21EC /* UIResponder+Extensions.swift in Sources */,
 				BE8264E92194AE0E002A540E /* OfflineOverviewViewController.swift in Sources */,
 				09F411D120F3EEC600D23A42 /* VideoMediaViewController.swift in Sources */,
 				BE17A250215FFFAA002C6CE6 /* ReadLaterContributionLoader.swift in Sources */,

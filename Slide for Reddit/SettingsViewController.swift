@@ -831,14 +831,14 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 2:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios/graphs/contributors")!
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
             case 3:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }

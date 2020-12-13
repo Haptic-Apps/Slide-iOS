@@ -7,8 +7,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(CommentModel)
 public class CommentModel: NSManagedObject {

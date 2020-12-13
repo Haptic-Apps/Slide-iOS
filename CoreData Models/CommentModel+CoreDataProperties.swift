@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension CommentModel {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CommentModel> {

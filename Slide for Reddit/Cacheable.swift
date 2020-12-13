@@ -25,11 +25,7 @@ extension NSManagedObjectContext {
     /// the rethrows invariant holds for performAndWait.
     ///
     /// Source: https://github.com/apple/swift/blob/bb157a070ec6534e4b534456d208b03adc07704b/stdlib/public/SDK/Dispatch/Queue.swift#L228-L249
-    private func _performAndWaitHelper<T>(
-        fn: (() -> Void) -> Void,
-        execute work: () throws -> T,
-        rescue: ((Error) throws -> (T))) rethrows -> T
-    {
+    private func _performAndWaitHelper<T>(fn: (() -> Void) -> Void, execute work: () throws -> T, rescue: ((Error) throws -> (T))) rethrows -> T {
         var result: T?
         var error: Error?
         withoutActuallyEscaping(work) { _work in

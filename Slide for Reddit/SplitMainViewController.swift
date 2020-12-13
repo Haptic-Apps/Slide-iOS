@@ -11,11 +11,11 @@ import Anchorage
 import AudioToolbox
 import BadgeSwift
 import MaterialComponents.MDCActivityIndicator
-import SDWebImage
-import SwiftyJSON
 import reddift
 import SDCAlertView
+import SDWebImage
 import StoreKit
+import SwiftyJSON
 import UIKit
 import WatchConnectivity
 #if canImport(WidgetKit)

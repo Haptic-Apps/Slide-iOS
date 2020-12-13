@@ -78,7 +78,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(url)
             }
@@ -832,7 +832,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
             alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
@@ -1547,7 +1547,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.readLater()
         case .EXTERNAL:
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(self.link!.url ?? URL(string: self.link!.permalink)!)
             }
@@ -1587,7 +1587,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.readLater()
         case .EXTERNAL:
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(self.link!.url ?? URL(string: self.link!.permalink)!, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(self.link!.url ?? URL(string: self.link!.permalink)!)
             }
@@ -3427,7 +3427,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             })
 
             children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
-                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             })
             
             let open = OpenInChromeController.init()
@@ -3494,7 +3494,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             })
 
             children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
-                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             })
             
             return UIMenu(title: "Image Options", image: nil, identifier: nil, children: children)
@@ -3563,7 +3563,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             })
 
             children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
-                UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             })
             
             return UIMenu(title: "Video Options", image: nil, identifier: nil, children: children)

@@ -125,7 +125,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
 
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(link.url!)
             }
@@ -311,7 +311,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
 
             if #available(iOS 10.0, *) {
                 print("Opening externally")
-                UIApplication.shared.open(newUrl, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(newUrl)
             }

@@ -9,7 +9,7 @@
 import Anchorage
 import UIKit
 
-public protocol PagingTitleDelegate {
+public protocol PagingTitleDelegate: class {
     func didSelect(_ subreddit: String)
     func didSetWidth()
 }
@@ -59,9 +59,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     }
     
     public override var intrinsicContentSize: CGSize {
-        get {
-            return CGSize(width: UIView.layoutFittingExpandedSize.width, height: UIView.layoutFittingExpandedSize.height)
-        }
+        return CGSize(width: UIView.layoutFittingExpandedSize.width, height: UIView.layoutFittingExpandedSize.height)
     }
     
     required init?(coder: NSCoder) {
@@ -133,7 +131,6 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             parent.layoutIfNeeded()
         }*/
     }
-    
 
     /*//From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
      private func indexOfMajorCell() -> Int {
@@ -315,9 +312,7 @@ extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
 
 class GradientMaskView: UIView {
     override class var layerClass: AnyClass {
-        get {
-            return CAGradientLayer.self
-        }
+        return CAGradientLayer.self
     }
 }
 

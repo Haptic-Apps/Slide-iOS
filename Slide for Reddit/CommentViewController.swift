@@ -304,8 +304,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 self.liveNewCount += 1
                                 paths.append(IndexPath.init(row: i, section: 0))
                             }
-                            let contentHeight = self.tableView.contentSize.height
-                            let offsetY = self.tableView.contentOffset.y
+
                             if #available(iOS 11.0, *) {
                                 CATransaction.begin()
                                 CATransaction.setDisableActions(true)
@@ -1425,7 +1424,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "Cell\(version)")
         self.tableView.register(CommentDepthCell.classForCoder(), forCellReuseIdentifier: "MoreCell\(version)")
-        updateStringsTheme(self.content.map { (k, v) in v } )
+        updateStringsTheme(self.content.map { (_, v) in v })
         
         self.tableView.reloadData()
         
@@ -2147,17 +2146,17 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             items.append(loadFullThreadButton)
             items.append(space)
         } else {
-            let up = UIButton(buttonImage:UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up"), toolbar: true)
+            let up = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up"), toolbar: true)
             up.accessibilityLabel = "Navigate up one comment thread"
             up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
             let upB = UIBarButtonItem(customView: up)
             
-            let nav = UIButton(buttonImage:UIImage(sfString: SFSymbol.safariFill, overrideString: "nav"), toolbar: true)
+            let nav = UIButton(buttonImage: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav"), toolbar: true)
             nav.accessibilityLabel = "Change criteria for comment thread navigation"
             nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
             let navB = UIBarButtonItem(customView: nav)
             
-            let down = UIButton(buttonImage:UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down"), toolbar: true)
+            let down = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down"), toolbar: true)
             down.accessibilityLabel = "Navigate down one comment thread"
             down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
             let downB = UIBarButtonItem(customView: down)
@@ -2167,7 +2166,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
             moreB = UIBarButtonItem(customView: more)
             
-            let mod = UIButton(buttonImage:UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod"), toolbar: true)
+            let mod = UIButton(buttonImage: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod"), toolbar: true)
             mod.accessibilityLabel = "Moderator options"
             mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
             modB = UIBarButtonItem(customView: mod)

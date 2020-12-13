@@ -8,8 +8,8 @@
 //  Code based off https://github.com/rajdeep/proton/blob/d1a3c855fdabd487ed01c1d6dadff559a5843f28/Proton/Sources/Core/LayoutManager.swift
 //
 
-import UIKit
 import Foundation
+import UIKit
 
 class TitleUITextView: UITextView {
     var tapDelegate: TextDisplayStackViewDelegate

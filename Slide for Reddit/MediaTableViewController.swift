@@ -85,10 +85,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         if link.isArchived || !AccountController.isLoggedIn {
             upvoteCallback = nil
         }
-        if self is CommentViewController {
-            commentCallback = nil
-            upvoteCallback = nil
-        }
+
         failureCallback = { (url: URL) in
             let vc: UIViewController
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
@@ -112,7 +109,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
         
         if type == .EXTERNAL {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(link.url!)
             }
@@ -165,7 +162,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                     }
                     return safariVC
                 }
-                return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+                return WebsiteViewController(url: contentUrl!, subreddit: link.subreddit)
             }
             return ModalMediaViewController.init(url: contentUrl!, lq: lq, commentCallback, upvoteCallback: upvoteCallback, isUpvoted: isUpvoted, failureCallback, link: link)
         } else if type == ContentType.CType.LINK || type == ContentType.CType.NONE {
@@ -181,7 +178,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
                 }
                 return safariVC
             }
-            let web = WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+            let web = WebsiteViewController(url: contentUrl!, subreddit: link.subreddit)
             return web
         } else if type == ContentType.CType.REDDIT {
             return RedditLink.getViewControllerForURL(urlS: contentUrl!)
@@ -198,7 +195,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
             return safariVC
         }
-        return WebsiteViewController(url: contentUrl!, subreddit: link == nil ? "" : link.subreddit)
+        return WebsiteViewController(url: contentUrl!, subreddit: link.subreddit)
     }
 
     var contentUrl: URL?
@@ -276,12 +273,12 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
             }
 
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(newUrl, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(newUrl, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(newUrl)
             }
         } else if url.scheme == "slide" {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else {
             var urlString = url.absoluteString
             if urlString.startsWith("//") {
@@ -313,7 +310,7 @@ class MediaTableViewController: UITableViewController, MediaVCDelegate, UIViewCo
     func setBarColors(color: UIColor) {
         self.color = color
         if SettingValues.reduceColor {
-            self.color = self is CommentViewController ? ColorUtil.theme.foregroundColor : ColorUtil.theme.foregroundColor
+            self.color = ColorUtil.theme.foregroundColor
         }
         setNavColors()
     }

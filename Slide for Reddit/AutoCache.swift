@@ -20,7 +20,7 @@ extension Notification.Name {
 }
 
 //TODO on cancel
-protocol AutoCacheDelegate {
+protocol AutoCacheDelegate: class {
     func autoCacheStarted(_ notification: Notification)
     func autoCacheFinished(_ notification: Notification)
     func autoCacheProgress(_ notification: Notification)
@@ -39,7 +39,7 @@ public class AutoCache: NSObject {
             AutoCache.current = self
             self.subs = subs
             if !self.subs.isEmpty {
-                doCache(subs: subs, progress: { sub, post, total, failed in
+                doCache(subs: subs, progress: { sub, post, total, _ in
                     DispatchQueue.main.async {
                         NotificationCenter.default.post(name: .autoCacheProgress, object: nil, userInfo: ["subreddit": sub, "progress": Float(post) / Float(total)])
                         self.cacheProgress = Float(post) / Float(total)
@@ -156,7 +156,7 @@ public class AutoCache: NSObject {
                             let newRS = SubmissionObject.linkToSubmissionObject(submission: link)
                             converted.append(newRS)
                         }
-                        let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! SubmissionObject}
+                        let values = PostFilter.filter(converted, previous: [], baseSubreddit: sub).map { $0 as! SubmissionObject }
                         
                         self.saveSubmissionsCoreData(subreddit: sub, links: values)
                         self.preloadImages(values)

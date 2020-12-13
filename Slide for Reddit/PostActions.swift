@@ -99,7 +99,7 @@ class PostActions: NSObject {
         case .SAFARI:
             if link.url != nil {
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(link.url!)
                 }

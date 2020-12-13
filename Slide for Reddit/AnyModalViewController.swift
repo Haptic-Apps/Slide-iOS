@@ -349,7 +349,7 @@ class AnyModalViewController: UIViewController {
         
         alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(baseURL)
             }

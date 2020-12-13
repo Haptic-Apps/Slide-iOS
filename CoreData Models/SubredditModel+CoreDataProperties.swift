@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension SubredditModel {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<SubredditModel> {

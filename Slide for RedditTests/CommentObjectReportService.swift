@@ -73,18 +73,18 @@ class CommentObjectReportService: XCTestCase {
             let mirroredOriginal = Mirror(reflecting: commentObject!)
             let mirroredNew = Mirror(reflecting: newCommentObject)
 
-            for (_, attr) in mirroredOriginal.children.enumerated() {
+            for attr in mirroredOriginal.children {
                 if let property_name = attr.label, (attr.value is String || attr.value is Int || attr.value is Date || attr.value is Double) {
                     let firstValue = attr.value
-                    if let secondValue = mirroredNew.children.first { $0.label == property_name }?.value {
+                    if let secondValue = mirroredNew.children.first(where: { $0.label == property_name })?.value {
                         if firstValue is String {
-                            XCTAssertEqual(firstValue as! String, secondValue as? String, "\(property_name) not equal")
+                            XCTAssertEqual(firstValue as? String, secondValue as? String, "\(property_name) not equal")
                         } else if firstValue is Int {
-                            XCTAssertEqual(firstValue as! Int, secondValue as? Int, "\(property_name) not equal")
+                            XCTAssertEqual(firstValue as? Int, secondValue as? Int, "\(property_name) not equal")
                         } else if firstValue is Date {
-                            XCTAssertEqual(firstValue as! Date, secondValue as? Date, "\(property_name) not equal")
+                            XCTAssertEqual(firstValue as? Date, secondValue as? Date, "\(property_name) not equal")
                         } else if firstValue is Double {
-                            XCTAssertEqual(firstValue as! Double, secondValue as? Double, "\(property_name) not equal")
+                            XCTAssertEqual(firstValue as? Double, secondValue as? Double, "\(property_name) not equal")
                         }
                     } else {
                         XCTAssert(false, "\(property_name) doesnt have a value in new object")
