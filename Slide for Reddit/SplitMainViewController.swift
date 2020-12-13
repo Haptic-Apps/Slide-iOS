@@ -25,7 +25,8 @@ import WidgetKit
 class SplitMainViewController: MainViewController {
 
     static var isFirst = true
-    
+    var removeCachingHeader: (() -> Void)?
+
     var autoCacheProgress: MDCActivityIndicator?
 
     override func handleToolbars() {
@@ -1225,14 +1226,15 @@ extension SplitMainViewController: AutoCacheDelegate {
     }
     
     func showCacheDetails() {
-        if getHeaderView() != nil {
+        if getHeaderView() != nil || removeCachingHeader != nil {
+            self.removeCachingHeader?()
             return
         }
         
         let oldView = self.navigationItem.titleView
         let oldRight = self.navigationItem.rightBarButtonItems
         
-        let cancel = UIBarButtonItem(title: "Cancel AutoCache", style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCache))
+        let cancel = UIBarButtonItem(title: "Stop", style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCache))
         self.navigationItem.rightBarButtonItem = cancel
         
         self.navigationItem.titleView = ProgressHeaderView()
@@ -1248,17 +1250,23 @@ extension SplitMainViewController: AutoCacheDelegate {
             self.autoCacheProgress?.isHidden = true
         }
         
-        getHeaderView()?.addTapGestureRecognizer(action: { (_) in
+        removeCachingHeader = {
             self.hideCacheDetails(oldView, oldButtons: oldRight)
+            self.removeCachingHeader = nil
+        }
+        
+        getHeaderView()?.addTapGestureRecognizer(action: { (_) in
+            self.removeCachingHeader?()
         })
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
-            self.hideCacheDetails(oldView, oldButtons: oldRight)
+            self.removeCachingHeader?()
         }
     }
     
     @objc func cancelCache() {
         NotificationCenter.default.post(name: .cancelAutoCache, object: nil, userInfo: [:])
+        self.removeCachingHeader?()
     }
     
     func hideCacheDetails(_ oldView: UIView?, oldButtons: [UIBarButtonItem]?) {
@@ -1286,7 +1294,7 @@ extension SplitMainViewController: AutoCacheDelegate {
     
     @objc func autoCacheProgress(_ notification: Notification) {
         DispatchQueue.main.async {
-            if self.autoCacheProgress == nil {
+            if self.autoCacheProgress == nil && AutoCache.current != nil {
                 self.doSubCachingIcon(notification)
             }
             

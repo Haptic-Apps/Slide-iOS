@@ -57,6 +57,9 @@ public class AutoCache: NSObject {
     
     @objc func cancelAutoCache() {
         cancel = true
+        //Todo show subs that weren't cached?
+        NotificationCenter.default.post(name: .autoCacheFinished, object: nil, userInfo: ["total": 0, "failed": 0])
+        AutoCache.current = nil
     }
 
     func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
@@ -120,15 +123,16 @@ public class AutoCache: NSObject {
     }
 
     func cacheSub(_ index: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void, total: Int, failed: Int) {
-        if cancel {
-            return
-        }
-        
         if index >= subs.count {
             completion(total, failed)
             return
         }
         
+        if cancel {
+            self.cacheSub(index + 1, progress: progress, completion: completion, total: total, failed: failed)
+            return
+        }
+
         NotificationCenter.default.post(name: .autoCacheStarted, object: nil, userInfo: ["subreddit": self.subs[index]])
         self.currentSubreddit = self.subs[index]
         
