@@ -135,7 +135,6 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="SubredditModel" representedClassName="SubredditModel" syncable="YES"/>
     <entity name="SubredditPosts" representedClassName="SubredditPosts" syncable="YES">
         <attribute name="posts" attributeType="String"/>
         <attribute name="subreddit" attributeType="String"/>
@@ -151,7 +150,6 @@
         <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
         <element name="SubmissionComments" positionX="0" positionY="144" width="128" height="74"/>
         <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="944"/>
-        <element name="SubredditModel" positionX="-36" positionY="153" width="128" height="29"/>
         <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="74"/>
     </elements>
 </model>
