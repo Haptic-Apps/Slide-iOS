@@ -29,7 +29,7 @@ opt_in_rules:
   - sorted_imports
   
 excluded:
-  - CoreData\ Models
+  - CoreData_Models
   - Pods
 
 control_statement:

@@ -1439,7 +1439,7 @@
 			name = CoreData;
 			sourceTree = "<group>";
 		};
-		BE84B28D257DAC6100A90C5D /* CoreData Models */ = {
+		BE84B28D257DAC6100A90C5D /* CoreData_Models */ = {
 			isa = PBXGroup;
 			children = (
 				BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */,
@@ -1458,13 +1458,13 @@
 				BE84B20C257C622400A90C5D /* SubmissionModel+CoreDataClass.swift */,
 				BE84B20D257C622400A90C5D /* SubmissionModel +CoreDataProperties.swift */,
 			);
-			path = "CoreData Models";
+			path = CoreData_Models;
 			sourceTree = "<group>";
 		};
 		BE8FC9FB1E0C46090063B8EF = {
 			isa = PBXGroup;
 			children = (
-				BE84B28D257DAC6100A90C5D /* CoreData Models */,
+				BE84B28D257DAC6100A90C5D /* CoreData_Models */,
 				BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */,
 				BED90FF0250C017C00090DF5 /* Favorite SubredditsExtension.entitlements */,
 				BE77470720367D98006C72E8 /* Credits.plist */,
