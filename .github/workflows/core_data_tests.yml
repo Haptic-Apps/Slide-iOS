@@ -30,6 +30,13 @@ jobs:
           key: ${{ runner.os }}-mint-${{ hashFiles('**/Mintfile') }}
           restore-keys: |
             ${{ runner.os }}-mint-
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v2.1.3
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ github.workspace }}-${{ hashFiles('Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-${{ github.workspace }}
       - name: Install dependencies
         run: |
           sh ./bootstrap.sh
