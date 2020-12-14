@@ -17,7 +17,6 @@ disabled_rules:
 - force_cast
 - type_name
 - force_try
-- weak_delegate
 
 opt_in_rules:
   - array_init
