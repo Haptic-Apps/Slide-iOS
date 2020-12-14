@@ -149,6 +149,7 @@ class NavigationHomeViewController: UIViewController {
         
         self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
         self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
 
         tableView.sectionIndexColor = ColorUtil.baseAccent
 
