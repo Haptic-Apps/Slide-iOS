@@ -513,8 +513,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func setupSplitPaneLayout(_ splitViewController: UISplitViewController) {
         if #available(iOS 14.0, *) {
-            splitViewController.preferredDisplayMode = .oneBesideSecondary
-            splitViewController.preferredSplitBehavior = .displace
+            if SettingValues.desktopMode {
+                splitViewController.preferredDisplayMode = .twoBesideSecondary
+                splitViewController.preferredSplitBehavior = .tile
+            } else {
+                splitViewController.preferredDisplayMode = .oneBesideSecondary
+                splitViewController.preferredSplitBehavior = .displace
+            }
         } else {
             splitViewController.preferredDisplayMode = .allVisible
         }

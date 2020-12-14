@@ -3348,15 +3348,24 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
             let innerPoint = self.innerView.convert(location, to: self.textView)
             if self.textView.firstTextView.frame.contains(innerPoint) {
-                return getConfigurationForTextView(self.textView.firstTextView, innerPoint)
+                if let config = getConfigurationForTextView(self.textView.firstTextView, innerPoint) {
+                    return config
+                }
             } else if self.textView.overflow.frame.contains(innerPoint) {
                 let innerLocation = self.innerView.convert(innerPoint, to: self.textView.overflow)
                 print(innerLocation)
                 for view in self.textView.overflow.subviews {
                     if view.frame.contains(innerLocation) && view is YYLabel {
-                        return getConfigurationForTextView(view as! YYLabel, innerLocation)
+                        if let config = getConfigurationForTextView(view as! YYLabel, innerLocation) {
+                            return config
+                        }
                     }
                 }
+            }
+            if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                    return self.del?.getMoreMenu(self)
+                })
             }
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true

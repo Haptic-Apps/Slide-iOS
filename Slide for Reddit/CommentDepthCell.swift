@@ -1521,13 +1521,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
-                self.commentBody.addInteraction(previewing)
-                let previewing2 = UIContextMenuInteraction(delegate: self)
-                self.sideViewSpace.addInteraction(previewing2)
-                let previewing3 = UIContextMenuInteraction(delegate: self)
-                self.sideView.addInteraction(previewing3)
-                let previewing4 = UIContextMenuInteraction(delegate: self)
-                self.contentView.addInteraction(previewing4)
+                self.contentView.addInteraction(previewing)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
@@ -2362,31 +2356,38 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             return getConfigurationParentComment()
         } else if self.sideView.frame.contains(specialLocation) {
             return getConfigurationParentComment()
-        } else if self.commentBody.firstTextView.frame.contains(location) {
-            return getConfigurationForTextView(self.commentBody.firstTextView, location)
-        } else if self.commentBody.overflow.frame.contains(location) {
-            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
-            for view in self.commentBody.overflow.subviews {
-                if view.frame.contains(innerLocation) && view is YYLabel {
-                    return getConfigurationForTextView(view as! YYLabel, innerLocation)
+        } else {
+            if self.commentBody.firstTextView.frame.contains(location) {
+                if let config = getConfigurationForTextView(self.commentBody.firstTextView, location) {
+                    return config
                 }
+            } else if self.commentBody.overflow.frame.contains(location) {
+                let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+                for view in self.commentBody.overflow.subviews {
+                    if view.frame.contains(innerLocation) && view is YYLabel {
+                        if let config = getConfigurationForTextView(view as! YYLabel, innerLocation) {
+                            return config
+                        }
+                    }
+                }
+            } else if self.commentBody.links.frame.contains(location) {
+                /* TODO - find the links from the subviews?
+                for view in self.commentBody.links.subviews[0].subviews {
+                    if view is UIButton {
+                    }
+                }*/
             }
-        } else if self.commentBody.links.frame.contains(location) {
-            /* TODO - find the links from the subviews?
-            for view in self.commentBody.links.subviews[0].subviews {
-                if view is UIButton {
+            if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+                if self.parent?.menuCell == self {
+                    if let parent = self.parent {
+                        let menu = self.getMoreMenu(parent)
+                        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                            return menu
+                        })
+                    }
+                } else {
+                    self.showMenuAnimated()
                 }
-            }*/
-        } else if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
-            if self.parent?.menuCell == self {
-                if let parent = self.parent {
-                    let menu = self.getMoreMenu(parent)
-                    return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-                        return menu
-                    })
-                }
-            } else {
-                self.showMenuAnimated()
             }
         }
         return nil
