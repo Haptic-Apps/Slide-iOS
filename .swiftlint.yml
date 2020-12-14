@@ -60,6 +60,11 @@ custom_rules:
     regex: "(?:edge|horizontal|vertical|leading|trailing|top|bottom|left|right|height|width|centerX|centerY)Anchors?\\s*(==|<=|>=)"
     message: "Wrap Anchorage operators with //. For example, use /==/ instead of ==."
     severity: warning
+  swift_migrator_functions:
+    name: "Swift Migrator Functions"
+    regex: "\\/\\/ Helper function inserted by Swift \\d(.\\d)* migrator."
+    message: "Function left over from automatic Swift version migrator. Refactor or eliminate."
+    severity: warning
 
 
 excluded:
