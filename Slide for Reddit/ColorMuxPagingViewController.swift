@@ -11,7 +11,13 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     public weak var navToMux: UINavigationBar?
     private weak var match: UICollectionView?
     public var dontMatch = false
-    var currentIndex = 0
+    var currentIndex: Int = 0 {
+        didSet {
+            if let tabs = self as? TabsContentPagingViewController {
+                tabs.del?.shouldUpdateButtons()
+            }
+        }
+    }
     var titles = [String]()
 
     public override func viewWillAppear(_ animated: Bool) {

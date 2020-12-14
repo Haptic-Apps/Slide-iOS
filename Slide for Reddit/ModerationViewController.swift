@@ -7,7 +7,6 @@
 //
 
 import Anchorage
-import MaterialComponents.MaterialTabs
 import reddift
 import UIKit
 
