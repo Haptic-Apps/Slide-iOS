@@ -125,7 +125,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
     }
 
-    var currentIndex = 0
     var lastPosition: CGFloat = 0
         
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {

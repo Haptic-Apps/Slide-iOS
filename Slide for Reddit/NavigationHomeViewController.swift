@@ -267,6 +267,7 @@ class NavigationHomeViewController: UIViewController {
         //horizontalSubGroup.delegate = self
         //view.addSubview(horizontalSubGroup)
 
+        accountHeader?.removeFromSuperview()
         accountHeader = CurrentAccountHeaderView()
         accountHeader?.delegate = parentController
         accountHeader!.initCurrentAccount(self)

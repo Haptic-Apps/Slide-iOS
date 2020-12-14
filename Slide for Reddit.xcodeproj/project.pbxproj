@@ -280,6 +280,7 @@
 		BE7AF91E258526D70079B0B3 /* CommentObjectReportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AF91D258526D70079B0B3 /* CommentObjectReportService.swift */; };
 		BE7BFB421F128F9B009CA2E1 /* Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */; };
 		BE7BFB481F1997BA009CA2E1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7BFB471F1997BA009CA2E1 /* MapKit.framework */; };
+		BE80F9CE2585E81A00EA1636 /* TabsContentPagingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE80F9CD2585E81A00EA1636 /* TabsContentPagingViewController.swift */; };
 		BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8264E621934221002A540E /* VideoMediaDownloader.swift */; };
 		BE8264E92194AE0E002A540E /* OfflineOverviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */; };
 		BE836478254A3A8B00677F8A /* TrendingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE836477254A3A8B00677F8A /* TrendingViewController.swift */; };
@@ -787,6 +788,7 @@
 		BE7AF91D258526D70079B0B3 /* CommentObjectReportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentObjectReportService.swift; sourceTree = "<group>"; };
 		BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sidebar.swift; sourceTree = "<group>"; };
 		BE7BFB471F1997BA009CA2E1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		BE80F9CD2585E81A00EA1636 /* TabsContentPagingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabsContentPagingViewController.swift; sourceTree = "<group>"; };
 		BE8264E621934221002A540E /* VideoMediaDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaDownloader.swift; sourceTree = "<group>"; };
 		BE8264E82194AE0E002A540E /* OfflineOverviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineOverviewViewController.swift; sourceTree = "<group>"; };
 		BE836477254A3A8B00677F8A /* TrendingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendingViewController.swift; sourceTree = "<group>"; };
@@ -1624,6 +1626,7 @@
 				BEBF3813256376AC00C91668 /* ModerationOverviewViewController.swift */,
 				BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */,
 				BE3144FE25663674004A908C /* AsyncTextAttachment.swift */,
+				BE80F9CD2585E81A00EA1636 /* TabsContentPagingViewController.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2519,6 +2522,7 @@
 				BEE5BF841E14836E00E3C9AE /* MediaVCDelegate.swift in Sources */,
 				BE2B89FB1E253D610053D493 /* ReplyViewController.swift in Sources */,
 				BED3B31924CE278B00B9A664 /* SettingsShortcutMenu.swift in Sources */,
+				BE80F9CE2585E81A00EA1636 /* TabsContentPagingViewController.swift in Sources */,
 				BEBF380A2563716B00C91668 /* ModlogContributionLoader.swift in Sources */,
 				BEC4A1B4232F3F1800EE5114 /* CollectionsContributionLoader.swift in Sources */,
 				096A7D172215EC920067106C /* SettingsAudio.swift in Sources */,

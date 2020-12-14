@@ -15,18 +15,28 @@ public protocol PagingTitleDelegate: class {
 }
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
+    //Overwrite this when implementing
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return UICollectionViewCell()
+    }
+    
+    func registerCells() {
+        
+    }
+
+    //Shared vars
     public var collectionView: UICollectionView!
     private var collectionViewLayout: FadingCollectionViewLayout!
-    private var delegate: PagingTitleDelegate
+    private weak var delegate: PagingTitleDelegate?
     
-    private var dataSource: [String] = []
+    public var dataSource: [String] = []
     public weak var parentScroll: UIScrollView?
     
     private var indexOfCellBeforeDragging = 0
     private var widthSet = false
     
-    init(withSubreddits: [String], delegate: PagingTitleDelegate) {
-        self.dataSource = withSubreddits
+    init(withTitles: [String], delegate: PagingTitleDelegate) {
+        self.dataSource = withTitles
         self.delegate = delegate
 
         super.init(frame: CGRect.zero)
@@ -36,7 +46,9 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     func configureViews() {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.collectionViewLayout = FadingCollectionViewLayout(scrollDirection: .horizontal)
-        //self.collectionViewLayout.scrollDirection = .horizontal
+        if self is TabsPagingTitleCollectionView {
+            (self.collectionViewLayout as? FadingCollectionViewLayout)?.shouldFade = false
+        }
         
         self.collectionViewLayout.delegate = self
 
@@ -51,11 +63,10 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         self.collectionView.showsHorizontalScrollIndicator = false
         self.collectionView.showsVerticalScrollIndicator = false
         
-        if SettingValues.fullWidthHeaderCells {
+        if SettingValues.fullWidthHeaderCells && !(self is TabsPagingTitleCollectionView) {
             self.collectionView.isUserInteractionEnabled = false
         }
-        //self.collectionView.isPagingEnabled = true
-        self.collectionView.register(SubredditTitleCollectionViewCell.classForCoder(), forCellWithReuseIdentifier: "subreddit")
+        registerCells()
     }
     
     public override var intrinsicContentSize: CGSize {
@@ -73,7 +84,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
             widthSet = true
             collectionViewLayout.reset()
             collectionView.reloadData()
-            delegate.didSetWidth()
+            delegate?.didSetWidth()
         } else {
             collectionView.contentOffset = oldOffset
         }
@@ -81,10 +92,10 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate.didSelect(dataSource[indexPath.row])
+        delegate?.didSelect(dataSource[indexPath.row])
     }
     
-    private func addGradientMask() {
+    public func addGradientMask() {
         let coverView = GradientMaskView(frame: self.collectionView.bounds)
          let coverLayer = coverView.layer as! CAGradientLayer
          coverLayer.colors = [ColorUtil.theme.foregroundColor.withAlphaComponent(0).cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.withAlphaComponent(0).cgColor]
@@ -99,80 +110,62 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         return dataSource.count
     }
             
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public var currentIndex = 0
+    public var originalOffset = CGFloat(0)
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    }
+            
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        self.collectionView.mask?.frame = self.collectionView.bounds
+    }
+}
+
+public class SubredditPagingTitleCollectionView: PagingTitleCollectionView {
+        
+    init(withSubreddits: [String], delegate: PagingTitleDelegate) {
+        super.init(withTitles: withSubreddits, delegate: delegate)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func registerCells() {
+        self.collectionView.register(SubredditTitleCollectionViewCell.classForCoder(), forCellWithReuseIdentifier: "subreddit")
+    }
+                    
+    override public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subreddit", for: indexPath) as! SubredditTitleCollectionViewCell
         
         cell.setSubreddit(subreddit: dataSource[indexPath.row])
         return cell
     }
+}
 
-    public var currentIndex = 0
-    public var originalOffset = CGFloat(0)
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        /*indexOfCellBeforeDragging = indexOfMajorCell()
-        currentIndex = indexOfMajorCell()
-        if let parent = parentScroll {
-            originalOffset = parent.contentOffset.x
-        }*/
+public class TabsPagingTitleCollectionView: PagingTitleCollectionView {
+        
+    init(withTabs: [String], delegate: PagingTitleDelegate) {
+        super.init(withTitles: withTabs, delegate: delegate)
     }
-            
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.collectionView.mask?.frame = self.collectionView.bounds
-        /* Disable for now
-        print(scrollView.contentOffset.x)
-        if let parent = parentScroll {
-            let currentY = scrollView.contentOffset.x
-
-            var currentBackgroundOffset = parent.contentOffset
-                        
-            //Translate percentage of current view translation to the parent scroll view, add in original offset
-            currentBackgroundOffset.x = originalOffset + ((currentY - (CGFloat(currentIndex) * collectionViewLayout.itemSize.width)) / (scrollView.frame.size.width - 140 )) * parent.frame.size.width
-            parent.contentOffset = currentBackgroundOffset
-            parent.layoutIfNeeded()
-        }*/
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func addGradientMask() {
+        return
     }
 
-    /*//From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
-     private func indexOfMajorCell() -> Int {
-         let itemWidth = collectionViewLayout.itemSize.width
-         let proportionalOffset = collectionViewLayout.collectionView!.contentOffset.x / itemWidth
-         let index = Int(round(proportionalOffset))
-         let safeIndex = max(0, min(dataSource.count - 1, index))
-         return safeIndex
-     }
-
-    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        // Stop scrollView sliding:
-        targetContentOffset.pointee = scrollView.contentOffset
-
-        // calculate where scrollView should snap to:
-        let indexOfMajorCell = self.indexOfMajorCell()
-
-        // calculate conditions:
-        let dataSourceCount = collectionView(collectionView!, numberOfItemsInSection: 0)
-        let swipeVelocityThreshold: CGFloat = 0.5 // after some trail and error
-        let hasEnoughVelocityToSlideToTheNextCell = indexOfCellBeforeDragging + 1 < dataSourceCount && velocity.x > swipeVelocityThreshold
-        let hasEnoughVelocityToSlideToThePreviousCell = indexOfCellBeforeDragging - 1 >= 0 && velocity.x < -swipeVelocityThreshold
-        let majorCellIsTheCellBeforeDragging = indexOfMajorCell == indexOfCellBeforeDragging
-        let didUseSwipeToSkipCell = majorCellIsTheCellBeforeDragging && (hasEnoughVelocityToSlideToTheNextCell || hasEnoughVelocityToSlideToThePreviousCell)
-
-        if didUseSwipeToSkipCell {
-
-            let snapToIndex = indexOfCellBeforeDragging + (hasEnoughVelocityToSlideToTheNextCell ? 1 : -1)
-            let toValue = collectionViewLayout.itemSize.width * CGFloat(snapToIndex)
-
-            // Damping equal 1 => no oscillations => decay animation:
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: velocity.x, options: .allowUserInteraction, animations: {
-                scrollView.contentOffset = CGPoint(x: toValue, y: 0)
-                scrollView.layoutIfNeeded()
-            }, completion: nil)
-
-        } else {
-            // This is a much better way to scroll to a cell:
-            let indexPath = IndexPath(row: indexOfMajorCell, section: 0)
-            collectionViewLayout.collectionView!.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-        }
-    }*/
+    override func registerCells() {
+        self.collectionView.register(TabTitleCollectionViewCell.classForCoder(), forCellWithReuseIdentifier: "tab")
+    }
+                    
+    override public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tab", for: indexPath) as! TabTitleCollectionViewCell
+        
+        cell.setTitle(titleText: dataSource[indexPath.row])
+        return cell
+    }
 }
 
 class SubredditTitleCollectionViewCell: UICollectionViewCell {
@@ -285,12 +278,68 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
     }
 }
 
+class TabTitleCollectionViewCell: UICollectionViewCell {
+    var titleText = ""
+    var title: UILabel = UILabel()
+    var innerView = UIView()
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureViews()
+        configureLayout()
+    }
+        
+    func configureViews() {
+        self.clipsToBounds = true
+
+        self.title = UILabel().then {
+            $0.numberOfLines = 0
+            $0.font = UIFont.boldSystemFont(ofSize: 18)
+        }
+
+        self.contentView.addSubview(innerView)
+        self.innerView.addSubviews(title)
+        self.contentView.backgroundColor = .clear
+        self.backgroundColor = .clear
+    }
+
+    func configureLayout() {
+        batch {
+            title.leftAnchor /==/ innerView.leftAnchor + 4
+            title.centerYAnchor /==/ innerView.centerYAnchor
+            title.rightAnchor /==/ innerView.rightAnchor - 4
+            innerView.centerYAnchor /==/ self.contentView.centerYAnchor
+            innerView.centerXAnchor /==/ self.contentView.centerXAnchor
+        }
+    }
+    
+    func setTitle(titleText: String) {
+        title.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        self.contentView.backgroundColor = .clear
+        self.titleText = titleText
+                
+        title.adjustsFontSizeToFitWidth = true
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.text = titleText
+        title.numberOfLines = 1
+        title.sizeToFit()
+
+        let selectedView = UIView()
+        selectedView.backgroundColor = .clear
+        selectedBackgroundView = selectedView
+    }
+}
+
 extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, indexPath: IndexPath) -> CGSize {
-        if SettingValues.fullWidthHeaderCells {
+        if SettingValues.fullWidthHeaderCells && !(self is TabsPagingTitleCollectionView) {
             return CGSize(width: collectionView.frame.size.width, height: 40)
         }
-        if SettingValues.subredditIcons {
+        if SettingValues.subredditIcons && !(self is TabsPagingTitleCollectionView) {
             var width = CGFloat(30) //icon size
             width += 4 //icon leading padding
             
@@ -320,6 +369,7 @@ class GradientMaskView: UIView {
 class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
     private var fadeFactor: CGFloat = 0.6
+    public var shouldFade = true
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -347,12 +397,14 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
                 if collectionView!.frame.size.width > 400 {
                     self.fadeFactor = 0.4
                 }
-                for attrs in attributes {
-                    if attrs.frame.intersects(rect) {
-                        let distance = visibleRect.midX - attrs.center.x
-                        let normalizedDistance = abs(distance) / (visibleRect.width * fadeFactor)
-                        let fade = 1 - normalizedDistance
-                        attrs.alpha = fade
+                if self.shouldFade {
+                    for attrs in attributes {
+                        if attrs.frame.intersects(rect) {
+                            let distance = visibleRect.midX - attrs.center.x
+                            let normalizedDistance = abs(distance) / (visibleRect.width * fadeFactor)
+                            let fade = 1 - normalizedDistance
+                            attrs.alpha = fade
+                        }
                     }
                 }
                 return attributes
@@ -366,7 +418,9 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
     override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         if let attributes = super.layoutAttributesForItem(at: itemIndexPath) {
-            attributes.alpha = 0
+            if shouldFade {
+                attributes.alpha = 0
+            }
             return attributes
         }
         return nil
@@ -374,7 +428,9 @@ class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
     override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         if let attributes = super.layoutAttributesForItem(at: itemIndexPath) {
-            attributes.alpha = 0
+            if shouldFade {
+                attributes.alpha = 0
+            }
             return attributes
         }
         return nil

@@ -48,9 +48,32 @@ PODS:
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
+  - MaterialComponents/schemes/Color (119.1.0):
+    - MaterialComponents/Availability
+    - MaterialComponents/private/Color
+  - MaterialComponents/schemes/Container (119.1.0):
+    - MaterialComponents/schemes/Color
+    - MaterialComponents/schemes/Shape
+    - MaterialComponents/schemes/Typography
+  - MaterialComponents/schemes/Shape (119.1.0):
+    - MaterialComponents/ShapeLibrary
+    - MaterialComponents/Shapes
+  - MaterialComponents/schemes/Typography (119.1.0):
+    - "MaterialComponents/schemes/Typography+BasicFontScheme"
+    - "MaterialComponents/schemes/Typography+Scheming"
+    - MaterialComponents/Typography
+  - "MaterialComponents/schemes/Typography+BasicFontScheme (119.1.0)"
+  - "MaterialComponents/schemes/Typography+Scheming (119.1.0)"
   - MaterialComponents/ShadowElevations (119.1.0)
   - MaterialComponents/ShadowLayer (119.1.0):
     - MaterialComponents/ShadowElevations
+  - MaterialComponents/ShapeLibrary (119.1.0):
+    - MaterialComponents/private/Math
+    - MaterialComponents/Shapes
+  - MaterialComponents/Shapes (119.1.0):
+    - MaterialComponents/private/Color
+    - MaterialComponents/private/Math
+    - MaterialComponents/ShadowLayer
   - MaterialComponents/Tabs (119.1.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Elevation
@@ -67,6 +90,9 @@ PODS:
     - MaterialComponents/private/Math
     - MaterialComponents/Ripple
     - MDFInternationalization
+  - "MaterialComponents/Tabs+TabBarViewTheming (119.1.0)":
+    - MaterialComponents/schemes/Container
+    - "MaterialComponents/Tabs+TabBarView"
   - MaterialComponents/Typography (119.1.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
@@ -104,6 +130,7 @@ DEPENDENCIES:
   - MaterialComponents/ProgressView
   - MaterialComponents/Tabs
   - "MaterialComponents/Tabs+TabBarView"
+  - "MaterialComponents/Tabs+TabBarViewTheming"
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
   - OpalImagePicker
@@ -209,6 +236,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 6b7c5d20a5fa527d5a6619caca21c42466f84619
+PODFILE CHECKSUM: e17d3daaac9c8f7052ee93afd771dcb673a8b0b3
 
 COCOAPODS: 1.10.0

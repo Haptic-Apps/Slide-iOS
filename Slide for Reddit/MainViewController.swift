@@ -35,7 +35,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public static var needsRestart = false
     public static var needsReTheme = false
     public var toolbar: UIView?
-    var tabBar: PagingTitleCollectionView!
+    var tabBar: SubredditPagingTitleCollectionView!
     var subs: UIView?
     var selected = false
 
@@ -73,9 +73,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return 0
         }
     }
-    
-    var currentIndex = 0
-    
+        
     public static var isOffline = false
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
@@ -373,8 +371,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         let oldOffset = tabBar?.collectionView.contentOffset ?? CGPoint.zero
         tabBar?.removeFromSuperview()
-        tabBar = PagingTitleCollectionView(withSubreddits: subs, delegate: self)
-        //self.viewToMux = self.tabBar
+        tabBar = SubredditPagingTitleCollectionView(withSubreddits: subs, delegate: self)
         self.navigationItem.titleView = tabBar
         tabBar.sizeToFit()
         tabBar.collectionView.setNeedsLayout()
