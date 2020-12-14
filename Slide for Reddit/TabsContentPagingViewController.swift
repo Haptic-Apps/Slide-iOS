@@ -10,6 +10,10 @@ import Anchorage
 import Foundation
 import reddift
 
+protocol TabsContentPagingViewControllerDelegate: class {
+    func shouldUpdateButtons()
+}
+
 class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UINavigationControllerDelegate {
     var vCs: [UIViewController] = []
     var lastPosition: CGFloat = 0
@@ -20,6 +24,8 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
     var selected = false
     var stickyBelow = UIView()
     var shouldScroll: Bool = true
+    var openTo = 0
+    var del: TabsContentPagingViewControllerDelegate?
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if ColorUtil.theme.isLight && SettingValues.reduceColor {
@@ -135,7 +141,9 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
         self.delegate = self
 
         self.navigationController?.view.backgroundColor = UIColor.clear
-        let firstViewController = vCs[0]
+        
+        currentIndex = openTo
+        let firstViewController = vCs[openTo]
 
         for view in view.subviews {
             if view is UIScrollView {

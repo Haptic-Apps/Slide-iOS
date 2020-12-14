@@ -346,7 +346,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     estimatedHeights[comment.id] = height + 20
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
-            } else if thing is FriendModel {
+            } else if thing is FriendObject {
                 return CGSize(width: itemWidth, height: 70)
             } else if thing is MessageObject {
                 let message = thing as! MessageObject

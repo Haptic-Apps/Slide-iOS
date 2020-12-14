@@ -19,86 +19,19 @@ PODS:
     - DTFoundation/Core
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (119.1.0):
+  - MaterialComponents/ActivityIndicator (119.2.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
     - MotionAnimator (~> 2.0)
-  - MaterialComponents/AnimationTiming (119.1.0)
-  - MaterialComponents/Availability (119.1.0)
-  - MaterialComponents/Elevation (119.1.0):
-    - MaterialComponents/Availability
-    - MaterialComponents/private/Color
-    - MaterialComponents/private/Math
-  - MaterialComponents/Ink (119.1.0):
-    - MaterialComponents/Availability
-    - MaterialComponents/private/Color
-    - MaterialComponents/private/Math
-  - MaterialComponents/Palettes (119.1.0)
-  - MaterialComponents/private/Application (119.1.0)
-  - MaterialComponents/private/Color (119.1.0):
-    - MaterialComponents/Availability
-  - MaterialComponents/private/Math (119.1.0)
-  - MaterialComponents/ProgressView (119.1.0):
+  - MaterialComponents/Palettes (119.2.0)
+  - MaterialComponents/private/Application (119.2.0)
+  - MaterialComponents/private/Math (119.2.0)
+  - MaterialComponents/ProgressView (119.2.0):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
-  - MaterialComponents/Ripple (119.1.0):
-    - MaterialComponents/AnimationTiming
-    - MaterialComponents/Availability
-    - MaterialComponents/private/Color
-    - MaterialComponents/private/Math
-  - MaterialComponents/schemes/Color (119.1.0):
-    - MaterialComponents/Availability
-    - MaterialComponents/private/Color
-  - MaterialComponents/schemes/Container (119.1.0):
-    - MaterialComponents/schemes/Color
-    - MaterialComponents/schemes/Shape
-    - MaterialComponents/schemes/Typography
-  - MaterialComponents/schemes/Shape (119.1.0):
-    - MaterialComponents/ShapeLibrary
-    - MaterialComponents/Shapes
-  - MaterialComponents/schemes/Typography (119.1.0):
-    - "MaterialComponents/schemes/Typography+BasicFontScheme"
-    - "MaterialComponents/schemes/Typography+Scheming"
-    - MaterialComponents/Typography
-  - "MaterialComponents/schemes/Typography+BasicFontScheme (119.1.0)"
-  - "MaterialComponents/schemes/Typography+Scheming (119.1.0)"
-  - MaterialComponents/ShadowElevations (119.1.0)
-  - MaterialComponents/ShadowLayer (119.1.0):
-    - MaterialComponents/ShadowElevations
-  - MaterialComponents/ShapeLibrary (119.1.0):
-    - MaterialComponents/private/Math
-    - MaterialComponents/Shapes
-  - MaterialComponents/Shapes (119.1.0):
-    - MaterialComponents/private/Color
-    - MaterialComponents/private/Math
-    - MaterialComponents/ShadowLayer
-  - MaterialComponents/Tabs (119.1.0):
-    - MaterialComponents/AnimationTiming
-    - MaterialComponents/Elevation
-    - MaterialComponents/Ink
-    - MaterialComponents/Palettes
-    - MaterialComponents/private/Math
-    - MaterialComponents/Ripple
-    - MaterialComponents/ShadowElevations
-    - MaterialComponents/ShadowLayer
-    - MaterialComponents/Typography
-    - MDFInternationalization
-  - "MaterialComponents/Tabs+TabBarView (119.1.0)":
-    - MaterialComponents/AnimationTiming
-    - MaterialComponents/private/Math
-    - MaterialComponents/Ripple
-    - MDFInternationalization
-  - "MaterialComponents/Tabs+TabBarViewTheming (119.1.0)":
-    - MaterialComponents/schemes/Container
-    - "MaterialComponents/Tabs+TabBarView"
-  - MaterialComponents/Typography (119.1.0):
-    - MaterialComponents/private/Application
-    - MaterialComponents/private/Math
-    - MDFTextAccessibility
   - MDFInternationalization (2.0.0)
-  - MDFTextAccessibility (2.0.0)
   - MiniKeychain (1.0.8)
   - MKColorPicker (1.2)
   - MotionAnimator (2.8.1):
@@ -128,9 +61,6 @@ DEPENDENCIES:
   - LicensesViewController (~> 0.7.0)
   - MaterialComponents/ActivityIndicator
   - MaterialComponents/ProgressView
-  - MaterialComponents/Tabs
-  - "MaterialComponents/Tabs+TabBarView"
-  - "MaterialComponents/Tabs+TabBarViewTheming"
   - MKColorPicker (from `https://github.com/ccrama/MKColorPicker`)
   - MTColorDistance
   - OpalImagePicker
@@ -154,7 +84,6 @@ SPEC REPOS:
     - LicensesViewController
     - MaterialComponents
     - MDFInternationalization
-    - MDFTextAccessibility
     - MiniKeychain
     - MotionAnimator
     - MotionInterchange
@@ -214,9 +143,8 @@ SPEC CHECKSUMS:
   DTFoundation: e7781d9fd2f202bfd451fbbf8cab71ce83b46498
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 04f29e3ec4965c29a48e13a626a0ab4bbd19e289
+  MaterialComponents: a7206e4d3491b63c7cedc8d80032cbc0178a9497
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
-  MDFTextAccessibility: 85c09a1bd9c321f494348e632a25063bcda35a53
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
   MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
@@ -236,6 +164,6 @@ SPEC CHECKSUMS:
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: e17d3daaac9c8f7052ee93afd771dcb673a8b0b3
+PODFILE CHECKSUM: f3d5434b3387a84e7106b422142f47f6745fbb1f
 
 COCOAPODS: 1.10.0
