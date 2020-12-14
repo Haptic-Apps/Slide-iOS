@@ -51,7 +51,6 @@ class ProfileViewController: TabsContentPagingViewController {
         if friends {
             self.vCs.append(ContentListingViewController.init(dataSource: FriendsContributionLoader.init()))
             self.titles.append("Friends")
-            openTo += 1
         }
         
         for place in content {

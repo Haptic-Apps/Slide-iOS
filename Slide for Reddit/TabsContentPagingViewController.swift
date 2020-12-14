@@ -142,6 +142,10 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
 
         self.navigationController?.view.backgroundColor = UIColor.clear
         
+        if (self as? ProfileViewController)?.friends ?? false {
+            openTo += 1
+        }
+        
         currentIndex = openTo
         let firstViewController = vCs[openTo]
 
@@ -151,13 +155,12 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
                 break
             }
         }
-
-        doToolbarOffset()
-
+        
         setViewControllers([firstViewController],
                 direction: .forward,
-                animated: true,
-                completion: nil)
+                animated: true) { (_) in
+            self.doToolbarOffset()
+        }
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -271,6 +274,7 @@ extension TabsContentPagingViewController: PagingTitleDelegate {
     }
 
     func didSetWidth() {
+        self.doToolbarOffset()
     }
 }
 
