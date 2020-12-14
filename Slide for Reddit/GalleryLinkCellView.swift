@@ -68,6 +68,8 @@ final class GalleryLinkCellView: LinkCellView {
 
         let attText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: full)
         title.attributedText = attText
+        
+        layoutTitleImageViews()
     }
     
     override func refresh(np: Bool = false) {
