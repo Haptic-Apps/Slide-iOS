@@ -492,6 +492,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .SINGLE, .MULTI_COLUMN:
                 if UIApplication.shared.isSplitOrSlideOver {
                     setupSplitPaneLayout(splitViewController)
+                } else if SettingValues.desktopMode {
+                    splitViewController.preferredDisplayMode = .oneBesideSecondary
+                    if #available(iOS 14.0, *) {
+                        splitViewController.preferredSplitBehavior = .displace
+                    }
                 } else {
                     splitViewController.preferredDisplayMode = .secondaryOnly
                     if #available(iOS 14.0, *) {
@@ -1042,6 +1047,7 @@ extension URL {
         return results
     }
 }
+
 extension Session {
     /**
      Refresh own token.

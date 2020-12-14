@@ -1019,7 +1019,7 @@ class CurrentAccountHeaderView: UIView {
         let forwardItem = UIBarButtonItem(customView: forwardButton)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        if UIApplication.shared.isMac() {
+        if SettingValues.desktopMode {
             parent.toolbarItems = [leftItem, space, rightItem]
         } else {
             parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
@@ -1248,6 +1248,10 @@ extension CurrentAccountHeaderView {
                 is14Column = true
             }
             if #available(iOS 14, *), self.parent?.splitViewController?.style == .doubleColumn {
+                is14Column = true
+            }
+            
+            if SettingValues.desktopMode {
                 is14Column = true
             }
             

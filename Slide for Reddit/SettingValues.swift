@@ -148,6 +148,7 @@ class SettingValues {
     public static let pref_imageFlairs = "IMAGE_FLAIRS"
     public static let pref_coloredFlairs = "COLORED_FLAIRS"
     public static let pref_showFlairs = "SHOW_FLAIRS"
+    public static let pref_desktopMode = "DESKTOP_MODE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -292,6 +293,7 @@ class SettingValues {
     public static var imageFlairs = false
     public static var coloredFlairs = false
     public static var showFlairs = true
+    public static var desktopMode = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -530,6 +532,9 @@ class SettingValues {
                 break
             }
         }
+
+        SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
+        SettingValues.desktopMode = true //todo disable this
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 

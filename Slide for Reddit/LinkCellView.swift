@@ -32,6 +32,8 @@ protocol LinkCellViewDelegate: class {
     func deleteSelf(_ cell: LinkCellView)
     func mod(_ cell: LinkCellView)
     func readLater(_ cell: LinkCellView)
+    
+    @available(iOS 13, *) func getMoreMenu(_ cell: LinkCellView) -> UIMenu
 }
 
 enum CurrentType {
@@ -2310,7 +2312,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func showMore() {
-        timer!.invalidate()
+        timer?.invalidate()
         if longBlocking {
             self.longBlocking = false
             return
@@ -3368,6 +3370,10 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.makeContextMenu()
             })
+        } else if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                return self.del?.getMoreMenu(seslf)
+            })
         }
         return nil
     }
@@ -3571,7 +3577,6 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
 
     func makeContextMenu() -> UIMenu {
-
         // Create a UIAction for sharing
         var buttons = [UIAction]()
         let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "add")) { _ in

@@ -580,6 +580,14 @@ extension ContentListingViewController: LinkCellViewDelegate {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
     
+    @available(iOS 13, *)
+    func getMoreMenu(_ cell: LinkCellView) -> UIMenu {
+        if let nav = self.navigationController {
+            return PostActions.getMoreContextMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
+    }
+
+    
     func upvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in

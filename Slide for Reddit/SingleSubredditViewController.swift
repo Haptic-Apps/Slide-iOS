@@ -2853,6 +2853,13 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         }
     }
 
+    @available(iOS 13, *)
+    func getMoreMenu(_ cell: LinkCellView) -> UIMenu {
+        if let nav = self.navigationController {
+            return PostActions.getMoreContextMenu(cell: cell, parent: self, nav: nav, mutableList: true, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
+    }
+
     func readLater(_ cell: LinkCellView) {
         guard let link = cell.link else {
             return
@@ -2940,6 +2947,9 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             swipe.require(toFail: cellGestureRecognizer)
         }
         
+        if #available(iOS 13.4, *) {
+            cellGestureRecognizer.allowedScrollTypesMask = .continuous
+        }
     }
         
     func setupSwipeGesture() {
