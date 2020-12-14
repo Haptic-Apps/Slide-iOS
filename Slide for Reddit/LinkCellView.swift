@@ -33,7 +33,7 @@ protocol LinkCellViewDelegate: class {
     func mod(_ cell: LinkCellView)
     func readLater(_ cell: LinkCellView)
     
-    @available(iOS 13, *) func getMoreMenu(_ cell: LinkCellView) -> UIMenu
+    @available(iOS 13, *) func getMoreMenu(_ cell: LinkCellView) -> UIMenu?
 }
 
 enum CurrentType {
@@ -3372,7 +3372,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             })
         } else if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-                return self.del?.getMoreMenu(seslf)
+                return self.del?.getMoreMenu(self)
             })
         }
         return nil

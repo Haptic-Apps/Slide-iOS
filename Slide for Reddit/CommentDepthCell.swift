@@ -1058,7 +1058,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func doMenu() {
-        more(parent!)
+        if let parent = self.parent {
+            more(parent)
+        }
     }
 
     @objc func menu(_ s: AnyObject) {
@@ -1244,47 +1246,43 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             refresh(comment: content as! CommentObject, submissionAuthor: savedAuthor, text: cellContent!)
         }
     }
-
-    func more(_ par: CommentViewController) {
-        if comment == nil {
-            return
-        }
-
-        let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.markdownBody, icon: nil)
-
-        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
+    
+    func getActions(_ par: CommentViewController) -> [AlertMenuAction] {
+        var actions = [AlertMenuAction]()
+        
+        actions.append(AlertMenuAction(title: "\(AccountController.formatUsernamePosessive(input: comment!.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon(), action: {
             let prof = ProfileViewController.init(name: self.comment!.author)
             VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: par.navigationController, parentViewController: par)
-        }
+        }))
 
-        alertController.addAction(title: "Share comment permalink", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
+        actions.append(AlertMenuAction(title: "Share comment permalink", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon(), action: {
             let activityViewController = UIActivityViewController(activityItems: [URL(string: self.comment!.permalink + "?context=5") ?? URL(string: "about://blank")], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
                 presenter.sourceRect = self.moreButton.bounds
             }
             par.present(activityViewController, animated: true, completion: {})
-        }
+        }))
         
         if AccountController.isLoggedIn {
-            alertController.addAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon()) {
+            actions.append(AlertMenuAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon(), action: {
                 par.saveComment(self.comment!)
-            }
+            }))
         }
         
-        alertController.addAction(title: "Report comment", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon()) {
+        actions.append(AlertMenuAction(title: "Report comment", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), action: {
             PostActions.report(self.comment!, parent: par, index: -1, delegate: nil)
-        }
+        }))
 
-        alertController.addAction(title: "Tag u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon()) {
+        actions.append(AlertMenuAction(title: "Tag u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.tagFill, overrideString: "subs")!.menuIcon(), action: {
             par.tagUser(name: self.comment!.author)
-        }
+        }))
         
-        alertController.addAction(title: "Block u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
+        actions.append(AlertMenuAction(title: "Block u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon(), action: {
             par.blockUser(name: self.comment!.author)
-        }
+        }))
         
-        alertController.addAction(title: "Copy text", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+        actions.append(AlertMenuAction(title: "Copy text", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon(), action: {
             let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
             
             alert.setupTheme()
@@ -1312,13 +1310,41 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             alert.addBlurView()
             par.present(alert, animated: true)
-        }
+        }))
         
-        alertController.addAction(title: "Open comment permalink", icon: UIImage(named: "crosspost")!.menuIcon()) {
+        actions.append(AlertMenuAction(title: "Open comment permalink", icon: UIImage(named: "crosspost")!.menuIcon(), action: {
             VCPresenter.openRedditLink(self.comment!.permalink + "?context=5", par.navigationController, par)
+        }))
+        
+        return actions
+    }
+
+    func more(_ par: CommentViewController) {
+        if comment == nil {
+            return
         }
+
+        let alertController = DragDownAlertMenu(title: "Comment by u/\(comment!.author)", subtitle: comment!.markdownBody, icon: nil)
+
+        alertController.actions = getActions(par)
         
         alertController.show(par.parent)
+    }
+
+    @available(iOS 13, *)
+    func getMoreMenu(_ par: CommentViewController) -> UIMenu? {
+        if comment == nil {
+            return nil
+        }
+
+        var actions = [UIAction]()
+        for action in getActions(par) {
+            actions.append(UIAction(title: action.title, image: action.icon, handler: { (_) in
+                action.action()
+            }))
+        }
+        
+        return UIMenu(title: "Comment by \(AccountController.formatUsername(input: self.comment?.author ?? "", small: true))", image: nil, identifier: nil, children: actions)
     }
 
     func mod(_ par: CommentViewController) {
@@ -1500,6 +1526,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 self.sideViewSpace.addInteraction(previewing2)
                 let previewing3 = UIContextMenuInteraction(delegate: self)
                 self.sideView.addInteraction(previewing3)
+                let previewing4 = UIContextMenuInteraction(delegate: self)
+                self.contentView.addInteraction(previewing4)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
@@ -2322,6 +2350,8 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                     return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
                 }
             }
+        } else {
+            
         }
         return UITargetedPreview(view: self.commentBody, parameters: parameters)
     }
@@ -2347,6 +2377,17 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 if view is UIButton {
                 }
             }*/
+        } else if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+            if self.parent?.menuCell == self {
+                if let parent = self.parent {
+                    let menu = self.getMoreMenu(parent)
+                    return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                        return menu
+                    })
+                }
+            } else {
+                self.showMenuAnimated()
+            }
         }
         return nil
     }

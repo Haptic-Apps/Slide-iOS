@@ -581,10 +581,11 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
     
     @available(iOS 13, *)
-    func getMoreMenu(_ cell: LinkCellView) -> UIMenu {
+    func getMoreMenu(_ cell: LinkCellView) -> UIMenu? {
         if let nav = self.navigationController {
             return PostActions.getMoreContextMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
         }
+        return nil
     }
 
     
