@@ -552,12 +552,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Download New Messages") {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
+            self.backgroundTaskId = UIBackgroundTaskIdentifier.invalid
         }
 
         func cleanup() {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
+            self.backgroundTaskId = UIBackgroundTaskIdentifier.invalid
         }
 
         NSLog("getData running...")
@@ -1108,11 +1108,6 @@ extension Session {
             } catch { print(error) }
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
-    return input.rawValue
 }
 
 class CustomSplitController: UISplitViewController {

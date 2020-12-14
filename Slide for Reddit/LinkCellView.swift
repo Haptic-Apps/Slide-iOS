@@ -1998,7 +1998,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 taglabel.text = " \(text.uppercased()) "
             } else {
                 tagbody.isHidden = true
-                let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
+                let finalText = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: true)])
                 finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
                 info.attributedText = finalText
             }
@@ -2039,24 +2039,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let colorF = ColorUtil.theme.fontColor
             
-            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
+            let attrs = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
             }
             
-            let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: colorF])
             
-            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor ?? "", small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor ?? "", small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: colorF])
             
             /* Maybe enable this later
              let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
              if AccountController.currentName == submission.author {
-             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
              } else if userColor != ColorUtil.baseColor {
-             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
              }*/
             
             endString.append(authorString)
@@ -2622,31 +2622,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): comments.font ?? UIFont.systemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): comments.textColor ?? ColorUtil.theme.fontColor]))
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSAttributedString.Key.font: comments.font ?? UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: comments.textColor ?? ColorUtil.theme.fontColor])
             
-            var attrsNew: [String: Any] = [:]
+            var attrsNew: [NSAttributedString.Key: Any] = [:]
             if scoreRatio.length > 0 {
                 let numb = (link.upvoteRatio)
                 if numb <= 0.5 {
                     if numb <= 0.1 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue500Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.blue500Color()]
                     } else if numb <= 0.3 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue400Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.blue400Color()]
                     } else {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue300Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.blue300Color()]
                     }
                 } else {
                     if numb >= 0.9 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange500Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.orange500Color()]
                     } else if numb >= 0.7 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange400Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.orange400Color()]
                     } else {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange300Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.orange300Color()]
                     }
                 }
             }
             
-            scoreRatio.addAttributes(convertToNSAttributedStringKeyDictionary(attrsNew), range: NSRange.init(location: 0, length: scoreRatio.length))
+            scoreRatio.addAttributes(attrsNew, range: NSRange.init(location: 0, length: scoreRatio.length))
             
             subScore.append(scoreRatio)
             score.attributedText = subScore
@@ -2689,8 +2689,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 popup.isUserInteractionEnabled = true
                 
                 let finalText: NSMutableAttributedString!
-                let firstPart = NSMutableAttributedString.init(string: type.getTitle(link.url), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                let secondPart = NSMutableAttributedString.init(string: "\n" + (link.contentUrl ?? ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                let firstPart = NSMutableAttributedString(string: type.getTitle(link.url), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+                let secondPart = NSMutableAttributedString(string: "\n" + (link.contentUrl ?? ""), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
                 firstPart.append(secondPart)
                 finalText = firstPart
                 popup.attributedText = finalText
@@ -2742,12 +2742,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 let finalText: NSMutableAttributedString!
                 if textParts.count > 1 {
-                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
                     firstPart.append(secondPart)
                     finalText = firstPart
                 } else {
-                    finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                    finalText = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
                 }
                 popup.attributedText = finalText
                 
@@ -3211,32 +3211,6 @@ class PostActionsManager {
     init(submission: SubmissionObject) {
         self.submission = submission
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 @available(iOS 13.0, *)

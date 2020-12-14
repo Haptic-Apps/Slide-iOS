@@ -301,13 +301,13 @@ class SubredditHeaderView: UIView {
         here.textColor = ColorUtil.theme.fontColor
         subscribers.textColor = ColorUtil.theme.fontColor
 
-        let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 20, submission: true)]
-        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+        let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: attrs)
         var subt = NSMutableAttributedString(string: "\nSUBSCRIBERS")
         attributedString.append(subt)
         subscribers.attributedText = attributedString
         
-        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: attrs)
         subt = NSMutableAttributedString(string: "\nHERE")
         attributedString.append(subt)
         here.attributedText = attributedString
@@ -607,15 +607,4 @@ extension Int {
     var delimiter: String {
         return Int.numberFormatter.string(from: NSNumber(value: self)) ?? ""
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

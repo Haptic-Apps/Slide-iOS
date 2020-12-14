@@ -372,9 +372,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if let navigationController = navigationController {
             navigationController.navigationBar.shadowImage = UIImage()
             navigationController.navigationBar.barTintColor = color
-            navigationController.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([
-                NSAttributedString.Key.foregroundColor.rawValue: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white as Any,
-            ])
+            navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white]
             // If no color was specified but the color muxer is doing its thing,
             // grab the "from" color so that we don't get a white flash.
             if color == nil,
@@ -389,15 +387,4 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

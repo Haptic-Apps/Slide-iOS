@@ -262,18 +262,3 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
     }
 }
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-	return input.rawValue
-}

@@ -20,7 +20,6 @@ class LinkParser {
         }
         
         let string = NSMutableAttributedString.init(attributedString: attributedString)
-        string.removeAttribute(convertToNSAttributedStringKey(kCTForegroundColorFromContextAttributeName as String), range: NSRange.init(location: 0, length: string.length))
         if string.length > 0 {
             while string.string.contains("slide://") {
                 do {
@@ -52,10 +51,10 @@ class LinkParser {
                             string.addAttribute(NSAttributedString.Key.font, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
                         string.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
-                        string.addAttribute(convertToNSAttributedStringKey(kCTUnderlineColorAttributeName as String), value: UIColor.clear, range: range)
+                        string.addAttribute(.underlineStyle, value: 0, range: range)
                         let type = ContentType.getContentType(baseUrl: url)
                         if SettingValues.showLinkContentType {
-                            let typeString = NSMutableAttributedString.init(string: "", attributes: convertToOptionalNSAttributedStringKeyDictionary([:]))
+                            let typeString = NSMutableAttributedString.init(string: "", attributes: [:])
                             switch type {
                             case .ALBUM:
                                 typeString.mutableString.setString("(Album)")
@@ -87,7 +86,7 @@ class LinkParser {
                                 }
                             }
                             string.insert(typeString, at: range.location + range.length)
-                            string.addAttributes(convertToNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]), range: NSRange.init(location: range.location + range.length, length: typeString.length))
+                            string.addAttributes([NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor], range: NSRange.init(location: range.location + range.length, length: typeString.length))
                         }
                         
                         if type != .SPOILER {
@@ -113,14 +112,18 @@ class LinkParser {
                     let isItalic = f.fontDescriptor.symbolicTraits.contains(UIFontDescriptor.SymbolicTraits.traitItalic)
                     let isBold = f.fontDescriptor.symbolicTraits.contains(UIFontDescriptor.SymbolicTraits.traitBold)
                     
-                    var newFont = UIFont(descriptor: font.fontDescriptor, size: f.pointSize)
+                    var newFont = font.withSize(f.pointSize)
                     if isBold {
-                        newFont = UIFont(descriptor: finalBold.fontDescriptor, size: f.pointSize)
+                        newFont = finalBold.withSize(f.pointSize)
                     }
+
+                    if isItalic {
+                        newFont = newFont.withTraits(traits: .traitItalic)
+                    }
+                    
                     string.removeAttribute(.font, range: range)
                     if isItalic {
-                        string.addAttributes([.font: newFont, convertToNSAttributedStringKey(YYTextGlyphTransformAttributeName): CGAffineTransform(a: 1, b: tan(0.degreesToRadians), c: tan(15.degreesToRadians), d: 1, tx: 0, ty: 0)], range: range)
-                        string.yy_setColor(fontColor, range: range)
+                        string.addAttributes([.font: newFont.withTraits(traits: .traitItalic), .foregroundColor: fontColor], range: range)
                     } else {
                         string.addAttribute(.font, value: newFont, range: range)
                     }
@@ -153,25 +156,4 @@ extension NSMutableAttributedString {
             }
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKey(_ input: String) -> NSAttributedString.Key {
-	return NSAttributedString.Key(rawValue: input)
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

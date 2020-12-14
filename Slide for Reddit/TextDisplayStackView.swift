@@ -245,7 +245,7 @@ public class TextDisplayStackView: UIStackView {
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
                     if !newTitle.string.trimmed().isEmpty {
-                        newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                        newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
                     }
                     newTitle.append(createAttributedChunk(baseHTML: blocks[0], accent: tColor, linksCallback: linkCallback, indexCallback: indexCallback))
                 }
@@ -278,7 +278,7 @@ public class TextDisplayStackView: UIStackView {
             if body != nil {
                 let mutableBody = NSMutableAttributedString(attributedString: body!)
                 if !newTitle.string.trimmed().isEmpty {
-                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
                 }
                 if allLinks.isEmpty && body != nil {
                     mutableBody.enumerateAttributes(in: NSRange.init(location: 0, length: body!.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
@@ -298,7 +298,7 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(mutableBody)
             } else if !htmlString.isEmpty() {
                 if !newTitle.string.trimmed().isEmpty {
-                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
                 }
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor, linksCallback: linkCallback, indexCallback: indexCallback))
             }
@@ -736,7 +736,7 @@ public class TextDisplayStackView: UIStackView {
             let newTitle = NSMutableAttributedString(attributedString: titleString)
             if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
                 if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
-                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
                     newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
                 }
                 startIndex = 1
@@ -756,7 +756,7 @@ public class TextDisplayStackView: UIStackView {
             blocks = [String]()
             let newTitle = NSMutableAttributedString(attributedString: titleString)
             if !htmlString.isEmpty() {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
+                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
                 if htmlString.contains("<a") {
                     hasLinks = true
@@ -824,20 +824,4 @@ public class TextDisplayStackView: UIStackView {
         }
         return base
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

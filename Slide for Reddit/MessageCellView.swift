@@ -138,21 +138,21 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     var cancelled = false
     
     public static func getTitleText(message: MessageObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: message.wasComment ? message.submissionTitle?.unescapeHTML ?? "" : message.subject.unescapeHTML, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor]))
+        let titleText = NSMutableAttributedString(string: message.wasComment ? message.submissionTitle?.unescapeHTML ?? "" : message.subject.unescapeHTML, attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor])
         
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))  •  from \(message.author)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))  •  from \(message.author)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)])
         
         var color = ColorUtil.getColorForSub(sub: message.subreddit)
         if color == ColorUtil.baseColor {
             color = ColorUtil.theme.fontColor
         }
 
-        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
+        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false), NSAttributedString.Key.foregroundColor: color])
         
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
         if !message.subreddit.isEmpty {
-            infoString.append(NSAttributedString.init(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)])))
+            infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)]))
             infoString.append(subString)
         }
         
@@ -288,15 +288,4 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             }
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

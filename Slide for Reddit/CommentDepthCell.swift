@@ -982,7 +982,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.layoutSubviews()
     }
     
-    var replyDelegate: ReplyDelegate?
+    weak var replyDelegate: ReplyDelegate?
     @objc func reply(_ s: AnyObject) {
         oldLocation = parent!.tableView.contentOffset
         if menu.isHidden {
@@ -1725,23 +1725,23 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
-        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(Int(getScoreText(comment: comment)))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(Int(getScoreText(comment: comment)))"), attributes: [NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: boldFont])
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2.75
         
-        let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: boldFont])
         let new = date != 0 && date < Double(comment.created.timeIntervalSince1970)
-        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))") : ""), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: boldFont])
         
         if new {
             endString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.accentColorForSub(sub: comment.subreddit), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
         }
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.isCakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.isCakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         if comment.author != "[deleted]" && comment.author != "[removed]" {
             authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])
         }
-        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): parent?.authorColor ?? ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: parent?.authorColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
         if comment.author != "[deleted]" && comment.author != "[removed]" {
             authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])
@@ -1785,7 +1785,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(tagString)
         }
 
-        infoString.append(NSAttributedString(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor])))
+        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
         infoString.append(scoreString)
         infoString.append(spacerString)
         infoString.append(endString)
@@ -1803,17 +1803,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }*/
 
         if parent!.removed.contains(comment.id) || (!(comment.removedBy ?? "").isEmpty() && !parent!.approved.contains(comment.id)) {
-            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.red500Color()] as [String: Any]
+            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: GMColor.red500Color()]
             infoString.append(spacer)
             if comment.removedBy == "true" {
-                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(comment.removalReason ?? "").isEmpty() ? ":\(comment.removalReason!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(comment.removalReason ?? "").isEmpty() ? ":\(comment.removalReason!)" : "")", attributes: attrs))
             } else {
-                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy!)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!(comment.removalNote ?? "").isEmpty() ? " \(comment.removalNote!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy!)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!(comment.removalNote ?? "").isEmpty() ? " \(comment.removalNote!)" : "")", attributes: attrs))
             }
         } else if parent!.approved.contains(comment.id) || (!(comment.approvedBy ?? "").isEmpty() && !parent!.removed.contains(comment.id)) {
-            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.green500Color()] as [String: Any]
+            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: GMColor.green500Color()]
             infoString.append(spacer)
-            infoString.append(NSMutableAttributedString.init(string: "Approved\(!(comment.approvedBy ?? "").isEmpty() ? " by \(comment.approvedBy!)":"")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+            infoString.append(NSMutableAttributedString.init(string: "Approved\(!(comment.approvedBy ?? "").isEmpty() ? " by \(comment.approvedBy!)":"")", attributes: attrs))
         }
         
         paragraphStyle.lineSpacing = 1.5
@@ -2241,27 +2241,6 @@ extension Array {
         }
         return newArray
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
 
 @available(iOS 13.0, *)

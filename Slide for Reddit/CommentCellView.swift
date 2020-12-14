@@ -115,7 +115,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     }
     
     public static func getTitle(_ comment: CommentObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                 
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
@@ -127,13 +127,13 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
             uC = ColorUtil.theme.fontColor
         }
         
-        let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): uC] as [String: Any]
+        let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: uC] as [NSAttributedString.Key: Any]
         
-        let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor] as [String: Any]
+        let attrs2 = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor] as [NSAttributedString.Key: Any]
         
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: attrs2)
         
-        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
         let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
         if color != ColorUtil.baseColor {
@@ -167,15 +167,4 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     @objc func openComment(sender: UITapGestureRecognizer? = nil) {
         VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

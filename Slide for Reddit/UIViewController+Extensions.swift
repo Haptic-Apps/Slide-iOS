@@ -23,8 +23,8 @@ extension UIViewController {
             self.navigationController?.navigationBar.compactAppearance?.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white]
         } else {
             navigationController?.navigationBar.barTintColor = overrideColor ?? ColorUtil.getColorForSub(sub: "", true)
-            let textAttributes = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white]
-            navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary(textAttributes)
+            let textAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white]
+            navigationController?.navigationBar.titleTextAttributes = textAttributes
         }
         
         self.setNeedsUpdateOfHomeIndicatorAutoHidden()
@@ -44,15 +44,4 @@ extension UIViewController {
             $0.isEnabled = true
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

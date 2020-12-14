@@ -718,45 +718,19 @@ class EmptyStateView: UIView {
     func setText(title: String, message: String?) {
         let finalText: NSMutableAttributedString!
         if let message = message {
-            let firstPart = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([
-                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.8),
-                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 20),
-            ]))
-            let secondPart = NSMutableAttributedString.init(string: "\n\n" + message, attributes: convertToOptionalNSAttributedStringKeyDictionary([
-                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.5),
-                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 14),
-            ]))
+            let firstPart = NSMutableAttributedString(string: title, attributes: [
+                NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.8),
+                NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20),
+            ])
+            let secondPart = NSMutableAttributedString.init(string: "\n\n" + message, attributes: [
+                NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.5),
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14),
+            ])
             firstPart.append(secondPart)
             finalText = firstPart
         } else {
-            finalText = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+            finalText = NSMutableAttributedString(string: title, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
         }
         titleLabel.attributedText = finalText
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-    return input.rawValue
 }

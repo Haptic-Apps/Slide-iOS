@@ -306,38 +306,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     numberFormatter.locale = items[0].priceLocale
                     let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
                     let price2Str = "Go pro and donate for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
-                    
-                    // TODO: - this
-                    /*
-                    let priceOldStr = "Go pro for \(price1Str)"
-                    let priceOldStr2 = "Go pro and donate for \(price2Str)"
-                    if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
-                        //Is a sale
-                        
-                        let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
-                        let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
-                        
-                        let newString = NSMutableAttributedString.init(string: price1Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
-                        let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
-                        
-                        let finalString = NSMutableAttributedString()
-                        let finalString2 = NSMutableAttributedString()
-                        
-                        finalString.append(crossedString)
-                        finalString.append(newString)
-                        
-                        finalString2.append(crossedString2)
-                        finalString2.append(newString2)
-                        
-                        self.three.attributedText = finalString
-                        self.six.attributedText = finalString2
-                        
-                        self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                        self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                    } else {*/
-                        self.three.text = price1Str
-                        self.six.text = price2Str
-                //}
+                
+                    self.three.text = price1Str
+                    self.six.text = price2Str
                 }
             }
         }
@@ -533,15 +504,4 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         }
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

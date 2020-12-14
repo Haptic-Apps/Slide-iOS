@@ -274,19 +274,19 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote.getCopy(withColor: .white)
             downvote.image = LinkCellImageCache.downvote.getCopy(withColor: .white)
-            var attrs: [String: Any] = [:]
+            var attrs: [NSAttributedString.Key: Any] = [:]
             switch  ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             default:
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true)]
             }
             
-            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
             
             comments.text = "\(link.commentCount)"
             
@@ -305,19 +305,19 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote
             downvote.image = LinkCellImageCache.downvote
-            var attrs: [String: Any] = [:]
+            var attrs: [NSAttributedString.Key: Any] = [:]
             switch ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             default:
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true)]
             }
             
-            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
             
            // TODO: - what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
         }
@@ -438,7 +438,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 default:
                     text = "Link"
                 }
-            let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 16, submission: true)]))
+            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)])
             finalText.append(NSAttributedString.init(string: "\n\(baseURL?.host ?? baseURL?.absoluteString ?? "")"))
             info.textAlignment = .center
             info.attributedText = finalText
@@ -550,15 +550,4 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

@@ -135,20 +135,20 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     var cancelled = false
     
     public static func getTitleText(item: ModLogObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created as NSDate, numericDates: true))  •  removed by \(item.mod)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)]))
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created as NSDate, numericDates: true))  •  removed by \(item.mod)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)])
         
         var color = ColorUtil.getColorForSub(sub: item.subreddit)
         if color == ColorUtil.baseColor {
             color = ColorUtil.theme.fontColor
         }
 
-        let subString = NSMutableAttributedString(string: "r/\(item.subreddit)", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
+        let subString = NSMutableAttributedString(string: "r/\(item.subreddit)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false), NSAttributedString.Key.foregroundColor: color])
         
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
-        infoString.append(NSAttributedString.init(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 16, submission: false)])))
+        infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)]))
         infoString.append(subString)
         
         titleText.append(NSAttributedString(string: "\n"))
@@ -214,15 +214,4 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     var logItem: ModLogObject?
     public var parentViewController: (UIViewController & MediaVCDelegate)?
     public var navViewController: UIViewController?
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
 }
