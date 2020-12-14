@@ -46,6 +46,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     func configureViews() {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.collectionViewLayout = FadingCollectionViewLayout(scrollDirection: .horizontal)
+
         if self is TabsPagingTitleCollectionView {
             (self.collectionViewLayout as? FadingCollectionViewLayout)?.shouldFade = false
         }
@@ -66,6 +67,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         if SettingValues.fullWidthHeaderCells && !(self is TabsPagingTitleCollectionView) {
             self.collectionView.isUserInteractionEnabled = false
         }
+        
         registerCells()
     }
     

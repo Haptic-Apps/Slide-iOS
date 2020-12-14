@@ -30,7 +30,7 @@ class MoreObject: RedditObject {
         self.name = more.name
         self.parentID = more.parentId
         self.count = Int64(more.count)
-        self.childrenString = more.children.joined()
+        self.childrenString = more.children.joined(separator: ",")
     }
 }
 

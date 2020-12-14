@@ -89,7 +89,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
         
         stickyBelow = UIView().then {
             $0.backgroundColor = ColorUtil.baseAccent
-            $0.layer.cornerRadius = 5
+            $0.layer.cornerRadius = 2.5
             $0.clipsToBounds = true
         }
 
@@ -123,7 +123,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
 
         tabBar.horizontalAnchors /==/ self.view.horizontalAnchors
         tabBar.sizeToFit()
-        
+                
         if self is InboxViewController {
             time = History.getInboxSeen()
             History.inboxSeen()
@@ -143,6 +143,8 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
                 break
             }
         }
+
+        doToolbarOffset()
 
         setViewControllers([firstViewController],
                 direction: .forward,
@@ -246,8 +248,7 @@ extension TabsContentPagingViewController: PagingTitleDelegate {
 
         let currentWidth = layout.widthAt(currentIndex)
         
-        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
-
+        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2)
         let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
             (currentWidth / 2) - // Width of current cell
             (self.tabBar!.collectionView.frame.size.width / 2) +
