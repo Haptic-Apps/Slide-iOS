@@ -42,14 +42,17 @@ class LinkParser {
                 for attr in attrs {
                     if let isColor = attr.value as? UIColor {
                         if isColor.hexString() == "#0000FF" {
+                            //Is a code block (for some reason)
                             string.setAttributes([NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.backgroundColor: ColorUtil.theme.backgroundColor.withAlphaComponent(0.5), NSAttributedString.Key.font: UIFont(name: "Courier", size: font.pointSize) ?? font], range: range)
                         } else if isColor.hexString() == "#008000" {
+                            //Is strikethrough (for some reason)
                             string.setAttributes([NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key(rawValue: YYTextStrikethroughAttributeName): YYTextDecoration(style: YYTextLineStyle.single, width: 1, color: fontColor), NSAttributedString.Key.font: font], range: range)
                         }
                     } else if let url = attr.value as? URL {
                         if SettingValues.enlargeLinks {
                             string.addAttribute(NSAttributedString.Key.font, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
+                        string.removeAttribute(.foregroundColor, range: range)
                         string.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
                         string.addAttribute(.underlineStyle, value: 0, range: range)
                         let type = ContentType.getContentType(baseUrl: url)
@@ -86,7 +89,7 @@ class LinkParser {
                                 }
                             }
                             string.insert(typeString, at: range.location + range.length)
-                            string.addAttributes([NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor], range: NSRange.init(location: range.location + range.length, length: typeString.length))
+                            string.addAttributes([NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: fontColor], range: NSRange.init(location: range.location + range.length, length: typeString.length))
                         }
                         
                         if type != .SPOILER {
@@ -123,7 +126,7 @@ class LinkParser {
                     
                     string.removeAttribute(.font, range: range)
                     if isItalic {
-                        string.addAttributes([.font: newFont.withTraits(traits: .traitItalic), .foregroundColor: fontColor], range: range)
+                        string.addAttributes([.font: newFont, .foregroundColor: fontColor], range: range)
                     } else {
                         string.addAttribute(.font, value: newFont, range: range)
                     }
