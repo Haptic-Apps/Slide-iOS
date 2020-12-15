@@ -9,7 +9,7 @@
 import Foundation
 import Proton
 import SDWebImage
-import YYText
+
 
 struct Title {
     var mainTitle: NSAttributedString?
@@ -352,10 +352,16 @@ class CachedTitle {
                 extraLine.append(NSAttributedString.init(string: "\n"))
             }
             
-            let poll = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "poll")!.getCopy(withColor: ColorUtil.theme.fontColor), fontSize: titleFont.pointSize * 0.75)!
-
             let finalText = NSMutableAttributedString.init(string: " Poll", attributes: [NSAttributedString.Key.foregroundColor: colorF, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
-                        
+            let size = finalText.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+
+            let image = UIImage(named: "poll")!.getCopy(withColor: ColorUtil.theme.fontColor).getCopy(withSize: CGSize.square(size: size.height * 0.75), withColor: ColorUtil.theme.fontColor)
+
+            let pollImage = NSTextAttachment()
+            pollImage.image = image
+            pollImage.bounds = CGRect(x: 0, y: (image.size.height * -0.25) / 2, width: image.size.width, height: image.size.height)
+
+            let poll = NSMutableAttributedString(attachment: pollImage)
             poll.append(finalText)
 
             for option in submission.pollDictionary.keys {

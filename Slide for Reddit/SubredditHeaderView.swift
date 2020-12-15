@@ -12,7 +12,7 @@ import reddift
 import RLBAlertsPickers
 import SDCAlertView
 import UIKit
-import YYText
+
 
 class SubredditHeaderView: UIView {
 
@@ -285,7 +285,7 @@ class SubredditHeaderView: UIView {
     var content: NSAttributedString?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
-    var parentController: (UIViewController & MediaVCDelegate)?
+    weak var parentController: (UIViewController & MediaVCDelegate)?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
         self.subreddit = subreddit
@@ -417,6 +417,10 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
         if parentController != nil {
             alertController.show(parentController!)
         }
+    }
+    
+    func previewProfile(profile: String) {
+        //unused
     }
 }
 

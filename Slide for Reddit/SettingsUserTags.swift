@@ -9,7 +9,7 @@
 import Anchorage
 import Then
 import UIKit
-import YYText
+
 
 class SettingsUserTags: UITableViewController {
     
@@ -124,7 +124,7 @@ class SettingsUserTags: UITableViewController {
 }
 class TagCellView: UITableViewCell {
     
-    var title: YYLabel!
+    var title: TitleUITextView!
     var body = UIView()
     
     required init?(coder aDecoder: NSCoder) {
@@ -146,8 +146,15 @@ class TagCellView: UITableViewCell {
             $0.clipsToBounds = true
         }
         
-        self.title = YYLabel(frame: CGRect.zero).then {
-            $0.numberOfLines = 0
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.title = TitleUITextView(delegate: nil, textContainer: container).then {
             $0.font = UIFont.systemFont(ofSize: 16)
         }
         
@@ -174,7 +181,7 @@ class TagCellView: UITableViewCell {
         if !tag.isEmpty {
             let spacer = NSMutableAttributedString.init(string: "  ")
             
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), .badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             attributedTitle.append(spacer)
             attributedTitle.append(tagString)

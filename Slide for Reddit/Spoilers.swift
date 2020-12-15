@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import YYText
+
 
 public class WrapSpoilers: NSObject {
     

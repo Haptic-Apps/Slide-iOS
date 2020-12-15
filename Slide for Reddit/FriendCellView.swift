@@ -10,11 +10,11 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
-import YYText
+
 
 class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     
-    var title = YYLabel()
+    var titleView: TitleUITextView!
     var icon = UIImageView()
     
     override func layoutSubviews() {
@@ -32,15 +32,19 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+        self.titleView = TitleUITextView(delegate: nil, textContainer: container)
+        
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.title = YYLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        title.numberOfLines = 0
-        title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        title.textColor = ColorUtil.theme.fontColor
         
         self.icon = UIImageView(image: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
-        self.contentView.addSubviews(title, icon)
+        self.contentView.addSubviews(titleView, icon)
 
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
         self.setupConstraints()
@@ -52,9 +56,9 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     func setupConstraints() {
-        self.title.leftAnchor /==/ self.icon.rightAnchor + 8
-        self.title.rightAnchor /==/ self.contentView.rightAnchor - 8
-        self.title.verticalAnchors /==/ self.contentView.verticalAnchors
+        self.titleView.leftAnchor /==/ self.icon.rightAnchor + 8
+        self.titleView.rightAnchor /==/ self.contentView.rightAnchor - 8
+        self.titleView.verticalAnchors /==/ self.contentView.verticalAnchors
         self.icon.leftAnchor /==/ self.contentView.leftAnchor + 8
         self.icon.heightAnchor /==/ 30
         self.icon.widthAnchor /==/ 30
@@ -73,9 +77,9 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         let userColor = ColorUtil.getColorForUser(name: friend.name)
         var authorSmall = false
         if AccountController.currentName == friend.name {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([.badgeColor: UIColor(hexString: "#FFB74D"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else {
             authorSmall = true
         }
@@ -89,7 +93,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         let tag = ColorUtil.getTagForUser(name: friend.name)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), .badgeColor: UIColor(rgb: 0x2196f3),  NSAttributedString.Key.foregroundColor: UIColor.white])
             infoString.append(spacer)
             infoString.append(tagString)
         }
@@ -104,7 +108,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         let endString = NSMutableAttributedString(string: "\nFriend since \(df.string(from: friend.friendSince as Date))", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         
         infoString.append(endString)
-        title.attributedText = infoString
+        titleView.attributedText = infoString
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -112,6 +116,6 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     var friend: FriendModel?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
+    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
+    public weak var navViewController: UIViewController?
 }

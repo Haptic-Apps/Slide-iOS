@@ -10,7 +10,7 @@ import Anchorage
 import AVFoundation
 import Foundation
 import reddift
-import YYText
+
 
 class SettingValues {
 
@@ -711,15 +711,23 @@ class SettingValues {
         settings.set(submission.permalink, forKey: "vlink")
         settings.synchronize()
         
-        var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: CGFloat.greatestFiniteMagnitude)
         let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-        let layout = YYTextLayout(containerSize: size, text: chunk)!
-        let textSize = layout.textBoundingSize
+        
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
 
-        size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: textSize.height)
-        let body = YYLabel()
-        body.numberOfLines = 0
+        let body = TitleUITextView(delegate: nil, textContainer: container)
+
         body.attributedText = chunk
+        
+        let textHeight = body.attributedText!.height(containerWidth: UIScreen.main.bounds.size.width * 0.85 - 30)
+        var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: textHeight)
+
         let detailViewController = UpdateViewController(view: body, size: size)
         detailViewController.titleView.font = UIFont.boldSystemFont(ofSize: 20)
         detailViewController.titleView.textColor = ColorUtil.theme.fontColor

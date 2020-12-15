@@ -10,7 +10,7 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
-import YYText
+
 
 class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
     
@@ -62,6 +62,15 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         
         if parentViewController != nil {
             alertController.show(parentViewController!)
+        }
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentViewController {
+            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
         }
     }
 
@@ -254,8 +263,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     }
 
     var message: MessageObject?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
+    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
+    public weak var navViewController: UIViewController?
 
     @objc func doReply(sender: UITapGestureRecognizer? = nil) {
         if !ActionStates.isRead(s: message!) {

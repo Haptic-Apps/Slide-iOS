@@ -10,10 +10,13 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
-import YYText
+
 
 class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    
+    var logItem: ModLogObject?
+    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
+    public weak var navViewController: UIViewController?
+
     func linkTapped(url: URL, text: String) {
         if !text.isEmpty {
             self.parentViewController?.showSpoiler(text)
@@ -62,6 +65,15 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
         
         if parentViewController != nil {
             alertController.show(parentViewController!)
+        }
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentViewController {
+            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
         }
     }
 
@@ -210,8 +222,4 @@ class ModlogCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDis
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    var logItem: ModLogObject?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
 }

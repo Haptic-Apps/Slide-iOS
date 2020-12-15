@@ -12,7 +12,7 @@ import reddift
 import SDWebImage
 import Then
 import UIKit
-import YYText
+
 
 class CodeDisplayView: UIScrollView {
     
@@ -75,19 +75,17 @@ class CodeDisplayView: UIScrollView {
             index += 1
         }
         baseLabel.attributedText = finalString
-        
-        let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: finalString)!
-        let textSizeB = layout.textBoundingSize
+                
+        let textHeight = finalString.height(containerWidth: .infinity)
         
         addSubview(baseLabel)
         contentInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 0, right: 8)
         baseLabel.widthAnchor /==/ getWidestCell()
-        globalHeight = textSizeB.height + 16
-        baseLabel.heightAnchor /==/ textSizeB.height
+        globalHeight = textHeight + 16
+        baseLabel.heightAnchor /==/ textHeight
         baseLabel.leftAnchor /==/ leftAnchor
         baseLabel.topAnchor /==/ topAnchor
-        contentSize = CGSize.init(width: getWidestCell() + 16, height: textSizeB.height)
+        contentSize = CGSize.init(width: getWidestCell() + 16, height: textHeight)
     }
     
     func getWidestCell() -> CGFloat {

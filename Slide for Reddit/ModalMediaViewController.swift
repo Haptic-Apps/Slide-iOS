@@ -11,7 +11,7 @@ import AVKit
 import SDCAlertView
 import Then
 import UIKit
-import YYText
+
 
 class ModalMediaViewController: UIViewController {
 
@@ -35,7 +35,7 @@ class ModalMediaViewController: UIViewController {
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
     var spinnerIndicator = UIActivityIndicatorView()
-    var titleView = YYLabel()
+    var titleView: TitleUITextView!
     
     var didStartPan : (_ panStart: Bool) -> Void = { _ in }
 
@@ -48,6 +48,15 @@ class ModalMediaViewController: UIViewController {
 
     init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: SubmissionObject?) {
         super.init(nibName: nil, bundle: nil)
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        titleView = TitleUITextView(delegate: nil, textContainer: container)
 
         self.failureCallback = failureCallback
         self.commentCallback = commentCallback
@@ -62,7 +71,7 @@ class ModalMediaViewController: UIViewController {
             finalTitle.append(title.mainTitle!)
             
             titleView.attributedText = finalTitle
-            titleView.numberOfLines = 0
+            titleView.layoutTitleImageViews()
             
             if commentCallback != nil {
                 titleView.addTapGestureRecognizer { [weak self] (_) in
@@ -287,7 +296,6 @@ class ModalMediaViewController: UIViewController {
         UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         
-        titleView.lineBreakMode = .byWordWrapping
         titleView.sizeToFit()
         titleView.layoutIfNeeded()
 
@@ -395,7 +403,6 @@ class ModalMediaViewController: UIViewController {
         titleView.bottomAnchor /==/ gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
-        titleView.preferredMaxLayoutWidth = self.titleView.frame.size.width
         titleView.sizeToFit()
     }
 

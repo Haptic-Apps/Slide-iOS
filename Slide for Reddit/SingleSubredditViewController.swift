@@ -16,7 +16,7 @@ import RLBAlertsPickers
 import SDCAlertView
 import SDWebImage
 import UIKit
-import YYText
+
 
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDelegate {

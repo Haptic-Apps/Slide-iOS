@@ -8,7 +8,7 @@
 
 import reddift
 import UIKit
-import YYText
+
 
 class GalleryCellView: UITableViewCell {
     
@@ -84,7 +84,7 @@ class GalleryCellView: UITableViewCell {
         view.addGestureRecognizer(tap)
     }
     
-    var parentViewController: (UIViewController & MediaVCDelegate)?
+    weak var parentViewController: (UIViewController & MediaVCDelegate)?
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

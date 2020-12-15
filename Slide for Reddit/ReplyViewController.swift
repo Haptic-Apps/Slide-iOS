@@ -15,7 +15,7 @@ import SDCAlertView
 import SwiftyJSON
 import Then
 import UIKit
-import YYText
+
 
 class ReplyViewController: MediaViewController, UITextViewDelegate {
 
@@ -626,13 +626,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         if type.isMessage() {
             if type == .REPLY_MESSAGE {
                 //two
-                let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                    $0.textColor = ColorUtil.theme.fontColor
+                let layout = BadgeLayoutManager()
+                let storage = NSTextStorage()
+                storage.addLayoutManager(layout)
+                let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+                let container = NSTextContainer(size: initialSize)
+                container.widthTracksTextView = true
+                layout.addTextContainer(container)
+
+                let text1 = TitleUITextView(delegate: self, textContainer: container).then({
+                    $0.doSetup()
                     $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.clipsToBounds = true
                     $0.layer.cornerRadius = 10
-                    $0.font = UIFont.systemFont(ofSize: 16)
-                    $0.numberOfLines = 0
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! MessageObject).htmlBody
@@ -646,20 +652,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 */
                 text1.attributedText = content
-                text1.highlightTapAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
-                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                        for attr in attrs {
-                            if attr.value is YYTextHighlight {
-                                if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
-                                    return
-                                }
-                            }
-                        }
-                    })
-                }
                 text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-                text1.preferredMaxLayoutWidth = self.view.frame.size.width - 16
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -917,13 +910,19 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         } else if type.isComment() {
             if (toReplyTo as! SubmissionObject).type == .SELF && !((toReplyTo as! SubmissionObject).htmlBody ?? "").trimmed().isEmpty {
                 //two
-                let text1 = YYLabel.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
-                    $0.textColor = ColorUtil.theme.fontColor
+                let layout = BadgeLayoutManager()
+                let storage = NSTextStorage()
+                storage.addLayoutManager(layout)
+                let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+                let container = NSTextContainer(size: initialSize)
+                container.widthTracksTextView = true
+                layout.addTextContainer(container)
+
+                let text1 = TitleUITextView(delegate: self, textContainer: container).then({
+                    $0.doSetup()
                     $0.backgroundColor = ColorUtil.theme.foregroundColor
                     $0.clipsToBounds = true
-                    $0.numberOfLines = 0
                     $0.layer.cornerRadius = 10
-                    $0.font = UIFont.systemFont(ofSize: 16)
                 })
                 extras?.append(text1)
                 let html = (toReplyTo as! SubmissionObject).htmlBody ?? ""
@@ -938,20 +937,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 */
                 
                 text1.attributedText = content
-                text1.highlightTapAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
-                    text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                        for attr in attrs {
-                            if attr.value is YYTextHighlight {
-                                if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                    self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
-                                    return
-                                }
-                            }
-                        }
-                    })
-                }
                 text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-                text1.preferredMaxLayoutWidth = self.view.frame.size.width - 16
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
@@ -1652,5 +1638,22 @@ public class UIStateButton: UIButton {
             self.layer.borderColor = color .cgColor
             self.layer.borderWidth = isSelected ? CGFloat(0) : CGFloat(2)
         }
+    }
+}
+
+extension ReplyViewController: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+    }
+    
+    func linkLongTapped(url: URL) {
+        //TODO this
+    }
+    
+    func previewProfile(profile: String) {
+        let vc = ProfileInfoViewController(accountNamed: profile, parent: self)
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = ProfileInfoPresentationManager()
+        self.present(vc, animated: true)
     }
 }

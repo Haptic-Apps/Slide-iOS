@@ -12,21 +12,9 @@ import AVKit
 import CoreData
 import MaterialComponents.MaterialProgressView
 import SDWebImage
-import YYText
 
-class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    func linkTapped(url: URL, text: String) {
-        if !text.isEmpty {
-            self.showSpoiler(text)
-        } else {
-            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: submission)
-        }
-    }
 
-    func linkLongTapped(url: URL) {
-        
-    }
-    
+class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     
     var textView: TextDisplayStackView!
@@ -40,7 +28,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         return content as? SubmissionObject
     }
 
-    var titleLabel: YYLabel!
+    var titleLabel: TitleUITextView!
     var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
     var comment = UIImageView()
@@ -98,7 +86,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             populateData()
             doBackground()
-            titleLabel.preferredMaxLayoutWidth = self.view.frame.size.width - 48
         }
         doBackground()
     }
@@ -108,11 +95,16 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func configureView() {
-        self.titleLabel = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
-            $0.accessibilityIdentifier = "Title"
-            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
-            $0.isOpaque = false
-            $0.numberOfLines = 0
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.titleLabel = TitleUITextView(delegate: self, textContainer: container).then {
+            $0.doSetup()
         }
         
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
@@ -263,9 +255,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         titleLabel.bottomAnchor /==/ gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
-        titleLabel.preferredMaxLayoutWidth = self.titleLabel.frame.size.width
         titleLabel.sizeToFit()
-
     }
 
     func populateData() {
@@ -296,11 +286,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             finalTitle.append(title.mainTitle!)
             
             titleLabel.attributedText = finalTitle
-
-            let size = CGSize(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
-            titleLabel.textLayout = layout
-            titleLabel.heightAnchor /==/ layout.textBoundingSize.height
+            titleLabel.layoutTitleImageViews()
         } else if let link = content as! CommentObject? {
             archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote
@@ -549,5 +535,27 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.widthAnchor /==/ space
         }
     }
+}
 
+extension ShadowboxLinkViewController: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.showSpoiler(text)
+        } else {
+            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: submission)
+        }
+    }
+
+    func linkLongTapped(url: URL) {
+        
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentVC {
+            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
+        }
+    }
 }

@@ -10,11 +10,12 @@ import Anchorage
 import DTCoreText
 import Then
 import UIKit
-import YYText
+
 
 public protocol TextDisplayStackViewDelegate: class {
     func linkTapped(url: URL, text: String)
     func linkLongTapped(url: URL)
+    func previewProfile(profile: String)
 }
 
 public class TextDisplayStackView: UIStackView {
@@ -22,13 +23,12 @@ public class TextDisplayStackView: UIStackView {
     static let TABLE_START_TAG = "<table>"
     static let HR_TAG = "<hr/>"
     static let TABLE_END_TAG = "</table>"
-    let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
 
     var estimatedWidth = CGFloat(0)
     var estimatedHeight = CGFloat(0)
     weak var parentLongPress: UILongPressGestureRecognizer?
     
-    let firstTextView: YYLabel
+    let firstTextView: TitleUITextView
     let overflow: UIStackView
     let links: UIScrollView
     
@@ -38,11 +38,9 @@ public class TextDisplayStackView: UIStackView {
     var baseFontColor: UIColor
     var tableCount = 0
     var tableData = [[[NSAttributedString]]]()
-    var delegate: TextDisplayStackViewDelegate
+    weak var delegate: TextDisplayStackViewDelegate?
 
     var ignoreHeight = false
-    var touchLinkAction: YYTextAction?
-    var longTouchLinkAction: YYTextAction?
 
     var activeSet = false
     
@@ -52,52 +50,24 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = .black
         self.baseFontColor = .white
         self.delegate = delegate
-        self.firstTextView = YYLabel(frame: .zero)
+        
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.firstTextView = TitleUITextView(delegate: delegate, textContainer: container)
+        
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
         self.links = TouchUIScrollView()
         self.links.isUserInteractionEnabled = true
         super.init(frame: CGRect.zero)
         self.distribution = .fill
-
-        self.touchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
-                for attr in attrs {
-                    if let value = attr.value as? YYTextHighlight {
-                        if let url = value.userInfo?["url"] as? URL {
-                            self.delegate.linkTapped(url: url, text: "")
-                            return
-                        } else if value.userInfo?["spoiler"] as? Bool ?? false {
-                            self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
-                        }
-                    }
-                }
-            })
-        }
-        self.longTouchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                for attr in attrs {
-                    if let value = attr.value as? YYTextHighlight {
-                        if let profile = value.userInfo?["profile"] as? String {
-                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
-                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
-                                vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
-                                parent.present(vc, animated: true)
-                            }
-                            return
-                        } else if let url = value.userInfo?["url"] as? URL {
-                            self.delegate.linkLongTapped(url: url)
-                            return
-                        }
-                    }
-                }
-            })
-        }
-        
         self.isUserInteractionEnabled = true
-        self.firstTextView.highlightLongPressAction = longTouchLinkAction
-        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     func setColor(_ color: UIColor) {
@@ -111,9 +81,17 @@ public class TextDisplayStackView: UIStackView {
         self.tColor = color
         self.delegate = delegate
         self.baseFontColor = baseFontColor
-        self.firstTextView = YYLabel(frame: CGRect.zero).then({
+        
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.firstTextView = TitleUITextView(delegate: delegate, textContainer: container).then({
             $0.accessibilityIdentifier = "Top title"
-            $0.numberOfLines = 0
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         })
         self.links = TouchUIScrollView()
@@ -133,43 +111,6 @@ public class TextDisplayStackView: UIStackView {
         firstTextView.horizontalAnchors /==/ self.horizontalAnchors
         overflow.horizontalAnchors /==/ self.horizontalAnchors
         links.horizontalAnchors /==/ self.horizontalAnchors
-
-        self.touchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, smallRange, _) in
-                for attr in attrs {
-                    if let value = attr.value as? YYTextHighlight {
-                        if let url = value.userInfo?["url"] as? URL {
-                            self.delegate.linkTapped(url: url, text: "")
-                            return
-                        } else if value.userInfo?["spoiler"] as? Bool ?? false {
-                            self.delegate.linkTapped(url: URL(string: "/s")!, text: text.attributedSubstring(from: smallRange).string)
-                        }
-                    }
-                }
-            })
-        }
-        self.longTouchLinkAction = { (_: UIView, text: NSAttributedString, range: NSRange, _: CGRect) in
-            text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                for attr in attrs {
-                    if let value = attr.value as? YYTextHighlight {
-                        if let profile = value.userInfo?["profile"] as? String {
-                            if let parent = UIApplication.shared.keyWindow?.topViewController() {
-                                let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
-                                vc.modalPresentationStyle = .custom
-                                vc.transitioningDelegate = self.currentAccountTransitioningDelegate
-                                parent.present(vc, animated: true)
-                            }
-                            return
-                        } else if let url = value.userInfo?["url"] as? URL {
-                            self.delegate.linkLongTapped(url: url)
-                            return
-                        }
-                    }
-                }
-            })
-        }
-        self.firstTextView.highlightLongPressAction = longTouchLinkAction
-        self.firstTextView.highlightTapAction = touchLinkAction
     }
     
     required public init(coder: NSCoder) {
@@ -185,21 +126,18 @@ public class TextDisplayStackView: UIStackView {
         }
 
         firstTextView.attributedText = string
-        firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
         if !ignoreHeight {
 //            let framesetterB = CTFramesetterCreateWithAttributedString(string)
 //            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //            estimatedHeight += textSizeB.height
 
-            let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: string)!
-            firstTextView.textLayout = layout
-            estimatedHeight += layout.textBoundingSize.height
+            let textHeight = firstTextView.attributedText!.height(containerWidth: estimatedWidth)
+            estimatedHeight += textHeight
             firstTextView.horizontalAnchors /==/ horizontalAnchors
             firstTextView.removeConstraints(addedConstraints)
             addedConstraints = batch {
-                firstTextView.heightAnchor /==/ layout.textBoundingSize.height
+                firstTextView.heightAnchor /==/ textHeight
             }
         }
 
@@ -253,16 +191,14 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = newTitle
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: newTitle)!
-                estimatedHeight += layout.textBoundingSize.height
+                let textHeight = firstTextView.attributedText!.height(containerWidth: estimatedWidth)
+                estimatedHeight += textHeight
             }
             
             if blocks.count > 1 {
@@ -309,23 +245,19 @@ public class TextDisplayStackView: UIStackView {
 //            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 
             firstTextView.attributedText = newTitle
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
-            
+
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                if let layout = YYTextLayout(containerSize: size, text: newTitle) {
-                    firstTextView.textLayout = layout
-                    estimatedHeight += layout.textBoundingSize.height
-                    firstTextView.removeConstraints(addedConstraints)
-                    addedConstraints = batch {
-                        firstTextView.heightAnchor /==/ layout.textBoundingSize.height
-                    }
-                    firstTextView.horizontalAnchors /==/ horizontalAnchors
+                let textHeight = newTitle.height(containerWidth: estimatedWidth)
+                estimatedHeight += textHeight
+                firstTextView.removeConstraints(addedConstraints)
+                addedConstraints = batch {
+                    firstTextView.heightAnchor /==/ textHeight
                 }
+                firstTextView.horizontalAnchors /==/ horizontalAnchors
             }
 
         }
@@ -357,10 +289,10 @@ public class TextDisplayStackView: UIStackView {
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
                     $0.backgroundColor = UIColor.clear
                     $0.addTapGestureRecognizer(action: { _ in
-                        self.delegate.linkTapped(url: url, text: "")
+                        self.delegate?.linkTapped(url: url, text: "")
                     })
                     $0.addLongTapGestureRecognizer(action: { _ in
-                        self.delegate.linkLongTapped(url: url)
+                        self.delegate?.linkLongTapped(url: url)
                     })
                     counter += 1
                 }
@@ -423,16 +355,14 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = text
-            firstTextView.preferredMaxLayoutWidth = estimatedWidth
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(text)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                estimatedHeight += layout.textBoundingSize.height
+                let textHeight = firstTextView.attributedText!.height(containerWidth: estimatedWidth)
+                estimatedHeight += textHeight
             }
 
             startIndex = 1
@@ -456,7 +386,7 @@ public class TextDisplayStackView: UIStackView {
         for block in blocks {
             estimatedHeight += 8
             if block.startsWith("<table>") {
-                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, action: self.touchLinkAction, longAction: self.longTouchLinkAction, linksCallback: linksCallback, indexCallback: indexCallback)
+                let table = TableDisplayView(baseHtml: block, color: baseFontColor, accentColor: tColor, delegate: self.delegate, linksCallback: linksCallback, indexCallback: indexCallback)
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors /==/ overflow.horizontalAnchors
@@ -494,24 +424,27 @@ public class TextDisplayStackView: UIStackView {
                 if body.isEmpty {
                     continue
                 }
-                let label = YYLabel(frame: .zero)
+                
+                let layout = BadgeLayoutManager()
+                let storage = NSTextStorage()
+                storage.addLayoutManager(layout)
+                let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+                let container = NSTextContainer(size: initialSize)
+                container.widthTracksTextView = true
+                layout.addTextContainer(container)
+
+                let label = TitleUITextView(delegate: self.delegate, textContainer: container)
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
-                label.numberOfLines = 0
-                label.lineBreakMode = .byWordWrapping
-                label.highlightLongPressAction = longTouchLinkAction
-                label.highlightTapAction = touchLinkAction
                 
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
                 label.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let size = CGSize(width: estimatedWidth - 12, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                estimatedHeight += layout.textBoundingSize.height
-                label.textLayout = layout
-                label.preferredMaxLayoutWidth = layout.textBoundingSize.width
+                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth - 12)
+
+                estimatedHeight += textHeight
                 label.attributedText = text
 
                 baseView.addSubview(label)
@@ -524,35 +457,35 @@ public class TextDisplayStackView: UIStackView {
                             
                 baseView.horizontalAnchors /==/ overflow.horizontalAnchors
                 if !ignoreHeight {
-                    baseView.heightAnchor /==/ layout.textBoundingSize.height
+                    baseView.heightAnchor /==/ textHeight
                 }
             } else {
                 if block.trimmed().isEmpty || block.trimmed() == "\n" {
                     continue
                 }
                 let text = createAttributedChunk(baseHTML: block.trimmed(), accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
-                let label = YYLabel(frame: CGRect.zero).then {
+                
+                let layout = BadgeLayoutManager()
+                let storage = NSTextStorage()
+                storage.addLayoutManager(layout)
+                let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+                let container = NSTextContainer(size: initialSize)
+                container.widthTracksTextView = true
+                layout.addTextContainer(container)
+
+                let label = TitleUITextView(delegate: self.delegate, textContainer: container).then {
                     $0.accessibilityIdentifier = "Paragraph"
-                    $0.numberOfLines = 0
-                    $0.lineBreakMode = .byWordWrapping
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
-                label.highlightLongPressAction = longTouchLinkAction
-                label.highlightTapAction = touchLinkAction
 
-                let size = CGSize(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                label.textLayout = layout
-                label.preferredMaxLayoutWidth = layout.textBoundingSize.width
-
-                estimatedHeight += layout.textBoundingSize.height
-
+                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth)
+                estimatedHeight += textHeight
                 overflow.addArrangedSubview(label)
 
                 label.horizontalAnchors /==/ overflow.horizontalAnchors
                 if !ignoreHeight {
-                    label.heightAnchor /==/ layout.textBoundingSize.height
+                    label.heightAnchor /==/ textHeight
                 }
             }
         }
@@ -742,9 +675,8 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: newTitle)!
-            totalHeight += layout.textBoundingSize.height
+            let textHeight = newTitle.height(containerWidth: width)
+            totalHeight += textHeight
             
             if blocks.count > 1 {
                 if startIndex == 0 {
@@ -763,9 +695,8 @@ public class TextDisplayStackView: UIStackView {
                 }
             }
             
-            let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: newTitle)!
-            totalHeight += layout.textBoundingSize.height
+            let textHeight = newTitle.height(containerWidth: width)
+            totalHeight += textHeight
         }
         
         for block in blocks {
@@ -783,11 +714,9 @@ public class TextDisplayStackView: UIStackView {
                 totalHeight += body.globalHeight
             } else {
                 let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil)
-                let size = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-                let layout = YYTextLayout(containerSize: size, text: text)!
-                let textSize = layout.textBoundingSize
+                let textHeight = text.height(containerWidth: width)
                 
-                totalHeight += textSize.height
+                totalHeight += textHeight
             }
         }
         if hasLinks && !SettingValues.disablePreviews {

@@ -19,7 +19,6 @@ target 'Slide for Reddit' do
   pod 'SwiftLinkPreview', '~> 3.0.1'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
-  pod 'YYText'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON', :git => 'https://github.com/ccrama/SwiftyJSON.git', :branch => 'hotfix-xcode12'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"

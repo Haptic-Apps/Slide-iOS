@@ -10,7 +10,7 @@ import reddift
 import SDWebImage
 import Starscream
 import UIKit
-import YYText
+
 
 class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource {
     func headerOffset() -> Int {
@@ -173,10 +173,8 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 }
             }
 
-            let size = CGSize(width: width - 18, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: content)!
-            let infoHeight = layout.textBoundingSize.height
-            estimatedHeights[id] = CGFloat(24 + infoHeight + CGFloat(imageHeight))
+            let textHeight = content.height(containerWidth: width - 18)
+            estimatedHeights[id] = CGFloat(24 + textHeight + CGFloat(imageHeight))
         }
         return CGSize(width: itemWidth, height: estimatedHeights[id]!)
     }

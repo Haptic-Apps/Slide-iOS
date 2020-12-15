@@ -19,7 +19,7 @@ import SDCAlertView
 import SDWebImage
 import Then
 import UIKit
-import YYText
+
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -38,69 +38,7 @@ enum CurrentType {
     case thumb, banner, text, autoplay, none
 }
 
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    
-    func linkTapped(url: URL, text: String) {
-        linkClicked = true
-        if url.absoluteString == CachedTitle.AWARD_KEY {
-            showAwardMenu()
-            return
-        }
-        
-        if !text.isEmpty {
-            self.parentViewController?.showSpoiler(text)
-        } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: link!)
-        }
-    }
-
-    func linkLongTapped(url: URL) {
-        longBlocking = true
-        
-        if url.absoluteString == CachedTitle.AWARD_KEY {
-            showAwardMenu()
-            return
-        }
-
-        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
-        
-        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
-            let shareItems: Array = [url]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.innerView
-            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }
-        
-        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
-            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }
-
-        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        }
-
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }
-        }
-        
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        
-        if parentViewController != nil {
-            alertController.show(parentViewController!)
-        }
-    }
+class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate {
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
        // TODO: - maybe? innerView.blink(color: GMColor.orange500Color())
@@ -152,7 +90,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
     var thumbText: UILabel!
-    var title: UITextView!
+    var title: TitleUITextView!
     var score: UILabel!
     var box: UIStackView!
     var sideButtons: UIStackView!
@@ -326,27 +264,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         self.title = TitleUITextView(delegate: self, textContainer: container).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.clipsToBounds = false
-            $0.textContainer.lineFragmentPadding = 0
-            $0.textContainerInset = .zero
-            $0.showsHorizontalScrollIndicator = false
-            $0.showsVerticalScrollIndicator = false
-            $0.layer.isOpaque = true
-            $0.isOpaque = true
-            $0.isSelectable = false
-            $0.layoutManager.allowsNonContiguousLayout = false
-            $0.isScrollEnabled = false
-            $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
-            $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-            $0.layoutManager.usesFontLeading = false
-            $0.contentInset = .zero
-            $0.contentInsetAdjustmentBehavior = .never
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
-            $0.isUserInteractionEnabled = true
-            for subview in $0.subviews {
-                subview.isOpaque = true
-                subview.backgroundColor = ColorUtil.theme.foregroundColor
-            }
+            $0.doSetup()
         }
         
         self.infoBox = UIStackView().then {
@@ -1442,51 +1360,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
         
-        layoutTitleImageViews()
+        title.layoutTitleImageViews()
         title.isScrollEnabled = false
     }
-    
-    //Should be moved into TitleUITextView.swift
-    func layoutTitleImageViews() {
-        title.subviews.forEach { (view) in
-            if view is UIImageView {
-                view.removeFromSuperview()
-            }
-        }
-        title.sizeToFit()
-        title.layoutManager.textStorage?.enumerateAttribute(.attachment, in: NSRange(location: 0, length: title.attributedText.length)) { attr, bgStyleRange, _ in
-            var rects = [CGRect]()
-            if let attachment = attr as? AsyncTextAttachmentNoLoad {
-                let url = attachment.imageURL
-                if let url = url {
-                    let bgStyleGlyphRange = title.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                    title.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                        var rect = self.title.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                        var baseline = 0
-                        baseline = Int(truncating: self.title.layoutManager.textStorage!.attribute(.baselineOffset, at: self.title.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-
-                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2) + (attachment.bounds.size.height < 20 ? 2 : 0)
-                        rect.size = attachment.bounds.size
-                        let insetTop = CGFloat.zero
-                        rects.append(rect.offsetBy(dx: 0, dy: insetTop))
-                    }
-                    if let first = rects.first {
-                        let imageView = UIImageView(frame: first)
-                        title.addSubview(imageView)
-                        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)])
-                                                
-                        if attachment.rounded {
-                            imageView.backgroundColor = attachment.backgroundColor
-                            imageView.clipsToBounds = true
-                            imageView.layer.cornerRadius = first.size.height / 2
-                        }
-                    }
-                }
-            }
-        }
-    }
-            
+                
     @objc func doDTap(_ sender: AnyObject) {
         typeImage = UIImageView().then {
             $0.accessibilityIdentifier = "Action type"
@@ -3264,8 +3141,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             } else if self.textView.overflow.frame.contains(location) {
                 let innerLocation = self.textView.convert(location, to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
+                    if view.frame.contains(innerLocation) && view is TitleUITextView {
+                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view as! TitleUITextView, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
                     }
                 }
             }
@@ -3281,40 +3158,52 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     
-    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
         if inputURL == nil {
             return nil
         }
+        
         let point = label.superview?.convert(location, to: label) ?? location
+
         var params: UIPreviewParameters?
-        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                attributedText.enumerateAttribute(
-                    .link,
-                    in: NSRange(location: 0, length: attributedText.length)
-                ) { (value, range, _) in
-                    if let url = value as? NSURL {
-                        if url.absoluteString == inputURL! {
-                            let baseRects = layoutManager.selectionRects(for: YYTextRange(range: range))
-                            var cgs = [NSValue]()
-                            for rect in baseRects {
-                                if changeRectTo != nil {
-                                    cgs.append(NSValue(cgRect: changeRectTo!.convert(rect.rect, from: label)))
-                                } else {
-                                    cgs.append(NSValue(cgRect: rect.rect))
-                                }
-                            }
-                            params = UIPreviewParameters(textLineRects: cgs)
-                            params?.backgroundColor = .clear
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
+            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
+            textStorage.enumerateAttribute(.urlAction, in: characterRange) { attr, bgStyleRange, _ in
+                var rects = [CGRect]()
+                if let testURL = attr as? URL, (inputURL == nil || testURL.absoluteString == inputURL!) {
+                    let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                    layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                        var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                        var baseline = 0
+                        baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                        
+                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                        rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                        let insetTop = CGFloat.zero
+                        
+                        let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                        if offsetRect.contains(point) {
+                            rects.append(offsetRect)
                         }
                     }
+                    var cgs = [NSValue]()
+                    for rect in rects {
+                        if changeRectTo != nil {
+                            cgs.append(NSValue(cgRect: changeRectTo!.convert(rect, from: label)))
+                        } else {
+                            cgs.append(NSValue(cgRect: rect))
+                        }
+                    }
+
+                    params = UIPreviewParameters(textLineRects: cgs)
+                    params?.backgroundColor = .clear
                 }
             }
         }
         return params
     }
-    
+
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
@@ -3325,8 +3214,8 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 let innerLocation = self.innerView.convert(innerPoint, to: self.textView.overflow)
                 print(innerLocation)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        return getConfigurationForTextView(view as! YYLabel, innerLocation)
+                    if view.frame.contains(innerLocation) && view is TitleUITextView {
+                        return getConfigurationForTextView(view as! TitleUITextView, innerLocation)
                     }
                 }
             }
@@ -3346,24 +3235,39 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         return nil
     }
     
-    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
+    func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
         let point = label.superview?.convert(location, to: label) ?? location
-                if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
-                for attribute in attributes {
-                    if attribute.value is NSURL {
-                        if let url = (attribute.value as! NSURL).absoluteURL {
-                            return getConfigurationFor(url: url)
+
+        var configuration: UIContextMenuConfiguration?
+        var found = false
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage, !found {
+            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
+            textStorage.enumerateAttribute(.urlAction, in: characterRange) { attr, bgStyleRange, _ in
+                if let url = attr as? URL {
+                    let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                    layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                        var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                        var baseline = 0
+                        baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                        
+                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                        rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                        let insetTop = CGFloat.zero
+                        
+                        let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                        if offsetRect.contains(point) {
+                            configuration = self.getConfigurationFor(url: url)
+                            found = true
                         }
                     }
                 }
             }
         }
-        return nil
+        
+        return configuration
     }
-    
+
     func contextMenuInteractionDidEnd(_ interaction: UIContextMenuInteraction) {
         self.previewedVC = nil
         self.previewedImage = false
@@ -3680,30 +3584,87 @@ extension NSAttributedString {
         )
         return boundingBox.height
     }
-    func height2(containerWidth: CGFloat) -> CGFloat {
-        let textStorage = NSTextStorage(attributedString: self)
-        let size = CGSize(width: containerWidth, height: CGFloat.greatestFiniteMagnitude)
-        let boundingRect = CGRect(origin: .zero, size: size)
+    
+    func width(containerWidth: CGFloat) -> CGFloat {
+        let size = CGSize(width: containerWidth, height: .infinity)
+        let boundingBox = self.boundingRect(
+            with: size,
+            options: [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics],
+            context: nil
+        )
+        return boundingBox.width
+    }
+}
 
-        let textContainer = NSTextContainer(size: size)
-        textContainer.lineFragmentPadding = 0
+extension LinkCellView: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        linkClicked = true
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
+        
+        if !text.isEmpty {
+            self.parentViewController?.showSpoiler(text)
+        } else {
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: link!)
+        }
+    }
 
-        let layoutManager = NSLayoutManager()
-        layoutManager.addTextContainer(textContainer)
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
 
-        textStorage.addLayoutManager(layoutManager)
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.innerView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }
 
-        self.enumerateAttribute(.attachment, in: NSRange(location: 0, length: self.length), options: []) { (value, range, _) in
-            if let attachment = value as? NSTextAttachment {
-                layoutManager.setAttachmentSize(CGSize.square(size: 24), forGlyphRange: range)
-                layoutManager.setNeedsLayout(forAttachment: attachment)
-                layoutManager.setNeedsDisplay(forAttachment: attachment)
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
             }
         }
-        layoutManager.glyphRange(forBoundingRect: boundingRect, in: textContainer)
 
-        let rect = layoutManager.usedRect(for: textContainer)
-
-        return rect.integral.size.height
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        
+        if parentViewController != nil {
+            alertController.show(parentViewController!)
+        }
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentViewController {
+            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
+        }
     }
 }

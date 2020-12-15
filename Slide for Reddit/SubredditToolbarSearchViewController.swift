@@ -750,6 +750,10 @@ extension SubredditToolbarSearchViewController: TextDisplayStackViewDelegate {
     func linkLongTapped(url: URL) {
         
     }
+    
+    func previewProfile(profile: String) {
+        
+    }
 }
 
 extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableViewDataSource {

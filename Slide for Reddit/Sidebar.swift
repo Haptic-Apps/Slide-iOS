@@ -8,11 +8,10 @@
 
 import Foundation
 import reddift
-import YYText
 
 class Sidebar: NSObject {
     
-    var parent: (UIViewController & MediaVCDelegate)?
+    weak var parent: (UIViewController & MediaVCDelegate)?
     var subname = ""
     
     init(parent: UIViewController & MediaVCDelegate, subname: String) {

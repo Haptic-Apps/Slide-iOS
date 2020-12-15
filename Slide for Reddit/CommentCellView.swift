@@ -10,62 +10,10 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
-import YYText
 
-class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    
+
+class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var longBlocking = false
-    func linkTapped(url: URL, text: String) {
-        if !text.isEmpty {
-            self.parentViewController?.showSpoiler(text)
-        } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
-        }
-    }
-
-    func linkLongTapped(url: URL) {
-        longBlocking = true
-        
-        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
-        
-        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
-            let shareItems: Array = [url]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.contentView
-            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }
-        
-        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
-            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }
-        
-        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        }
-        
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }
-        }
-        
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        
-        if parentViewController != nil {
-            alertController.show(parentViewController!)
-        }
-    }
-
     var text: TextDisplayStackView!
     var single = false
     
@@ -166,5 +114,67 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
     
     @objc func openComment(sender: UITapGestureRecognizer? = nil) {
         VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)
+    }
+}
+
+extension CommentCellView: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.parentViewController?.showSpoiler(text)
+        } else {
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+        }
+    }
+
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }
+        
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        
+        if parentViewController != nil {
+            alertController.show(parentViewController!)
+        }
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentViewController {
+            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
+        }
     }
 }

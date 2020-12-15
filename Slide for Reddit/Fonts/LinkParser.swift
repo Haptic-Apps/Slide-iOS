@@ -8,7 +8,7 @@
 
 import DTCoreText
 import UIKit
-import YYText
+
 
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, bold: UIFont? = nil, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {
@@ -46,7 +46,7 @@ class LinkParser {
                             string.setAttributes([NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.backgroundColor: ColorUtil.theme.backgroundColor.withAlphaComponent(0.5), NSAttributedString.Key.font: UIFont(name: "Courier", size: font.pointSize) ?? font], range: range)
                         } else if isColor.hexString() == "#008000" {
                             //Is strikethrough (for some reason)
-                            string.setAttributes([NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key(rawValue: YYTextStrikethroughAttributeName): YYTextDecoration(style: YYTextLineStyle.single, width: 1, color: fontColor), NSAttributedString.Key.font: font], range: range)
+                            string.setAttributes([NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key.strikethroughStyle: 2, NSAttributedString.Key.strikethroughColor: fontColor, NSAttributedString.Key.font: font], range: range)
                         }
                     } else if let url = attr.value as? URL {
                         if SettingValues.enlargeLinks {
@@ -100,7 +100,7 @@ class LinkParser {
                             }
                         }
 
-                        string.yy_setTextHighlight(range, color: color, backgroundColor: nil, userInfo: ["url": url])
+                        string.addAttribute(.textHighlight, value: TextHighlight(["url": url]), range: NSRange(location: 0, length: string.length))
                         break
                     }
                 }
@@ -150,11 +150,7 @@ extension NSMutableAttributedString {
                 let copy = self.attributedSubstring(from: match.range)
                 let text = copy.string
                 let attributedText = NSMutableAttributedString(string: text.replacingOccurrences(of: "[[s[", with: "").replacingOccurrences(of: "]s]]", with: ""), attributes: copy.attributes(at: 0, effectiveRange: nil))
-                attributedText.yy_textBackgroundBorder = YYTextBorder(fill: color, cornerRadius: 3)
-                attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: attributedText.length))
-                let highlight = YYTextHighlight()
-                highlight.userInfo = ["spoiler": true]
-                attributedText.yy_setTextHighlight(highlight, range: NSRange(location: 0, length: attributedText.length))
+                attributedText.addAttributes([NSAttributedString.Key.foregroundColor: color, .badgeColor: color, .textHighlight: TextHighlight(["spoiler": true, "attributedText": attributedText.string])], range: NSRange(location: 0, length: attributedText.length))
                 self.replaceCharacters(in: match.range, with: attributedText)
             }
         }

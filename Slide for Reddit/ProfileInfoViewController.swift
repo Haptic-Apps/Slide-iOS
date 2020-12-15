@@ -390,6 +390,7 @@ extension ProfileInfoViewController: ProfileHeaderViewDelegate {
         }
     }
     
+    //TODO make tags and colors work without a viewcontroller context
     func didRequestSetColor() {
         if let profile = profile as? ProfileViewController {
             self.dismiss(animated: true) {

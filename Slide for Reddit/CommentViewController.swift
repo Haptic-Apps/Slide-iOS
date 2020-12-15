@@ -14,7 +14,7 @@ import reddift
 import RLBAlertsPickers
 import SDCAlertView
 import UIKit
-import YYText
+
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
@@ -1556,7 +1556,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 view.addSubview(headerCell.contentView)
                 self.tableView.tableHeaderView = view
             }
-            headerCell.layoutTitleImageViews()
+            headerCell.title.layoutTitleImageViews()
         }
     }
     
@@ -3505,11 +3505,9 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             parentCell.content = comment
             parentCell.contentView.isUserInteractionEnabled = false
             
-            var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
-            let textSize = layout.textBoundingSize
+            let textHeight = parentCell.title.attributedText!.height(containerWidth: UIScreen.main.bounds.size.width * 0.85)
             
-            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
+            let size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textHeight)
             let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
             detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
             

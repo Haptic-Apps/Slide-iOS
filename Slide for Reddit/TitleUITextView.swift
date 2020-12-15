@@ -12,9 +12,49 @@ import Foundation
 import UIKit
 
 class TitleUITextView: UITextView {
-    var tapDelegate: TextDisplayStackViewDelegate
-    
-    init(delegate: TextDisplayStackViewDelegate, textContainer: NSTextContainer) {
+    weak var tapDelegate: TextDisplayStackViewDelegate?
+        
+    func layoutTitleImageViews() {
+        self.subviews.forEach { (view) in
+            if view is UIImageView {
+                view.removeFromSuperview()
+            }
+        }
+        self.sizeToFit()
+        self.layoutManager.textStorage?.enumerateAttribute(.attachment, in: NSRange(location: 0, length: self.attributedText.length)) { attr, bgStyleRange, _ in
+            var rects = [CGRect]()
+            if let attachment = attr as? AsyncTextAttachmentNoLoad {
+                let url = attachment.imageURL
+                if let url = url {
+                    let bgStyleGlyphRange = self.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                    self.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                        var rect = self.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                        var baseline = 0
+                        baseline = Int(truncating: self.layoutManager.textStorage!.attribute(.baselineOffset, at: self.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+
+                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2) + (attachment.bounds.size.height < 20 ? 2 : 0)
+                        rect.size = attachment.bounds.size
+                        let insetTop = CGFloat.zero
+                        rects.append(rect.offsetBy(dx: 0, dy: insetTop))
+                    }
+                    if let first = rects.first {
+                        let imageView = UIImageView(frame: first)
+                        self.addSubview(imageView)
+                        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)])
+                                                
+                        if attachment.rounded {
+                            imageView.backgroundColor = attachment.backgroundColor
+                            imageView.clipsToBounds = true
+                            imageView.layer.cornerRadius = first.size.height / 2
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    init(delegate: TextDisplayStackViewDelegate?, textContainer: NSTextContainer) {
         self.tapDelegate = delegate
         super.init(frame: .zero, textContainer: textContainer)
         
@@ -24,7 +64,16 @@ class TitleUITextView: UITextView {
             let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
             if index < self.textStorage.length {
                 if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
-                    delegate.linkTapped(url: attributedURL, text: "")
+                    delegate?.linkTapped(url: attributedURL, text: "")
+                } else if let highlight = self.attributedText.attribute(NSAttributedString.Key.textHighlight, at: index, effectiveRange: nil) as? TextHighlight {
+                    if let url = highlight.userInfo["url"] as? URL {
+                        delegate?.linkTapped(url: url, text: "")
+                        return
+                    } else if highlight.userInfo["spoiler"] as? Bool ?? false {
+                        if let attributedText = highlight.userInfo["attributedText"] as? String {
+                            delegate?.linkTapped(url: URL(string: "/s")!, text: attributedText)
+                        }
+                    }
                 }
             }
         }
@@ -35,7 +84,15 @@ class TitleUITextView: UITextView {
             let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
             if index < self.textStorage.length {
                 if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
-                    delegate.linkLongTapped(url: attributedURL)
+                    delegate?.linkLongTapped(url: attributedURL)
+                } else if let highlight = self.attributedText.attribute(NSAttributedString.Key.textHighlight, at: index, effectiveRange: nil) as? TextHighlight {
+                    if let profile = highlight.userInfo["profile"] as? String {
+                        delegate?.previewProfile(profile: profile)
+                        return
+                    } else if let url = highlight.userInfo["url"] as? URL {
+                        delegate?.linkLongTapped(url: url)
+                        return
+                    }
                 }
             }
         }
@@ -43,6 +100,30 @@ class TitleUITextView: UITextView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func doSetup() {
+        self.clipsToBounds = false
+        self.textContainer.lineFragmentPadding = 0
+        self.textContainerInset = .zero
+        self.showsHorizontalScrollIndicator = false
+        self.showsVerticalScrollIndicator = false
+        self.layer.isOpaque = true
+        self.isOpaque = true
+        self.isSelectable = false
+        self.layoutManager.allowsNonContiguousLayout = false
+        self.isScrollEnabled = false
+        self.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
+        self.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+        self.layoutManager.usesFontLeading = false
+        self.contentInset = .zero
+        self.contentInsetAdjustmentBehavior = .never
+        self.backgroundColor = ColorUtil.theme.foregroundColor
+        self.isUserInteractionEnabled = true
+        for subview in self.subviews {
+            subview.isOpaque = true
+            subview.backgroundColor = ColorUtil.theme.foregroundColor
+        }
     }
 }
 
@@ -237,6 +318,14 @@ class BadgeLayoutManager: NSLayoutManager {
 extension NSAttributedString.Key {
     static let badgeColor: NSAttributedString.Key = .init("badgeColor")
     static let urlAction: NSAttributedString.Key = .init("urlAction")
+    static let textHighlight: NSAttributedString.Key = .init("textHighlight")
+}
+
+class TextHighlight: NSObject {
+    var userInfo: NSDictionary
+    init(_ dict: NSDictionary) {
+        self.userInfo = dict
+    }
 }
 
 //
