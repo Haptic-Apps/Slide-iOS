@@ -1728,7 +1728,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: boldFont])
         let new = date != 0 && date < Double(comment.created.timeIntervalSince1970)
-        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))") : ""), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: boldFont])
+        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))\(new ? " " : "")") : "\(new ? " " : "")"), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: boldFont])
         
         if new {
             endString.addAttributes([.badgeColor: ColorUtil.accentColorForSub(sub: comment.subreddit), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
@@ -2334,7 +2334,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
         } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             return createRectsTargetedPreview(textView: self.commentBody.firstTextView, location: location, snapshot: snapshot)
-        } else if self.contentView.convert(self.commentBody.overflow.frame, to: self.contentView).contains(location) {
+        } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
             let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
@@ -2356,11 +2356,11 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             return getConfigurationForTextView(self.title, location)
         } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
-        } else if self.contentView.convert(self.commentBody.overflow.frame, to: self.contentView).contains(location) {
-            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+        } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
+            let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if view.frame.contains(innerLocation) && view is TitleUITextView {
-                    return getConfigurationForTextView(view as! TitleUITextView, innerLocation)
+                    return getConfigurationForTextView(view as! TitleUITextView, location)
                 }
             }
         } else if self.commentBody.links.frame.contains(location) {

@@ -131,7 +131,7 @@ public class TextDisplayStackView: UIStackView {
         }
 
         firstTextView.attributedText = string
-        firstTextView.layoutTitleImageViews()
+        firstTextView.sizeToFit()
 
         if !ignoreHeight {
 //            let framesetterB = CTFramesetterCreateWithAttributedString(string)
@@ -144,6 +144,7 @@ public class TextDisplayStackView: UIStackView {
             firstTextView.removeConstraints(addedConstraints)
             addedConstraints = batch {
                 firstTextView.heightAnchor /==/ textHeight
+                firstTextView.verticalCompressionResistancePriority = .required
             }
         }
 
@@ -197,7 +198,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = newTitle
-            firstTextView.layoutTitleImageViews()
+            firstTextView.sizeToFit()
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
@@ -362,7 +363,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = text
-            firstTextView.layoutTitleImageViews()
+            firstTextView.sizeToFit()
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(text)
@@ -404,11 +405,13 @@ public class TextDisplayStackView: UIStackView {
                 table.layer.cornerRadius = 10
                 table.isUserInteractionEnabled = true
                 table.contentOffset = CGPoint.init(x: -8, y: 0)
+                table.verticalCompressionResistancePriority = .required
                 estimatedHeight += table.globalHeight
                 tableCount += 1
             } else if block.startsWith("<hr/>") {
                 let line = UIView()
                 line.backgroundColor = ColorUtil.theme.fontColor
+                line.verticalCompressionResistancePriority = .required
                 overflow.addArrangedSubview(line)
                 estimatedHeight += 1
                 line.heightAnchor /==/ CGFloat(1)
@@ -423,6 +426,7 @@ public class TextDisplayStackView: UIStackView {
                 //}
                 body.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
+                body.verticalCompressionResistancePriority = .required
                 estimatedHeight += body.globalHeight
                 body.layer.cornerRadius = 10
                 body.contentOffset = CGPoint.init(x: -8, y: -8)
@@ -448,16 +452,16 @@ public class TextDisplayStackView: UIStackView {
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
-                
+                                
                 let baseView = UIView()
                 baseView.accessibilityIdentifier = "Quote box view"
-                label.setBorder(border: .left, weight: 2, color: tColor)
+                baseView.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth - 12)
+                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth - 14)
 
                 estimatedHeight += textHeight
                 label.attributedText = text
-                label.layoutTitleImageViews()
+                label.sizeToFit()
                 
                 baseView.addSubview(label)
                 label.leftAnchor /==/ baseView.leftAnchor + CGFloat(8)
@@ -470,6 +474,7 @@ public class TextDisplayStackView: UIStackView {
                 baseView.horizontalAnchors /==/ overflow.horizontalAnchors
                 if !ignoreHeight {
                     baseView.heightAnchor /==/ textHeight
+                    baseView.verticalCompressionResistancePriority = .required
                 }
             } else {
                 if block.trimmed().isEmpty || block.trimmed() == "\n" {
@@ -500,6 +505,7 @@ public class TextDisplayStackView: UIStackView {
                 label.horizontalAnchors /==/ overflow.horizontalAnchors
                 if !ignoreHeight {
                     label.heightAnchor /==/ textHeight
+                    label.verticalCompressionResistancePriority = .required
                 }
             }
         }
