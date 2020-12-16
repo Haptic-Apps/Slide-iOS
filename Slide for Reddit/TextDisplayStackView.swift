@@ -399,7 +399,7 @@ public class TextDisplayStackView: UIStackView {
                 table.accessibilityIdentifier = "Table"
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors /==/ overflow.horizontalAnchors
-                table.heightAnchor /==/ table.globalHeight
+                table.heightAnchor /==/ table.globalHeight ~ .low
                 table.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
@@ -422,7 +422,7 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors /==/ overflow.horizontalAnchors
                 //if !ignoreHeight {
-                    body.heightAnchor />=/ body.globalHeight
+                    body.heightAnchor /==/ body.globalHeight
                 //}
                 body.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
@@ -457,12 +457,12 @@ public class TextDisplayStackView: UIStackView {
                 baseView.accessibilityIdentifier = "Quote box view"
                 baseView.setBorder(border: .left, weight: 2, color: tColor)
                 
-                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth - 14)
-
-                estimatedHeight += textHeight
                 label.attributedText = text
                 label.sizeToFit()
                 
+                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth - 14)
+                estimatedHeight += textHeight
+
                 baseView.addSubview(label)
                 label.leftAnchor /==/ baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor /==/ baseView.rightAnchor - CGFloat(4)

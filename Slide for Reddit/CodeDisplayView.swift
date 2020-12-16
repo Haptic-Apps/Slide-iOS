@@ -65,7 +65,7 @@ class CodeDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        let finalString = NSMutableAttributedString.init()
+        var finalString = NSMutableAttributedString()
         var index = 0
         for row in baseData {
             finalString.append(row)
@@ -73,6 +73,10 @@ class CodeDisplayView: UIScrollView {
                 finalString.append(NSAttributedString.init(string: "\n"))
             }
             index += 1
+        }
+        
+        while finalString.string.endsWith("\n") {
+            finalString = NSMutableAttributedString(attributedString: finalString.attributedSubstring(from: NSRange(location: 0, length: finalString.length - 1)))
         }
         baseLabel.attributedText = finalString
                 
@@ -83,6 +87,7 @@ class CodeDisplayView: UIScrollView {
         baseLabel.widthAnchor /==/ getWidestCell()
         globalHeight = textHeight + 16
         baseLabel.heightAnchor /==/ textHeight
+        baseLabel.verticalCompressionResistancePriority = .required
         baseLabel.leftAnchor /==/ leftAnchor
         baseLabel.topAnchor /==/ topAnchor
         contentSize = CGSize.init(width: getWidestCell() + 16, height: textHeight)

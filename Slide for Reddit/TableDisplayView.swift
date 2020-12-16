@@ -186,8 +186,11 @@ class TableDisplayView: UIScrollView {
                 } else {
                     label.backgroundColor = ColorUtil.theme.backgroundColor
                 }
+                label.attributedText = text
+                label.sizeToFit()
                 label.widthAnchor /==/ columnWidths[x]// + 100
                 label.heightAnchor /==/ rowHeights[y]
+                label.verticalCompressionResistancePriority = .required
                 rowStack.addArrangedSubview(label)
             }
             baseStackView.addArrangedSubview(rowStack)
