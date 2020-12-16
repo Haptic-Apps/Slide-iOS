@@ -1819,12 +1819,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         commentBody.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
+            title.linkTextAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: comment.subreddit)]
             title.attributedText = infoString
             title.layoutTitleImageViews()
             commentBody.firstTextView.isHidden = false
             commentBody.clearOverflow()
             commentBody.setTextWithTitleHTML(NSMutableAttributedString(), text, htmlString: comment.htmlBody)
         } else {
+            title.linkTextAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: comment.subreddit)]
             title.attributedText = infoString
             title.layoutTitleImageViews()
             commentBody.clearOverflow()
@@ -2445,8 +2447,10 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
             guard let self = self else { return nil }
             if url.absoluteString.starts(with: "/u/") {
-                self.previewedVC = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
-                return self.previewedVC
+                let vc = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                self.previewedVC = vc
+                
+                return vc
             }
             if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: SubmissionObject()) {
                 self.previewedVC = vc

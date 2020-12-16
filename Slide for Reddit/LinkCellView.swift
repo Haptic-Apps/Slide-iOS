@@ -1499,6 +1499,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
             
+        if !full {
+            self.contentView.isHidden = true
+        }
         self.linkClicked = false
 
         self.full = self is FullLinkCellView
@@ -3107,7 +3110,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     self.parentViewController?.present(vc, animated: true, completion: nil)
                 } else {
                     if let vc = vc as? ProfilePreviewViewController {
-                        VCPresenter.openRedditLink("/u/\(vc.account)", self.parent?.navigationController, self.parent)
+                        VCPresenter.openRedditLink("/u/\(vc.account)", nil, self.parentViewController)
                         return
                     }
 
@@ -3140,7 +3143,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         var weightedCenterpoint = CGPoint.zero
         
         for rect in rects {
-            convertedRects.append(self.contentView.convert(rect, from: textView))
+            convertedRects.append(self.innerView.convert(rect, from: textView))
         }
         
         for rect in convertedRects {
@@ -3163,13 +3166,13 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         
         let location = interaction.location(in: self.innerView)
         if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
-            guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
+            guard let snapshot = self.innerView.snapshotView(afterScreenUpdates: false) else {
                   return nil
             }
 
             if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
                 return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
-            } else if self.innerView.convert(self.textView.overflow.frame, to: self.innerView).contains(location){
+            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
@@ -3179,7 +3182,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             }
             return nil
         } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
-            guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
+            guard let snapshot = self.innerView.snapshotView(afterScreenUpdates: false) else {
                   return nil
             }
             return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
@@ -3195,22 +3198,22 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        let location = interaction.location(in: self.contentView)
+        let location = interaction.location(in: self.innerView)
 
         let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
             if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
-                return getConfigurationForTextView(self.textView.firstTextView, innerPoint)
-            } else if self.innerView.convert(self.textView.overflow.frame, to: self.innerView).contains(location){
+                return getConfigurationForTextView(self.textView.firstTextView, location)
+            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
-                        return getConfigurationForTextView(view, innerLocation)
+                        return getConfigurationForTextView(view, location)
                     }
                 }
             }
         } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
-            return getConfigurationForTextView(self.title, innerLocation)
+            return getConfigurationForTextView(self.title, location)
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true
             return getConfigurationForVideo(url: url)
@@ -3258,7 +3261,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
 
     func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
-        let point = label.convert(location, from: self.contentView)
+        let point = label.convert(location, from: self.innerView)
 
         var configuration: UIContextMenuConfiguration?
         var found = false
@@ -3302,8 +3305,9 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
             if url.absoluteString.starts(with: "/u/") {
-                self.previewedVC = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
-                return self.previewedVC
+                let vc = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                self.previewedVC = vc
+                return vc
             }
 
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url, link: self.link!) {

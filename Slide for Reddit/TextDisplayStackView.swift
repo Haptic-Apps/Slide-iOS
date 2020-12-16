@@ -60,6 +60,7 @@ public class TextDisplayStackView: UIStackView {
         layout.addTextContainer(container)
 
         self.firstTextView = TitleUITextView(delegate: delegate, textContainer: container)
+        self.firstTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
         self.firstTextView.doSetup()
         
         self.overflow = UIStackView()
@@ -73,6 +74,7 @@ public class TextDisplayStackView: UIStackView {
     
     func setColor(_ color: UIColor) {
         self.tColor = color
+        self.firstTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
     }
     
     init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.theme.fontColor, delegate: TextDisplayStackViewDelegate) {
@@ -105,6 +107,7 @@ public class TextDisplayStackView: UIStackView {
         })
         super.init(frame: CGRect.zero)
 
+        self.firstTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
         self.axis = .vertical
         self.addArrangedSubviews(firstTextView, overflow, links)
         self.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -440,6 +443,7 @@ public class TextDisplayStackView: UIStackView {
 
                 let label = TitleUITextView(delegate: self.delegate, textContainer: container).then {
                     $0.doSetup()
+                    $0.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
                 }
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
@@ -484,6 +488,7 @@ public class TextDisplayStackView: UIStackView {
                 let label = TitleUITextView(delegate: self.delegate, textContainer: container).then {
                     $0.accessibilityIdentifier = "Paragraph"
                     $0.doSetup()
+                    $0.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }

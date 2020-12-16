@@ -251,7 +251,7 @@ extension ProfilePreviewViewController {
                     DispatchQueue.main.async {
                         self.getTrophies(account)
                         if self.user != nil {
-                            self.accountImageView.sd_setImage(with: URL(string: self.user!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+                            self.accountImageView.sd_setImage(with: URL(string: self.user!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 100), withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                                 guard let strongSelf = self else { return }
                                 strongSelf.accountImageView.image = image
                             }

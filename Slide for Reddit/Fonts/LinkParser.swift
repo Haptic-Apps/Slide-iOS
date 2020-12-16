@@ -53,6 +53,7 @@ class LinkParser {
                             string.addAttribute(NSAttributedString.Key.font, value: FontGenerator.boldFontOfSize(size: 18, submission: false), range: range)
                         }
                         string.removeAttribute(.foregroundColor, range: range)
+                        string.removeAttribute(.link, range: range)
                         string.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: range)
                         string.addAttribute(.underlineStyle, value: 0, range: range)
                         let type = ContentType.getContentType(baseUrl: url)

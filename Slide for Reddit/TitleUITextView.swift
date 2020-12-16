@@ -81,9 +81,9 @@ class TitleUITextView: UITextView {
         self.addLongTapGestureRecognizer(delegate: self) { (sender) in
             if #available(iOS 13.0, *) {
                 for interaction in self.interactions {
-                        if interaction is UIContextMenuInteraction {
-                            return
-                        }
+                    if interaction is UIContextMenuInteraction {
+                        return
+                    }
                 }
             }
 
