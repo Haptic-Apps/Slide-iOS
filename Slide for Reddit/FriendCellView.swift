@@ -40,6 +40,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         container.widthTracksTextView = true
         layout.addTextContainer(container)
         self.titleView = TitleUITextView(delegate: nil, textContainer: container)
+        self.titleView.doSetup()
         
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
         
@@ -109,6 +110,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         infoString.append(endString)
         titleView.attributedText = infoString
+        titleView.layoutTitleImageViews()
     }
     
     required init?(coder aDecoder: NSCoder) {

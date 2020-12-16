@@ -552,7 +552,7 @@ extension ShadowboxLinkViewController: TextDisplayStackViewDelegate {
     
     func previewProfile(profile: String) {
         if let parent = self.parentVC {
-            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
             vc.transitioningDelegate = ProfileInfoPresentationManager()
             parent.present(vc, animated: true)

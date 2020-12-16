@@ -60,6 +60,7 @@ public class TextDisplayStackView: UIStackView {
         layout.addTextContainer(container)
 
         self.firstTextView = TitleUITextView(delegate: delegate, textContainer: container)
+        self.firstTextView.doSetup()
         
         self.overflow = UIStackView()
         self.overflow.isUserInteractionEnabled = true
@@ -93,6 +94,7 @@ public class TextDisplayStackView: UIStackView {
         self.firstTextView = TitleUITextView(delegate: delegate, textContainer: container).then({
             $0.accessibilityIdentifier = "Top title"
             $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+            $0.doSetup()
         })
         self.links = TouchUIScrollView()
         self.links.isUserInteractionEnabled = true
@@ -126,6 +128,7 @@ public class TextDisplayStackView: UIStackView {
         }
 
         firstTextView.attributedText = string
+        firstTextView.layoutTitleImageViews()
 
         if !ignoreHeight {
 //            let framesetterB = CTFramesetterCreateWithAttributedString(string)
@@ -191,6 +194,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = newTitle
+            firstTextView.layoutTitleImageViews()
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
@@ -355,6 +359,7 @@ public class TextDisplayStackView: UIStackView {
             }
             
             firstTextView.attributedText = text
+            firstTextView.layoutTitleImageViews()
 
             if !ignoreHeight {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(text)
@@ -433,7 +438,9 @@ public class TextDisplayStackView: UIStackView {
                 container.widthTracksTextView = true
                 layout.addTextContainer(container)
 
-                let label = TitleUITextView(delegate: self.delegate, textContainer: container)
+                let label = TitleUITextView(delegate: self.delegate, textContainer: container).then {
+                    $0.doSetup()
+                }
                 label.accessibilityIdentifier = "Quote"
                 let text = createAttributedChunk(baseHTML: body, accent: tColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 label.alpha = 0.7
@@ -446,7 +453,8 @@ public class TextDisplayStackView: UIStackView {
 
                 estimatedHeight += textHeight
                 label.attributedText = text
-
+                label.layoutTitleImageViews()
+                
                 baseView.addSubview(label)
                 label.leftAnchor /==/ baseView.leftAnchor + CGFloat(8)
                 label.rightAnchor /==/ baseView.rightAnchor - CGFloat(4)
@@ -475,6 +483,7 @@ public class TextDisplayStackView: UIStackView {
 
                 let label = TitleUITextView(delegate: self.delegate, textContainer: container).then {
                     $0.accessibilityIdentifier = "Paragraph"
+                    $0.doSetup()
                     $0.attributedText = text
                     $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
                 }
@@ -500,7 +509,13 @@ public class TextDisplayStackView: UIStackView {
     public static func
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        let htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>")
+        var htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>").replacingOccurrences(of: "<div class=\"md\">", with: "").replacingOccurrences(of: "<p>", with: "<span>").replacingOccurrences(of: "</p>", with: "</span><br/>")
+        if htmlBase.endsWith("\n</div>") {
+            htmlBase = htmlBase.substring(0, length: htmlBase.length - 7)
+        }
+        if htmlBase.endsWith("<br/>") {
+            htmlBase = htmlBase.substring(0, length: htmlBase.length - 5)
+        }
         let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
         let html = NSMutableAttributedString(attributedString: baseHtml)
         while html.mutableString.contains("\t•\t") {

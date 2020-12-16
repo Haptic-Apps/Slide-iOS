@@ -171,7 +171,7 @@ extension CommentCellView: TextDisplayStackViewDelegate {
     
     func previewProfile(profile: String) {
         if let parent = self.parentViewController {
-            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
             vc.transitioningDelegate = ProfileInfoPresentationManager()
             parent.present(vc, animated: true)

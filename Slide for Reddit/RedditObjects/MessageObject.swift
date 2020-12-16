@@ -30,7 +30,7 @@ class MessageObject: RedditObject {
     public init(message: Message) {
         let title = message.baseJson["link_title"] as? String ?? ""
         var bodyHtml = message.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
-        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
+
         self.htmlBody = bodyHtml
         self.name = message.name
         self.id = message.getId()

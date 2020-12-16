@@ -114,6 +114,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
 
                 title.attributedText = content
+                title.layoutTitleImageViews()
             }
         }
         
@@ -121,6 +122,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
             
             title.attributedText = content
+            title.layoutTitleImageViews()
         }
         
         imageHeight = 0
@@ -242,7 +244,7 @@ extension LiveThreadUpdate: TextDisplayStackViewDelegate {
     
     func previewProfile(profile: String) {
         if let parent = self.parentViewController {
-            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
             vc.transitioningDelegate = ProfileInfoPresentationManager()
             parent.present(vc, animated: true)

@@ -721,9 +721,12 @@ class SettingValues {
         container.widthTracksTextView = true
         layout.addTextContainer(container)
 
-        let body = TitleUITextView(delegate: nil, textContainer: container)
+        let body = TitleUITextView(delegate: nil, textContainer: container).then {
+            $0.doSetup()
+        }
 
         body.attributedText = chunk
+        body.layoutTitleImageViews()
         
         let textHeight = body.attributedText!.height(containerWidth: UIScreen.main.bounds.size.width * 0.85 - 30)
         var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: textHeight)

@@ -100,7 +100,7 @@ class LinkParser {
                             }
                         }
 
-                        string.addAttribute(.textHighlight, value: TextHighlight(["url": url]), range: NSRange(location: 0, length: string.length))
+                        string.addAttribute(.textHighlight, value: TextHighlight(["url": url]), range: NSRange(location: range.location, length: range.length))
                         break
                     }
                 }

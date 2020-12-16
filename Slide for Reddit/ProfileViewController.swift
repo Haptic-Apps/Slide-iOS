@@ -92,7 +92,7 @@ class ProfileViewController: TabsContentPagingViewController {
     }
 
     func showMenu(sender: AnyObject, user: String) {
-        let vc = ProfileInfoViewController(accountNamed: user, parent: self)
+        let vc = ProfileInfoViewController(accountNamed: user)
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = currentAccountTransitioningDelegate
         present(vc, animated: true)

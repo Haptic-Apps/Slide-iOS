@@ -652,6 +652,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text1.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
 */
                 text1.attributedText = content
+                text1.layoutTitleImageViews()
                 text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -937,6 +938,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 */
                 
                 text1.attributedText = content
+                text1.layoutTitleImageViews()
+
                 text1.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -1651,7 +1654,7 @@ extension ReplyViewController: TextDisplayStackViewDelegate {
     }
     
     func previewProfile(profile: String) {
-        let vc = ProfileInfoViewController(accountNamed: profile, parent: self)
+        let vc = ProfileInfoViewController(accountNamed: profile)
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = ProfileInfoPresentationManager()
         self.present(vc, animated: true)

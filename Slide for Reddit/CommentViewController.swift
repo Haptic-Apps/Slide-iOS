@@ -3157,7 +3157,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                 for c in children {
                                     strings.append(c)
                                 }
-                                cell.animateMore()
+                                //TODO this cell.animateMore()
                                 try session?.getMoreChildren(strings, name: link.getId(), sort: .top, id: more.getId(), completion: { (result) -> Void in
                                     switch result {
                                     case .failure(let error):

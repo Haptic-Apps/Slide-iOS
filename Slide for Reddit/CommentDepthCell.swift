@@ -199,6 +199,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, commentBody, childrenCount, specialButton)
         
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+
         sideViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
         topViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
         
@@ -802,7 +803,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
     }
 
-    var parent: CommentViewController?
+    weak var parent: CommentViewController?
     
     @objc func upvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .up)
@@ -1499,11 +1500,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
-                self.commentBody.addInteraction(previewing)
-                let previewing2 = UIContextMenuInteraction(delegate: self)
-                self.sideViewSpace.addInteraction(previewing2)
-                let previewing3 = UIContextMenuInteraction(delegate: self)
-                self.sideView.addInteraction(previewing3)
+                self.contentView.addInteraction(previewing)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
@@ -1538,6 +1535,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         loading = false
         childrenCount.alpha = 0
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+
         if depth - 1 > 0 {
             sideWidth = (SettingValues.wideIndicators ? 8 : 4)
             marginTop = 1
@@ -1601,13 +1599,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var numberOfDots = 3
     var loading = false
 
-    func animateMore() {
-        loading = true
-        
-        title.attributedText = TextDisplayStackView.createAttributedChunk(baseHTML: "Loading...", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-       // TODO: - possibly animate?
-    }
-
     public var isCollapsed = false
     var dtap: UIShortTapGestureRecognizer?
 
@@ -1630,6 +1621,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         self.currentPath = indexPath
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+
         loading = false
         if self.parent == nil {
             self.parent = parent
@@ -1750,6 +1742,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         if comment.author != "[deleted]" && comment.author != "[removed]" {
             authorString.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorString.length))
+            authorStringNoFlair.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorStringNoFlair.length))
         }
 
         let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair.unescapeHTML)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
@@ -1822,16 +1815,18 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         paragraphStyle.lineSpacing = 1.5
-        infoString.setAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: infoString.length))
+        //infoString.setAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: infoString.length))
 
         commentBody.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
             title.attributedText = infoString
+            title.layoutTitleImageViews()
             commentBody.firstTextView.isHidden = false
             commentBody.clearOverflow()
             commentBody.setTextWithTitleHTML(NSMutableAttributedString(), text, htmlString: comment.htmlBody)
         } else {
             title.attributedText = infoString
+            title.layoutTitleImageViews()
             commentBody.clearOverflow()
             commentBody.firstTextView.isHidden = true
         }
@@ -1947,8 +1942,6 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
     }
 
     func linkLongTapped(url: URL) {
-        if #available(iOS 13.0, *) {
-        } else {
         longBlocking = true
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
@@ -1987,12 +1980,11 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         }
         
         alertController.show(parent)
-        }
     }
     
     func previewProfile(profile: String) {
         if let parent = self.parent {
-            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
             vc.transitioningDelegate = ProfileInfoPresentationManager()
             parent.present(vc, animated: true)
@@ -2297,37 +2289,68 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         }
     }
     
+    func createRectsTargetedPreview(textView: TitleUITextView, location: CGPoint, snapshot: UIView) -> UITargetedPreview? {
+        let rects = self.getLocationForPreviewedText(textView, textView.convert(location, from: self.contentView), self.previewedURL?.absoluteString)
+        var convertedRects = [CGRect]()
+        
+        var weightedCenterpoint = CGPoint.zero
+        
+        for rect in rects {
+            convertedRects.append(self.contentView.convert(rect, from: textView))
+        }
+        
+        for rect in convertedRects {
+            weightedCenterpoint = CGPoint(x: weightedCenterpoint.x + rect.midX, y: weightedCenterpoint.y + rect.midY)
+        }
+        
+        let elements = CGFloat(convertedRects.count)
+        weightedCenterpoint = CGPoint(x: weightedCenterpoint.x / elements, y: weightedCenterpoint.y / elements)
+        
+        let target = UIPreviewTarget(container: self.contentView, center: weightedCenterpoint) //superview?.convert(textLineRectsCenter, to: contentView) ?? textLineRectsCente
+        let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
+        parameters.backgroundColor = ColorUtil.theme.foregroundColor
+        
+        return UITargetedPreview(view: snapshot, parameters: parameters, target: target)
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
-        let location = interaction.location(in: self.commentBody)
-        let specialLocation = interaction.location(in: self.contentView)
-        if self.sideViewSpace.frame.contains(specialLocation) {
-            return UITargetedPreview(view: self.sideViewSpace, parameters: parameters)
-        } else if self.sideView.frame.contains(specialLocation) {
-            return UITargetedPreview(view: self.sideView, parameters: parameters)
-        } else if self.commentBody.firstTextView.frame.contains(location) {
-            return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(self.commentBody.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
-        } else if self.commentBody.overflow.frame.contains(location) {
+        guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
+              return nil
+        }
+        let location = interaction.location(in: self.contentView)
+        if self.contentView.convert(self.sideViewSpace.frame, to: self.contentView).contains(location) {
+            return UITargetedPreview(view: snapshot, parameters: parameters, target: UIPreviewTarget(container: self.sideViewSpace, center: self.sideViewSpace.center))
+        } else if self.contentView.convert(self.sideView.frame, to: self.contentView).contains(location) {
+            return UITargetedPreview(view: snapshot, parameters: parameters, target: UIPreviewTarget(container: self.sideView, center: self.sideView.center))
+        } else if self.contentView.convert(self.title.frame, to: self.contentView).contains(location) {
+            return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
+        } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
+            return createRectsTargetedPreview(textView: self.commentBody.firstTextView, location: location, snapshot: snapshot)
+        } else if self.contentView.convert(self.commentBody.overflow.frame, to: self.contentView).contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if view.frame.contains(innerLocation) && view is TitleUITextView {
-                    return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view as! TitleUITextView, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
+                if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
+                    return createRectsTargetedPreview(textView: view, location: location, snapshot: snapshot)
                 }
             }
         }
-        return UITargetedPreview(view: self.commentBody, parameters: parameters)
+        return nil
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        let specialLocation = interaction.location(in: self.contentView)
-        if self.sideViewSpace.frame.contains(specialLocation) {
+        let location = interaction.location(in: self.contentView)
+
+        if self.contentView.convert(self.sideViewSpace.frame, to: self.contentView).contains(location) {
             return getConfigurationParentComment()
-        } else if self.sideView.frame.contains(specialLocation) {
+        } else if self.contentView.convert(self.sideView.frame, to: self.contentView).contains(location) {
             return getConfigurationParentComment()
-        } else if self.commentBody.firstTextView.frame.contains(location) {
+        } else if self.contentView.convert(self.title.frame, to: self.contentView).contains(location) {
+            return getConfigurationForTextView(self.title, location)
+        } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
-        } else if self.commentBody.overflow.frame.contains(location) {
+        } else if self.contentView.convert(self.commentBody.overflow.frame, to: self.contentView).contains(location) {
             let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if view.frame.contains(innerLocation) && view is TitleUITextView {
@@ -2348,76 +2371,62 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         self.previewedVC = nil
     }
     
-    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> [CGRect] {
         if inputURL == nil {
-            return nil
+            return [CGRect]()
         }
         
-        let point = label.superview?.convert(location, to: label) ?? location
+        let point = location
 
-        var params: UIPreviewParameters?
+        var rects = [CGRect]()
         if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
-            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
-            textStorage.enumerateAttribute(.urlAction, in: characterRange) { attr, bgStyleRange, _ in
-                var rects = [CGRect]()
-                if let testURL = attr as? URL, (inputURL == nil || testURL.absoluteString == inputURL!) {
-                    let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                    layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                        var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                        var baseline = 0
-                        baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-                        
-                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
-                        rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
-                        let insetTop = CGFloat.zero
-                        
-                        let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
-                        if offsetRect.contains(point) {
-                            rects.append(offsetRect)
-                        }
-                    }
-                    var cgs = [NSValue]()
-                    for rect in rects {
-                        if changeRectTo != nil {
-                            cgs.append(NSValue(cgRect: changeRectTo!.convert(rect, from: label)))
-                        } else {
-                            cgs.append(NSValue(cgRect: rect))
-                        }
-                    }
+            let index = layoutManager.characterIndex(for: point, in: label.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+            
+            if index < textStorage.length {
+                var range = NSRange.zero
 
-                    params = UIPreviewParameters(textLineRects: cgs)
-                    params?.backgroundColor = .clear
+                if (attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: &range) as? URL) != nil {
+                    layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                        rects.append(rect)
+                    }
+                } else if let highlight = attributedText.attribute(NSAttributedString.Key.textHighlight, at: index, effectiveRange: &range) as? TextHighlight {
+                    if (highlight.userInfo["url"] as? URL) != nil {
+                        layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                            rects.append(rect)
+                        }
+                    }
                 }
             }
         }
-        return params
+        return rects
     }
-    
+
     func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
-        let point = label.superview?.convert(location, to: label) ?? location
+        let point = label.convert(location, from: self.contentView)
 
         var configuration: UIContextMenuConfiguration?
         var found = false
         if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage, !found {
             let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
-            textStorage.enumerateAttribute(.urlAction, in: characterRange) { attr, bgStyleRange, _ in
-                if let url = attr as? URL {
-                    let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                    layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                        var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                        var baseline = 0
-                        baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-                        
-                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
-                        rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
-                        let insetTop = CGFloat.zero
-                        
-                        let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
-                        if offsetRect.contains(point) {
-                            configuration = self.getConfigurationFor(url: url)
-                            found = true
+            textStorage.enumerateAttributes(in: characterRange, options: .longestEffectiveRangeNotRequired) { (attrs, bgStyleRange, _) in
+                for attr in attrs {
+                    if let url = attr.value as? URL ?? (attr.value as? TextHighlight)?.userInfo["url"] as? URL {
+                        let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                        layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                            let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                            var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                            var baseline = 0
+                            baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                            
+                            rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                            rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                            let insetTop = CGFloat.zero
+                            
+                            let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                            if offsetRect.contains(point) {
+                                configuration = self.getConfigurationFor(url: url)
+                                found = true
+                            }
                         }
                     }
                 }
@@ -2429,7 +2438,11 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
+            guard let self = self else { return nil }
+            if url.absoluteString.starts(with: "/u/") {
+                return ProfileInfoViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+            }
             if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: SubmissionObject()) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {

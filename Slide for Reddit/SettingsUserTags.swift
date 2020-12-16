@@ -155,7 +155,7 @@ class TagCellView: UITableViewCell {
         layout.addTextContainer(container)
 
         self.title = TitleUITextView(delegate: nil, textContainer: container).then {
-            $0.font = UIFont.systemFont(ofSize: 16)
+            $0.doSetup()
         }
         
         self.contentView.addSubview(body)
@@ -188,6 +188,8 @@ class TagCellView: UITableViewCell {
         }
 
         title.attributedText = attributedTitle
+        title.layoutTitleImageViews()
+        
         body.backgroundColor = ColorUtil.theme.foregroundColor
         self.backgroundColor = ColorUtil.theme.backgroundColor
     }

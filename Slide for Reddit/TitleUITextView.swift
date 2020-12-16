@@ -60,8 +60,8 @@ class TitleUITextView: UITextView {
         
         self.addTapGestureRecognizer(delegate: self) { (sender) in
             let tapPoint = sender.location(in: self)
-            let glyphIndex = self.layoutManager.glyphIndex(for: tapPoint, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
-            let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
+            
+            let index = self.layoutManager.characterIndex(for: tapPoint, in: self.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
             if index < self.textStorage.length {
                 if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
                     delegate?.linkTapped(url: attributedURL, text: "")
@@ -79,9 +79,16 @@ class TitleUITextView: UITextView {
         }
         
         self.addLongTapGestureRecognizer(delegate: self) { (sender) in
+            if #available(iOS 13.0, *) {
+                for interaction in self.interactions {
+                        if interaction is UIContextMenuInteraction {
+                            return
+                        }
+                }
+            }
+
             let tapPoint = sender.location(in: self)
-            let glyphIndex = self.layoutManager.glyphIndex(for: tapPoint, in: self.textContainer, fractionOfDistanceThroughGlyph: nil)
-            let index = self.layoutManager.characterIndexForGlyph(at: glyphIndex)
+            let index = self.layoutManager.characterIndex(for: tapPoint, in: self.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
             if index < self.textStorage.length {
                 if let attributedURL = self.attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: nil) as? URL {
                     delegate?.linkLongTapped(url: attributedURL)
@@ -102,49 +109,52 @@ class TitleUITextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func doSetup() {
+    func doSetup(background: Bool = false) {
         self.clipsToBounds = false
         self.textContainer.lineFragmentPadding = 0
         self.textContainerInset = .zero
         self.showsHorizontalScrollIndicator = false
         self.showsVerticalScrollIndicator = false
-        self.layer.isOpaque = true
-        self.isOpaque = true
         self.isSelectable = false
         self.layoutManager.allowsNonContiguousLayout = false
         self.isScrollEnabled = false
-        self.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
+        
+        if background {
+            self.layer.isOpaque = true
+            self.isOpaque = true
+            self.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
+            self.backgroundColor = ColorUtil.theme.foregroundColor
+        } else {
+            self.backgroundColor = .clear
+        }
         self.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         self.layoutManager.usesFontLeading = false
         self.contentInset = .zero
         self.contentInsetAdjustmentBehavior = .never
-        self.backgroundColor = ColorUtil.theme.foregroundColor
         self.isUserInteractionEnabled = true
-        for subview in self.subviews {
-            subview.isOpaque = true
-            subview.backgroundColor = ColorUtil.theme.foregroundColor
-        }
     }
 }
 
 extension TitleUITextView: UIGestureRecognizerDelegate {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         var toReturn = false
-        self.layoutManager.textStorage?.enumerateAttribute(.urlAction, in: NSRange(location: 0, length: self.attributedText.length)) { attr, bgStyleRange, _ in
-            if attr is URL {
-                let bgStyleGlyphRange = self.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                self.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                    let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                    var rect = self.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                    rect.origin.y = usedRect.origin.y
-                    rect.size.height = usedRect.height
-                    let insetTop = CGFloat.zero
-                    if rect.offsetBy(dx: 0, dy: insetTop).contains(point) {
-                        toReturn = true
+        self.layoutManager.textStorage?.enumerateAttributes(in: NSRange(location: 0, length: self.attributedText.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, bgStyleRange, _) in
+            for attr in attrs {
+                if attr.value is TextHighlight || attr.value is URL {
+                    let bgStyleGlyphRange = self.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                    self.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                        var rect = self.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                        rect.origin.y = usedRect.origin.y
+                        rect.size.height = usedRect.height
+                        let insetTop = CGFloat.zero
+                        if rect.offsetBy(dx: 0, dy: insetTop).contains(point) {
+                            toReturn = true
+                        }
                     }
                 }
             }
-        }
+        })
         return toReturn
     }
 }

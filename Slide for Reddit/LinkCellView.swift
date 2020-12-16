@@ -264,7 +264,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         self.title = TitleUITextView(delegate: self, textContainer: container).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.doSetup()
+            $0.doSetup(background: true)
         }
         
         self.infoBox = UIStackView().then {
@@ -1361,7 +1361,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         title.attributedText = finalTitle
         
         title.layoutTitleImageViews()
-        title.isScrollEnabled = false
     }
                 
     @objc func doDTap(_ sender: AnyObject) {
@@ -3158,52 +3157,6 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     
-    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
-        if inputURL == nil {
-            return nil
-        }
-        
-        let point = label.superview?.convert(location, to: label) ?? location
-
-        var params: UIPreviewParameters?
-        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
-            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
-            textStorage.enumerateAttribute(.urlAction, in: characterRange) { attr, bgStyleRange, _ in
-                var rects = [CGRect]()
-                if let testURL = attr as? URL, (inputURL == nil || testURL.absoluteString == inputURL!) {
-                    let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                    layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                        var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                        var baseline = 0
-                        baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-                        
-                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
-                        rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
-                        let insetTop = CGFloat.zero
-                        
-                        let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
-                        if offsetRect.contains(point) {
-                            rects.append(offsetRect)
-                        }
-                    }
-                    var cgs = [NSValue]()
-                    for rect in rects {
-                        if changeRectTo != nil {
-                            cgs.append(NSValue(cgRect: changeRectTo!.convert(rect, from: label)))
-                        } else {
-                            cgs.append(NSValue(cgRect: rect))
-                        }
-                    }
-
-                    params = UIPreviewParameters(textLineRects: cgs)
-                    params?.backgroundColor = .clear
-                }
-            }
-        }
-        return params
-    }
-
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
@@ -3235,6 +3188,54 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         return nil
     }
     
+    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+        if inputURL == nil {
+            return nil
+        }
+        
+        let point = label.superview?.convert(location, to: label) ?? location
+
+        var params: UIPreviewParameters?
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
+            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
+            textStorage.enumerateAttributes(in: characterRange, options: .longestEffectiveRangeNotRequired) { (attrs, bgStyleRange, _) in
+                var rects = [CGRect]()
+                for attr in attrs {
+                    if let testURL = attr.value as? URL ?? (attr.value as? TextHighlight)?.userInfo["url"] as? URL, (inputURL == nil || testURL.absoluteString == inputURL!) {
+                        let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                        layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                            let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                            var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                            var baseline = 0
+                            baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                            
+                            rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                            rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                            let insetTop = CGFloat.zero
+                            
+                            let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                            if offsetRect.contains(point) {
+                                rects.append(offsetRect)
+                            }
+                        }
+                    }
+                }
+                var cgs = [NSValue]()
+                for rect in rects {
+                    if changeRectTo != nil {
+                        cgs.append(NSValue(cgRect: changeRectTo!.convert(rect, from: label)))
+                    } else {
+                        cgs.append(NSValue(cgRect: rect))
+                    }
+                }
+
+                params = UIPreviewParameters(textLineRects: cgs)
+                params?.backgroundColor = .clear
+            }
+        }
+        return params
+    }
+
     func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
         let point = label.superview?.convert(location, to: label) ?? location
 
@@ -3242,23 +3243,25 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         var found = false
         if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage, !found {
             let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
-            textStorage.enumerateAttribute(.urlAction, in: characterRange) { attr, bgStyleRange, _ in
-                if let url = attr as? URL {
-                    let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                    layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                        var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                        var baseline = 0
-                        baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-                        
-                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
-                        rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
-                        let insetTop = CGFloat.zero
-                        
-                        let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
-                        if offsetRect.contains(point) {
-                            configuration = self.getConfigurationFor(url: url)
-                            found = true
+            textStorage.enumerateAttributes(in: characterRange, options: .longestEffectiveRangeNotRequired) { (attrs, bgStyleRange, _) in
+                for attr in attrs {
+                    if let url = attr.value as? URL ?? (attr.value as? TextHighlight)?.userInfo["url"] as? URL {
+                        let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                        layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                            let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                            var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                            var baseline = 0
+                            baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                            
+                            rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                            rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                            let insetTop = CGFloat.zero
+                            
+                            let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                            if offsetRect.contains(point) {
+                                configuration = self.getConfigurationFor(url: url)
+                                found = true
+                            }
                         }
                     }
                 }
@@ -3661,7 +3664,7 @@ extension LinkCellView: TextDisplayStackViewDelegate {
     
     func previewProfile(profile: String) {
         if let parent = self.parentViewController {
-            let vc = ProfileInfoViewController(accountNamed: profile, parent: parent)
+            let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
             vc.transitioningDelegate = ProfileInfoPresentationManager()
             parent.present(vc, animated: true)

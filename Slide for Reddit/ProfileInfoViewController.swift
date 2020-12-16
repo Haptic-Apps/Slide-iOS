@@ -89,9 +89,8 @@ class ProfileInfoViewController: UIViewController {
     var header = ProfileHeaderView()
     var account: String
     
-    init(accountNamed: String, parent: UIViewController) {
+    init(accountNamed: String) {
         self.account = accountNamed
-        self.profile = parent
         super.init(nibName: nil, bundle: nil)
     }
     
