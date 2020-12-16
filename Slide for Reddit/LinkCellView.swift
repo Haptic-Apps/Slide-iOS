@@ -3106,6 +3106,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     
                     self.parentViewController?.present(vc, animated: true, completion: nil)
                 } else {
+                    if let vc = vc as? ProfilePreviewViewController {
+                        VCPresenter.openRedditLink("/u/\(vc.account)", self.parent?.navigationController, self.parent)
+                        return
+                    }
+
                     if vc is WebsiteViewController || vc is SFHideSafariViewController {
                         self.previewedVC = nil
                         if let url = self.previewedURL {
@@ -3128,24 +3133,56 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     
+    func createRectsTargetedPreview(textView: TitleUITextView, location: CGPoint, snapshot: UIView) -> UITargetedPreview? {
+        let rects = self.getLocationForPreviewedText(textView, textView.convert(location, from: self.innerView), self.previewedURL?.absoluteString)
+        var convertedRects = [CGRect]()
+        
+        var weightedCenterpoint = CGPoint.zero
+        
+        for rect in rects {
+            convertedRects.append(self.contentView.convert(rect, from: textView))
+        }
+        
+        for rect in convertedRects {
+            weightedCenterpoint = CGPoint(x: weightedCenterpoint.x + rect.midX, y: weightedCenterpoint.y + rect.midY)
+        }
+        
+        let elements = CGFloat(convertedRects.count)
+        weightedCenterpoint = CGPoint(x: weightedCenterpoint.x / elements, y: weightedCenterpoint.y / elements)
+        
+        let target = UIPreviewTarget(container: self.innerView, center: weightedCenterpoint) //superview?.convert(textLineRectsCenter, to: contentView) ?? textLineRectsCente
+        let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
+        parameters.backgroundColor = ColorUtil.theme.backgroundColor
+        
+        return UITargetedPreview(view: snapshot, parameters: parameters, target: target)
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         
-        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(interaction.location(in: self.innerView)) {
-            let location = interaction.location(in: self.textView)
-            
-            if self.textView.firstTextView.frame.contains(location) {
-                return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(self.textView.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
-            } else if self.textView.overflow.frame.contains(location) {
-                let innerLocation = self.textView.convert(location, to: self.textView.overflow)
+        let location = interaction.location(in: self.innerView)
+        if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
+                  return nil
+            }
+
+            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+                return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
+            } else if self.innerView.convert(self.textView.overflow.frame, to: self.innerView).contains(location){
+                let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is TitleUITextView {
-                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view as! TitleUITextView, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
+                    if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
+                        return createRectsTargetedPreview(textView: view, location: location, snapshot: snapshot)
                     }
                 }
             }
-            return UITargetedPreview(view: self.textView, parameters: parameters)
+            return nil
+        } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
+            guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
+                  return nil
+            }
+            return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
         } else if videoView != nil && !videoView.isHidden && videoView.frame.contains(interaction.location(in: self.innerView)) {
             return UITargetedPreview(view: self.videoView, parameters: parameters)
         } else if bannerImage != nil && !bannerImage.isHidden && bannerImage.frame.contains(interaction.location(in: self.innerView)) {
@@ -3158,20 +3195,22 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        let location = interaction.location(in: self.contentView)
+
         let saveArea = self.innerView.convert(location, to: self.buttons)
-        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
-            let innerPoint = self.innerView.convert(location, to: self.textView)
-            if self.textView.firstTextView.frame.contains(innerPoint) {
+        if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
                 return getConfigurationForTextView(self.textView.firstTextView, innerPoint)
-            } else if self.textView.overflow.frame.contains(innerPoint) {
-                let innerLocation = self.innerView.convert(innerPoint, to: self.textView.overflow)
-                print(innerLocation)
+            } else if self.innerView.convert(self.textView.overflow.frame, to: self.innerView).contains(location){
+                let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is TitleUITextView {
-                        return getConfigurationForTextView(view as! TitleUITextView, innerLocation)
+                    if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
+                        return getConfigurationForTextView(view, innerLocation)
                     }
                 }
             }
+        } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
+            return getConfigurationForTextView(self.title, innerLocation)
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true
             return getConfigurationForVideo(url: url)
@@ -3188,56 +3227,38 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         return nil
     }
     
-    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> [CGRect] {
         if inputURL == nil {
-            return nil
+            return [CGRect]()
         }
         
-        let point = label.superview?.convert(location, to: label) ?? location
+        let point = location
 
-        var params: UIPreviewParameters?
+        var rects = [CGRect]()
         if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
-            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
-            textStorage.enumerateAttributes(in: characterRange, options: .longestEffectiveRangeNotRequired) { (attrs, bgStyleRange, _) in
-                var rects = [CGRect]()
-                for attr in attrs {
-                    if let testURL = attr.value as? URL ?? (attr.value as? TextHighlight)?.userInfo["url"] as? URL, (inputURL == nil || testURL.absoluteString == inputURL!) {
-                        let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                        layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                            let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                            var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                            var baseline = 0
-                            baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-                            
-                            rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
-                            rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
-                            let insetTop = CGFloat.zero
-                            
-                            let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
-                            if offsetRect.contains(point) {
-                                rects.append(offsetRect)
-                            }
+            let index = layoutManager.characterIndex(for: point, in: label.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+            
+            if index < textStorage.length {
+                var range = NSRange.zero
+
+                if (attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: &range) as? URL) != nil {
+                    layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                        rects.append(rect)
+                    }
+                } else if let highlight = attributedText.attribute(NSAttributedString.Key.textHighlight, at: index, effectiveRange: &range) as? TextHighlight {
+                    if (highlight.userInfo["url"] as? URL) != nil {
+                        layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                            rects.append(rect)
                         }
                     }
                 }
-                var cgs = [NSValue]()
-                for rect in rects {
-                    if changeRectTo != nil {
-                        cgs.append(NSValue(cgRect: changeRectTo!.convert(rect, from: label)))
-                    } else {
-                        cgs.append(NSValue(cgRect: rect))
-                    }
-                }
-
-                params = UIPreviewParameters(textLineRects: cgs)
-                params?.backgroundColor = .clear
             }
         }
-        return params
+        return rects
     }
 
     func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
-        let point = label.superview?.convert(location, to: label) ?? location
+        let point = label.convert(location, from: self.contentView)
 
         var configuration: UIContextMenuConfiguration?
         var found = false
@@ -3280,6 +3301,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            if url.absoluteString.starts(with: "/u/") {
+                self.previewedVC = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                return self.previewedVC
+            }
+
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url, link: self.link!) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {

@@ -2254,6 +2254,10 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         animator.addCompletion {
             if let vc = self.previewedVC {
+                if let vc = vc as? ProfilePreviewViewController {
+                    VCPresenter.openRedditLink("/u/\(vc.account)", self.parent?.navigationController, self.parent)
+                    return
+                }
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
@@ -2308,7 +2312,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         
         let target = UIPreviewTarget(container: self.contentView, center: weightedCenterpoint) //superview?.convert(textLineRectsCenter, to: contentView) ?? textLineRectsCente
         let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
-        parameters.backgroundColor = ColorUtil.theme.foregroundColor
+        parameters.backgroundColor = ColorUtil.theme.backgroundColor
         
         return UITargetedPreview(view: snapshot, parameters: parameters, target: target)
     }
@@ -2329,7 +2333,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             return createRectsTargetedPreview(textView: self.commentBody.firstTextView, location: location, snapshot: snapshot)
         } else if self.contentView.convert(self.commentBody.overflow.frame, to: self.contentView).contains(location) {
-            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+            let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
                     return createRectsTargetedPreview(textView: view, location: location, snapshot: snapshot)
@@ -2441,7 +2445,8 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
             guard let self = self else { return nil }
             if url.absoluteString.starts(with: "/u/") {
-                return ProfileInfoViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                self.previewedVC = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                return self.previewedVC
             }
             if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: SubmissionObject()) {
                 self.previewedVC = vc

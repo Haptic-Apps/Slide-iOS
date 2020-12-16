@@ -250,6 +250,18 @@ class ModalMediaViewController: UIViewController {
 
     init(model: EmbeddableMediaDataModel) {
         super.init(nibName: nil, bundle: nil)
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        titleView = TitleUITextView(delegate: nil, textContainer: container).then {
+            $0.doSetup()
+        }
+        
         setModel(model: model)
     }
     
