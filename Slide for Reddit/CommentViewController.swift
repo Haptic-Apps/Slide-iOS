@@ -2737,7 +2737,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 cell.setMore(more: (innerContent as! MoreObject), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
             }
-            cell.content = content[thing]
+            cell.content = innerContent
         }
         
         return cell

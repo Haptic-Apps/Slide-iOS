@@ -139,7 +139,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureInit()
-        
     }
     
     func configureInit() {
@@ -245,7 +244,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         setNeedsLayout()
         layoutIfNeeded()
         configureLayout()
-
     }
     
     var gesturesAdded = false
@@ -1488,15 +1486,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if dtap != nil {
                 tapGestureRecognizer.require(toFail: dtap!)
             }
-            self.title.addGestureRecognizer(tapGestureRecognizer)
+            self.contentView.addGestureRecognizer(tapGestureRecognizer)
             
-            let tapGestureRecognizer2 = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
-            tapGestureRecognizer2.cancelsTouchesInView = false
-            tapGestureRecognizer2.delegate = self
-            if dtap != nil {
-                tapGestureRecognizer2.require(toFail: dtap!)
-            }
-            self.commentBody.addGestureRecognizer(tapGestureRecognizer2)
             
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
@@ -1506,8 +1497,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             long.minimumPressDuration = 0.36
             long.delegate = self
             long.cancelsTouchesInView = false
-            commentBody.parentLongPress = long
-            self.addGestureRecognizer(long)
+            self.contentView.addGestureRecognizer(long)
             
             if SettingValues.commentActionForceTouch != .PARENT_PREVIEW && SettingValues.commentActionForceTouch != .NONE && force == nil {
                 force = ForceTouchGestureRecognizer()
