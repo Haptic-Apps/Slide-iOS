@@ -793,6 +793,12 @@ public class TextDisplayStackView: UIStackView {
 }
 
 private extension NSAttributedString {
+
+    private static let superscriptKeys = [
+        NSAttributedString.Key(rawValue: "NSSuperScript"), // Used by Apple, but not documented.
+        NSAttributedString.Key(rawValue: "CTSuperscript"), // Used by Apple, but not documented. Typically created by DTCoreText.
+    ]
+
     /**
      Fixes the following:
      - Superscript is rendered incorrectly depending on the font
@@ -822,7 +828,12 @@ private extension NSAttributedString {
             let value = value as [NSAttributedString.Key: Any]
             // If the chunk has a superscript attribute from either CoreText or DTCoreText,
             // remove the attribute and adjust the chunk's baseline and size ourselves.
-            if value[NSAttributedString.Key(rawValue: "NSSuperScript")] != nil || value[NSAttributedString.Key(rawValue: "CTSuperscript")] != nil { // kCTSuperscriptAttributeName
+            if !NSAttributedString.superscriptKeys.compactMap({ value[$0] }).isEmpty { // kCTSuperscriptAttributeName
+                // Remove existing superscript keys
+                for key in NSAttributedString.superscriptKeys where value[key] != nil {
+                    mutable.removeAttribute(key, range: range)
+                }
+
                 // Extract font from attributed string; this includes bold/italic information
                 let fontForChunk = value[NSAttributedString.Key.font] as! UIFont
                 superscriptLevel += 1
@@ -830,15 +841,11 @@ private extension NSAttributedString {
                 let newFont = UIFont(name: fontForChunk.fontName, size: newFontSize) ?? fontForChunk
                 let newBaseline = (font.pointSize * 0.25) + (CGFloat(superscriptLevel) * (font.pointSize / 4.0))
 
-                mutable.setAttributes(nil, range: range)
-
+                // Add attributes to make "fake" superscript by changing baseline and font size
                 mutable.addAttributes([
                     .font: newFont,
                     .baselineOffset: newBaseline,
                 ], range: range)
-
-//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "NSSuperScript"), range: range) // Not really necessary.
-//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "CTSuperScript"), range: range) // Not really necessary.
             } else {
                 // Reset superscript level if we hit a chunk with no superscript attribute
                 superscriptLevel = 0
