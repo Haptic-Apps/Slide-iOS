@@ -13,7 +13,6 @@ import SDWebImage
 import Then
 import UIKit
 
-
 class TableDisplayView: UIScrollView {
 
     var baseStackView = UIStackView()

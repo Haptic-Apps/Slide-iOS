@@ -9,7 +9,6 @@
 import DTCoreText
 import UIKit
 
-
 class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, bold: UIFont? = nil, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {
         var finalBold: UIFont

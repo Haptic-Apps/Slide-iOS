@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 public class WrapSpoilers: NSObject {
     
     public static func addSpoilers(_ text: String) -> String {

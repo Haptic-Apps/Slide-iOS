@@ -13,7 +13,6 @@ import SDWebImage
 import Then
 import UIKit
 
-
 class CodeDisplayView: UIScrollView {
     
     var baseData = [NSAttributedString]()

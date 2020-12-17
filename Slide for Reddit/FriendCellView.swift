@@ -20,22 +20,8 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var icon = UIImageView()
     var friend: FriendModel?
     weak var delegate: FriendCellViewDelegate?
-
-    init(delegate: FriendCellViewDelegate) {
-        super.init(frame: CGRect.zero)
-        self.delegate = delegate
+    var hasConfigured = false
         
-        self.configureViews()
-        self.configureLayout()
-        
-        self.contentView.addTapGestureRecognizer { [weak self] (_) in
-            guard let self = self else { return }
-            if let name = self.friend?.name {
-                self.delegate?.showProfile(name: name)
-            }
-        }
-    }
-    
     func configureViews() {
         let layout = BadgeLayoutManager()
         let storage = NSTextStorage()
@@ -73,6 +59,13 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     func setFriend(friend: FriendModel) {
+        if !hasConfigured {
+            hasConfigured = true
+            self.configureViews()
+            self.configureLayout()
+            self.configureGestures()
+        }
+
         self.friend = friend
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
@@ -99,7 +92,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         let tag = ColorUtil.getTagForUser(name: friend.name)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), .badgeColor: UIColor(rgb: 0x2196f3),  NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), .badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
             infoString.append(spacer)
             infoString.append(tagString)
         }
@@ -112,9 +105,5 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         infoString.append(endString)
         titleView.attributedText = infoString
         titleView.layoutTitleImageViews()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

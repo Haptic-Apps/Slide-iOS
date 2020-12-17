@@ -11,7 +11,6 @@ import DTCoreText
 import Then
 import UIKit
 
-
 public protocol TextDisplayStackViewDelegate: class {
     func linkTapped(url: URL, text: String)
     func linkLongTapped(url: URL)

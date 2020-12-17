@@ -11,7 +11,6 @@ import AVFoundation
 import Foundation
 import reddift
 
-
 class SettingValues {
 
     public static let pref_viewType = "VIEW_TYPE"

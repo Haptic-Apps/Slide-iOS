@@ -11,7 +11,6 @@ import SDWebImage
 import Starscream
 import UIKit
 
-
 class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource {
     func headerOffset() -> Int {
         return 0

@@ -1178,6 +1178,7 @@
 				BE1CD01620F586E9007746B6 /* CodeDisplayView.swift */,
 				B776B6360A2BA2ABC0297545 /* LiveThreadViewController.swift */,
 				B776B2E54F7438959A76E42E /* LiveThreadUpdate.swift */,
+				BEC912AA258B31FF00E65F34 /* ContentViews */,
 			);
 			name = ContentViewControllers;
 			sourceTree = "<group>";
@@ -1540,7 +1541,6 @@
 				BE6EA6E11E1DA1A300E9E709 /* ContributionLoader.swift */,
 				B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */,
 				B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */,
-				BEC912AA258B31FF00E65F34 /* ContentViews */,
 				BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */,
 				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
 				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,

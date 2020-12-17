@@ -13,7 +13,6 @@ import CoreData
 import MaterialComponents.MaterialProgressView
 import SDWebImage
 
-
 class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     

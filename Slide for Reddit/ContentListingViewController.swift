@@ -20,7 +20,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var lastYUsed = CGFloat.zero
     var lastY = CGFloat.zero
     
-    var profileTransitionDelegate = ProfileInfoPresentationManager()
+    weak var profilePresentationManager: ProfileInfoPresentationManager?
+    
     var longBlocking = false
     
     func getTableView() -> UICollectionView {
@@ -301,20 +302,34 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             
             cell = c
         } else if thing is CommentObject {
+            //Show comment cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
+            c.delegate = self
+            c.textDelegate = self
+
             c.setComment(comment: (thing as! CommentObject), width: self.view.frame.size.width)
             cell = c
         } else if thing is FriendModel {
+            //Show friend cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
+            c.delegate = self
+
             c.setFriend(friend: (thing as! FriendModel))
             cell = c
         } else if thing is MessageObject {
+            //Show message cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
+            c.delegate = self
+            c.textDelegate = self
+
             c.setMessage(message: (thing as! MessageObject), width: self.view.frame.size.width)
             cell = c
         } else {
-            //Is mod log item
+            //Show modlog cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
+            c.delegate = self
+            c.textDelegate = self
+
             c.setLogItem(logItem: (thing as! ModLogObject), width: self.view.frame.size.width)
             cell = c
         }
@@ -749,7 +764,9 @@ extension ContentListingViewController: TextDisplayStackViewDelegate {
     func previewProfile(profile: String) {
         let vc = ProfileInfoViewController(accountNamed: profile)
         vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = profileTransitionDelegate
+        let presentation = ProfileInfoPresentationManager()
+        self.profilePresentationManager = presentation
+        vc.transitioningDelegate = presentation
         self.present(vc, animated: true)
     }
 }

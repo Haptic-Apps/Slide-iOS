@@ -10,7 +10,6 @@ import Anchorage
 import Then
 import UIKit
 
-
 class SettingsUserTags: UITableViewController {
     
     var tags: [String: String] = [:]

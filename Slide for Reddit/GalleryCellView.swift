@@ -9,7 +9,6 @@
 import reddift
 import UIKit
 
-
 class GalleryCellView: UITableViewCell {
     
     var bannerImage = UIImageView()

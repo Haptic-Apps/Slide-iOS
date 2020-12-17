@@ -107,7 +107,7 @@ class CommentObject: RedditObject {
     }
 
     public init(comment: Comment, depth: Int) {
-        var bodyHtml = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
+        let bodyHtml = comment.bodyHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
 
         self.id = comment.getId()
         self.author = comment.author

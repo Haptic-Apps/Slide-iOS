@@ -26,17 +26,7 @@ class ModlogCellView: UICollectionViewCell {
     var hasText = false
     var full = false
     var lsC: [NSLayoutConstraint] = []
-
-    init(delegate: ModlogCellViewDelegate, textDelegate: TextDisplayStackViewDelegate) {
-        super.init(frame: CGRect.zero)
-        
-        self.delegate = delegate
-        self.textDelegate = textDelegate
-        
-        configureView()
-        configureLayout()
-        configureGestures()
-    }
+    var hasConfigured = false
     
     func configureGestures() {
         self.contentView.addTapGestureRecognizer { [weak self] (_) in
@@ -49,7 +39,7 @@ class ModlogCellView: UICollectionViewCell {
         }
     }
     
-    func configureView() {
+    func configureViews() {
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
         self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
         self.contentView.addSubview(text)
@@ -66,6 +56,13 @@ class ModlogCellView: UICollectionViewCell {
     }
 
     func setLogItem(logItem: ModLogObject, width: CGFloat) {
+        if !hasConfigured {
+            hasConfigured = true
+            self.configureViews()
+            self.configureLayout()
+            self.configureGestures()
+        }
+
         self.logItem = logItem
 
         let titleText = ModlogCellView.getTitleText(item: logItem)
@@ -96,9 +93,5 @@ class ModlogCellView: UICollectionViewCell {
         titleText.append(NSAttributedString(string: "\n"))
         titleText.append(infoString)
         return titleText
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

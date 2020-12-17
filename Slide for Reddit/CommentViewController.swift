@@ -15,7 +15,6 @@ import RLBAlertsPickers
 import SDCAlertView
 import UIKit
 
-
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
     var version = 0
@@ -2952,7 +2951,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     realPosition += 1
                                 }
                                 
-                                if self.comments.count > realPosition && self.comments[realPosition] != nil {
+                                if self.comments.count > realPosition {
                                     self.comments.remove(at: realPosition)
                                 } else {
                                     return
@@ -3183,7 +3182,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 realPosition += 1
                                             }
                                             
-                                            if self.comments.count > realPosition && self.comments[realPosition] != nil {
+                                            if self.comments.count > realPosition {
                                                 self.comments.remove(at: realPosition)
                                             } else {
                                                 return
@@ -3569,7 +3568,7 @@ extension CommentViewController: Cacheable {
                     
                 }
                 if submissionComments == nil {
-                    submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as! SubmissionComments
+                    submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as? SubmissionComments
                 }
 
                 submissionComments.submissionId = submission.getId()

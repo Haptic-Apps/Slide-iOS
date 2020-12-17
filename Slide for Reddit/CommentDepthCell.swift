@@ -15,7 +15,6 @@ import SDCAlertView
 import SDWebImage
 import UIKit
 
-
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
     func isMenuShown() -> Bool
@@ -38,6 +37,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     weak var previewedVC: UIViewController?
     var previewedURL: URL?
     var lastLength = 0
+    
+    weak var profilePresentationManager: ProfileInfoPresentationManager?
 
     @objc func textViewDidChange(_ textView: UITextView) {
         replyDelegate?.textChanged(textView.text)
@@ -1273,7 +1274,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         alertController.addAction(title: "Share comment permalink", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
-            let activityViewController = UIActivityViewController(activityItems: [URL(string: self.comment!.permalink + "?context=5") ?? URL(string: "about://blank")], applicationActivities: nil)
+            let activityViewController = UIActivityViewController(activityItems: [URL(string: "\(self.comment!.permalink)?context=5") ?? URL(string: "about://blank")], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
                 presenter.sourceRect = self.moreButton.bounds
@@ -1989,7 +1990,9 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         if let parent = self.parent {
             let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
-            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            let presentation = ProfileInfoPresentationManager()
+            self.profilePresentationManager = presentation
+            vc.transitioningDelegate = presentation
             parent.present(vc, animated: true)
         }
     }

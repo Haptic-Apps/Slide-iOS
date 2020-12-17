@@ -20,7 +20,6 @@ import SDWebImage
 import Then
 import UIKit
 
-
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
     func downvote(_ cell: LinkCellView)
@@ -160,6 +159,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var videoID: String = ""
     
+    var currentAccountTransitioningManager = ProfileInfoPresentationManager()
+
     //Can't have parameters that target an iOS version :/
     private var _savedPreview: Any?
     @available(iOS 13.0, *)
@@ -1331,8 +1332,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         return viewWidth * ratio
     }
     
-    let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
-
     func refreshLink(_ submission: SubmissionObject, np: Bool) {
         self.link = submission
         
@@ -3729,7 +3728,7 @@ extension LinkCellView: TextDisplayStackViewDelegate {
         if let parent = self.parentViewController {
             let vc = ProfileInfoViewController(accountNamed: profile)
             vc.modalPresentationStyle = .custom
-            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            vc.transitioningDelegate = currentAccountTransitioningManager
             parent.present(vc, animated: true)
         }
     }

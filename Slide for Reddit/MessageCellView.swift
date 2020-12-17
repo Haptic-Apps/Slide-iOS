@@ -28,17 +28,8 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var cancelled = false
     var lsC: [NSLayoutConstraint] = []
     var message: MessageObject?
+    var hasConfigured = false
 
-    init(delegate: MessageCellViewDelegate, textDelegate: TextDisplayStackViewDelegate) {
-        super.init(frame: CGRect.zero)
-        self.delegate = delegate
-        self.textDelegate = textDelegate
-
-        self.configureViews()
-        self.configureLayout()
-        self.configureGestures()
-    }
-    
     func configureViews() {
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
@@ -63,20 +54,14 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         text.rightAnchor /==/ contentView.rightAnchor - CGFloat(8)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 0
-        let bottommargin = 2
-        let leftmargin = 0
-        let rightmargin = 0
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
-    }
-
-
     func setMessage(message: MessageObject, width: CGFloat) {
+        if !hasConfigured {
+            hasConfigured = true
+            self.configureViews()
+            self.configureLayout()
+            self.configureGestures()
+        }
+
         self.message = message
 
         let titleText = MessageCellView.getTitleText(message: message)

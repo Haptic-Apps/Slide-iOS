@@ -17,7 +17,6 @@ import SDCAlertView
 import SDWebImage
 import UIKit
 
-
 // MARK: - Base
 class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDelegate {
     var currentPlayingIndex = [IndexPath]()

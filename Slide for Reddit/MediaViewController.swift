@@ -52,8 +52,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         }
     }
 
-    lazy var slideInTransitioningDelegate = SlideInPresentationManager()
-    lazy var postContentTransitioningDelegate = PostContentPresentationManager()
+    var postContentTransitioningManager = PostContentPresentationManager()
 
     var subChanged = false
 
@@ -332,15 +331,10 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 let controller = getControllerForUrl(baseUrl: contentUrl!, lq: lq, link: link)!
                 if let sourceView = heroView,
                     let modalController = controller as? ModalMediaViewController {
-
-//                    slideInTransitioningDelegate.direction = .bottom
-//                    slideInTransitioningDelegate.coverageRatio = 0.6
-//                    modalController.transitioningDelegate = slideInTransitioningDelegate
-//                    modalController.modalPresentationStyle = .custom
                     modalController.finalSize = finalSize
                     modalController.previewImage = (sourceView as? UIImageView)?.image
-                    postContentTransitioningDelegate.sourceImageView = sourceView
-                    modalController.transitioningDelegate = postContentTransitioningDelegate
+                    self.postContentTransitioningManager.sourceImageView = sourceView
+                    modalController.transitioningDelegate = postContentTransitioningManager
                     modalController.modalPresentationStyle = .custom
 
                     present(modalController, animated: true, completion: nil)

@@ -13,7 +13,6 @@ import RLBAlertsPickers
 import SDCAlertView
 import UIKit
 
-
 class SubredditHeaderView: UIView {
 
     var subscribers: UILabel = UILabel()

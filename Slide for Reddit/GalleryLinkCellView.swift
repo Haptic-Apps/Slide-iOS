@@ -9,7 +9,6 @@
 import Anchorage
 import UIKit
 
-
 final class GalleryLinkCellView: LinkCellView {
     
     override func layoutForType() {

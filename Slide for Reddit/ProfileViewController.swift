@@ -23,7 +23,7 @@ class ProfileViewController: TabsContentPagingViewController {
     var sortB: UIBarButtonItem?
     var tagText: String?
     
-    lazy var currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
+    lazy var currentAccountTransitioningManager = ProfileInfoPresentationManager()
 
     static func doDefault() -> [UserContent] {
         return [UserContent.overview, UserContent.comments, UserContent.submitted, UserContent.gilded]
@@ -94,7 +94,7 @@ class ProfileViewController: TabsContentPagingViewController {
     func showMenu(sender: AnyObject, user: String) {
         let vc = ProfileInfoViewController(accountNamed: user)
         vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = currentAccountTransitioningDelegate
+        vc.transitioningDelegate = currentAccountTransitioningManager
         present(vc, animated: true)
     }
 

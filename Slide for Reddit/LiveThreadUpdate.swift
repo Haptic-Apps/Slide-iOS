@@ -12,9 +12,7 @@ import reddift
 import UIKit
 import WebKit
 
-
 class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
-    
     var title: TitleUITextView!
     var image = UIImageView()
     var web = WKWebView()
@@ -247,4 +245,3 @@ extension LiveThreadUpdate: TextDisplayStackViewDelegate {
         }
     }
 }
-

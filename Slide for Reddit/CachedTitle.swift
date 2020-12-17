@@ -10,7 +10,6 @@ import Foundation
 import Proton
 import SDWebImage
 
-
 struct Title {
     var mainTitle: NSAttributedString?
     var infoLine: NSAttributedString?
@@ -587,7 +586,6 @@ class CachedTitle {
                         totalAwards += 1
 
                         let url = award[1]
-                        let testString = NSMutableAttributedString(string: "test", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                         if let urlAsURL = URL(string: url) {
                             let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
                             attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)

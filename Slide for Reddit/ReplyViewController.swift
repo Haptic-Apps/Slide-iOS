@@ -16,7 +16,6 @@ import SwiftyJSON
 import Then
 import UIKit
 
-
 class ReplyViewController: MediaViewController, UITextViewDelegate {
 
     public enum ReplyType {

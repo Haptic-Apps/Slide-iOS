@@ -31,7 +31,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     var resetCard = UIView()
     
     //Delegate will handle instant color changes
-    var delegate: SubredditThemeEditViewControllerDelegate
+    weak var delegate: SubredditThemeEditViewControllerDelegate?
 
     init(subreddit: String, delegate: SubredditThemeEditViewControllerDelegate) {
         self.subreddit = subreddit
@@ -112,9 +112,9 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         
         resetCard.addTapGestureRecognizer { (_) in
             self.setupTitleView(self.subreddit)
-            self.delegate.didChangeColors(false, color: ColorUtil.getColorForSub(sub: self.subreddit))
+            self.delegate?.didChangeColors(false, color: ColorUtil.getColorForSub(sub: self.subreddit))
             
-            if !self.delegate.didClear() {
+            if !(self.delegate?.didClear() ?? true) {
                 UserDefaults.standard.removeObject(forKey: "color+" + self.subreddit)
                 UserDefaults.standard.removeObject(forKey: "accent+" + self.subreddit)
                 UserDefaults.standard.synchronize()
@@ -163,7 +163,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         if let selected = primaryWell?.selectedColor {
             ColorUtil.setColorForSub(sub: subreddit, color: selected)
             setupTitleView(subreddit)
-            delegate.didChangeColors(false, color: selected)
+            delegate?.didChangeColors(false, color: selected)
         }
     }
 
@@ -171,7 +171,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     @objc func colorWellChangedAccent(_ sender: Any) {
         if let selected = accentWell?.selectedColor {
             ColorUtil.setAccentColorForSub(sub: subreddit, color: selected)
-            delegate.didChangeColors(true, color: selected)
+            delegate?.didChangeColors(true, color: selected)
         }
     }
     

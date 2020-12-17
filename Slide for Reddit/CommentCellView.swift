@@ -26,17 +26,8 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var comment: CommentObject?
     var hasText = false
     var full = false
-    
-    init(delegate: CommentCellViewDelegate, textDelegate: TextDisplayStackViewDelegate) {
-        super.init(frame: CGRect.zero)
-        self.delegate = delegate
-        self.textDelegate = textDelegate
+    var hasConfigured = false
         
-        self.configureView()
-        self.configureLayout()
-        self.configureGestures()
-    }
-    
     func configureGestures() {
         self.contentView.addTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let comment = self.comment else { return }
@@ -45,7 +36,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         //TODO add long press menu
     }
     
-    func configureView() {
+    func configureViews() {
         self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
         self.contentView.addSubview(text)
         
@@ -59,6 +50,13 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
 
     func setComment(comment: CommentObject, width: CGFloat) {
+        if !hasConfigured {
+            hasConfigured = true
+            self.configureViews()
+            self.configureLayout()
+            self.configureGestures()
+        }
+        
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         text.estimatedWidth = self.contentView.frame.size.width - 16
 
@@ -106,9 +104,4 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
 
         return titleText
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
-

@@ -1342,7 +1342,7 @@ extension VideoMediaViewController {
     
     @objc func openInYoutube(_ sender: AnyObject) {
         if let url = youtubeURL {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
 }

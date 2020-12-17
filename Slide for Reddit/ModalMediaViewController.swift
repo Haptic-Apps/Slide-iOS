@@ -12,7 +12,6 @@ import SDCAlertView
 import Then
 import UIKit
 
-
 class ModalMediaViewController: UIViewController {
 
 //    var loadedURL: URL?
