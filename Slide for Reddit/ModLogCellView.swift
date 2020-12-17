@@ -28,6 +28,14 @@ class ModlogCellView: UICollectionViewCell {
     var lsC: [NSLayoutConstraint] = []
     var hasConfigured = false
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func configureGestures() {
         self.contentView.addTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let item = self.logItem else { return }

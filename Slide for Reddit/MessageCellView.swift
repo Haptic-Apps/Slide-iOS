@@ -15,7 +15,7 @@ protocol MessageCellViewDelegate: class {
     func showMenu(for message: MessageObject, cell: MessageCellView)
 }
 
-class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
+class MessageCellView: UICollectionViewCell {
     var text: TextDisplayStackView!
     var single = false
     var longBlocking = false
@@ -29,7 +29,15 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var lsC: [NSLayoutConstraint] = []
     var message: MessageObject?
     var hasConfigured = false
-
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     func configureViews() {
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
         self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
@@ -102,9 +110,5 @@ class MessageCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         titleText.append(NSAttributedString(string: "\n"))
         titleText.append(infoString)
         return titleText
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

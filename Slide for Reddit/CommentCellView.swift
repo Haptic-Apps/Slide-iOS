@@ -27,7 +27,15 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var hasText = false
     var full = false
     var hasConfigured = false
-        
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     func configureGestures() {
         self.contentView.addTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let comment = self.comment else { return }
