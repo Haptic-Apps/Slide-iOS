@@ -520,15 +520,24 @@ public class TextDisplayStackView: UIStackView {
     public static func
         createAttributedChunk(baseHTML: String, fontSize: CGFloat, submission: Bool, accentColor: UIColor, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSAttributedString {
         let font = FontGenerator.fontOfSize(size: fontSize, submission: submission)
-        var htmlBase = TextDisplayStackView.addSpoilers(baseHTML).replacingOccurrences(of: "<sup>", with: "<font size=\"1\">").replacingOccurrences(of: "</sup>", with: "</font>").replacingOccurrences(of: "<del>", with: "<font color=\"green\">").replacingOccurrences(of: "</del>", with: "</font>").replacingOccurrences(of: "<code>", with: "<font color=\"blue\">").replacingOccurrences(of: "</code>", with: "</font>").replacingOccurrences(of: "<div class=\"md\">", with: "").replacingOccurrences(of: "<p>", with: "<span>").replacingOccurrences(of: "</p>", with: "</span><br/>")
+        var htmlBase = TextDisplayStackView
+            .addSpoilers(baseHTML)
+            .replacingOccurrences(of: "<del>", with: "<font color=\"green\">")
+            .replacingOccurrences(of: "</del>", with: "</font>")
+            .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
+            .replacingOccurrences(of: "</code>", with: "</font>")
+            .replacingOccurrences(of: "<div class=\"md\">", with: "")
+            .replacingOccurrences(of: "<p>", with: "<span>")
+            .replacingOccurrences(of: "</p>", with: "</span><br/>")
         if htmlBase.endsWith("\n</div>") {
             htmlBase = htmlBase.substring(0, length: htmlBase.length - 7)
         }
         if htmlBase.endsWith("<br/>") {
             htmlBase = htmlBase.substring(0, length: htmlBase.length - 5)
         }
-        let baseHtml = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
-        let html = NSMutableAttributedString(attributedString: baseHtml)
+        let htmlString = DTHTMLAttributedStringBuilder.init(html: htmlBase.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: fontColor, DTDefaultFontSize: font.pointSize], documentAttributes: nil).generatedAttributedString()!
+
+        let html = NSMutableAttributedString(attributedString: htmlString)
         while html.mutableString.contains("\t•\t") {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t•\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: " • ")
@@ -541,8 +550,10 @@ public class TextDisplayStackView: UIStackView {
             let rangeOfStringToBeReplaced = html.mutableString.range(of: "\t▪\t")
             html.replaceCharacters(in: rangeOfStringToBeReplaced, with: "   ▪ ")
         }
+
+        let fixedHTML = html.fixCoreTextIssues(withFont: font)
         
-        return LinkParser.parse(html, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
+        return LinkParser.parse(fixedHTML, accentColor, font: font, fontColor: fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
     }
     
 //    public func link(at: CGPoint, withTouch: UITouch) -> TTTAttributedLabelLink? {
@@ -778,5 +789,62 @@ public class TextDisplayStackView: UIStackView {
             base = base.replacingOccurrences(of: tag, with: "Spoiler [[s[\(spoilerText)]s]]")
         }
         return base
+    }
+}
+
+private extension NSAttributedString {
+    /**
+     Fixes the following:
+     - Superscript is rendered incorrectly depending on the font
+     */
+    func fixCoreTextIssues(withFont font: UIFont) -> NSAttributedString {
+        return self.fixSuperscript(withFont: font)
+    }
+
+    /**
+     Superscript rendering is flaky for different fonts. Superscript is
+     typically accomplished by using dedicated superscript font glyphs. Not
+     all the fonts have superscript glyphs for every character that might be
+     superscripted by a user, which can look bad. Furthermore, different
+     NSAttributedString generators will accomplish superscript in different ways.
+
+     To solve this, we go through each attribute in the string. We remove the attribute
+     while adding our own. Instead of using a superscript attribute, we simulate the
+     look by adjusting the baseline and font size.
+     */
+    private func fixSuperscript(withFont font: UIFont) -> NSAttributedString {
+        let mutable = NSMutableAttributedString(attributedString: self)
+
+        var superscriptLevel: Int = 0
+
+        // Go through each chunk in the attributed string
+        mutable.enumerateAttributes(in: NSRange(location: 0, length: mutable.length), options: .longestEffectiveRangeNotRequired) { (value, range, _) in
+            let value = value as [NSAttributedString.Key: Any]
+            // If the chunk has a superscript attribute from either CoreText or DTCoreText,
+            // remove the attribute and adjust the chunk's baseline and size ourselves.
+            if value[NSAttributedString.Key(rawValue: "NSSuperScript")] != nil || value[NSAttributedString.Key(rawValue: "CTSuperscript")] != nil { // kCTSuperscriptAttributeName
+                // Extract font from attributed string; this includes bold/italic information
+                let fontForChunk = value[NSAttributedString.Key.font] as! UIFont
+                superscriptLevel += 1
+                let newFontSize = max(CGFloat(font.pointSize / 2), 10)
+                let newFont = UIFont(name: fontForChunk.fontName, size: newFontSize) ?? fontForChunk
+                let newBaseline = (font.pointSize * 0.25) + (CGFloat(superscriptLevel) * (font.pointSize / 4.0))
+
+                mutable.setAttributes(nil, range: range)
+
+                mutable.addAttributes([
+                    .font: newFont,
+                    .baselineOffset: newBaseline,
+                ], range: range)
+
+//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "NSSuperScript"), range: range) // Not really necessary.
+//                mutable.removeAttribute(NSAttributedString.Key(rawValue: "CTSuperScript"), range: range) // Not really necessary.
+            } else {
+                // Reset superscript level if we hit a chunk with no superscript attribute
+                superscriptLevel = 0
+            }
+        }
+
+        return mutable
     }
 }
