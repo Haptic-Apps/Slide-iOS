@@ -44,7 +44,7 @@ public class TextDisplayStackView: UIStackView {
 
     var activeSet = false
     
-    init(delegate: TextDisplayStackViewDelegate) {
+    init(delegate: TextDisplayStackViewDelegate?) {
         self.fontSize = 0
         self.submission = false
         self.tColor = .black
@@ -77,7 +77,7 @@ public class TextDisplayStackView: UIStackView {
         self.firstTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
     }
     
-    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.theme.fontColor, delegate: TextDisplayStackViewDelegate) {
+    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.theme.fontColor, delegate: TextDisplayStackViewDelegate?) {
         self.fontSize = fontSize
         self.submission = submission
         self.estimatedWidth = width
@@ -433,6 +433,7 @@ public class TextDisplayStackView: UIStackView {
                 body.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
             } else if block.startsWith("<cite>") {
                 let body = block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed()
+                
                 if body.isEmpty {
                     continue
                 }

@@ -1531,24 +1531,22 @@
 				BE2B89F21E2450D70053D493 /* ColorPicker.swift */,
 				BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */,
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
-				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
 				BE3E5C201E18227500749C0C /* CommentDepthCell.swift */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
 				BE3E5C1C1E177B2C00749C0C /* CommentViewController.swift */,
-				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
 				BE780B671E35276600DAA1EB /* ContentUtilities */,
 				BE1DA3991E26D52500EC0A04 /* ContentViewControllers */,
 				BE6EA6E11E1DA1A300E9E709 /* ContributionLoader.swift */,
 				B776BF3F4BCDE57E4274764F /* CustomAlbum.swift */,
 				B776B5502C1178D6A0F51B6A /* CustomAnimateUITableView.swift */,
+				BEC912AA258B31FF00E65F34 /* ContentViews */,
 				BEE5BF6B1E12C92F00E3C9AE /* DateFormatter+util.swift */,
 				BE762C9422A2FF7200B29757 /* DraftFindReturnViewController.swift */,
 				BE7A2D3D22AD99600005F74F /* DragDownAlertMenu.swift */,
 				0965260320E1688400EA53BE /* Extensions */,
 				BE3521641E3D22B000C30B8D /* Fonts */,
 				BE25402521CCC03E003BD547 /* ForceTouchGestureRecognizer.swift */,
-				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
 				BEB81A65214457ED007E326B /* FriendsContributionLoader.swift */,
 				BEC494291E307DDA006618F3 /* GalleryCellView.swift */,
 				BE6EA6C01E1C1DC200E9E709 /* Gfycat */,
@@ -1575,7 +1573,6 @@
 				BE47AF70225C574700A61FB0 /* ManageMultireddit.swift */,
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
 				090D6B7A20F3D8610052F3F6 /* Media */,
-				BEB2B2381E35D64F00BF761C /* MessageCellView.swift */,
 				B776BECBFCB8F58AC234156A /* ModerationViewController.swift */,
 				B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */,
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
@@ -1629,7 +1626,6 @@
 				BE836477254A3A8B00677F8A /* TrendingViewController.swift */,
 				BEBF38092563716B00C91668 /* ModlogContributionLoader.swift */,
 				BEBF3813256376AC00C91668 /* ModerationOverviewViewController.swift */,
-				BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */,
 				BE3144FE25663674004A908C /* AsyncTextAttachment.swift */,
 				BE80F9CD2585E81A00EA1636 /* TabsContentPagingViewController.swift */,
 				BE4CAC372589ABAC0034A8DA /* ProfilePreviewViewController.swift */,
@@ -1701,6 +1697,18 @@
 				BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		BEC912AA258B31FF00E65F34 /* ContentViews */ = {
+			isa = PBXGroup;
+			children = (
+				BE7439F21E20C9BD008BB63B /* CommentCellView.swift */,
+				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
+				BEB81A6721445FE4007E326B /* FriendCellView.swift */,
+				BEB2B2381E35D64F00BF761C /* MessageCellView.swift */,
+				BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */,
+			);
+			name = ContentViews;
 			sourceTree = "<group>";
 		};
 		BED90FE4250BF71600090DF5 /* Slide Widgets */ = {

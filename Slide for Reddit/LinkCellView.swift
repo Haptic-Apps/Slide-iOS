@@ -1519,9 +1519,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.full = self is FullLinkCellView
         self.parentViewController = parent
         self.link = submission
-        if navViewController == nil && nav != nil {
-            navViewController = nav
-        }
 
         self.shouldLoadVideo = false
         self.loadedImage = nil
@@ -2338,8 +2335,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: SubmissionObject.linkToSubmissionObject(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
-                self.showBody(width: self.innerView.frame.size.width - 24)
+                if let parent = self.parentViewController {
+                    self.setLink(submission: SubmissionObject.linkToSubmissionObject(submission: cr!), parent: parent, nav: parent.navigationController, baseSub: (self.link?.subreddit)!, np: false)
+                    self.showBody(width: self.innerView.frame.size.width - 24)
+                }
             })
         }
         
@@ -2450,7 +2449,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         flairDictionary[(text != nil && !text!.isEmpty) ? text! : flair.text] = NSDictionary()
                         self.link!.flairJSON = flairDictionary.jsonString()
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
-                        self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
+                        if let parent = self.parentViewController {
+                            self.setLink(submission: self.link!, parent: parent, nav: parent.navigationController, baseSub: (self.link?.subreddit)!, np: false)
+                        }
                         if self.textView != nil {
                             self.showBody(width: self.innerView.frame.size.width - 24)
                         }
@@ -2839,7 +2840,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var previewedImage = false
     var previewedVideo = false
     var previewedURL: URL?
-    weak var navViewController: UIViewController?
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {

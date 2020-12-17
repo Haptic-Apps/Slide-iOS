@@ -18,25 +18,6 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
     var title: TitleUITextView!
     var image = UIImageView()
     var web = WKWebView()
-    
-    func attributedLabel(_ label: TitleUITextView!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 5
-        let bottommargin = 5
-        let leftmargin = 5
-        let rightmargin = 5
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
-        self.contentView.layer.cornerRadius = 15
-        self.contentView.clipsToBounds = true
-    }
-    
     var content: NSMutableAttributedString?
     var hasText = false
     
@@ -91,9 +72,6 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         let json = rawJson as! JSONDictionary
         parentViewController = parent
-        if navViewController == nil && nav != nil {
-            navViewController = nav
-        }
         
         if let url = json["original_url"] as? String {
             self.url = url
@@ -170,6 +148,24 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
     }
     
+    func attributedLabel(_ label: TitleUITextView!, didSelectLinkWith url: URL!) {
+        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let topmargin = 5
+        let bottommargin = 5
+        let leftmargin = 5
+        let rightmargin = 5
+        
+        let f = self.contentView.frame
+        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        self.contentView.frame = fr
+        self.contentView.layer.cornerRadius = 15
+        self.contentView.clipsToBounds = true
+    }
+
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(contentView.frame.size.width - 16)

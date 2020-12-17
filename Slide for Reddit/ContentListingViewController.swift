@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import AudioToolbox
 import reddift
 import SDWebImage
 import UIKit
@@ -15,12 +16,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var currentPlayingIndex = [IndexPath]()
     
     var isScrollingDown = true
-    
     var lastScrollDirectionWasDown = false
-    
     var lastYUsed = CGFloat.zero
-    
     var lastY = CGFloat.zero
+    
+    var profileTransitionDelegate = ProfileInfoPresentationManager()
+    var longBlocking = false
     
     func getTableView() -> UICollectionView {
         return self.tableView
@@ -301,20 +302,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             cell = c
         } else if thing is CommentObject {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
-            c.setComment(comment: (thing as! CommentObject), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setComment(comment: (thing as! CommentObject), width: self.view.frame.size.width)
             cell = c
         } else if thing is FriendModel {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
-            c.setFriend(friend: (thing as! FriendModel), parent: self)
+            c.setFriend(friend: (thing as! FriendModel))
             cell = c
         } else if thing is MessageObject {
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
-            c.setMessage(message: (thing as! MessageObject), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setMessage(message: (thing as! MessageObject), width: self.view.frame.size.width)
             cell = c
         } else {
             //Is mod log item
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
-            c.setLogItem(logItem: (thing as! ModLogObject), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.setLogItem(logItem: (thing as! ModLogObject), width: self.view.frame.size.width)
             cell = c
         }
         
@@ -687,7 +688,188 @@ extension ContentListingViewController: LinkCellViewDelegate {
         }
         cell.refresh()
     }
+}
+
+extension ContentListingViewController: FriendCellViewDelegate {
+    func showProfile(name: String) {
+        VCPresenter.openRedditLink("/u/\(name)", self.navigationController, self)
+    }
+}
+
+extension ContentListingViewController: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.showSpoiler(text)
+        } else {
+            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+        }
+    }
+
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.view
+            self.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self)
+        }
+        
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        
+        alertController.show(self)
+    }
     
+    func previewProfile(profile: String) {
+        let vc = ProfileInfoViewController(accountNamed: profile)
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = profileTransitionDelegate
+        self.present(vc, animated: true)
+    }
+}
+
+extension ContentListingViewController: CommentCellViewDelegate {
+    func openComment(_ comment: CommentObject) {
+        VCPresenter.openRedditLink(comment.permalink, self.navigationController, self)
+    }
+}
+
+extension ContentListingViewController: ModlogCellViewDelegate {
+    func didClick(on modLogObject: ModLogObject) {
+        let url = "https://www.reddit.com\(modLogObject.permalink)"
+        VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+    
+    func showMenu(for modLogObject: ModLogObject) {
+        let alertController = DragDownAlertMenu(title: "Modlog Item", subtitle: modLogObject.targetTitle.unescapeHTML, icon: nil)
+
+        alertController.addAction(title: "View author profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
+            let url = "https://www.reddit.com/u/\(modLogObject.targetAuthor)"
+            VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        alertController.addAction(title: "View original content", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
+            let url = "https://www.reddit.com\(modLogObject.permalink)"
+            VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        alertController.show(self)
+    }
+}
+
+extension ContentListingViewController: MessageCellViewDelegate {
+    func doReply(to message: MessageObject, cell: MessageCellView) {
+        if !ActionStates.isRead(s: message) {
+            let session = (UIApplication.shared.delegate as! AppDelegate).session
+            do {
+                try session?.markMessagesAsRead([message.name.contains("_") ? message.name : (message.wasComment ? "t1_" : "t4_") + message.name], completion: { (result) in
+                    if result.error != nil {
+                        print(result.error!.description)
+                    } else {
+                        NotificationCenter.default.post(name: .accountRefreshRequested, object: nil, userInfo: nil)
+                    }
+                })
+            } catch {
+            }
+            ActionStates.setRead(s: message, read: true)
+            let titleText = MessageCellView.getTitleText(message: message)
+            cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
+
+        } else {
+            if let context = message.context, message.wasComment {
+                let url = "https://www.reddit.com\(context)"
+                let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!)
+                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            } else {
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
+                    })
+                })), parentVC: self)
+            }
+        }
+    }
+    
+    func showMenu(for message: MessageObject, cell: MessageCellView) {
+        let alertController = DragDownAlertMenu(title: "Message from u/\(message.author)", subtitle: message.subject, icon: nil)
+
+        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: message.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
+            let prof = ProfileViewController.init(name: message.author)
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        alertController.addAction(title: "Reply to message", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
+            self.doReply(to: message, cell: cell)
+        }
+
+        alertController.addAction(title: ActionStates.isRead(s: message) ? "Mark as unread" : "Mark as read", icon: ActionStates.isRead(s: message) ? UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "seen")!.menuIcon() : UIImage(sfString: SFSymbol.eyeFill, overrideString: "seen")!.menuIcon()) {
+            if ActionStates.isRead(s: message) {
+                let session = (UIApplication.shared.delegate as! AppDelegate).session
+                do {
+                    try session?.markMessagesAsUnread([message.name.contains("_") ? message.name : (message.wasComment ? "t1_" : "t4_") + message.name], completion: { (result) in
+                        if result.error != nil {
+                            print(result.error!.description)
+                        }
+                    })
+                } catch {
+                    
+                }
+                ActionStates.setRead(s: message, read: false)
+                let titleText = MessageCellView.getTitleText(message: message)
+                cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
+                
+            } else {
+                let session = (UIApplication.shared.delegate as! AppDelegate).session
+                do {
+                    try session?.markMessagesAsRead([message.name.contains("_") ? message.name : (message.wasComment ? "t1_" : "t4_") + message.name], completion: { (result) in
+                        if result.error != nil {
+                            print(result.error!.description)
+                        }
+                    })
+                } catch {
+                    
+                }
+                ActionStates.setRead(s: message, read: true)
+                let titleText = MessageCellView.getTitleText(message: message)
+                cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
+            }
+        }
+
+        if let context = message.context, message.wasComment {
+            alertController.addAction(title: "View comment thread", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
+                let url = "https://www.reddit.com\(context)"
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            }
+        }
+
+        alertController.show(self)
+    }
 }
 
 class EmptyStateView: UIView {

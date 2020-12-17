@@ -53,10 +53,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         }
         
         updateToolbar()
-        webView.getCookies() { data in
-              print("=========================================")
-              print(data)
-        }
 
         navigationController?.setToolbarHidden(false, animated: false)
         navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor

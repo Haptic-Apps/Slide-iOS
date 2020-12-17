@@ -2033,53 +2033,6 @@ class UIShortTapGestureRecognizer: UITapGestureRecognizer {
     }
 }
 
-/*class ForceNavView: TapBehindModalViewController, ForceTouchGestureDelegate {
-    func touchStarted() {
-        
-    }
-    
-    func touchCancelled() {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    func pop() {
-        
-    }
-}
-
-extension CommentDepthCell: ForceTouchGestureDelegate {
-    func touchStarted() {
-        parentPresentedTextView = TextDisplayStackView(fontSize: 12, submission: false, color: ColorUtil.theme.fontColor, delegate: self, width: UIScreen.main.bounds.size.width * 0.8)
-        parentPresentedTextView?.setTextWithTitleHTML(NSAttributedString(string: "asdfasdf"), htmlString: "<b>ASDFSDF</b> not bold")
-        let alert = UIViewController()
-        alert.view.addSubview(parentPresentedTextView!)
-        alert.view.backgroundColor = ColorUtil.theme.foregroundColor
-        alert.view.roundCorners(UIRectCorner.allCorners, radius: 20)
-        alert.view.addGestureRecognizer(force)
-        alert.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.8, height: UIScreen.main.bounds.size.height * 0.8)
-        let nav = ForceNavView.init(rootViewController: alert)
-        nav.setNavigationBarHidden(true, animated: false)
-        nav.modalPresentationStyle = UIModalPresentationStyle.popover
-        force.forceDelegate = nav
-        let popover = nav.popoverPresentationController
-        popover?.delegate = self
-        popover?.sourceView = parent!.view
-        popover?.sourceRect = CGRect(x: parent!.view.center.x, y: parent!.view.center.y, width: 0, height: 0)
-        popover?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-        presentedVC = nav
-        parent?.present(nav, animated: true, completion: nil)
-    }
-    
-    func touchCancelled() {
-        presentedVC?.dismiss(animated: true, completion: nil)
-    }
-    
-    func pop() {
-        print("Popped")
-    }
-}
-*/
-
 // MARK: - Accessibility
 extension CommentDepthCell {
     override func accessibilityActivate() -> Bool {

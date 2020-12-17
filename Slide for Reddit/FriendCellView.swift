@@ -11,27 +11,32 @@ import AudioToolbox
 import reddift
 import UIKit
 
+protocol FriendCellViewDelegate: class {
+    func showProfile(name: String)
+}
 
 class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
-    
     var titleView: TitleUITextView!
     var icon = UIImageView()
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 0
-        let bottommargin = 2
-        let leftmargin = 0
-        let rightmargin = 0
+    var friend: FriendModel?
+    weak var delegate: FriendCellViewDelegate?
+
+    init(delegate: FriendCellViewDelegate) {
+        super.init(frame: CGRect.zero)
+        self.delegate = delegate
         
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
+        self.configureViews()
+        self.configureLayout()
+        
+        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+            guard let self = self else { return }
+            if let name = self.friend?.name {
+                self.delegate?.showProfile(name: name)
+            }
+        }
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
+    func configureViews() {
         let layout = BadgeLayoutManager()
         let storage = NSTextStorage()
         storage.addLayoutManager(layout)
@@ -48,15 +53,16 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.contentView.addSubviews(titleView, icon)
 
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-        self.setupConstraints()
-        
-        self.contentView.addTapGestureRecognizer { (_) in
-            let prof = ProfileViewController.init(name: self.friend?.name ?? "")
-            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+    }
+    
+    func configureGestures() {
+        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+            guard let self = self, let friend = self.friend else { return }
+            self.delegate?.showProfile(name: friend.name)
         }
     }
     
-    func setupConstraints() {
+    func configureLayout() {
         self.titleView.leftAnchor /==/ self.icon.rightAnchor + 8
         self.titleView.rightAnchor /==/ self.contentView.rightAnchor - 8
         self.titleView.verticalAnchors /==/ self.contentView.verticalAnchors
@@ -66,8 +72,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.icon.verticalAnchors /==/ self.contentView.verticalAnchors + 20
     }
     
-    func setFriend(friend: FriendModel, parent: UIViewController & MediaVCDelegate) {
-        parentViewController = parent
+    func setFriend(friend: FriendModel) {
         self.friend = friend
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
@@ -98,11 +103,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
             infoString.append(spacer)
             infoString.append(tagString)
         }
-        
-        let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
-        messageClick.delegate = self
-        self.addGestureRecognizer(messageClick)
-        
+                
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
 
@@ -116,8 +117,4 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    var friend: FriendModel?
-    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
-    public weak var navViewController: UIViewController?
 }

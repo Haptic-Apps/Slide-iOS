@@ -11,54 +11,60 @@ import AudioToolbox
 import reddift
 import UIKit
 
+protocol CommentCellViewDelegate: class {
+    func openComment(_ comment: CommentObject)
+}
 
 class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var longBlocking = false
     var text: TextDisplayStackView!
     var single = false
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 0
-        let bottommargin = 2
-        let leftmargin = 0
-        let rightmargin = 0
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
-    }
-
+    weak var delegate: CommentCellViewDelegate?
+    weak var textDelegate: TextDisplayStackViewDelegate?
+    var registered: Bool = false
+    var currentLink: URL?
+    var comment: CommentObject?
     var hasText = false
     var full = false
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
+    init(delegate: CommentCellViewDelegate, textDelegate: TextDisplayStackViewDelegate) {
+        super.init(frame: CGRect.zero)
+        self.delegate = delegate
+        self.textDelegate = textDelegate
+        
+        self.configureView()
+        self.configureLayout()
+        self.configureGestures()
+    }
+    
+    func configureGestures() {
+        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+            guard let self = self, let comment = self.comment else { return }
+            self.delegate?.openComment(comment)
+        }
+        //TODO add long press menu
+    }
+    
+    func configureView() {
+        self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
         self.contentView.addSubview(text)
         
-        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
-        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
-        text.horizontalAnchors /==/ contentView.horizontalAnchors + CGFloat(8)
         self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
-    func setComment(comment: CommentObject, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
+    func configureLayout() {
+        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
+        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
+        text.horizontalAnchors /==/ contentView.horizontalAnchors + CGFloat(8)
+    }
+
+    func setComment(comment: CommentObject, width: CGFloat) {
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         text.estimatedWidth = self.contentView.frame.size.width - 16
-        parentViewController = parent
-        if navViewController == nil && nav != nil {
-            navViewController = nav
-        }
+
         let titleText = CommentCellView.getTitle(comment)
         self.comment = comment
        
-        let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
-        commentClick.delegate = self
-        self.addGestureRecognizer(commentClick)
-        
         text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody)
     }
     
@@ -101,80 +107,8 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         return titleText
     }
     
-    var registered: Bool = false
-    var currentLink: URL?
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    var comment: CommentObject?
-    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
-    public weak var navViewController: UIViewController?
-    
-    @objc func openComment(sender: UITapGestureRecognizer? = nil) {
-        VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)
-    }
 }
 
-extension CommentCellView: TextDisplayStackViewDelegate {
-    func linkTapped(url: URL, text: String) {
-        if !text.isEmpty {
-            self.parentViewController?.showSpoiler(text)
-        } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
-        }
-    }
-
-    func linkLongTapped(url: URL) {
-        longBlocking = true
-        
-        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
-        
-        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
-            let shareItems: Array = [url]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.contentView
-            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }
-        
-        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
-            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }
-        
-        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        }
-        
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }
-        }
-        
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        
-        if parentViewController != nil {
-            alertController.show(parentViewController!)
-        }
-    }
-    
-    func previewProfile(profile: String) {
-        if let parent = self.parentViewController {
-            let vc = ProfileInfoViewController(accountNamed: profile)
-            vc.modalPresentationStyle = .custom
-            vc.transitioningDelegate = ProfileInfoPresentationManager()
-            parent.present(vc, animated: true)
-        }
-    }
-}
