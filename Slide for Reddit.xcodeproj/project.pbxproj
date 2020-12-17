@@ -376,6 +376,7 @@
 		BEC814EC24BD43EE005C8E8C /* SiriShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */; };
 		BEC814EE24BE8B94005C8E8C /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */; };
 		BEC814F024BE8BBD005C8E8C /* HistoryContributionLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */; };
+		BEC912A0258B19AA00E65F34 /* UIBezierPath+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC9129F258B19AA00E65F34 /* UIBezierPath+Helpers.swift */; };
 		BECF52442012AF7A00A310F9 /* VCPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECF52432012AF7A00A310F9 /* VCPresenter.swift */; };
 		BED396A924F2C5FF003922D5 /* SubmissionsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED396A824F2C5FF003922D5 /* SubmissionsDataSource.swift */; };
 		BED3B31924CE278B00B9A664 /* SettingsShortcutMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED3B31824CE278B00B9A664 /* SettingsShortcutMenu.swift */; };
@@ -891,6 +892,7 @@
 		BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SiriShortcuts.swift; sourceTree = "<group>"; };
 		BEC814ED24BE8B94005C8E8C /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
 		BEC814EF24BE8BBD005C8E8C /* HistoryContributionLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryContributionLoader.swift; sourceTree = "<group>"; };
+		BEC9129F258B19AA00E65F34 /* UIBezierPath+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBezierPath+Helpers.swift"; sourceTree = "<group>"; };
 		BECB672F256B65EA001D96FE /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS7.0.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
 		BECF52432012AF7A00A310F9 /* VCPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCPresenter.swift; sourceTree = "<group>"; };
 		BED396A824F2C5FF003922D5 /* SubmissionsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionsDataSource.swift; sourceTree = "<group>"; };
@@ -1050,6 +1052,7 @@
 				096A7D142215D9AB0067106C /* AVAudioSession+Extensions.swift */,
 				BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */,
 				BE2F3BE9253D37EF00FB21EC /* UIResponder+Extensions.swift */,
+				BEC9129F258B19AA00E65F34 /* UIBezierPath+Helpers.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -2430,6 +2433,7 @@
 				BE780B621E32CB9600DAA1EB /* RelatedViewController.swift in Sources */,
 				0965260D20E2989600EA53BE /* UITableView+Extensions.swift in Sources */,
 				BE84B283257DAC5A00A90C5D /* ModlogModel+CoreDataClass.swift in Sources */,
+				BEC912A0258B19AA00E65F34 /* UIBezierPath+Helpers.swift in Sources */,
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
 				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,

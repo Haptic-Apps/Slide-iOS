@@ -135,6 +135,18 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var depth: Int = 0
     
     var content: RedditObject?
+    
+    //Can't have parameters that target an iOS version :/
+    private var _savedPreview: Any?
+    @available(iOS 13.0, *)
+    fileprivate var savedPreview: UITargetedPreview? {
+        get {
+            return _savedPreview as? UITargetedPreview
+        }
+        set {
+            self._savedPreview = newValue
+        }
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -1488,7 +1500,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             self.contentView.addGestureRecognizer(tapGestureRecognizer)
             
-            
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
                 self.contentView.addInteraction(previewing)
@@ -2289,27 +2300,47 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         let rects = self.getLocationForPreviewedText(textView, textView.convert(location, from: self.contentView), self.previewedURL?.absoluteString)
         var convertedRects = [CGRect]()
         
-        var weightedCenterpoint = CGPoint.zero
-        
+        var minX = CGFloat.greatestFiniteMagnitude, maxX = -CGFloat.greatestFiniteMagnitude,
+            minY = CGFloat.greatestFiniteMagnitude, maxY = -CGFloat.greatestFiniteMagnitude
+
         for rect in rects {
             convertedRects.append(self.contentView.convert(rect, from: textView))
         }
         
         for rect in convertedRects {
-            weightedCenterpoint = CGPoint(x: weightedCenterpoint.x + rect.midX, y: weightedCenterpoint.y + rect.midY)
+            minX = min(rect.minX, minX)
+            maxX = max(rect.maxX, maxX)
+            minY = min(rect.minY, minY)
+            maxY = max(rect.maxY, maxY)
         }
         
-        let elements = CGFloat(convertedRects.count)
-        weightedCenterpoint = CGPoint(x: weightedCenterpoint.x / elements, y: weightedCenterpoint.y / elements)
-        
-        let target = UIPreviewTarget(container: self.contentView, center: weightedCenterpoint) //superview?.convert(textLineRectsCenter, to: contentView) ?? textLineRectsCente
+        let weightedCenterpoint = CGPoint(x: (minX + maxX) / 2, y: (minY + maxY) / 2)
+
+        let target = UIPreviewTarget(container: self.contentView, center: weightedCenterpoint)
         let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
         parameters.backgroundColor = ColorUtil.theme.backgroundColor
         
-        return UITargetedPreview(view: snapshot, parameters: parameters, target: target)
+        let path = UIBezierPath(wrappingAround: convertedRects)
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = path.cgPath
+        
+        let snapshotContainer = UIView(frame: snapshot.bounds)
+        snapshotContainer.addSubview(snapshot)
+        snapshot.layer.mask = maskLayer
+
+        return UITargetedPreview(view: snapshotContainer, parameters: parameters, target: target)
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        self.savedPreview = createPreview(interaction, configuration: configuration)
+        return self.savedPreview
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForDismissingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return self.savedPreview
+    }
+    
+    func createPreview(_ interaction: UIContextMenuInteraction, configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
