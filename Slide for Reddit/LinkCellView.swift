@@ -3191,7 +3191,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForDismissingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         return self.savedPreview
     }
-    
+        
     func createPreview(_ interaction: UIContextMenuInteraction, configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
@@ -3323,7 +3323,6 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 }
             }
         }
-        
         return configuration
     }
 
@@ -3353,34 +3352,56 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             return nil
         }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
-            
-            children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
-                let shareItems: Array = [url]
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = self.innerView
-                if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = self.innerView
-                    presenter.sourceRect = self.innerView.bounds
-                }
-                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-            })
-            children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
-                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-            })
+            if url.absoluteString.starts(with: "/u/") {
+                let username = url.absoluteString.replacingOccurrences(of: "/u/", with: "")
 
-            children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            })
-            
-            let open = OpenInChromeController.init()
-            if open.isChromeInstalled() {
-                children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
-                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                children.append(UIAction(title: "Visit profile", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
+                    VCPresenter.openRedditLink(url.absoluteString, self.parentViewController?.navigationController, self.parentViewController)
                 })
-            }
 
-            return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
+                children.append(UIAction(title: "Send Message", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
+                    VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parentViewController?.navigationController, self.parentViewController)
+                })
+
+                children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
+                    guard let self = self else { return }
+                    if let parent = self.parentViewController {
+                        PostActions.block(username, parent: parent) {
+                            
+                        }
+                    }
+                }))
+
+                return UIMenu(title: "u/\(username)", image: nil, identifier: nil, children: children)
+            } else {
+                children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                    let shareItems: Array = [url]
+                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                    activityViewController.popoverPresentationController?.sourceView = self.innerView
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = self.innerView
+                        presenter.sourceRect = self.innerView.bounds
+                    }
+                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+                })
+                children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                    BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+                })
+
+                children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                })
+                
+                let open = OpenInChromeController.init()
+                if open.isChromeInstalled() {
+                    children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
+                        open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    })
+                }
+
+                return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
+            }
         })
     }
 

@@ -50,7 +50,7 @@ class MessageCellView: UICollectionViewCell {
             guard let self = self, let message = self.message else { return }
             self.delegate?.doReply(to: message, cell: self)
         }
-        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+        self.contentView.addLongTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let message = self.message else { return }
             self.delegate?.showMenu(for: message, cell: self)
         }
