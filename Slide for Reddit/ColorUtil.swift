@@ -395,6 +395,18 @@ extension UIColor {
         }
     }
     
+    static func fontColorOverlaid(withForeground: Bool, _ percent: CGFloat, _ dark: Bool) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return dark ?
+                    ColorUtil.nightTheme.fontColor.add(overlay: (withForeground ? ColorUtil.nightTheme.foregroundColor : ColorUtil.nightTheme.backgroundColor).withAlphaComponent(percent)) :
+                    ColorUtil.theme.fontColor.add(overlay: (withForeground ? ColorUtil.theme.foregroundColor : ColorUtil.theme.backgroundColor).withAlphaComponent(percent))
+            }
+        } else {
+            return ColorUtil.swappedTheme.fontColor.add(overlay: (withForeground ? ColorUtil.swappedTheme.foregroundColor : ColorUtil.swappedTheme.backgroundColor).withAlphaComponent(percent))
+        }
+    }
+    
     static func foregroundColorOverlaidWithFont(_ percent: CGFloat) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in

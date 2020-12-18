@@ -80,30 +80,46 @@ public class LinkCellImageCache {
 
         readLater = UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
         readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
-        
-        var topColor = UIColor.fontColorOverlaid(withForeground: true, 0.9)
-        var nextColor = UIColor.fontColorOverlaid(withForeground: true, 0.9)
+                
+        web = generateLinkImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white))
+        webBig = generateLinkImage(UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), CGSize(width: 400, height: 275))
+        spoiler = generateLinkImage(UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.getCopy(withSize: CGSize.square(size: 75), withColor: UIColor.white))
+        reddit = generateLinkImage(UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)))
 
-        web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        web = web.overlayWith(image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: (75 / 2), posY: (75 / 2))
+        let topColor = GMColor.red400Color()
+        let nextColor = GMColor.red600Color()
 
-        webBig = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize(width: 400, height: 275))
-        webBig = webBig.overlayWith(image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: ((400 - 75) / 2), posY: (200 / 2))
-
-        spoiler = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        spoiler = spoiler.overlayWith(image: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.getCopy(withSize: CGSize.square(size: 75), withColor: UIColor.white), posX: (75 / 2), posY: (75 / 2))
-
-        reddit = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
-        reddit = reddit.overlayWith(image: UIImage(named: "reddit")!.getCopy(withSize: CGSize.init(width: 90, height: 75)), posX: 30, posY: (75 / 2))
-
-        topColor = GMColor.red400Color()
-        nextColor = GMColor.red600Color()
-        
         let nsfwimg = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white)
         let nsfwimg2 = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white)
         nsfw = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         nsfwUp = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         nsfw = nsfw.overlayWith(image: nsfwimg, posX: ((150 - (nsfwimg.size.width)) / 2), posY: ((150 - (nsfwimg.size.height)) / 2))
         nsfwUp = nsfwUp.overlayWith(image: nsfwimg2, posX: ((150 - (nsfwimg2.size.width)) / 2), posY: ((125 - (nsfwimg2.size.height)) / 2))
+    }
+    
+    static func generateLinkImage(_ baseImage: UIImage, _ size: CGSize = CGSize.square(size: 150)) -> UIImage {
+        let topColorLight = UIColor.fontColorOverlaid(withForeground: true, 0.9, false)
+        let nextColorLight = UIColor.fontColorOverlaid(withForeground: true, 0.8, false)
+        let topColorDark = UIColor.fontColorOverlaid(withForeground: true, 0.9, true)
+        let nextColorDark = UIColor.fontColorOverlaid(withForeground: true, 0.8, true)
+
+        if #available(iOS 13.0, *) {
+            var lightImage = UIImage.convertGradientToImage(colors: [topColorLight, nextColorLight], frame: CGSize.square(size: 150))
+            lightImage = lightImage.overlayWith(image: baseImage, posX: ((size.width - baseImage.size.width) / 2), posY: ((size.height - baseImage.size.height) / 2))
+
+            var darkImage = UIImage.convertGradientToImage(colors: [topColorDark, nextColorDark], frame: CGSize.square(size: 150))
+            darkImage = darkImage.overlayWith(image: baseImage, posX: ((size.width - baseImage.size.width) / 2), posY: ((size.height - baseImage.size.height) / 2))
+
+            let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
+            return asset.image()
+        } else {
+            let topColor = UIColor.fontColorOverlaid(withForeground: true, 0.9)
+            let nextColor = UIColor.fontColorOverlaid(withForeground: true, 0.8)
+
+            var image = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize(width: 400, height: 275))
+            image = image.overlayWith(image: baseImage, posX: ((size.width - 75) / 2), posY: (size.height / 2))
+
+            return image
+        }
     }
 }

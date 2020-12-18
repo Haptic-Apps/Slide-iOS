@@ -1707,7 +1707,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     thumbImage.image = LinkCellImageCache.web
                 }
                 if let round = thumbImage as? RoundedImageView {
-                    round.setCornerRadius()
+                    if full {
+                        round.setCornerRadius(rect: CGRect(x: 0, y: 0, width: SettingValues.largerThumbnail ? 75 : 50, height: SettingValues.largerThumbnail ? 75 : 50))
+                    } else {
+                        round.setCornerRadius()
+                    }
                 }
             } else {
                 thumbText.isHidden = false
@@ -3654,7 +3658,7 @@ class RoundedImageView: UIImageView {
         let path = UIBezierPath(roundedRect: rect ?? self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         maskLayer?.removeFromSuperlayer()
         maskLayer = CAShapeLayer()
-        maskLayer.frame = self.layer.bounds
+        maskLayer.frame = rect ?? self.layer.bounds
         maskLayer.path = path.cgPath
         self.layer.mask = maskLayer
         self.layer.masksToBounds = true
