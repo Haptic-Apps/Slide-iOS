@@ -43,6 +43,12 @@ public class ColorUtil {
         }
     }
     
+    static fileprivate var swappedTheme: Theme = Theme(title: "dark", displayName: "Dark Gray", foregroundColor: UIColor(hexString: "#303030"), backgroundColor: UIColor(hexString: "#212121"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false) {
+        didSet {
+            LinkCellImageCache.initialize()
+        }
+    }
+    
     static var CUSTOM_FOREGROUND = "customForeground"
     static var CUSTOM_FONT = "customFont"
     static var CUSTOM_BACKGROUND = "customBackground"
@@ -84,8 +90,11 @@ public class ColorUtil {
                 break
             }
         }
+        
+        if shouldBeNight() {
+            swappedTheme = nightTheme
+        }
 
-        var toReturn = false
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
         if color != nil {
             baseColor = color!
@@ -94,8 +103,10 @@ public class ColorUtil {
         if accent != nil {
             baseAccent = accent!
         }
-        NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-        return toReturn
+        if #available(iOS 13.0, *) { } else { //Re-draw views on iOS 11 and 12
+            NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+        }
+        return true
     }
     
     private static func image(fromLayer layer: CALayer) -> UIImage {
@@ -346,8 +357,7 @@ extension UIColor {
                     ColorUtil.theme.foregroundColor
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.foregroundColor
+            return ColorUtil.swappedTheme.foregroundColor
         }
     }
     
@@ -359,8 +369,7 @@ extension UIColor {
                     ColorUtil.theme.backgroundColor
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.backgroundColor
+            return ColorUtil.swappedTheme.backgroundColor
         }
     }
     
@@ -372,8 +381,7 @@ extension UIColor {
                     ColorUtil.theme.fontColor
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.fontColor
+            return ColorUtil.swappedTheme.fontColor
         }
     }
 
@@ -385,8 +393,7 @@ extension UIColor {
                     ColorUtil.theme.fontColor.add(overlay: (withForeground ? ColorUtil.theme.foregroundColor : ColorUtil.theme.backgroundColor).withAlphaComponent(percent))
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.fontColor
+            return ColorUtil.swappedTheme.fontColor.add(overlay: (withForeground ? ColorUtil.swappedTheme.foregroundColor : ColorUtil.swappedTheme.backgroundColor).withAlphaComponent(percent))
         }
     }
     
@@ -398,8 +405,7 @@ extension UIColor {
                     ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.fontColor.withAlphaComponent(percent))
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.fontColor
+            return ColorUtil.swappedTheme.foregroundColor.add(overlay: ColorUtil.swappedTheme.fontColor.withAlphaComponent(percent))
         }
     }
 
@@ -411,8 +417,7 @@ extension UIColor {
                     ColorUtil.theme.foregroundColor.add(overlay: color.withAlphaComponent(percent))
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.foregroundColor
+            return ColorUtil.swappedTheme.backgroundColor
         }
     }
 
@@ -424,8 +429,7 @@ extension UIColor {
                     ColorUtil.theme.navIconColor
             }
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.theme.navIconColor
+            return ColorUtil.swappedTheme.backgroundColor
         }
     }
     
@@ -433,8 +437,7 @@ extension UIColor {
         if #available(iOS 13.0, *) {
             return UITraitCollection.current.userInterfaceStyle != .dark ? ColorUtil.theme.isLight : ColorUtil.nightTheme.isLight
         } else {
-            //TODO ios 11/12 night theme
-            return true
+            return ColorUtil.swappedTheme.isLight
         }
     }
 }
