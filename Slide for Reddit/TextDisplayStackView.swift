@@ -514,6 +514,8 @@ public class TextDisplayStackView: UIStackView {
         var htmlBase = TextDisplayStackView
             .addSpoilers(baseHTML)
             .replacingOccurrences(of: "<del>", with: "<font color=\"green\">")
+            .replacingOccurrences(of: "<!-- SC_OFF -->", with: "")
+            .replacingOccurrences(of: "<!-- SC_ON -->", with: "")
             .replacingOccurrences(of: "</del>", with: "</font>")
             .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
             .replacingOccurrences(of: "</code>", with: "</font>")

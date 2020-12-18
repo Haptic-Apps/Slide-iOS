@@ -46,7 +46,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     func configureViews() {
-        self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
+        self.text = TextDisplayStackView(fontSize: 16, submission: true, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
         
         self.innerView = UIView().then {
             $0.backgroundColor = ColorUtil.theme.foregroundColor

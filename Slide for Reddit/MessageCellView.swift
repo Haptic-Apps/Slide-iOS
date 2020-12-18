@@ -29,7 +29,8 @@ class MessageCellView: UICollectionViewCell {
     var lsC: [NSLayoutConstraint] = []
     var message: MessageObject?
     var hasConfigured = false
-    
+    var innerView = UIView()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -39,27 +40,34 @@ class MessageCellView: UICollectionViewCell {
     }
     
     func configureViews() {
-        self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
-        self.contentView.addSubview(text)
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.text = TextDisplayStackView(fontSize: 16, submission: true, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
+        
+        self.innerView = UIView().then {
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
+        }
+        
+        self.innerView.addSubview(text)
+        self.addSubview(innerView)
+        self.backgroundColor = ColorUtil.theme.backgroundColor
     }
-    
+
     func configureGestures() {
-        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+        self.innerView.addTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let message = self.message else { return }
             self.delegate?.doReply(to: message, cell: self)
         }
-        self.contentView.addLongTapGestureRecognizer { [weak self] (_) in
+        self.innerView.addLongTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let message = self.message else { return }
             self.delegate?.showMenu(for: message, cell: self)
         }
     }
     
     func configureLayout() {
-        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
-        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
-        text.rightAnchor /==/ contentView.rightAnchor - CGFloat(8)
+        text.topAnchor /==/ innerView.topAnchor + CGFloat(6)
+        text.bottomAnchor /==/ innerView.bottomAnchor + CGFloat(6)
+        text.horizontalAnchors /==/ innerView.horizontalAnchors + CGFloat(4)
+        text.verticalCompressionResistancePriority = .required
+        innerView.edgeAnchors /==/ self.edgeAnchors + 2
     }
     
     func setMessage(message: MessageObject, width: CGFloat) {
@@ -71,44 +79,102 @@ class MessageCellView: UICollectionViewCell {
         }
 
         self.message = message
+        
+        text.estimatedWidth = self.contentView.frame.size.width - 12
+        text.tColor = ColorUtil.accentColorForSub(sub: message.subreddit)
 
         let titleText = MessageCellView.getTitleText(message: message)
-        text.estimatedWidth = self.contentView.frame.size.width - 16 - (message.subject.hasPrefix("re:") ? 30 : 0)
-        text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
-
-        self.text.removeConstraints(lsC)
-        if message.subject.hasPrefix("re:") {
-            lsC = batch {
-                self.text.leftAnchor /==/ self.contentView.leftAnchor + 38
-            }
-        } else {
-            lsC = batch {
-                self.text.leftAnchor /==/ self.contentView.leftAnchor + 8
-            }
-        }
+       
+        text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody, images: true)
     }
-
+    
     public static func getTitleText(message: MessageObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString(string: message.wasComment ? message.submissionTitle?.unescapeHTML ?? "" : message.subject.unescapeHTML, attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: !ActionStates.isRead(s: message) ? GMColor.red500Color() : ColorUtil.theme.fontColor])
-        
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))  •  from \(message.author)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)])
-        
-        var color = ColorUtil.getColorForSub(sub: message.subreddit)
-        if color == ColorUtil.baseColor {
-            color = ColorUtil.theme.fontColor
-        }
+        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
+        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor] as [NSAttributedString.Key: Any]
 
-        let subString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false), NSAttributedString.Key.foregroundColor: color])
-        
-        let infoString = NSMutableAttributedString()
-        infoString.append(endString)
-        if !message.subreddit.isEmpty {
-            infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)]))
-            infoString.append(subString)
+        var infoString: NSMutableAttributedString
+        if message.wasComment {
+            let color = ColorUtil.getColorForSub(sub: message.subreddit)
+            var iconString = NSMutableAttributedString()
+            if (Subscriptions.icon(for: message.subreddit) != nil) && SettingValues.subredditIcons {
+                if let urlAsURL = URL(string: Subscriptions.icon(for: message.subreddit.lowercased())!.unescapeHTML) {
+                    let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                    iconString.append(NSAttributedString(attachment: attachment))
+                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
+                }
+                let tapString = NSMutableAttributedString(string: "  r/\(message.subreddit)", attributes: attrs)
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(message.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+
+                iconString.append(tapString)
+            } else {
+                if color != ColorUtil.baseColor {
+                    let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
+                    iconString = preString
+                    let tapString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: attrs)
+                    tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(message.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                    iconString.append(tapString)
+                } else {
+                    let tapString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: attrs)
+                    tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(message.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                    iconString = tapString
+                }
+            }
+            
+            var authorAttributes: [NSAttributedString.Key: Any] = attrs
+            let userColor = ColorUtil.getColorForUser(name: message.author)
+            
+            if AccountController.currentName == message.author {
+                authorAttributes[.badgeColor] = UIColor.init(hexString: "#FFB74D")
+                authorAttributes[.foregroundColor] = UIColor.white
+            } else if userColor != ColorUtil.baseColor {
+                authorAttributes[.badgeColor] = userColor
+                authorAttributes[.foregroundColor] = UIColor.white
+            }
+
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: message.author, small: false))\u{00A0}", attributes: authorAttributes)
+
+            let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))  •  from ", attributes: attrs)
+            authorString.append(endString)
+            
+            if message.isNew {
+                attrs[.foregroundColor] = GMColor.red500Color()
+            }
+            attrs[.font] = FontGenerator.boldFontOfSize(size: 16, submission: true)
+            endString.append(NSAttributedString(string: "\n\(message.submissionTitle?.unescapeHTML ?? message.subject.unescapeHTML)", attributes: attrs))
+            
+            infoString = NSMutableAttributedString()
+            infoString.append(iconString)
+            infoString.append(endString)
+        } else {
+            var authorAttributes: [NSAttributedString.Key: Any] = attrs
+            let userColor = ColorUtil.getColorForUser(name: message.author)
+            
+            if AccountController.currentName == message.author {
+                authorAttributes[.badgeColor] = UIColor.init(hexString: "#FFB74D")
+                authorAttributes[.foregroundColor] = UIColor.white
+            } else if userColor != ColorUtil.baseColor {
+                authorAttributes[.badgeColor] = userColor
+                authorAttributes[.foregroundColor] = UIColor.white
+            }
+
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: message.author, small: false))\u{00A0}", attributes: authorAttributes)
+
+            let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))  •  from ", attributes: attrs)
+            endString.append(authorString)
+            
+            if message.isNew {
+                attrs[.foregroundColor] = GMColor.red500Color()
+            }
+            attrs[.font] = FontGenerator.fontOfSize(size: 16, submission: true)
+            endString.append(NSAttributedString(string: "\n\(message.subject.unescapeHTML)", attributes: attrs))
+            
+            infoString = NSMutableAttributedString()
+            infoString.append(endString)
+
         }
         
-        titleText.append(NSAttributedString(string: "\n"))
-        titleText.append(infoString)
-        return titleText
+        return infoString
     }
 }

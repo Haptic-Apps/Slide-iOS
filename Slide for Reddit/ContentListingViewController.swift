@@ -356,7 +356,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 let comment = thing as! CommentObject
                 if estimatedHeights[comment.id] == nil {
                     let titleText = CommentCellView.getTitle(comment)
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 12, titleString: titleText, htmlString: comment.htmlBody)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: comment.htmlBody)
                     
                     estimatedHeights[comment.id] = height + 16
                 }
@@ -367,10 +367,11 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 let message = thing as! MessageObject
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message)
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16 - (message.subject.unescapeHTML.hasPrefix("re:") ? 30 : 0), titleString: titleText, htmlString: message.htmlBody)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: message.htmlBody)
                     
                     estimatedHeights[message.id] = height + 16
                 }
+
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             } else {
                 let logItem = thing as! ModLogObject
