@@ -451,7 +451,7 @@ public class TextDisplayStackView: UIStackView {
                 label.attributedText = text
                 label.sizeToFit()
                 
-                let textHeight = label.attributedText!.height(containerWidth: estimatedWidth - 14)
+                let textHeight = text.height(containerWidth: estimatedWidth - 14)
                 estimatedHeight += textHeight
 
                 baseView.addSubview(label)
@@ -656,7 +656,12 @@ public class TextDisplayStackView: UIStackView {
                     
                     preSeperated.append(startTag + code + endTag)
                     if split.count > 1 {
-                        preSeperated.append(split[1])
+                        for i in 1..<split.count {
+                            let text = split[i]
+                            if !text.trimmed().isEmpty {
+                                preSeperated.append(text)
+                            }
+                        }
                     }
                 }
             }
