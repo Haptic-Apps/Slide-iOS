@@ -37,7 +37,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     weak var previewedVC: UIViewController?
     var previewedURL: URL?
     var lastLength = 0
-    
+    var loader: UIActivityIndicatorView?
     weak var profilePresentationManager: ProfileInfoPresentationManager?
 
     @objc func textViewDidChange(_ textView: UITextView) {
@@ -1523,6 +1523,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func setMore(more: MoreObject, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
+        if loader != nil {
+            loader?.stopAnimating()
+            loader?.removeFromSuperview()
+            loader = nil
+        }
+
         if title == nil {
             configureInit()
         }
@@ -1607,6 +1613,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var dtap: UIShortTapGestureRecognizer?
 
     func setComment(comment: CommentObject, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath, width: CGFloat) {
+        if loader != nil {
+            loader?.stopAnimating()
+            loader?.removeFromSuperview()
+            loader = nil
+        }
         if title == nil {
             configureInit()
         }
@@ -1906,6 +1917,23 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         return nil
         */
+    }
+    
+    func animateMore() {
+        loading = true
+        if loader == nil {
+            loader = UIActivityIndicatorView().then {
+                $0.color = UIColor.fontColor
+                $0.hidesWhenStopped = true
+            }
+            
+            self.contentView.addSubview(loader!)
+            loader!.centerYAnchor == self.contentView.centerYAnchor
+            loader!.rightAnchor == self.contentView.rightAnchor - 12
+        }
+        loader?.isHidden = false
+        loader?.startAnimating()
+        title.attributedText = TextDisplayStackView.createAttributedChunk(baseHTML: "Loading...", fontSize: 16, submission: false, accentColor: .white, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
