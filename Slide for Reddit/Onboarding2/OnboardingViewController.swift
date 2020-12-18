@@ -30,10 +30,10 @@ class OnboardingViewController: UIViewController {
         $0.text = "Done"
         $0.accessibilityLabel = "Exit"
         $0.textAlignment = .center
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
-        $0.layer.backgroundColor = ColorUtil.theme.backgroundColor.cgColor
+        $0.layer.backgroundColor = UIColor.backgroundColor.cgColor
     }
     
     override func accessibilityPerformEscape() -> Bool {
@@ -59,8 +59,8 @@ class OnboardingViewController: UIViewController {
         }
         
         let pageControl = UIPageControl.appearance()
-        pageControl.pageIndicatorTintColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3)
-        pageControl.currentPageIndicatorTintColor = ColorUtil.theme.fontColor
+        pageControl.pageIndicatorTintColor = UIColor.fontColor.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = UIColor.fontColor
     }
 
     private func setupConstraints() {

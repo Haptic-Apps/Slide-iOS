@@ -20,7 +20,7 @@ class SettingsThemeChooser: UITableViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -35,7 +35,7 @@ class SettingsThemeChooser: UITableViewController {
     func doLayout() {
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -59,7 +59,7 @@ class SettingsThemeChooser: UITableViewController {
             return !theme.isLight || !nightOnly
         })
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         self.title = "Choose a \(nightOnly ? "Night" : "") Theme"
         self.tableView.separatorStyle = .none
         self.tableView.tableFooterView = UIView()
@@ -163,7 +163,7 @@ class ThemeCellView: UITableViewCell {
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hexString: split[5]))
         body.backgroundColor = UIColor(hexString: split[2])
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
         self.tintColor = UIColor(hexString: split[5])
     }
     
@@ -174,7 +174,7 @@ class ThemeCellView: UITableViewCell {
         title.text = (split[1].removingPercentEncoding ?? split[1]).replacingOccurrences(of: "<H>", with: "#")
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor(hexString: split[5]))
         body.backgroundColor = UIColor(hexString: split[2])
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
         self.tintColor = UIColor(hexString: split[5])
     }
     
@@ -183,7 +183,7 @@ class ThemeCellView: UITableViewCell {
         title.text = theme.displayName
         icon.image = UIImage(named: "colors")!.getCopy(withSize: CGSize.square(size: 20), withColor: theme.navIconColor)
         body.backgroundColor = theme.foregroundColor
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
         self.tintColor = theme.navIconColor
     }
 }

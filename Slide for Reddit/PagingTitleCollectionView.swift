@@ -100,7 +100,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     public func addGradientMask() {
         let coverView = GradientMaskView(frame: self.collectionView.bounds)
          let coverLayer = coverView.layer as! CAGradientLayer
-         coverLayer.colors = [ColorUtil.theme.foregroundColor.withAlphaComponent(0).cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.cgColor, ColorUtil.theme.foregroundColor.withAlphaComponent(0).cgColor]
+         coverLayer.colors = [UIColor.foregroundColor.withAlphaComponent(0).cgColor, UIColor.foregroundColor.cgColor, UIColor.foregroundColor.cgColor, UIColor.foregroundColor.withAlphaComponent(0).cgColor]
         coverLayer.locations = [0.0, 0.15, 0.85, 1.0]
          coverLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
          coverLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
@@ -237,7 +237,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
     }
     
     func setSubreddit(subreddit: String) {
-        title.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        title.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
         self.contentView.backgroundColor = .clear
         self.subreddit = subreddit
         self.sideView.isHidden = false
@@ -320,7 +320,7 @@ class TabTitleCollectionViewCell: UICollectionViewCell {
     }
     
     func setTitle(titleText: String) {
-        title.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        title.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
         self.contentView.backgroundColor = .clear
         self.titleText = titleText
                 

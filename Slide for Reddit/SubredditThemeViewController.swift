@@ -19,7 +19,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var regularButtons = [UIBarButtonItem]()
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -37,7 +37,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         subs = Subscriptions.subreddits
@@ -138,7 +138,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.theme.fontColor
+        spinnerIndicator.color = UIColor.fontColor
         spinnerIndicator.startAnimating()
 
         alertController?.view.addSubview(spinnerIndicator)
@@ -245,7 +245,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
         cell?.sideView.isHidden = UserDefaults.standard.colorForKey(key: "color+" + thing) == nil
         return cell!
     }
@@ -391,7 +391,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
     }
 
     func doDelete(_ sub: String) {

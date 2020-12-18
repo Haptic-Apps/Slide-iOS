@@ -9,7 +9,6 @@
 import UIKit
 
 public class LinkCellImageCache {
-
     static var upvote = UIImage()
     static var downvote = UIImage()
     static var save = UIImage()
@@ -82,8 +81,8 @@ public class LinkCellImageCache {
         readLater = UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
         readLaterTinted = readLater.getCopy(withColor: GMColor.green500Color())
         
-        var topColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.9))
-        var nextColor = ColorUtil.theme.fontColor.add(overlay: ColorUtil.theme.foregroundColor.withAlphaComponent(0.8))
+        var topColor = UIColor.fontColorOverlaid(withForeground: true, 0.9)
+        var nextColor = UIColor.fontColorOverlaid(withForeground: true, 0.9)
 
         web = UIImage.convertGradientToImage(colors: [topColor, nextColor], frame: CGSize.square(size: 150))
         web = web.overlayWith(image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.getCopy(withSize: CGSize.square(size: 75), withColor: .white), posX: (75 / 2), posY: (75 / 2))
@@ -107,14 +106,4 @@ public class LinkCellImageCache {
         nsfw = nsfw.overlayWith(image: nsfwimg, posX: ((150 - (nsfwimg.size.width)) / 2), posY: ((150 - (nsfwimg.size.height)) / 2))
         nsfwUp = nsfwUp.overlayWith(image: nsfwimg2, posX: ((150 - (nsfwimg2.size.width)) / 2), posY: ((125 - (nsfwimg2.size.height)) / 2))
     }
-
-}
-
-func optimizedImage(from image: UIImage) -> UIImage {
-    let imageSize: CGSize = image.size
-    UIGraphicsBeginImageContextWithOptions(imageSize, true, UIScreen.main.scale)
-    image.draw(in: CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
-    let optimizedImage = UIGraphicsGetImageFromCurrentImageContext()
-    UIGraphicsEndImageContext()
-    return optimizedImage ?? UIImage()
 }

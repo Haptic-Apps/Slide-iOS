@@ -74,7 +74,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         
         setNavColors()
         
-        scrollView.backgroundColor = ColorUtil.theme.backgroundColor
+        scrollView.backgroundColor = UIColor.backgroundColor
         scrollView.isUserInteractionEnabled = true
         
         self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)

@@ -76,7 +76,7 @@ public class TextDisplayStackView: UIStackView {
         self.firstTextView.linkTextAttributes = [NSAttributedString.Key.foregroundColor: tColor]
     }
     
-    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = ColorUtil.theme.fontColor, delegate: TextDisplayStackViewDelegate?) {
+    init(fontSize: CGFloat, submission: Bool, color: UIColor, width: CGFloat, baseFontColor: UIColor = UIColor.fontColor, delegate: TextDisplayStackViewDelegate?) {
         self.fontSize = fontSize
         self.submission = submission
         self.estimatedWidth = width
@@ -279,10 +279,10 @@ public class TextDisplayStackView: UIStackView {
                     $0.layer.cornerRadius = 12.5
                     $0.clipsToBounds = true
                     $0.setTitle("    \(counter): \(urlText)", for: .normal)
-                    $0.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
+                    $0.setTitleColor(UIColor.fontColor, for: .normal)
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
-                    $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: ColorUtil.theme.fontColor), for: .normal)
+                    $0.setImage(UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 12), withColor: UIColor.fontColor), for: .normal)
                    // TODO: - icon
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 10)
                     $0.backgroundColor = UIColor.clear
@@ -296,7 +296,7 @@ public class TextDisplayStackView: UIStackView {
                 }
                 
                 view.layer.borderWidth = 1
-                view.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7).cgColor
+                view.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.7).cgColor
 
                 let widthS = view.currentTitle!.size(with: view.titleLabel!.font).width + CGFloat(35)
                 
@@ -390,7 +390,7 @@ public class TextDisplayStackView: UIStackView {
                 overflow.addArrangedSubview(table)
                 table.horizontalAnchors /==/ overflow.horizontalAnchors
                 table.heightAnchor /==/ table.globalHeight ~ .low
-                table.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
+                table.backgroundColor = UIColor.backgroundColor.withAlphaComponent(0.5)
                 table.clipsToBounds = true
                 table.layer.cornerRadius = 10
                 table.isUserInteractionEnabled = true
@@ -400,7 +400,7 @@ public class TextDisplayStackView: UIStackView {
                 tableCount += 1
             } else if block.startsWith("<hr/>") {
                 let line = UIView()
-                line.backgroundColor = ColorUtil.theme.fontColor
+                line.backgroundColor = UIColor.fontColor
                 line.verticalCompressionResistancePriority = .required
                 overflow.addArrangedSubview(line)
                 estimatedHeight += 1
@@ -414,7 +414,7 @@ public class TextDisplayStackView: UIStackView {
                 //if !ignoreHeight {
                     body.heightAnchor /==/ body.globalHeight
                 //}
-                body.backgroundColor = ColorUtil.theme.backgroundColor.withAlphaComponent(0.5)
+                body.backgroundColor = UIColor.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 body.verticalCompressionResistancePriority = .required
                 estimatedHeight += body.globalHeight
@@ -715,7 +715,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<hr/>") {
                 totalHeight += 1
             } else if block.startsWith("<pre><code>") {
-                let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                let body = CodeDisplayView.init(baseHtml: block, color: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
                 totalHeight += body.globalHeight
             } else if block.startsWith("<cite>") {
                 let body = block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed()

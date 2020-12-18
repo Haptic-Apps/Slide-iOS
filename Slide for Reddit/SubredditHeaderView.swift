@@ -82,36 +82,36 @@ class SubredditHeaderView: UIView {
 
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
-        self.submit.backgroundColor = ColorUtil.theme.foregroundColor
-        self.submit.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.submit.backgroundColor = UIColor.foregroundColor
+        self.submit.textLabel?.textColor = UIColor.fontColor
         self.submit.imageView?.image = UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon()
-        self.submit.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.submit.imageView?.tintColor = UIColor.fontColor
         self.submit.layer.cornerRadius = 5
         self.submit.clipsToBounds = true
 
         self.sorting.textLabel?.text = "Default subreddit sorting"
         self.sorting.accessoryType = .none
-        self.sorting.backgroundColor = ColorUtil.theme.foregroundColor
-        self.sorting.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.sorting.backgroundColor = UIColor.foregroundColor
+        self.sorting.textLabel?.textColor = UIColor.fontColor
         self.sorting.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.menuIcon()
-        self.sorting.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.sorting.imageView?.tintColor = UIColor.fontColor
         self.sorting.layer.cornerRadius = 5
         self.sorting.clipsToBounds = true
 
         self.mods.textLabel?.text = "Subreddit moderators"
         self.mods.accessoryType = .none
-        self.mods.backgroundColor = ColorUtil.theme.foregroundColor
-        self.mods.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.mods.backgroundColor = UIColor.foregroundColor
+        self.mods.textLabel?.textColor = UIColor.fontColor
         self.mods.imageView?.image = UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon()
-        self.mods.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.mods.imageView?.tintColor = UIColor.fontColor
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
         self.flair.accessoryType = .none
-        self.flair.backgroundColor = ColorUtil.theme.foregroundColor
-        self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.flair.backgroundColor = UIColor.foregroundColor
+        self.flair.textLabel?.textColor = UIColor.fontColor
         self.flair.imageView?.image = UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")?.menuIcon()
-        self.flair.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.flair.imageView?.tintColor = UIColor.fontColor
         self.flair.layer.cornerRadius = 5
         self.flair.clipsToBounds = true
 
@@ -297,8 +297,8 @@ class SubredditHeaderView: UIView {
         here.font = subscribers.font
         here.textAlignment = .center
         subscribers.textAlignment = .center
-        here.textColor = ColorUtil.theme.fontColor
-        subscribers.textColor = ColorUtil.theme.fontColor
+        here.textColor = UIColor.fontColor
+        subscribers.textColor = UIColor.fontColor
 
         let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 20, submission: true)]
         var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: attrs)

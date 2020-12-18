@@ -24,7 +24,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -61,14 +61,14 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
     var lunch = UILabel()
 
     func doCells(_ reset: Bool = true) {
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Tip jar"
         let aboutArea = UIView()
         let about = UILabel(frame: CGRect.init(x: 0, y: 0, width: self.view.frame.size.width, height: 30))
         about.font = UIFont.systemFont(ofSize: 15)
-        aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
-        about.textColor = ColorUtil.theme.fontColor
+        aboutArea.backgroundColor = UIColor.foregroundColor
+        about.textColor = UIColor.fontColor
         about.text = "Thank you for being a Slide supporter! If you want to continue to support my work, feel free to leave me a tip 🍻\n\nPlease note, this does not enable Pro for your account and is purely a donation. If you have purchased pro and want to restore your purchase, or would like to go pro, exit this dialog and use the \"Support Slide, Go Pro!\" settings option!"
         about.numberOfLines = 0
         about.textAlignment = .center
@@ -114,7 +114,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.theme.fontColor
+            spinnerIndicator.color = UIColor.fontColor
             spinnerIndicator.startAnimating()
             
             self.alertController?.view.addSubview(spinnerIndicator)
@@ -127,7 +127,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.theme.fontColor
+            spinnerIndicator.color = UIColor.fontColor
             spinnerIndicator.startAnimating()
             
             self.alertController?.view.addSubview(spinnerIndicator)
@@ -140,7 +140,7 @@ class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
             
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.theme.fontColor
+            spinnerIndicator.color = UIColor.fontColor
             spinnerIndicator.startAnimating()
             
             self.alertController?.view.addSubview(spinnerIndicator)

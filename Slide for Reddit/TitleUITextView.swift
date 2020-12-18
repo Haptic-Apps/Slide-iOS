@@ -122,8 +122,8 @@ class TitleUITextView: UITextView {
         if background {
             self.layer.isOpaque = true
             self.isOpaque = true
-            self.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
-            self.backgroundColor = ColorUtil.theme.foregroundColor
+            self.layer.backgroundColor = UIColor.foregroundColor.cgColor
+            self.backgroundColor = UIColor.foregroundColor
         } else {
             self.backgroundColor = .clear
         }

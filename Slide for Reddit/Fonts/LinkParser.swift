@@ -42,7 +42,7 @@ class LinkParser {
                     if let isColor = attr.value as? UIColor {
                         if isColor.hexString() == "#0000FF" {
                             //Is a code block (for some reason)
-                            string.setAttributes([NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.backgroundColor: ColorUtil.theme.backgroundColor.withAlphaComponent(0.5), NSAttributedString.Key.font: UIFont(name: "Courier", size: font.pointSize) ?? font], range: range)
+                            string.setAttributes([NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.backgroundColor: UIColor.backgroundColor.withAlphaComponent(0.5), NSAttributedString.Key.font: UIFont(name: "Courier", size: font.pointSize) ?? font], range: range)
                         } else if isColor.hexString() == "#008000" {
                             //Is strikethrough (for some reason)
                             string.setAttributes([NSAttributedString.Key.foregroundColor: fontColor, NSAttributedString.Key.strikethroughStyle: 2, NSAttributedString.Key.strikethroughColor: fontColor, NSAttributedString.Key.font: font], range: range)

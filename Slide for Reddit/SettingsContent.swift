@@ -36,8 +36,8 @@ class SettingsContent: BubbleSettingTableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -51,7 +51,7 @@ class SettingsContent: BubbleSettingTableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Reddit Content"
         self.headers = ["NSFW content"]
