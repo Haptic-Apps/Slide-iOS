@@ -199,6 +199,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else {
             self.addSubview(innerView)
         }
+        
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true

@@ -27,6 +27,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var hasText = false
     var full = false
     var hasConfigured = false
+    var innerView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,7 +38,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
 
     func configureGestures() {
-        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+        self.innerView.addTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let comment = self.comment else { return }
             self.delegate?.openComment(comment)
         }
@@ -45,16 +46,23 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     }
     
     func configureViews() {
-        self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
-        self.contentView.addSubview(text)
+        self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
         
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.innerView = UIView().then {
+            $0.backgroundColor = ColorUtil.theme.foregroundColor
+        }
+        
+        self.innerView.addSubview(text)
+        self.addSubview(innerView)
+        self.backgroundColor = ColorUtil.theme.backgroundColor
     }
     
     func configureLayout() {
-        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
-        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
-        text.horizontalAnchors /==/ contentView.horizontalAnchors + CGFloat(8)
+        text.topAnchor /==/ innerView.topAnchor + CGFloat(6)
+        text.bottomAnchor /==/ innerView.bottomAnchor + CGFloat(6)
+        text.horizontalAnchors /==/ innerView.horizontalAnchors + CGFloat(4)
+        text.verticalCompressionResistancePriority = .required
+        innerView.edgeAnchors /==/ self.edgeAnchors + 2
     }
 
     func setComment(comment: CommentObject, width: CGFloat) {
@@ -65,18 +73,18 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.configureGestures()
         }
         
+        self.contentView.isHidden = true
+        
         text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
-        text.estimatedWidth = self.contentView.frame.size.width - 16
+        text.estimatedWidth = self.contentView.frame.size.width - 12
 
         let titleText = CommentCellView.getTitle(comment)
         self.comment = comment
        
-        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody)
+        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody, images: true)
     }
     
     public static func getTitle(_ comment: CommentObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
         case .down:
@@ -87,29 +95,49 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
             uC = ColorUtil.theme.fontColor
         }
         
-        let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: uC] as [NSAttributedString.Key: Any]
-        
-        let attrs2 = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor] as [NSAttributedString.Key: Any]
-        
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: attrs2)
+        let color = ColorUtil.getColorForSub(sub: comment.subreddit)
+        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
+        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor] as [NSAttributedString.Key: Any]
+
+        var iconString = NSMutableAttributedString()
+        if (Subscriptions.icon(for: comment.subreddit) != nil) && SettingValues.subredditIcons {
+            if let urlAsURL = URL(string: Subscriptions.icon(for: comment.subreddit.lowercased())!.unescapeHTML) {
+                let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                iconString.append(NSAttributedString(attachment: attachment))
+                attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
+            }
+            let tapString = NSMutableAttributedString(string: "  r/\(comment.subreddit)", attributes: attrs)
+            tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(comment.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+
+            iconString.append(tapString)
+        } else {
+            if color != ColorUtil.baseColor {
+                let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
+                iconString = preString
+                let tapString = NSMutableAttributedString(string: "r/\(comment.subreddit)", attributes: attrs)
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(comment.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                iconString.append(tapString)
+            } else {
+                let tapString = NSMutableAttributedString(string: "r/\(comment.subreddit)", attributes: attrs)
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(comment.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                iconString = tapString
+            }
+        }
+
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: attrs)
         
         let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
-        let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
-        let color = ColorUtil.getColorForSub(sub: comment.subreddit)
-        if color != ColorUtil.baseColor {
-            subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
-        } else {
-            subString.addAttribute(NSAttributedString.Key.foregroundColor, value: ColorUtil.theme.fontColor, range: NSRange.init(location: 0, length: subString.length))
-        }
+        boldString.addAttributes([.foregroundColor: uC], range: NSRange(location: 0, length: boldString.length))
+        endString.append(boldString)
+        
+        endString.append(NSAttributedString(string: "  •  \(comment.submissionTitle)", attributes: attrs))
         
         let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
+        infoString.append(iconString)
         infoString.append(endString)
-        infoString.append(subString)
         
-        titleText.append(NSAttributedString.init(string: "\n", attributes: nil))
-        titleText.append(infoString)
-
-        return titleText
+        return infoString
     }
 }

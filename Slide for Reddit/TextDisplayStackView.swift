@@ -133,20 +133,15 @@ public class TextDisplayStackView: UIStackView {
         firstTextView.sizeToFit()
 
         if !ignoreHeight {
-//            let framesetterB = CTFramesetterCreateWithAttributedString(string)
-//            let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-//            estimatedHeight += textSizeB.height
-
             let textHeight = firstTextView.attributedText!.height(containerWidth: estimatedWidth)
             estimatedHeight += textHeight
             firstTextView.horizontalAnchors /==/ horizontalAnchors
             firstTextView.removeConstraints(addedConstraints)
             addedConstraints = batch {
-                firstTextView.heightAnchor /==/ textHeight
+                firstTextView.heightAnchor /==/ textHeight ~ .low
                 firstTextView.verticalCompressionResistancePriority = .required
             }
         }
-
     }
     
     var addedConstraints = [NSLayoutConstraint]()
@@ -169,7 +164,7 @@ public class TextDisplayStackView: UIStackView {
         links.isHidden = true
     }
     
-    public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String) {
+    public func setTextWithTitleHTML(_ title: NSAttributedString, _ body: NSAttributedString? = nil, htmlString: String, images: Bool = false) {
         estimatedHeight = 0
         clearOverflow()
         
@@ -246,23 +241,19 @@ public class TextDisplayStackView: UIStackView {
                 newTitle.append(createAttributedChunk(baseHTML: htmlString, accent: tColor, linksCallback: linkCallback, indexCallback: indexCallback))
             }
             
-//            let activeLinkAttributes = NSMutableDictionary(dictionary: firstTextView.activeLinkAttributes)
-//            activeLinkAttributes[kCTForegroundColorAttributeName] = tColor
-//            firstTextView.activeLinkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-//            firstTextView.linkAttributes = activeLinkAttributes as NSDictionary as? [AnyHashable: Any]
-
             firstTextView.attributedText = newTitle
-
+            if images {
+                firstTextView.layoutTitleImageViews()
+            }
+            
             if !ignoreHeight {
-//                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
-//                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
-//                estimatedHeight += textSizeB.height
+                firstTextView.sizeToFit()
 
                 let textHeight = newTitle.height(containerWidth: estimatedWidth)
                 estimatedHeight += textHeight
                 firstTextView.removeConstraints(addedConstraints)
                 addedConstraints = batch {
-                    firstTextView.heightAnchor /==/ textHeight
+                    firstTextView.heightAnchor /==/ textHeight ~ .low
                 }
                 firstTextView.horizontalAnchors /==/ horizontalAnchors
             }
@@ -694,49 +685,24 @@ public class TextDisplayStackView: UIStackView {
     }
     
     public static func estimateHeight(fontSize: CGFloat, submission: Bool, width: CGFloat, titleString: NSAttributedString, htmlString: String) -> CGFloat {
-        var totalHeight = CGFloat(0)
-        _ = CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)
-        var blocks: [String]
+        var totalHeight = titleString.height(containerWidth: width)
+        let blocks: [String] = TextDisplayStackView.getBlocks(htmlString)
         var hasLinks = false
-        if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
-            blocks = TextDisplayStackView.getBlocks(htmlString)
-            
-            var startIndex = 0
-            
-            let newTitle = NSMutableAttributedString(attributedString: titleString)
-            if !blocks[0].startsWith("<table>") && !blocks[0].startsWith("<cite>") && !blocks[0].startsWith("<pre><code>") {
-                if !blocks[0].trimmed().isEmpty() && blocks[0].trimmed() != "<div class=\"md\">" {
-                    newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
-                    newTitle.append(createAttributedChunk(baseHTML: blocks[0], fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
-                }
-                startIndex = 1
-            }
-            
-            let textHeight = newTitle.height(containerWidth: width)
-            totalHeight += textHeight
-            
-            if blocks.count > 1 {
-                if startIndex == 0 {
-                } else {
-                    blocks.remove(at: 0)
-                }
-            }
-        } else {
-            blocks = [String]()
-            let newTitle = NSMutableAttributedString(attributedString: titleString)
-            if !htmlString.isEmpty() {
-                newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
-                newTitle.append(createAttributedChunk(baseHTML: htmlString, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil))
-                if htmlString.contains("<a") {
-                    hasLinks = true
-                }
-            }
-            
-            let textHeight = newTitle.height(containerWidth: width)
-            totalHeight += textHeight
-        }
-        
+        var newlineHeight = CGFloat.zero
+        let newline = NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)])
+        newlineHeight = newline.height(containerWidth: width)
+
+        totalHeight += newlineHeight
+
         for block in blocks {
+            let parsedBlock = block.replacingOccurrences(of: "<div class=\"md\">", with: "")
+                .replacingOccurrences(of: "<p>", with: "<span>")
+                .replacingOccurrences(of: "</p>", with: "</span><br/>")
+                .replacingOccurrences(of: "\n</div>", with: "")
+            if parsedBlock.isEmpty {
+                continue
+            }
+
             totalHeight += 8
             if block.contains("<a") {
                 hasLinks = true
@@ -749,6 +715,15 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<pre><code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
                 totalHeight += body.globalHeight
+            } else if block.startsWith("<cite>") {
+                let body = block.replacingOccurrences(of: "<cite>", with: "").replacingOccurrences(of: "</cite>", with: "").trimmed()
+                
+                if body.isEmpty {
+                    continue
+                }
+                
+                let text = createAttributedChunk(baseHTML: body, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil)
+                totalHeight += text.height(containerWidth: width - 14)
             } else {
                 let text = createAttributedChunk(baseHTML: block, fontSize: fontSize, submission: submission, accentColor: .white, fontColor: .white, linksCallback: nil, indexCallback: nil)
                 let textHeight = text.height(containerWidth: width)
