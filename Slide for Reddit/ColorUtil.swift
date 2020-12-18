@@ -201,8 +201,7 @@ public class ColorUtil {
         if #available(iOS 13.0, *) {
             return UITraitCollection.current.userInterfaceStyle != .dark ? ColorUtil.theme : ColorUtil.nightTheme
         } else {
-            //TODO ios 11/12 night theme
-            return ColorUtil.themes[0]
+            return ColorUtil.swappedTheme
         }
     }
     
@@ -213,7 +212,6 @@ public class ColorUtil {
     public static func getDayTheme() -> Theme {
         return ColorUtil.theme
     }
-
     
     public static func setCommentDepthColors(_ colors: [UIColor]) {
         for i in 0...4 {

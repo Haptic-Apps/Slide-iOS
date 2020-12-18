@@ -1928,8 +1928,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             
             self.contentView.addSubview(loader!)
-            loader!.centerYAnchor == self.contentView.centerYAnchor
-            loader!.rightAnchor == self.contentView.rightAnchor - 12
+            loader!.centerYAnchor /==/ self.contentView.centerYAnchor
+            loader!.rightAnchor /==/ self.contentView.rightAnchor - 12
         }
         loader?.isHidden = false
         loader?.startAnimating()
