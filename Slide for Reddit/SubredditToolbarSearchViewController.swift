@@ -21,7 +21,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     var backgroundView = UIView()
     var topView: UIView?
     var bottomOffset: CGFloat = 64
-    var muxColor = ColorUtil.theme.foregroundColor
+    var muxColor = UIColor.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
     var isSearchComplete = false
@@ -75,7 +75,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
         $0.returnKeyType = .search
-        if !ColorUtil.theme.isLight {
+        if !UIColor.isLightTheme {
             $0.keyboardAppearance = .dark
         }
         $0.searchBarStyle = UISearchBar.Style.minimal
@@ -304,7 +304,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
         
@@ -341,7 +341,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             strongSelf.backgroundView.alpha = 0
             strongSelf.topView?.alpha = 1
             strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.view.frame.width, height: strongSelf.view.frame.height)
-            strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            strongSelf.topView?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
         
@@ -378,7 +378,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                 strongSelf.backgroundView.alpha = 0
                 strongSelf.topView?.alpha = 1
                 strongSelf.view.frame = CGRect(x: 0, y: y, width: strongSelf.parentController?.view.frame.width ?? strongSelf.view.frame.size.width, height: desiredHeight)
-                strongSelf.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+                strongSelf.topView?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
                 strongSelf.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
             }
             
@@ -403,7 +403,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             self.backgroundView.isHidden = true
             self.topView?.alpha = 1
             self.view.frame = CGRect(x: 0, y: y, width: parentController?.view.frame.width ?? self.view.frame.size.width, height: desiredHeight)
-            self.topView?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+            self.topView?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
             self.topView?.layer.cornerRadius = SettingValues.flatMode ? 0 : 15
         }
     }
@@ -494,8 +494,8 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         super.viewWillAppear(animated)
 
         // Update any things that can change due to user settings here
-        tableView.backgroundColor = ColorUtil.theme.foregroundColor
-        tableView.separatorColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.foregroundColor
+        tableView.separatorColor = UIColor.backgroundColor
     }
     
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -522,7 +522,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         //horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
         //horizontalSubGroup.delegate = self
         //view.addSubview(horizontalSubGroup)
-        subInfoLabel = TextDisplayStackView(fontSize: 14, submission: false, color: .blue, width: (parentController?.view ?? self.view).frame.size.width - 16, baseFontColor: ColorUtil.theme.fontColor, delegate: self)
+        subInfoLabel = TextDisplayStackView(fontSize: 14, submission: false, color: .blue, width: (parentController?.view ?? self.view).frame.size.width - 16, baseFontColor: UIColor.fontColor, delegate: self)
         subInfoLabel.isUserInteractionEnabled = true
 
         view.addSubview(headerView)
@@ -663,13 +663,13 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
             //self.horizontalSubGroup.setColors()
-            //self.horizontalSubGroup.backgroundColor = ColorUtil.theme.foregroundColor
-            self.headerView.backgroundColor = ColorUtil.theme.foregroundColor
-            self.dragHandleView.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.2)
-            self.searchBar.tintColor = ColorUtil.theme.fontColor
-            self.searchBar.textColor = ColorUtil.theme.fontColor
+            //self.horizontalSubGroup.backgroundColor = UIColor.foregroundColor
+            self.headerView.backgroundColor = UIColor.foregroundColor
+            self.dragHandleView.backgroundColor = UIColor.fontColor.withAlphaComponent(0.2)
+            self.searchBar.tintColor = UIColor.fontColor
+            self.searchBar.textColor = UIColor.fontColor
             self.searchBar.backgroundColor = .clear
-            self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+            self.tableView.backgroundColor = UIColor.backgroundColor
             self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
     }
@@ -679,25 +679,25 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     func setSubreddit(subreddit: String) {
         self.subreddit = subreddit
         setColors(subreddit)
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         setupHeader(subreddit)
     }
     
     func setSubredditObject(subreddit: Subreddit) {
         self.subreddit = subreddit.displayName
         setColors(subreddit.displayName)
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         
         setupHeader(subreddit.displayName)
         setDescriptionLabel(subreddit)
     }
     
     func setupHeader(_ subreddit: String) {
-        let titleString = NSMutableAttributedString(string: "r/\(subreddit)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
+        let titleString = NSMutableAttributedString(string: "r/\(subreddit)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
         
         subTitleView.attributedText = titleString
         subTitleView.numberOfLines = 0
-        subTitleView.textColor = ColorUtil.theme.fontColor
+        subTitleView.textColor = UIColor.fontColor
         subIconView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         subIconView.layer.cornerRadius = 25
         subIconView.clipsToBounds = true
@@ -722,9 +722,9 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     func setDescriptionLabel(_ subreddit: Subreddit) {
-        let titleString = NSMutableAttributedString(string: "r/\(subreddit.displayName)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
+        let titleString = NSMutableAttributedString(string: "r/\(subreddit.displayName)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
         titleString.appendString("\n")
-        titleString.append(NSMutableAttributedString(string: "\(subreddit.accountsActive) HERE • \(subreddit.subscribers) SUBSCRIBERS", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]))
+        titleString.append(NSMutableAttributedString(string: "\(subreddit.accountsActive) HERE • \(subreddit.subscribers) SUBSCRIBERS", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]))
         
         subTitleView.attributedText = titleString
 
@@ -830,7 +830,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
         label.text = titles?[section] ?? ""
         
         let toReturn = label.withPadding(padding: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
+        toReturn.backgroundColor = UIColor.foregroundColor
         return toReturn
     }
 
@@ -844,7 +844,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
                 c.setSearch(string: thing, sub: nil, nav: self)
                 cell = c
                 cell.accessoryType = .disclosureIndicator
-                cell.tintColor = ColorUtil.theme.fontColor
+                cell.tintColor = UIColor.fontColor
             } else if indexPath.row == 1 {
                 // "Search r/subreddit for <text>" cell
                 let thing = searchBar.text!
@@ -853,7 +853,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
                 c.title.text = "More results..."
                 cell = c
                 cell.accessoryType = .disclosureIndicator
-                cell.tintColor = ColorUtil.theme.fontColor
+                cell.tintColor = UIColor.fontColor
             } else {
                 if isSearchComplete {
                     let c = tableView.dequeueReusableCell(withIdentifier: "search", for: indexPath) as! SubredditCellView
@@ -877,7 +877,7 @@ extension SubredditToolbarSearchViewController: UITableViewDelegate, UITableView
             cell = c
         }
 
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.backgroundColor = UIColor.foregroundColor
 
         return cell
     }
@@ -1131,7 +1131,7 @@ class HorizontalSubredditGroup: UIView {
     func setColors() {
         for button in buttons {
             button.setTitleColor(ColorUtil.baseAccent, for: .normal)
-            button.setTitleColor(ColorUtil.theme.fontColor, for: .highlighted)
+            button.setTitleColor(UIColor.fontColor, for: .highlighted)
         }
     }
 

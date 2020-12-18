@@ -82,7 +82,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -194,7 +194,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.dataSource = self
         
         refreshControl = UIRefreshControl()
-        refreshControl.tintColor = ColorUtil.theme.fontColor
+        refreshControl.tintColor = UIColor.fontColor
         
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
@@ -211,7 +211,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         self.tableView.register(ModlogCellView.classForCoder(), forCellWithReuseIdentifier: "modlog")
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         
         var top = 0
         
@@ -529,7 +529,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.refreshControl.endRefreshing()
         self.refreshControl.removeFromSuperview()
         self.refreshControl = UIRefreshControl()
-        self.refreshControl.tintColor = ColorUtil.theme.fontColor
+        self.refreshControl.tintColor = UIColor.fontColor
         
         self.refreshControl.attributedTitle = NSAttributedString(string: "")
         self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
@@ -916,11 +916,11 @@ class EmptyStateView: UIView {
         let finalText: NSMutableAttributedString!
         if let message = message {
             let firstPart = NSMutableAttributedString(string: title, attributes: [
-                NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.8),
+                NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.8),
                 NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20),
             ])
             let secondPart = NSMutableAttributedString.init(string: "\n\n" + message, attributes: [
-                NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.5),
+                NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.5),
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14),
             ])
             firstPart.append(secondPart)

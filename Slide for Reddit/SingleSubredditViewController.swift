@@ -266,7 +266,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewWillAppear(animated)
 
         navigationController?.setToolbarHidden(false, animated: false)
-        navigationController?.toolbar.tintColor = ColorUtil.theme.foregroundColor
+        navigationController?.toolbar.tintColor = UIColor.foregroundColor
 
         if !(navigationController is TapBehindModalViewController) && inHeadView == nil {
             inHeadView = UIView().then {
@@ -322,7 +322,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if !dataSource.loaded {
             showUI()
         }
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         var isBelow13 = true
@@ -343,12 +343,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         self.splitViewController?.navigationController?.navigationBar.shadowImage = UIImage()
 
         if single && !(parent is SplitMainViewController) {
-            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? UIColor.fontColor : UIColor.white
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: sub, true)
         }
         
-        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+        navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+        navigationController?.toolbar.tintColor = UIColor.fontColor
 
         inHeadView?.isHidden = UIDevice.current.orientation.isLandscape
         self.navigationController?.setNavigationBarHidden(false, animated: true)
@@ -479,9 +479,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             alongsideTransition: { [unowned self] _ in
                 self.navigationController?.navigationBar.shadowImage = UIImage()
                 self.navigationController?.navigationBar.isTranslucent = false
-                self.navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
-                self.navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-                self.navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+                self.navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? UIColor.fontColor : UIColor.white
+                self.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                self.navigationController?.toolbar.tintColor = UIColor.fontColor
 
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                 self.tableView.reloadData()
@@ -507,7 +507,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -944,13 +944,13 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     func reloadNeedingColor() {
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         inHeadView?.backgroundColor = ColorUtil.getColorForSub(sub: sub, true)
         if SettingValues.hideStatusBar {
             inHeadView?.backgroundColor = .clear
         }
 
-        refreshControl.tintColor = ColorUtil.theme.fontColor
+        refreshControl.tintColor = UIColor.fontColor
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
 
@@ -1014,7 +1014,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             
             let label = UILabel()
             label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
-            label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+            label.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
             label.adjustsFontSizeToFitWidth = true
             label.font = UIFont.boldSystemFont(ofSize: 20)
             
@@ -1323,8 +1323,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+        alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         alert.contentView.addSubview(filterView)
         settings.didMove(toParent: alert)
@@ -2505,16 +2505,16 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             if dataSource.nomore {
                 let cell = tableView.dequeueReusableCell(withReuseIdentifier: "nothing", for: indexPath) as! NothingHereCell
                 if dataSource.content.count < 10 {
-                    let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                    let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
                     title.append(NSAttributedString(string: "\n"))
-                    title.append(NSMutableAttributedString(string: "\(numberFiltered) posts were filtered out", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]))
+                    title.append(NSMutableAttributedString(string: "\(numberFiltered) posts were filtered out", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.fontColor]))
                     cell.text.attributedText = title
                 }
                 
                 return cell
             }
             let cell = tableView.dequeueReusableCell(withReuseIdentifier: "loading", for: indexPath) as! LoadingCell
-            cell.loader.color = ColorUtil.theme.fontColor
+            cell.loader.color = UIColor.fontColor
             cell.loader.startAnimating()
             if !dataSource.loading && !dataSource.nomore {
                 dataSource.getData(reload: false)
@@ -2531,16 +2531,16 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             
             let finalText: NSMutableAttributedString!
             if textParts.count > 1 {
-                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)])
-                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)])
+                let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)])
+                let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)])
                 firstPart.append(secondPart)
                 finalText = firstPart
             } else {
-                finalText = NSMutableAttributedString.init(string: submission.title, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+                finalText = NSMutableAttributedString.init(string: submission.title, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
             }
 
             cell.time.font = UIFont.systemFont(ofSize: 12)
-            cell.time.textColor = ColorUtil.theme.fontColor
+            cell.time.textColor = UIColor.fontColor
             cell.time.alpha = 0.7
             cell.time.text = submission.subreddit
             
@@ -3100,7 +3100,7 @@ public class NothingHereCell: UICollectionViewCell {
     func setupView() {
         self.contentView.addSubview(text)
 
-        let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        let title = NSMutableAttributedString(string: "You've reached the end!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         text.attributedText = title
         text.topAnchor /==/ self.contentView.topAnchor + 10
@@ -3124,8 +3124,8 @@ public class ReadLaterCell: UICollectionViewCell {
     func setArticles(articles: Int) {
         let text = "Read Later "
         let numberText = "(\(articles))"
-        let number = NSMutableAttributedString.init(string: numberText, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 15)])
-        let readLater = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)])
+        let number = NSMutableAttributedString.init(string: numberText, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 15)])
+        let readLater = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15)])
         let finalText = readLater
         finalText.append(number)
 
@@ -3133,7 +3133,7 @@ public class ReadLaterCell: UICollectionViewCell {
     }
     
     func setupView() {
-        title.backgroundColor = ColorUtil.theme.foregroundColor
+        title.backgroundColor = UIColor.foregroundColor
         title.textAlignment = .center
         
         title.numberOfLines = 0
@@ -3179,7 +3179,7 @@ public class PageCell: UICollectionViewCell {
         title.numberOfLines = 0
         title.lineBreakMode = .byWordWrapping
         title.textAlignment = .center
-        title.textColor = ColorUtil.theme.fontColor
+        title.textColor = UIColor.fontColor
         
         time.heightAnchor /==/ 60
         time.leftAnchor /==/ self.contentView.leftAnchor
@@ -3211,24 +3211,24 @@ public class LinksHeaderCellView: UICollectionViewCell {
         setupViews()
         switch del?.dataSource.sorting ?? LinkSortType.top {
         case .best:
-            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            sortImage.image = UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
         case .hot:
-            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            sortImage.image = UIImage(sfString: SFSymbol.flameFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
         case .controversial:
-            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            sortImage.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
         case .new:
-            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            sortImage.image = UIImage(sfString: SFSymbol.sparkles, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
         case .rising:
-            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+            sortImage.image = UIImage(sfString: SFSymbol.arrowUturnUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
         case .top:
             if #available(iOS 14, *) {
-                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+                sortImage.image = UIImage(sfString: SFSymbol.crownFill, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
             } else {
-                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor)
+                sortImage.image = UIImage(sfString: SFSymbol.arrowUp, overrideString: "ic_sort_white")?.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor)
             }
         }
         sortTitle.font = UIFont.boldSystemFont(ofSize: 14)
-        sortTitle.textColor = ColorUtil.theme.fontColor
+        sortTitle.textColor = UIColor.fontColor
         sortTitle.text = (del?.dataSource.sorting ?? LinkSortType.top).description.uppercased()
     }
     
@@ -3350,7 +3350,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.theme.navIconColor
+                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor
                     $0.addTapGestureRecognizer { (_) in
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                     }

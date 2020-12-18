@@ -58,7 +58,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.contentView.addSubview(image)
             self.contentView.addSubview(web)
 
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.contentView.backgroundColor = UIColor.foregroundColor
             title.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
             image.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
             image.topAnchor /==/ self.contentView.topAnchor + 4
@@ -78,7 +78,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.addGestureRecognizer(commentClick)
         }
         
-        content = NSMutableAttributedString(string: "u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
+        content = NSMutableAttributedString(string: "u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
         
         var bodyDone = false
         if let body = json["body_html"] as? String {
@@ -86,7 +86,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 let html = body.unescapeHTML
                 content?.append(NSAttributedString(string: "\n"))
                // TODO: - maybe link parsing here?
-                content?.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+                content?.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil))
                 let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
 
                 title.attributedText = content

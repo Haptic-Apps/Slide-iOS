@@ -52,7 +52,7 @@ class ModlogCellView: UICollectionViewCell {
         self.text = TextDisplayStackView(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: textDelegate)
         self.contentView.addSubview(text)
 
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
     }
     
     func configureLayout() {
@@ -82,20 +82,20 @@ class ModlogCellView: UICollectionViewCell {
     var cancelled = false
     
     public static func getTitleText(item: ModLogObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        let titleText = NSMutableAttributedString.init(string: "\(item.action)- \(item.details)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 18, submission: false), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
-        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created as NSDate, numericDates: true))  •  removed by \(item.mod)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)])
+        let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: item.created as NSDate, numericDates: true))  •  removed by \(item.mod)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)])
         
         var color = ColorUtil.getColorForSub(sub: item.subreddit)
         if color == ColorUtil.baseColor {
-            color = ColorUtil.theme.fontColor
+            color = UIColor.fontColor
         }
 
         let subString = NSMutableAttributedString(string: "r/\(item.subreddit)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false), NSAttributedString.Key.foregroundColor: color])
         
         let infoString = NSMutableAttributedString()
         infoString.append(endString)
-        infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)]))
+        infoString.append(NSAttributedString.init(string: "  •  ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false)]))
         infoString.append(subString)
         
         titleText.append(NSAttributedString(string: "\n"))

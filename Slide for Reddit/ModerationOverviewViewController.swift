@@ -35,7 +35,7 @@ class ModerationOverviewViewController: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
 
         self.title = "Subs you Moderate"
         self.tableView.separatorStyle = .none

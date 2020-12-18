@@ -75,7 +75,7 @@ class ProfileViewController: TabsContentPagingViewController {
         
         if navigationController != nil {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
-            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? UIColor.fontColor : UIColor.white
         }
         
         if navigationController != nil {
@@ -140,7 +140,7 @@ extension ProfileViewController: TabsContentPagingViewControllerDelegate {
 extension ProfileViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         newColor = colorPickerView.colors[indexPath.row]
-        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : colorPickerView.colors[indexPath.row]
+        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? UIColor.backgroundColor : colorPickerView.colors[indexPath.row]
     }
     
     func pickColor(sender: AnyObject) {

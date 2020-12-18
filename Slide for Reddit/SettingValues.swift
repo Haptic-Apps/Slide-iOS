@@ -710,7 +710,7 @@ class SettingValues {
         settings.set(submission.permalink, forKey: "vlink")
         settings.synchronize()
         
-        let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+        let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
         
         let layout = BadgeLayoutManager()
         let storage = NSTextStorage()
@@ -732,7 +732,7 @@ class SettingValues {
 
         let detailViewController = UpdateViewController(view: body, size: size)
         detailViewController.titleView.font = UIFont.boldSystemFont(ofSize: 20)
-        detailViewController.titleView.textColor = ColorUtil.theme.fontColor
+        detailViewController.titleView.textColor = UIColor.fontColor
         detailViewController.titleView.text = submission.title
         detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: min(size.height, 300))
         detailViewController.comments.backgroundColor = ColorUtil.baseAccent
@@ -1388,7 +1388,7 @@ class UpdateViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView = UIScrollView().then {
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubviews(scrollView, titleView, comments)

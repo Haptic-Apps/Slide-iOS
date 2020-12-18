@@ -31,14 +31,17 @@ extension UIColor {
 }
 
 public class ColorUtil {
-    static var theme: Theme = Theme(title: "dark", displayName: "Dark Gray", foregroundColor: UIColor(hexString: "#303030"), backgroundColor: UIColor(hexString: "#212121"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false) {
+    static fileprivate var theme: Theme = Theme(title: "dark", displayName: "Dark Gray", foregroundColor: UIColor(hexString: "#303030"), backgroundColor: UIColor(hexString: "#212121"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false) {
         didSet {
             LinkCellImageCache.initialize()
         }
     }
     
-    static var defaultTheme = ""
-    static var currentTheme = ""
+    static fileprivate var nightTheme: Theme = Theme(title: "dark", displayName: "Dark Gray", foregroundColor: UIColor(hexString: "#303030"), backgroundColor: UIColor(hexString: "#212121"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false) {
+        didSet {
+            LinkCellImageCache.initialize()
+        }
+    }
     
     static var CUSTOM_FOREGROUND = "customForeground"
     static var CUSTOM_FONT = "customFont"
@@ -67,26 +70,22 @@ public class ColorUtil {
     static func doInit() -> Bool {
         initializeThemes()
         theme = themes[0]
-        
-        let name = shouldBeNight() ? SettingValues.nightTheme : UserDefaults.standard.string(forKey: "theme") ?? "light"
-        defaultTheme = name
+                
         for bTheme in themes {
-            if bTheme.title == name {
+            if bTheme.title == UserDefaults.standard.string(forKey: "theme") ?? "light" {
                 theme = bTheme
                 break
             }
         }
         
-        print("Switching theme to \(theme.title)")
-        var toReturn = false
-        if currentTheme != theme.title {
-            CachedTitle.titles.removeAll()
-            LinkCellImageCache.initialize()
-            SingleSubredditViewController.cellVersion += 1
-            toReturn = true
-            currentTheme = theme.title
+        for bTheme in themes {
+            if bTheme.title == SettingValues.nightTheme {
+                nightTheme = bTheme
+                break
+            }
         }
-        
+
+        var toReturn = false
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
         if color != nil {
             baseColor = color!
@@ -114,7 +113,7 @@ public class ColorUtil {
 
     public static func getColorForSub(sub: String, _ header: Bool = false) -> UIColor {
         if header && SettingValues.reduceColor {
-            return ColorUtil.theme.foregroundColor
+            return UIColor.foregroundColor
         }
         if let color = Subscriptions.color(for: sub), color != .white, color != .black {
             return color
@@ -187,6 +186,24 @@ public class ColorUtil {
         return colors
     }
     
+    public static func getCurrentTheme() -> Theme {
+        if #available(iOS 13.0, *) {
+            return UITraitCollection.current.userInterfaceStyle != .dark ? ColorUtil.theme : ColorUtil.nightTheme
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.themes[0]
+        }
+    }
+    
+    public static func getNightTheme() -> Theme {
+        return ColorUtil.nightTheme
+    }
+    
+    public static func getDayTheme() -> Theme {
+        return ColorUtil.theme
+    }
+
+    
     public static func setCommentDepthColors(_ colors: [UIColor]) {
         for i in 0...4 {
             UserDefaults.standard.setColor(color: colors.safeGet(i) ?? GMColor.red500Color(), forKey: "commentcolor\(i)")
@@ -200,7 +217,7 @@ public class ColorUtil {
         }
         let color = UserDefaults.standard.colorForKey(key: "commentcolor")
         if color == nil {
-            return ColorUtil.theme.fontColor
+            return UIColor.fontColor
         } else {
             return color!
         }
@@ -254,7 +271,7 @@ public class ColorUtil {
         }
     }
     
-    struct Theme: Equatable {
+    public struct Theme: Equatable {
         var title: String
         var displayName: String
         var foregroundColor: UIColor
@@ -264,7 +281,7 @@ public class ColorUtil {
         var isLight: Bool
         var isCustom: Bool
         
-        static func == (lhs: Theme, rhs: Theme) -> Bool {
+        public static func == (lhs: Theme, rhs: Theme) -> Bool {
             return lhs.title == rhs.title
         }
     }
@@ -318,5 +335,106 @@ extension UserDefaults {
         }
         set(colorData, forKey: key)
     }
+}
 
+extension UIColor {
+    static var foregroundColor: UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.foregroundColor :
+                    ColorUtil.theme.foregroundColor
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.foregroundColor
+        }
+    }
+    
+    static var backgroundColor: UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.backgroundColor :
+                    ColorUtil.theme.backgroundColor
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.backgroundColor
+        }
+    }
+    
+    static var fontColor: UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.fontColor :
+                    ColorUtil.theme.fontColor
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.fontColor
+        }
+    }
+
+    static func fontColorOverlaid(withForeground: Bool, _ percent: CGFloat) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.fontColor.add(overlay: (withForeground ? ColorUtil.nightTheme.foregroundColor : ColorUtil.nightTheme.backgroundColor).withAlphaComponent(percent)) :
+                    ColorUtil.theme.fontColor.add(overlay: (withForeground ? ColorUtil.theme.foregroundColor : ColorUtil.theme.backgroundColor).withAlphaComponent(percent))
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.fontColor
+        }
+    }
+    
+    static func foregroundColorOverlaidWithFont(_ percent: CGFloat) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.foregroundColor.add(overlay: ColorUtil.nightTheme.fontColor.withAlphaComponent(percent)) :
+                    ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.fontColor.withAlphaComponent(percent))
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.fontColor
+        }
+    }
+
+    static func foregroundColorOverlaid(with color: UIColor, _ percent: CGFloat) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.foregroundColor.add(overlay: color.withAlphaComponent(percent)) :
+                    ColorUtil.theme.foregroundColor.add(overlay: color.withAlphaComponent(percent))
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.foregroundColor
+        }
+    }
+
+    static var navIconColor: UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { (traits) -> UIColor in
+                return traits.userInterfaceStyle == .dark ?
+                    ColorUtil.nightTheme.navIconColor :
+                    ColorUtil.theme.navIconColor
+            }
+        } else {
+            //TODO ios 11/12 night theme
+            return ColorUtil.theme.navIconColor
+        }
+    }
+    
+    static var isLightTheme: Bool {
+        if #available(iOS 13.0, *) {
+            return UITraitCollection.current.userInterfaceStyle != .dark ? ColorUtil.theme.isLight : ColorUtil.nightTheme.isLight
+        } else {
+            //TODO ios 11/12 night theme
+            return true
+        }
+    }
 }

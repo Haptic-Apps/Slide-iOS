@@ -32,12 +32,12 @@ class ProfilePreviewViewController: UIViewController {
     
     var spinner = UIActivityIndicatorView().then {
         $0.style = UIActivityIndicatorView.Style.whiteLarge
-        $0.color = ColorUtil.theme.fontColor
+        $0.color = UIColor.fontColor
         $0.hidesWhenStopped = true
     }
     
     var contentView = UIView().then {
-        $0.backgroundColor = ColorUtil.theme.backgroundColor
+        $0.backgroundColor = UIColor.backgroundColor
         $0.clipsToBounds = false
     }
     
@@ -48,7 +48,7 @@ class ProfilePreviewViewController: UIViewController {
     // Content
     var accountNameLabel = UILabel().then {
         $0.font = FontGenerator.boldFontOfSize(size: 28, submission: false)
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.numberOfLines = 1
         $0.adjustsFontSizeToFitWidth = true
         $0.minimumScaleFactor = 0.5
@@ -57,13 +57,13 @@ class ProfilePreviewViewController: UIViewController {
     
     var accountAgeLabel = UILabel().then {
         $0.font = FontGenerator.fontOfSize(size: 12, submission: false)
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.numberOfLines = 1
         $0.text = ""
     }
     
     var accountImageView = UIImageView().then {
-        $0.backgroundColor = ColorUtil.theme.foregroundColor
+        $0.backgroundColor = UIColor.foregroundColor
         $0.contentMode = .scaleAspectFit
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
@@ -118,7 +118,7 @@ class ProfilePreviewViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        setStyle = SettingValues.reduceColor && ColorUtil.theme.isLight ? .default : .lightContent
+        setStyle = SettingValues.reduceColor && UIColor.isLightTheme ? .default : .lightContent
     }
 }
 
@@ -170,7 +170,7 @@ extension ProfilePreviewViewController {
         more.sd_setImage(with: trophy.icon70!)
         
         let subtitle = UILabel().then {
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.font = UIFont.systemFont(ofSize: 10)
             $0.text = trophy.title
             $0.numberOfLines = 0
@@ -251,12 +251,12 @@ extension ProfilePreviewViewController {
                     DispatchQueue.main.async {
                         self.getTrophies(account)
                         if self.user != nil {
-                            self.accountImageView.sd_setImage(with: URL(string: self.user!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 100), withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+                            self.accountImageView.sd_setImage(with: URL(string: self.user!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 100), withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                                 guard let strongSelf = self else { return }
                                 strongSelf.accountImageView.image = image
                             }
                         } else {
-                            self.accountImageView.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor)
+                            self.accountImageView.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor)
                         }
                         
                         let accountName = self.user!.name.insertingZeroWidthSpacesBeforeCaptials()
@@ -322,7 +322,7 @@ class AccountInfoHeader: UIView {
         $0.numberOfLines = 0
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.accessibilityTraits = UIAccessibilityTraits.button
     }
     
@@ -334,7 +334,7 @@ class AccountInfoHeader: UIView {
         $0.numberOfLines = 0
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
         $0.textAlignment = .center
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.accessibilityTraits = UIAccessibilityTraits.button
     }
     var infoStack = UIStackView().then {

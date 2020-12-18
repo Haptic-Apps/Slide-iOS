@@ -49,12 +49,12 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.text = TextDisplayStackView(fontSize: 16, submission: true, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
         
         self.innerView = UIView().then {
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
         }
         
         self.innerView.addSubview(text)
         self.addSubview(innerView)
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
     }
     
     func configureLayout() {
@@ -92,13 +92,13 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         case .up:
             uC = ColorUtil.upvoteColor
         default:
-            uC = ColorUtil.theme.fontColor
+            uC = UIColor.fontColor
         }
         
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
         let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor] as [NSAttributedString.Key: Any]
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor] as [NSAttributedString.Key: Any]
 
         var iconString = NSMutableAttributedString()
         if (Subscriptions.icon(for: comment.subreddit) != nil) && SettingValues.subredditIcons {

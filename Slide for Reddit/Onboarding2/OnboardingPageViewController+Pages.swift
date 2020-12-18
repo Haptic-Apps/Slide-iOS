@@ -121,7 +121,7 @@ class OnboardingSplashPageViewController: UIViewController {
             gradientMaskLayer.shadowOpacity = 1
             
             gradientMaskLayer.shadowOffset = CGSize.zero
-            gradientMaskLayer.shadowColor = ColorUtil.theme.foregroundColor.cgColor
+            gradientMaskLayer.shadowColor = UIColor.foregroundColor.cgColor
 
             view.layer.mask = gradientMaskLayer
         }
@@ -164,13 +164,13 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func setupViews() {
-        let newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
+        let newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
         newTitle.append(NSAttributedString(string: "\n"))
-        newTitle.append(NSMutableAttributedString(string: text.split("\n").last ?? "", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)]))
+        newTitle.append(NSMutableAttributedString(string: text.split("\n").last ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)]))
 
         self.textView = UILabel().then {
             $0.font = UIFont.boldSystemFont(ofSize: 30)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.textAlignment = .center
             $0.numberOfLines = 0
             $0.attributedText = newTitle
@@ -178,7 +178,7 @@ class OnboardingSplashPageViewController: UIViewController {
         
         self.subTextView = UILabel().then {
             $0.font = UIFont.systemFont(ofSize: 15)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.textAlignment = .center
             $0.text = subText
         }
@@ -243,8 +243,8 @@ class PreviewSubredditView: UIView {
     func randomizeColors() {
         let seed = Int.random(in: 0...100)
         if seed < 30 {
-            self.bubble.backgroundColor = ColorUtil.theme.fontColor
-            self.label.backgroundColor = ColorUtil.theme.fontColor
+            self.bubble.backgroundColor = UIColor.fontColor
+            self.label.backgroundColor = UIColor.fontColor
             self.label.alpha = 0.6
         } else if seed < 50 {
             self.bubble.backgroundColor = GMColor.green500Color()
@@ -335,14 +335,14 @@ class OnboardingFeaturePageViewController: UIViewController {
     func setupViews() {
         self.textView = UILabel().then {
             $0.font = UIFont.boldSystemFont(ofSize: 20)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.textAlignment = .center
             $0.text = text
         }
         
         self.subTextView = UILabel().then {
             $0.font = UIFont.systemFont(ofSize: 15)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.textAlignment = .center
             $0.text = subText
         }
@@ -446,10 +446,10 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
     func setupViews() {
         let attributedChangelog = NSMutableAttributedString()
         for paragraph in order {
-            attributedChangelog.append(NSAttributedString(string: paragraph, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)]))
+            attributedChangelog.append(NSAttributedString(string: paragraph, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)]))
             attributedChangelog.append(NSAttributedString(string: "\n"))
             attributedChangelog.append(NSAttributedString(string: "\n"))
-            attributedChangelog.append(NSAttributedString(string: paragraphs[paragraph]!, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]))
+            attributedChangelog.append(NSAttributedString(string: paragraphs[paragraph]!, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]))
             attributedChangelog.append(NSAttributedString(string: "\n"))
             attributedChangelog.append(NSAttributedString(string: "\n"))
         }
@@ -534,7 +534,7 @@ class OnboardingVideoPageViewController: UIViewController {
     func setupViews() {
         self.textView = UILabel().then {
             $0.font = UIFont.boldSystemFont(ofSize: 20)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.textAlignment = .center
             $0.text = text
             $0.numberOfLines = 0
@@ -544,7 +544,7 @@ class OnboardingVideoPageViewController: UIViewController {
         
         self.subTextView = UILabel().then {
             $0.font = UIFont.systemFont(ofSize: 15)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.textAlignment = .center
             $0.text = subText
             $0.numberOfLines = 0

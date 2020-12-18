@@ -55,8 +55,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         updateToolbar()
 
         navigationController?.setToolbarHidden(false, animated: false)
-        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+        navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+        navigationController?.toolbar.tintColor = UIColor.fontColor
     }
     
     func updateToolbar() {
@@ -244,7 +244,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                 if self.needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
                     self.needsReload = false
                     webView.alpha = 0
-                    webView.superview?.backgroundColor = ColorUtil.theme.backgroundColor
+                    webView.superview?.backgroundColor = UIColor.backgroundColor
                     let pending = UIAlertController(title: "Syncing with Reddit...", message: nil, preferredStyle: .alert)
 
                     let indicator = UIActivityIndicatorView(frame: pending.view.bounds)

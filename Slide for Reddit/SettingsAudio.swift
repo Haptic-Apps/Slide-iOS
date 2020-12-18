@@ -15,7 +15,7 @@ class SettingsAudio: BubbleSettingTableViewController {
     var cells: [[UITableViewCell]] = []
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -56,7 +56,7 @@ class SettingsAudio: BubbleSettingTableViewController {
         super.loadView()
         self.tableView.tableFooterView = UIView()
 
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         self.title = "Audio settings"
 
         muteModalVideoSwitch = UISwitch().then {
@@ -163,8 +163,8 @@ private extension SettingsAudio {
 
 private extension UITableViewCell {
     func style() {
-        backgroundColor = ColorUtil.theme.foregroundColor
-        textLabel?.textColor = ColorUtil.theme.fontColor
-        detailTextLabel?.textColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7)
+        backgroundColor = UIColor.foregroundColor
+        textLabel?.textColor = UIColor.fontColor
+        detailTextLabel?.textColor = UIColor.fontColor.withAlphaComponent(0.7)
     }
 }

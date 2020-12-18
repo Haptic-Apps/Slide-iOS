@@ -68,8 +68,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -84,7 +84,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         super.loadView()
         
         headers = ["Subreddit display mode", "Other settings"]
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "App Behavior"
         
@@ -101,39 +101,39 @@ class SettingsViewMode: BubbleSettingTableViewController {
         createCell(galleryCount, isOn: false, text: "Gallery-mode column count (Pro)")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.singleMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.singleMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.singleMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.singleMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.singleMode.backgroundColor = UIColor.foregroundColor
+        self.singleMode.textLabel?.textColor = UIColor.fontColor
         self.singleMode.detailTextLabel?.numberOfLines = 0
         
         self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
-        self.splitMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.splitMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.splitMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.splitMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.splitMode.backgroundColor = UIColor.foregroundColor
+        self.splitMode.textLabel?.textColor = UIColor.fontColor
         self.splitMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
-        self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumnMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.multicolumnMode.backgroundColor = UIColor.foregroundColor
+        self.multicolumnMode.textLabel?.textColor = UIColor.fontColor
         self.multicolumnMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.multicolumnCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnCount.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumnCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnCount.detailTextLabel?.textColor = UIColor.fontColor
+        self.multicolumnCount.backgroundColor = UIColor.foregroundColor
+        self.multicolumnCount.textLabel?.textColor = UIColor.fontColor
         self.multicolumnCount.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnPortraitCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.multicolumnPortraitCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnPortraitCount.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumnPortraitCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnPortraitCount.detailTextLabel?.textColor = UIColor.fontColor
+        self.multicolumnPortraitCount.backgroundColor = UIColor.foregroundColor
+        self.multicolumnPortraitCount.textLabel?.textColor = UIColor.fontColor
         self.multicolumnPortraitCount.detailTextLabel?.numberOfLines = 0
 
         self.galleryCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.galleryCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.galleryCount.backgroundColor = ColorUtil.theme.foregroundColor
-        self.galleryCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.galleryCount.detailTextLabel?.textColor = UIColor.fontColor
+        self.galleryCount.backgroundColor = UIColor.foregroundColor
+        self.galleryCount.textLabel?.textColor = UIColor.fontColor
         self.galleryCount.detailTextLabel?.numberOfLines = 0
 
         self.setSelected()
@@ -293,7 +293,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         actionSheetController.addChild(pickerView)
         
@@ -326,7 +326,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Portrait column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Portrait column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         actionSheetController.addChild(pickerView)
         
@@ -359,7 +359,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Gallery column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Gallery column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         actionSheetController.addChild(pickerView)
         

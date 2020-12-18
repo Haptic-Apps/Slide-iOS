@@ -14,22 +14,22 @@ extension UIViewController {
             self.navigationController?.navigationBar.standardAppearance = UINavigationBarAppearance()
             self.navigationController?.navigationBar.standardAppearance.configureWithOpaqueBackground()
             self.navigationController?.navigationBar.standardAppearance.backgroundColor = overrideColor ?? ColorUtil.getColorForSub(sub: "", true)
-            self.navigationController?.navigationBar.standardAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white]
+            self.navigationController?.navigationBar.standardAppearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? UIColor.fontColor : UIColor.white]
             self.navigationController?.navigationBar.standardAppearance.shadowColor = UIColor.clear
 
             self.navigationController?.navigationBar.compactAppearance = UINavigationBarAppearance()
             self.navigationController?.navigationBar.compactAppearance?.configureWithOpaqueBackground()
             self.navigationController?.navigationBar.compactAppearance?.backgroundColor = overrideColor ?? ColorUtil.getColorForSub(sub: "", true)
-            self.navigationController?.navigationBar.compactAppearance?.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white]
+            self.navigationController?.navigationBar.compactAppearance?.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? UIColor.fontColor : UIColor.white]
         } else {
             navigationController?.navigationBar.barTintColor = overrideColor ?? ColorUtil.getColorForSub(sub: "", true)
-            let textAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white]
+            let textAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? UIColor.fontColor : .white]
             navigationController?.navigationBar.titleTextAttributes = textAttributes
         }
         
         self.setNeedsUpdateOfHomeIndicatorAutoHidden()
         
-        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+        navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? UIColor.fontColor : UIColor.white
         setNeedsStatusBarAppearanceUpdate()
     }
     

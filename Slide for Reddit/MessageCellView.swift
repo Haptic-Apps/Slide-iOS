@@ -43,12 +43,12 @@ class MessageCellView: UICollectionViewCell {
         self.text = TextDisplayStackView(fontSize: 16, submission: true, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
         
         self.innerView = UIView().then {
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
         }
         
         self.innerView.addSubview(text)
         self.addSubview(innerView)
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
     }
 
     func configureGestures() {
@@ -91,7 +91,7 @@ class MessageCellView: UICollectionViewCell {
     public static func getTitleText(message: MessageObject) -> NSAttributedString {
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
         let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor] as [NSAttributedString.Key: Any]
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor] as [NSAttributedString.Key: Any]
 
         var infoString: NSMutableAttributedString
         if message.wasComment {

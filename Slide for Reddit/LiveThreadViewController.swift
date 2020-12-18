@@ -52,7 +52,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         self.tableView.dataSource = self
         self.tableView.register(LiveThreadUpdate.classForCoder(), forCellWithReuseIdentifier: "live")
 
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         refresh()
@@ -151,14 +151,14 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
-            let content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
+            let content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
             
             if let body = data["body_html"] as? String {
                 if !body.isEmpty() {
                     let html = body.unescapeHTML
                     content.append(NSAttributedString(string: "\n"))
                    // TODO: - maybe link parsing here?
-                    content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+                    content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil))
                 }
             }
 

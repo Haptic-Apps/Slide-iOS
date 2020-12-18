@@ -181,9 +181,9 @@ class TableDisplayView: UIScrollView {
                 let label = TitleUITextView(delegate: textDelegate, textContainer: container)
                 label.doSetup()
                 if y % 2 != 0 {
-                    label.backgroundColor = ColorUtil.theme.foregroundColor
+                    label.backgroundColor = UIColor.foregroundColor
                 } else {
-                    label.backgroundColor = ColorUtil.theme.backgroundColor
+                    label.backgroundColor = UIColor.backgroundColor
                 }
                 label.attributedText = text
                 label.sizeToFit()

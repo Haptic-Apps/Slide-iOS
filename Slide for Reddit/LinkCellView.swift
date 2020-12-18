@@ -188,10 +188,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func configureView() {
         if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
-            innerView = RoundedCornerView(radius: 15, cornerColor: ColorUtil.theme.foregroundColor)
-            self.innerView.backgroundColor = ColorUtil.theme.backgroundColor //The rounded corners code will take care of the foreground color
+            innerView = RoundedCornerView(radius: 15, cornerColor: UIColor.foregroundColor)
+            self.innerView.backgroundColor = UIColor.backgroundColor //The rounded corners code will take care of the foreground color
         } else {
-            self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.innerView.backgroundColor = UIColor.foregroundColor
         }
 
         if full {
@@ -205,13 +205,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         accessibilityView.isAccessibilityElement = true
         accessibilityView.accessibilityTraits = UIAccessibilityTraits.link
         
-        self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
+        self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: UIColor.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
         }
         
-        self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
+        self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: UIColor.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image"
             $0.backgroundColor = UIColor.white
             if #available(iOS 11.0, *) {
@@ -234,11 +234,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText = UILabel().then {
             $0.accessibilityIdentifier = "Link Type Label"
             if !ColorUtil.shouldBeNight() {
-                $0.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
-                $0.textColor = ColorUtil.theme.foregroundColor
+                $0.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
+                $0.textColor = UIColor.foregroundColor
             } else {
-                $0.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.5)
-                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = UIColor.foregroundColor.withAlphaComponent(0.5)
+                $0.textColor = UIColor.fontColor
             }
             $0.textAlignment = .center
             $0.adjustsFontSizeToFitWidth = true
@@ -258,14 +258,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText.heightAnchor /==/ 20
         self.thumbText.bottomAnchor /==/ self.thumbImage.bottomAnchor + 2
                 
-        self.bannerImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor).then {
+        self.bannerImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor).then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = SettingValues.postImageMode == .SHORT_IMAGE && self is BannerLinkCellView ? .scaleAspectFit : .scaleAspectFill
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
             $0.clipsToBounds = true
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = UIColor.backgroundColor
         }
         
         let layout = BadgeLayoutManager()
@@ -393,7 +393,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.isOpaque = true
         }
         
@@ -401,7 +401,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Score Label vertical"
             $0.numberOfLines = 1
             $0.textAlignment = .center
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.isOpaque = true
         }
         
@@ -409,9 +409,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Comment Count Label"
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
         }
         
         self.taglabel = UILabel().then {
@@ -855,7 +855,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
-                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                        self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                     }
                 } else {
                     print("Direction change to -1")
@@ -870,7 +870,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
-                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                        self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                     }
                 }
             }
@@ -918,7 +918,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }, completion: { (_) in
                 })
                 UIView.animate(withDuration: 0.2) {
-                    self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                    self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                 }
             } else if progress > 0.35 && previousProgress <= 0.35 && isTwoForDirection(left: direction == 1) {
                 action = getSecondAction(left: direction == 1)
@@ -970,7 +970,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = UIColor.backgroundColor
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
                 self.innerView.frame.origin.x = self.originalPos
             }, completion: { (_) in
@@ -988,7 +988,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
                 self.innerView.frame.origin.x = self.originalPos
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = UIColor.backgroundColor
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
                 self.typeImage = nil
@@ -1528,8 +1528,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             shadow.removeFromSuperlayer()
             round.shadowLayer = nil
         }
-        comments.textColor = ColorUtil.theme.navIconColor
-        title.textColor = ColorUtil.theme.navIconColor
+        comments.textColor = UIColor.navIconColor
+        title.textColor = UIColor.navIconColor
 
         activeSet = true
 
@@ -1900,7 +1900,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             crosspostDone = true
             let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
             let popup = UILabel()
-            outer.backgroundColor = ColorUtil.theme.backgroundColor
+            outer.backgroundColor = UIColor.backgroundColor
             popup.textAlignment = .left
             popup.isUserInteractionEnabled = true
             
@@ -1912,7 +1912,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             outer.layer.cornerRadius = 5
             outer.clipsToBounds = true
             
-            let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+            let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.fontColor))
             outer.addSubviews(icon, popup)
             icon.leftAnchor /==/ outer.leftAnchor + CGFloat(8)
             icon.centerYAnchor /==/ outer.centerYAnchor
@@ -1925,7 +1925,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             infoBox.spacing = 4
             
-            let colorF = ColorUtil.theme.fontColor
+            let colorF = UIColor.fontColor
             
             let attrs = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
@@ -2486,7 +2486,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
-            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.theme.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSAttributedString.Key.foregroundColor: UIColor.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         }
         
         var scoreInt = link.score
@@ -2514,7 +2514,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSAttributedString.Key.font: comments.font ?? UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: comments.textColor ?? ColorUtil.theme.fontColor])
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSAttributedString.Key.font: comments.font ?? UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: comments.textColor ?? UIColor.fontColor])
             
             var attrsNew: [NSAttributedString.Key: Any] = [:]
             if scoreRatio.length > 0 {
@@ -2576,13 +2576,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if type != .IMAGE && type != .SELF && type != .NONE && !thumb {
                 let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                 let popup = UILabel()
-                outer.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
+                outer.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: link.subreddit), 0.2)
                 popup.textAlignment = .left
                 popup.isUserInteractionEnabled = true
                 
                 let finalText: NSMutableAttributedString!
-                let firstPart = NSMutableAttributedString(string: type.getTitle(link.url), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
-                let secondPart = NSMutableAttributedString(string: "\n" + (link.contentUrl ?? ""), attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
+                let firstPart = NSMutableAttributedString(string: type.getTitle(link.url), attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+                let secondPart = NSMutableAttributedString(string: "\n" + (link.contentUrl ?? ""), attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
                 firstPart.append(secondPart)
                 finalText = firstPart
                 popup.attributedText = finalText
@@ -2595,7 +2595,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
-                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.fontColor))
                 outer.addSubviews(icon, popup)
                 icon.leftAnchor /==/ outer.leftAnchor + CGFloat(8)
                 icon.centerYAnchor /==/ outer.centerYAnchor
@@ -2948,7 +2948,7 @@ extension UILabel {
             textAttachment.image = image as? UIImage
         } else {
             
-            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.theme.navIconColor)
+            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: UIColor.navIconColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
         }
@@ -3003,7 +3003,7 @@ private extension UIView {
 public extension UIImageView {
     func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize? = nil, isBannerView: Bool) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
-        self.backgroundColor = ColorUtil.theme.fontColor
+        self.backgroundColor = UIColor.fontColor
         startPulsingAnimation()
 
         DispatchQueue.global(qos: .userInteractive).async {
@@ -3015,10 +3015,10 @@ public extension UIImageView {
                     if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) && ((self.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
                         self.contentMode = .scaleAspectFit
                         
-                        let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor)
+                        let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor)
                         backView.image = self.image?.sd_blurredImage(withRadius: 15)
                         backView.contentMode = .scaleAspectFill
-                        backView.backgroundColor = ColorUtil.theme.backgroundColor
+                        backView.backgroundColor = UIColor.backgroundColor
                         backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors /==/ self.edgeAnchors
@@ -3170,7 +3170,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         let target = UIPreviewTarget(container: self.innerView, center: weightedCenterpoint)
         let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
-        parameters.backgroundColor = ColorUtil.theme.backgroundColor
+        parameters.backgroundColor = UIColor.backgroundColor
         
         let path = UIBezierPath(wrappingAround: convertedRects)
         let maskLayer = CAShapeLayer()
