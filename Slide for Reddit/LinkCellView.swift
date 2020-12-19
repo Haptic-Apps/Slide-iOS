@@ -3165,6 +3165,10 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             convertedRects.append(self.innerView.convert(rect, from: textView))
         }
         
+        if convertedRects.isEmpty {
+            return nil
+        }
+        
         for rect in convertedRects {
             minX = min(rect.minX, minX)
             maxX = max(rect.maxX, maxX)
