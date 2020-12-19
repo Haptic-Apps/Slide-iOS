@@ -186,6 +186,7 @@ class NavigationHomeViewController: UIViewController {
         self.inHeadView.removeFromSuperview()
         self.view.endEditing(true)
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),

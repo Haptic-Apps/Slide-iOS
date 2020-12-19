@@ -93,6 +93,8 @@ public class ColorUtil {
         
         if shouldBeNight() {
             swappedTheme = nightTheme
+        } else {
+            swappedTheme = theme
         }
 
         let color = UserDefaults.standard.colorForKey(key: "basecolor")
@@ -439,7 +441,7 @@ extension UIColor {
                     ColorUtil.theme.navIconColor
             }
         } else {
-            return ColorUtil.swappedTheme.backgroundColor
+            return ColorUtil.swappedTheme.navIconColor
         }
     }
     
