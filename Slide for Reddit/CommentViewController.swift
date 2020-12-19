@@ -273,7 +273,6 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             let incoming = self.extendKeepMore(in: child, current: startDepth)
                             for i in incoming {
                                 if i.1 == 1 {
-                                    //TODO check if more or comment
                                     if let item = CommentObject.thingToCommentOrMore(thing: i.0, depth: i.1) {
                                         if self.content[item.getId()] == nil {
                                             self.content[item.getId()] = item
