@@ -14,7 +14,6 @@ import RLBAlertsPickers
 import SDCAlertView
 import SDWebImage
 import UIKit
-import YYText
 
 protocol TTTAttributedCellDelegate: class {
     func pushedSingleTap(_ cell: CommentDepthCell)
@@ -38,6 +37,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     weak var previewedVC: UIViewController?
     var previewedURL: URL?
     var lastLength = 0
+    var loader: UIActivityIndicatorView?
+    weak var profilePresentationManager: ProfileInfoPresentationManager?
 
     @objc func textViewDidChange(_ textView: UITextView) {
         replyDelegate?.textChanged(textView.text)
@@ -100,7 +101,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var sideViewSpace: UIView!
     var topViewSpace: UIView!
-    var title: YYLabel!
+    var title: TitleUITextView!
     var commentBody: TextDisplayStackView!
 
     var currentPath = IndexPath(row: 0, section: 0)
@@ -135,16 +136,27 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var depth: Int = 0
     
     var content: RedditObject?
+    
+    //Can't have parameters that target an iOS version :/
+    private var _savedPreview: Any?
+    @available(iOS 13.0, *)
+    fileprivate var savedPreview: UITargetedPreview? {
+        get {
+            return _savedPreview as? UITargetedPreview
+        }
+        set {
+            self._savedPreview = newValue
+        }
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureInit()
-        
     }
     
     func configureInit() {
         self.isAccessibilityElement = true
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
         self.commentBody = TextDisplayStackView(fontSize: 16, submission: false, color: .blue, width: contentView.frame.size.width, delegate: self).then({
             $0.isUserInteractionEnabled = true
             $0.accessibilityIdentifier = "Comment body"
@@ -152,13 +164,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.firstTextView.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         })
         
-        self.title = YYLabel().then({
-            $0.isUserInteractionEnabled = true
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.title = TitleUITextView(delegate: self, textContainer: container).then({
             $0.accessibilityIdentifier = "Comment title"
-            $0.numberOfLines = 0
-            $0.highlightTapAction = self.commentBody.touchLinkAction// TODO: - this!!!
-            $0.highlightLongPressAction = self.commentBody.longTouchLinkAction
-            $0.textContainerInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
+            $0.doSetup()
         })
         
         self.childrenCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 15)).then({
@@ -174,7 +190,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.isUserInteractionEnabled = true
             $0.alpha = 0.5
             $0.isHidden = true
-            $0.image = UIImage(sfString: SFSymbol.circleFill, overrideString: "circle")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15)
+            $0.image = UIImage(sfString: SFSymbol.circleFill, overrideString: "circle")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15)
             //$0.addTarget(self, action: #selector(self.specialAction(_:)), for: UIControl.Event.touchUpInside)
         })
 
@@ -194,9 +210,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         self.contentView.addSubviews(sideView, sideViewSpace, topViewSpace, title, commentBody, childrenCount, specialButton)
         
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-        sideViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
-        topViewSpace.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
+
+        sideViewSpace.backgroundColor = UIColor.backgroundColor
+        topViewSpace.backgroundColor = UIColor.backgroundColor
         
         self.clipsToBounds = true
         
@@ -222,8 +239,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         sendB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         discardB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         
-        sendB.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
-        discardB.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
+        sendB.setTitleColor(UIColor.fontColor, for: .normal)
+        discardB.setTitleColor(UIColor.fontColor, for: .normal)
 
         self.sendB.setTitle("Send", for: .normal)
         self.discardB.setTitle("Cancel", for: .normal)
@@ -240,7 +257,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         setNeedsLayout()
         layoutIfNeeded()
         configureLayout()
-
     }
     
     var gesturesAdded = false
@@ -419,7 +435,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
-                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                        self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                     }
                 } else {
                     direction = -1
@@ -433,7 +449,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
-                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                        self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                     }
                 }
             }
@@ -476,7 +492,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 }, completion: { (_) in
                 })
                 UIView.animate(withDuration: 0.2) {
-                    self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                    self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                 }
             } else if progress > 0.35 && previousProgress <= 0.35 && isTwoForDirection(left: direction == 1) {
                 action = getSecondAction(left: direction == 1)
@@ -528,7 +544,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = UIColor.backgroundColor
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
                 self.contentView.frame.origin.x = self.originalPos
             }, completion: { (_) in
@@ -546,7 +562,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
                 self.contentView.frame.origin.x = self.originalPos
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = UIColor.backgroundColor
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
                 self.typeImage = nil
@@ -572,14 +588,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent?.doAction(cell: self, action: item, indexPath: currentPath)
     }
 
-    /* ignored
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer.view == self.title {
-            let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
-            return link == nil
+        if touch.view?.isKind(of: UIButton.classForCoder()) ?? false {
+            return false
         }
         return true
-    }*/
+    }
 
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 
@@ -613,7 +627,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         newFrame.size.height = 0
         UIView.animate(withDuration: 0.12, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.contentView.backgroundColor = UIColor.foregroundColor
         }, completion: { (_) in
             self.contentView.removeConstraints(self.tempConstraints)
             self.tempConstraints = []
@@ -661,7 +675,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         newFrame.size.height += 40
         UIView.animate(withDuration: 0.25, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
             self.menu.frame = newFrame
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((self.comment)!.subreddit)).withAlphaComponent(0.25))
+            if let subreddit = self.comment?.subreddit {
+                self.contentView.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: subreddit), 0.25)
+            }
         }, completion: { (_) in
         })
         parent!.menuId = comment!.id
@@ -672,7 +688,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if ActionStates.getVoteDirection(s: comment!) == .up {
                 $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.upvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.upvote(_:)), for: UIControl.Event.touchUpInside)
         })
@@ -680,28 +696,28 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if ActionStates.getVoteDirection(s: comment!) == .down {
                 $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.downvoteColor).addImagePadding(x: 15, y: 15), for: .normal)
             } else {
-                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+                $0.setImage(UIImage(sfString: SFSymbol.arrowDown, overrideString: "downvote")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             }
             $0.addTarget(self, action: #selector(self.downvote(_:)), for: UIControl.Event.touchUpInside)
         })
         replyButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.reply(_:)), for: UIControl.Event.touchUpInside)
         })
         moreButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.ellipsis, overrideString: "ic_more_vert_white")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.menu(_:)), for: UIControl.Event.touchUpInside)
         })
         editButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.edit(_:)), for: UIControl.Event.touchUpInside)
         })
         deleteButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.trashFill, overrideString: "delete")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.doDelete(_:)), for: UIControl.Event.touchUpInside)
         })
         modButton = UIButton.init(type: .custom).then({
-            $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
+            $0.setImage(UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15), for: .normal)
             $0.addTarget(self, action: #selector(self.showModMenu(_:)), for: UIControl.Event.touchUpInside)
         })
         
@@ -759,8 +775,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.reply.heightAnchor /==/ CGFloat(0)
         }
         
-        if animate {
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: ((comment)!.subreddit)).withAlphaComponent(0.25))
+        if let subreddit = self.comment?.subreddit, animate {
+            self.contentView.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: subreddit), 0.25)
         }
         menuBack.backgroundColor = UIColor.clear
         //menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
@@ -794,11 +810,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         updateDepth()
         if doBody {
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.contentView.backgroundColor = UIColor.foregroundColor
         }
     }
 
-    var parent: CommentViewController?
+    weak var parent: CommentViewController?
     
     @objc func upvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .up)
@@ -871,7 +887,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.theme.fontColor
+        spinnerIndicator.color = UIColor.fontColor
         spinnerIndicator.startAnimating()
         
         alertController?.view.addSubview(spinnerIndicator)
@@ -902,7 +918,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.theme.fontColor
+        spinnerIndicator.color = UIColor.fontColor
         spinnerIndicator.startAnimating()
         
         alertController?.view.addSubview(spinnerIndicator)
@@ -982,7 +998,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         super.layoutSubviews()
     }
     
-    var replyDelegate: ReplyDelegate?
+    weak var replyDelegate: ReplyDelegate?
     @objc func reply(_ s: AnyObject) {
         oldLocation = parent!.tableView.contentOffset
         if menu.isHidden {
@@ -991,8 +1007,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if body == nil {
             self.body = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 0)).then({
                 $0.isEditable = true
-                $0.textColor = ColorUtil.theme.fontColor
-                $0.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.6)
+                $0.textColor = UIColor.fontColor
+                $0.backgroundColor = UIColor.foregroundColor.withAlphaComponent(0.6)
                 $0.layer.masksToBounds = false
                 $0.layer.cornerRadius = 10
                 $0.font = UIFont.systemFont(ofSize: 16)
@@ -1258,7 +1274,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
 
         alertController.addAction(title: "Share comment permalink", icon: UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()) {
-            let activityViewController = UIActivityViewController(activityItems: [URL(string: self.comment!.permalink + "?context=5") ?? URL(string: "about://blank")], applicationActivities: nil)
+            let activityViewController = UIActivityViewController(activityItems: [URL(string: "\(self.comment!.permalink)?context=5") ?? URL(string: "about://blank")], applicationActivities: nil)
             if let presenter = activityViewController.popoverPresentationController {
                 presenter.sourceView = self.moreButton
                 presenter.sourceRect = self.moreButton.bounds
@@ -1289,11 +1305,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
             let text = UITextView().then {
                 $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
-                $0.textColor = ColorUtil.theme.fontColor
+                $0.textColor = UIColor.fontColor
                 $0.backgroundColor = .clear
                 $0.isEditable = false
                 $0.text = self.comment!.markdownBody.decodeHTML()
@@ -1483,30 +1499,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             if dtap != nil {
                 tapGestureRecognizer.require(toFail: dtap!)
             }
-            self.title.addGestureRecognizer(tapGestureRecognizer)
-            
-            let tapGestureRecognizer2 = UITapGestureRecognizer.init(target: self, action: #selector(self.handleShortPress(_:)))
-            tapGestureRecognizer2.cancelsTouchesInView = false
-            tapGestureRecognizer2.delegate = self
-            if dtap != nil {
-                tapGestureRecognizer2.require(toFail: dtap!)
-            }
-            self.commentBody.addGestureRecognizer(tapGestureRecognizer2)
+            self.contentView.addGestureRecognizer(tapGestureRecognizer)
             
             if #available(iOS 13, *) {
                 let previewing = UIContextMenuInteraction(delegate: self)
-                self.commentBody.addInteraction(previewing)
-                let previewing2 = UIContextMenuInteraction(delegate: self)
-                self.sideViewSpace.addInteraction(previewing2)
-                let previewing3 = UIContextMenuInteraction(delegate: self)
-                self.sideView.addInteraction(previewing3)
+                self.contentView.addInteraction(previewing)
             }
             long = UILongPressGestureRecognizer.init(target: self, action: #selector(self.handleLongPress(_:)))
             long.minimumPressDuration = 0.36
             long.delegate = self
             long.cancelsTouchesInView = false
-            commentBody.parentLongPress = long
-            self.addGestureRecognizer(long)
+            self.contentView.addGestureRecognizer(long)
             
             if SettingValues.commentActionForceTouch != .PARENT_PREVIEW && SettingValues.commentActionForceTouch != .NONE && force == nil {
                 force = ForceTouchGestureRecognizer()
@@ -1518,6 +1521,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func setMore(more: MoreObject, depth: Int, depthColors: [UIColor], parent: CommentViewController) {
+        if loader != nil {
+            loader?.stopAnimating()
+            loader?.removeFromSuperview()
+            loader = nil
+        }
+
         if title == nil {
             configureInit()
         }
@@ -1533,7 +1542,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         loading = false
         childrenCount.alpha = 0
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
+
         if depth - 1 > 0 {
             sideWidth = (SettingValues.wideIndicators ? 8 : 4)
             marginTop = 1
@@ -1564,12 +1574,14 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         var attr = NSAttributedString()
         if more.childrenString.isEmpty {
-            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Continue thread</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Continue thread</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
         } else {
-            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            attr = TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Load \(more.count) more</p>", fontSize: 16, submission: false, accentColor: .white, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
         }
         
         title.attributedText = attr
+        title.layoutTitleImageViews()
+        
         commentBody.clearOverflow()
         commentBody.firstTextView.isHidden = true
         NSLayoutConstraint.deactivate(menuHeight)
@@ -1595,17 +1607,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var numberOfDots = 3
     var loading = false
 
-    func animateMore() {
-        loading = true
-        
-        title.attributedText = TextDisplayStackView.createAttributedChunk(baseHTML: "Loading...", fontSize: 16, submission: false, accentColor: .white, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-       // TODO: - possibly animate?
-    }
-
     public var isCollapsed = false
     var dtap: UIShortTapGestureRecognizer?
 
     func setComment(comment: CommentObject, depth: Int, parent: CommentViewController, hiddenCount: Int, date: Double, author: String?, text: NSAttributedString, isCollapsed: Bool, parentOP: String, depthColors: [UIColor], indexPath: IndexPath, width: CGFloat) {
+        if loader != nil {
+            loader?.stopAnimating()
+            loader?.removeFromSuperview()
+            loader = nil
+        }
         if title == nil {
             configureInit()
         }
@@ -1623,7 +1633,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         self.isMore = false
         
         self.currentPath = indexPath
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
+
         loading = false
         if self.parent == nil {
             self.parent = parent
@@ -1668,7 +1679,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         if commentBody.ignoreHeight {            
             commentBody.estimatedWidth = width - CGFloat(12) - CGFloat(sideWidth) - CGFloat((SettingValues.wideIndicators ? 8 : 4) * (depth - 1)) - CGFloat(SettingValues.wideIndicators ? 4 : 0)
-            title.preferredMaxLayoutWidth = commentBody.estimatedWidth
         }
 
         if depth == 1 {
@@ -1679,7 +1689,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             marginTop = 0
             self.depth = 0
             sideWidth = 8
-            sideView.backgroundColor = ColorUtil.theme.foregroundColor
+            sideView.backgroundColor = UIColor.foregroundColor
         }
 
         refresh(comment: comment, submissionAuthor: author, text: text, date)
@@ -1720,52 +1730,53 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         case .up:
             color = ColorUtil.upvoteColor
         default:
-            color = ColorUtil.theme.fontColor
+            color = UIColor.fontColor
         }
         
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
-        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(Int(getScoreText(comment: comment)))"), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let scoreString = NSMutableAttributedString(string: (comment.scoreHidden ? "[score hidden]" : "\(Int(getScoreText(comment: comment)))"), attributes: [NSAttributedString.Key.foregroundColor: color, NSAttributedString.Key.font: boldFont])
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 2.75
         
-        let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let spacerString = NSMutableAttributedString(string: (comment.controversality > 0 ? "†  •  " : "  •  "), attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: boldFont])
         let new = date != 0 && date < Double(comment.created.timeIntervalSince1970)
-        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))") : ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont]))
+        let endString = NSMutableAttributedString(string: "\(new ? " " : "")\(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))" + (comment.isEdited ? ("(edit \(DateFormatter().timeSince(from: (comment.edited ?? Date()) as NSDate, numericDates: true)))\(new ? " " : "")") : "\(new ? " " : "")"), attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: boldFont])
         
         if new {
-            endString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.accentColorForSub(sub: comment.subreddit), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
+            endString.addAttributes([.badgeColor: ColorUtil.accentColorForSub(sub: comment.subreddit), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: endString.length))
         }
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.isCakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: comment.author + (comment.isCakeday ? " 🎂" : ""), small: true))\u{00A0}", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         if comment.author != "[deleted]" && comment.author != "[removed]" {
-            authorString.yy_setTextHighlight(NSRange(location: 0, length: authorString.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])
+            authorString.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorString.length))
         }
-        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): parent?.authorColor ?? ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.paragraphStyle): paragraphStyle]))
+        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: comment.author, small: true))\u{00A0}", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: parent?.authorColor ?? UIColor.fontColor, NSAttributedString.Key.paragraphStyle: paragraphStyle])
         
         if comment.author != "[deleted]" && comment.author != "[removed]" {
-            authorStringNoFlair.yy_setTextHighlight(NSRange(location: 0, length: authorStringNoFlair.length), color: nil, backgroundColor: nil, userInfo: ["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])
+            authorString.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorString.length))
+            authorStringNoFlair.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorStringNoFlair.length))
         }
 
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair.unescapeHTML)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: ColorUtil.theme.backgroundColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair.unescapeHTML)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: UIColor.backgroundColor, NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
-        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: GMColor.green500Color(), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+        let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: comment.author)
         var authorSmall = false
         if comment.distinguished == "admin" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#E57373"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([.badgeColor: UIColor.init(hexString: "#E57373"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if comment.distinguished == "special" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#F44336"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([.badgeColor: UIColor.init(hexString: "#F44336"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if comment.distinguished == "moderator" {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#81C784"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([.badgeColor: UIColor.init(hexString: "#81C784"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if AccountController.currentName == comment.author {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([.badgeColor: UIColor.init(hexString: "#FFB74D"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else if submissionAuthor != nil && comment.author == submissionAuthor {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#64B5F6"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
+            authorString.addAttributes([.badgeColor: UIColor.init(hexString: "#64B5F6"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 0, length: authorString.length))
         } else {
             authorSmall = true
         }
@@ -1780,12 +1791,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 
         let tag = ColorUtil.getTagForUser(name: comment.author)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
             infoString.append(spacer)
             infoString.append(tagString)
         }
 
-        infoString.append(NSAttributedString(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor])))
+        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor]))
         infoString.append(scoreString)
         infoString.append(spacerString)
         infoString.append(endString)
@@ -1803,30 +1814,34 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }*/
 
         if parent!.removed.contains(comment.id) || (!(comment.removedBy ?? "").isEmpty() && !parent!.approved.contains(comment.id)) {
-            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.red500Color()] as [String: Any]
+            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: GMColor.red500Color()]
             infoString.append(spacer)
             if comment.removedBy == "true" {
-                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(comment.removalReason ?? "").isEmpty() ? ":\(comment.removalReason!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed by Reddit\(!(comment.removalReason ?? "").isEmpty() ? ":\(comment.removalReason!)" : "")", attributes: attrs))
             } else {
-                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy!)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!(comment.removalNote ?? "").isEmpty() ? " \(comment.removalNote!)" : "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+                infoString.append(NSMutableAttributedString.init(string: "Removed\(!(comment.removedBy ?? "").isEmpty() ? " by \(comment.removedBy!)":"")\(!(comment.removalReason ?? "").isEmpty() ? " for \(comment.removalReason!)" : "")\(!(comment.removalNote ?? "").isEmpty() ? " \(comment.removalNote!)" : "")", attributes: attrs))
             }
         } else if parent!.approved.contains(comment.id) || (!(comment.approvedBy ?? "").isEmpty() && !parent!.removed.contains(comment.id)) {
-            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.green500Color()] as [String: Any]
+            let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: GMColor.green500Color()]
             infoString.append(spacer)
-            infoString.append(NSMutableAttributedString.init(string: "Approved\(!(comment.approvedBy ?? "").isEmpty() ? " by \(comment.approvedBy!)":"")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs)))
+            infoString.append(NSMutableAttributedString.init(string: "Approved\(!(comment.approvedBy ?? "").isEmpty() ? " by \(comment.approvedBy!)":"")", attributes: attrs))
         }
         
         paragraphStyle.lineSpacing = 1.5
-        infoString.yy_paragraphStyle = paragraphStyle
+        //infoString.setAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: infoString.length))
 
         commentBody.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
+            title.linkTextAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: comment.subreddit)]
             title.attributedText = infoString
+            title.layoutTitleImageViews()
             commentBody.firstTextView.isHidden = false
             commentBody.clearOverflow()
             commentBody.setTextWithTitleHTML(NSMutableAttributedString(), text, htmlString: comment.htmlBody)
         } else {
+            title.linkTextAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: comment.subreddit)]
             title.attributedText = infoString
+            title.layoutTitleImageViews()
             commentBody.clearOverflow()
             commentBody.firstTextView.isHidden = true
         }
@@ -1841,7 +1856,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
 
     func setIsNew(sub: String) {
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: sub).withAlphaComponent(0.25))
+        if let subreddit = self.comment?.subreddit {
+            self.contentView.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: subreddit), 0.25)
+        }
     }
 
     func getScoreText(comment: CommentObject) -> Double {
@@ -1899,6 +1916,23 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         return nil
         */
     }
+    
+    func animateMore() {
+        loading = true
+        if loader == nil {
+            loader = UIActivityIndicatorView().then {
+                $0.color = UIColor.fontColor
+                $0.hidesWhenStopped = true
+            }
+            
+            self.contentView.addSubview(loader!)
+            loader!.centerYAnchor /==/ self.contentView.centerYAnchor
+            loader!.rightAnchor /==/ self.contentView.rightAnchor - 12
+        }
+        loader?.isHidden = false
+        loader?.startAnimating()
+        title.attributedText = TextDisplayStackView.createAttributedChunk(baseHTML: "Loading...", fontSize: 16, submission: false, accentColor: .white, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
+    }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if viewControllerToCommit is AlbumViewController {
@@ -1942,8 +1976,6 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
     }
 
     func linkLongTapped(url: URL) {
-        if #available(iOS 13.0, *) {
-        } else {
         longBlocking = true
         
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
@@ -1982,6 +2014,16 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
         }
         
         alertController.show(parent)
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parent {
+            let vc = ProfileInfoViewController(accountNamed: profile)
+            vc.modalPresentationStyle = .custom
+            let presentation = ProfileInfoPresentationManager()
+            self.profilePresentationManager = presentation
+            vc.transitioningDelegate = presentation
+            parent.present(vc, animated: true)
         }
     }
 }
@@ -2023,53 +2065,6 @@ class UIShortTapGestureRecognizer: UITapGestureRecognizer {
         }
     }
 }
-
-/*class ForceNavView: TapBehindModalViewController, ForceTouchGestureDelegate {
-    func touchStarted() {
-        
-    }
-    
-    func touchCancelled() {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    func pop() {
-        
-    }
-}
-
-extension CommentDepthCell: ForceTouchGestureDelegate {
-    func touchStarted() {
-        parentPresentedTextView = TextDisplayStackView(fontSize: 12, submission: false, color: ColorUtil.theme.fontColor, delegate: self, width: UIScreen.main.bounds.size.width * 0.8)
-        parentPresentedTextView?.setTextWithTitleHTML(NSAttributedString(string: "asdfasdf"), htmlString: "<b>ASDFSDF</b> not bold")
-        let alert = UIViewController()
-        alert.view.addSubview(parentPresentedTextView!)
-        alert.view.backgroundColor = ColorUtil.theme.foregroundColor
-        alert.view.roundCorners(UIRectCorner.allCorners, radius: 20)
-        alert.view.addGestureRecognizer(force)
-        alert.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.8, height: UIScreen.main.bounds.size.height * 0.8)
-        let nav = ForceNavView.init(rootViewController: alert)
-        nav.setNavigationBarHidden(true, animated: false)
-        nav.modalPresentationStyle = UIModalPresentationStyle.popover
-        force.forceDelegate = nav
-        let popover = nav.popoverPresentationController
-        popover?.delegate = self
-        popover?.sourceView = parent!.view
-        popover?.sourceRect = CGRect(x: parent!.view.center.x, y: parent!.view.center.y, width: 0, height: 0)
-        popover?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-        presentedVC = nav
-        parent?.present(nav, animated: true, completion: nil)
-    }
-    
-    func touchCancelled() {
-        presentedVC?.dismiss(animated: true, completion: nil)
-    }
-    
-    func pop() {
-        print("Popped")
-    }
-}
-*/
 
 // MARK: - Accessibility
 extension CommentDepthCell {
@@ -2243,32 +2238,15 @@ extension Array {
     }
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
-}
-
 @available(iOS 13.0, *)
 extension CommentDepthCell: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         animator.addCompletion {
             if let vc = self.previewedVC {
+                if let vc = vc as? ProfilePreviewViewController {
+                    VCPresenter.openRedditLink("/u/\(vc.account)", self.parent?.navigationController, self.parent)
+                    return
+                }
                 if vc is WebsiteViewController || vc is SFHideSafariViewController {
                     self.previewedVC = nil
                     if let url = self.previewedURL {
@@ -2304,41 +2282,92 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         }
     }
     
+    func createRectsTargetedPreview(textView: TitleUITextView, location: CGPoint, snapshot: UIView) -> UITargetedPreview? {
+        let rects = self.getLocationForPreviewedText(textView, textView.convert(location, from: self.contentView), self.previewedURL?.absoluteString)
+        var convertedRects = [CGRect]()
+        
+        var minX = CGFloat.greatestFiniteMagnitude, maxX = -CGFloat.greatestFiniteMagnitude,
+            minY = CGFloat.greatestFiniteMagnitude, maxY = -CGFloat.greatestFiniteMagnitude
+
+        for rect in rects {
+            convertedRects.append(self.contentView.convert(rect, from: textView))
+        }
+        
+        for rect in convertedRects {
+            minX = min(rect.minX, minX)
+            maxX = max(rect.maxX, maxX)
+            minY = min(rect.minY, minY)
+            maxY = max(rect.maxY, maxY)
+        }
+        
+        let weightedCenterpoint = CGPoint(x: (minX + maxX) / 2, y: (minY + maxY) / 2)
+
+        let target = UIPreviewTarget(container: self.contentView, center: weightedCenterpoint)
+        let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
+        parameters.backgroundColor = UIColor.foregroundColor
+        
+        let path = UIBezierPath(wrappingAround: convertedRects)
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = path.cgPath
+        
+        let snapshotContainer = UIView(frame: snapshot.bounds)
+        snapshotContainer.addSubview(snapshot)
+        snapshot.layer.mask = maskLayer
+
+        return UITargetedPreview(view: snapshotContainer, parameters: parameters, target: target)
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        self.savedPreview = createPreview(interaction, configuration: configuration)
+        return self.savedPreview
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForDismissingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return self.savedPreview
+    }
+    
+    func createPreview(_ interaction: UIContextMenuInteraction, configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
-        let location = interaction.location(in: self.commentBody)
-        let specialLocation = interaction.location(in: self.contentView)
-        if self.sideViewSpace.frame.contains(specialLocation) {
-            return UITargetedPreview(view: self.sideViewSpace, parameters: parameters)
-        } else if self.sideView.frame.contains(specialLocation) {
-            return UITargetedPreview(view: self.sideView, parameters: parameters)
-        } else if self.commentBody.firstTextView.frame.contains(location) {
-            return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(self.commentBody.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
-        } else if self.commentBody.overflow.frame.contains(location) {
-            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+        guard let snapshot = self.snapshotView(afterScreenUpdates: false) else {
+              return nil
+        }
+        let location = interaction.location(in: self.contentView)
+        if self.contentView.convert(self.sideViewSpace.frame, to: self.contentView).contains(location) {
+            return UITargetedPreview(view: snapshot, parameters: parameters, target: UIPreviewTarget(container: self.sideViewSpace, center: self.sideViewSpace.center))
+        } else if self.contentView.convert(self.sideView.frame, to: self.contentView).contains(location) {
+            return UITargetedPreview(view: snapshot, parameters: parameters, target: UIPreviewTarget(container: self.sideView, center: self.sideView.center))
+        } else if self.contentView.convert(self.title.frame, to: self.contentView).contains(location) {
+            return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
+        } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
+            return createRectsTargetedPreview(textView: self.commentBody.firstTextView, location: location, snapshot: snapshot)
+        } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
+            let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if view.frame.contains(innerLocation) && view is YYLabel {
-                    return UITargetedPreview(view: self.commentBody, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.commentBody) ?? parameters)
+                if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
+                    return createRectsTargetedPreview(textView: view, location: location, snapshot: snapshot)
                 }
             }
         }
-        return UITargetedPreview(view: self.commentBody, parameters: parameters)
+        return nil
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        let specialLocation = interaction.location(in: self.contentView)
-        if self.sideViewSpace.frame.contains(specialLocation) {
+        let location = interaction.location(in: self.contentView)
+
+        if self.contentView.convert(self.sideViewSpace.frame, to: self.contentView).contains(location) {
             return getConfigurationParentComment()
-        } else if self.sideView.frame.contains(specialLocation) {
+        } else if self.contentView.convert(self.sideView.frame, to: self.contentView).contains(location) {
             return getConfigurationParentComment()
-        } else if self.commentBody.firstTextView.frame.contains(location) {
+        } else if self.contentView.convert(self.title.frame, to: self.contentView).contains(location) {
+            return getConfigurationForTextView(self.title, location)
+        } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             return getConfigurationForTextView(self.commentBody.firstTextView, location)
-        } else if self.commentBody.overflow.frame.contains(location) {
-            let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
+        } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
+            let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
-                if view.frame.contains(innerLocation) && view is YYLabel {
-                    return getConfigurationForTextView(view as! YYLabel, innerLocation)
+                if view.frame.contains(innerLocation) && view is TitleUITextView {
+                    return getConfigurationForTextView(view as! TitleUITextView, location)
                 }
             }
         } else if self.commentBody.links.frame.contains(location) {
@@ -2355,62 +2384,81 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         self.previewedVC = nil
     }
     
-    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
+    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> [CGRect] {
         if inputURL == nil {
-            return nil
+            return [CGRect]()
         }
-        let point = label.superview?.convert(location, to: label) ?? location
-        var params: UIPreviewParameters?
-        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                attributedText.enumerateAttribute(
-                    .link,
-                    in: NSRange(location: 0, length: attributedText.length)
-                ) { (value, range, _) in
-                    if let url = value as? NSURL {
-                        if url.absoluteString == inputURL! {
-                            let baseRects = layoutManager.selectionRects(for: YYTextRange(range: range))
-                            var cgs = [NSValue]()
-                            for rect in baseRects {
-                                if changeRectTo != nil {
-                                    cgs.append(NSValue(cgRect: changeRectTo!.convert(rect.rect, from: label)))
-                                } else {
-                                    cgs.append(NSValue(cgRect: rect.rect))
-                                }
-                            }
-                            params = UIPreviewParameters(textLineRects: cgs)
-                            params?.backgroundColor = .clear
-                        }
-                    }
-                }
-            }
-        }
-        return params
-    }
-    
-    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
-        let point = label.superview?.convert(location, to: label) ?? location
         
-        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
-                for attribute in attributes {
-                    if attribute.value is NSURL {
-                        if let url = (attribute.value as! NSURL).absoluteURL {
-                            return getConfigurationFor(url: url)
+        let point = location
+
+        var rects = [CGRect]()
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
+            let index = layoutManager.characterIndex(for: point, in: label.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+            
+            if index < textStorage.length {
+                var range = NSRange.zero
+
+                if (attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: &range) as? URL) != nil {
+                    layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                        rects.append(rect)
+                    }
+                } else if let highlight = attributedText.attribute(NSAttributedString.Key.textHighlight, at: index, effectiveRange: &range) as? TextHighlight {
+                    if (highlight.userInfo["url"] as? URL) != nil {
+                        layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                            rects.append(rect)
                         }
                     }
                 }
             }
         }
-        return nil
+        return rects
+    }
+
+    func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
+        let point = label.convert(location, from: self.contentView)
+
+        var configuration: UIContextMenuConfiguration?
+        var found = false
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage, !found {
+            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
+            textStorage.enumerateAttributes(in: characterRange, options: .longestEffectiveRangeNotRequired) { (attrs, bgStyleRange, _) in
+                for attr in attrs {
+                    if let url = attr.value as? URL ?? (attr.value as? TextHighlight)?.userInfo["url"] as? URL {
+                        let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                        layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                            let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                            var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                            var baseline = 0
+                            baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                            
+                            rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                            rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                            let insetTop = CGFloat.zero
+                            
+                            let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                            if offsetRect.contains(point) {
+                                configuration = self.getConfigurationFor(url: url)
+                                found = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return configuration
     }
     
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: { [weak self] () -> UIViewController? in
+            guard let self = self else { return nil }
+            if url.absoluteString.starts(with: "/u/") {
+                let vc = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                self.previewedVC = vc
+                
+                return vc
+            }
             if let vc = self.parent?.getControllerForUrl(baseUrl: url, link: SubmissionObject()) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
@@ -2497,11 +2545,13 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             parentCell.content = comment
             parentCell.contentView.isUserInteractionEnabled = false
 
-            var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
-            let textSize = layout.textBoundingSize
+            var size: CGSize!
+            if let height = parentCell.title.attributedText?.height(containerWidth: UIScreen.main.bounds.size.width * 0.85) {
+                size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + height)
+            } else {
+                size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24)
+            }
 
-            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
             let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
             detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
 

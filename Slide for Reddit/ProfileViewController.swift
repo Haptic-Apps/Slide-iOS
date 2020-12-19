@@ -23,7 +23,7 @@ class ProfileViewController: TabsContentPagingViewController {
     var sortB: UIBarButtonItem?
     var tagText: String?
     
-    lazy var currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
+    lazy var currentAccountTransitioningManager = ProfileInfoPresentationManager()
 
     static func doDefault() -> [UserContent] {
         return [UserContent.overview, UserContent.comments, UserContent.submitted, UserContent.gilded]
@@ -51,7 +51,6 @@ class ProfileViewController: TabsContentPagingViewController {
         if friends {
             self.vCs.append(ContentListingViewController.init(dataSource: FriendsContributionLoader.init()))
             self.titles.append("Friends")
-            openTo += 1
         }
         
         for place in content {
@@ -76,7 +75,7 @@ class ProfileViewController: TabsContentPagingViewController {
         
         if navigationController != nil {
             navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: "", true)
-            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white
+            navigationController?.navigationBar.tintColor = SettingValues.reduceColor ? UIColor.fontColor : UIColor.white
         }
         
         if navigationController != nil {
@@ -93,9 +92,9 @@ class ProfileViewController: TabsContentPagingViewController {
     }
 
     func showMenu(sender: AnyObject, user: String) {
-        let vc = ProfileInfoViewController(accountNamed: user, parent: self)
+        let vc = ProfileInfoViewController(accountNamed: user)
         vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = currentAccountTransitioningDelegate
+        vc.transitioningDelegate = currentAccountTransitioningManager
         present(vc, animated: true)
     }
 
@@ -141,7 +140,7 @@ extension ProfileViewController: TabsContentPagingViewControllerDelegate {
 extension ProfileViewController: ColorPickerViewDelegate {
     public func colorPickerView(_ colorPickerView: ColorPickerView, didSelectItemAt indexPath: IndexPath) {
         newColor = colorPickerView.colors[indexPath.row]
-        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? ColorUtil.theme.backgroundColor : colorPickerView.colors[indexPath.row]
+        self.navigationController?.navigationBar.barTintColor = SettingValues.reduceColor ? UIColor.backgroundColor : colorPickerView.colors[indexPath.row]
     }
     
     func pickColor(sender: AnyObject) {

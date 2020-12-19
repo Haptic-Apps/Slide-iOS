@@ -28,7 +28,7 @@ class FriendsContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var delegate: ContentListingViewController?
+    weak var delegate: ContentListingViewController?
     var paging = false
     
     func getData(reload: Bool) {

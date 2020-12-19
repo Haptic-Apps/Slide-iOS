@@ -10,113 +10,81 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
-import YYText
 
-class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    
+protocol CommentCellViewDelegate: class {
+    func openComment(_ comment: CommentObject)
+}
+
+class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var longBlocking = false
-    func linkTapped(url: URL, text: String) {
-        if !text.isEmpty {
-            self.parentViewController?.showSpoiler(text)
-        } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
-        }
-    }
-
-    func linkLongTapped(url: URL) {
-        longBlocking = true
-        
-        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
-        
-        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
-            let shareItems: Array = [url]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.contentView
-            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }
-        
-        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
-            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }
-        
-        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        }
-        
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }
-        }
-        
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        
-        if parentViewController != nil {
-            alertController.show(parentViewController!)
-        }
-    }
-
     var text: TextDisplayStackView!
     var single = false
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 0
-        let bottommargin = 2
-        let leftmargin = 0
-        let rightmargin = 0
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
-    }
-
+    weak var delegate: CommentCellViewDelegate?
+    weak var textDelegate: TextDisplayStackViewDelegate?
+    var registered: Bool = false
+    var currentLink: URL?
+    var comment: CommentObject?
     var hasText = false
     var full = false
+    var hasConfigured = false
+    var innerView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-
-        self.text = TextDisplayStackView.init(fontSize: 16, submission: false, color: ColorUtil.accentColorForSub(sub: ""), width: frame.width - 16, delegate: self)
-        self.contentView.addSubview(text)
-        
-        text.topAnchor /==/ contentView.topAnchor + CGFloat(8)
-        text.bottomAnchor /<=/ contentView.bottomAnchor + CGFloat(8)
-        text.horizontalAnchors /==/ contentView.horizontalAnchors + CGFloat(8)
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
     }
     
-    func setComment(comment: CommentObject, parent: MediaViewController, nav: UIViewController?, width: CGFloat) {
-        text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
-        text.estimatedWidth = self.contentView.frame.size.width - 16
-        parentViewController = parent
-        if navViewController == nil && nav != nil {
-            navViewController = nav
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configureGestures() {
+        self.innerView.addTapGestureRecognizer { [weak self] (_) in
+            guard let self = self, let comment = self.comment else { return }
+            self.delegate?.openComment(comment)
         }
+        //TODO add long press menu
+    }
+    
+    func configureViews() {
+        self.text = TextDisplayStackView(fontSize: 16, submission: true, color: ColorUtil.accentColorForSub(sub: ""), width: contentView.frame.width - 12, delegate: textDelegate)
+        
+        self.innerView = UIView().then {
+            $0.backgroundColor = UIColor.foregroundColor
+        }
+        
+        self.innerView.addSubview(text)
+        self.addSubview(innerView)
+        self.backgroundColor = UIColor.backgroundColor
+    }
+    
+    func configureLayout() {
+        text.topAnchor /==/ innerView.topAnchor + CGFloat(6)
+        text.bottomAnchor /==/ innerView.bottomAnchor + CGFloat(6)
+        text.horizontalAnchors /==/ innerView.horizontalAnchors + CGFloat(4)
+        text.verticalCompressionResistancePriority = .required
+        innerView.edgeAnchors /==/ self.edgeAnchors + 2
+    }
+
+    func setComment(comment: CommentObject, width: CGFloat) {
+        if !hasConfigured {
+            hasConfigured = true
+            self.configureViews()
+            self.configureLayout()
+            self.configureGestures()
+        }
+        
+        self.contentView.isHidden = true
+        
+        text.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
+        text.estimatedWidth = self.contentView.frame.size.width - 12
+
         let titleText = CommentCellView.getTitle(comment)
         self.comment = comment
        
-        let commentClick = UITapGestureRecognizer(target: self, action: #selector(CommentCellView.openComment(sender:)))
-        commentClick.delegate = self
-        self.addGestureRecognizer(commentClick)
-        
-        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody)
+        text.setTextWithTitleHTML(titleText, htmlString: comment.htmlBody, images: true)
     }
     
     public static func getTitle(_ comment: CommentObject) -> NSAttributedString {
-        let titleText = NSMutableAttributedString.init(string: comment.submissionTitle, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 18, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
-                
         var uC: UIColor
         switch ActionStates.getVoteDirection(s: comment) {
         case .down:
@@ -124,58 +92,52 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate, TextDi
         case .up:
             uC = ColorUtil.upvoteColor
         default:
-            uC = ColorUtil.theme.fontColor
+            uC = UIColor.fontColor
         }
         
-        let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): uC] as [String: Any]
-        
-        let attrs2 = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor] as [String: Any]
-        
-        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs2))
-        
-        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
-        let subString = NSMutableAttributedString(string: "r/\(comment.subreddit)")
         let color = ColorUtil.getColorForSub(sub: comment.subreddit)
-        if color != ColorUtil.baseColor {
-            subString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: subString.length))
+        let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
+        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor] as [NSAttributedString.Key: Any]
+
+        var iconString = NSMutableAttributedString()
+        if (Subscriptions.icon(for: comment.subreddit) != nil) && SettingValues.subredditIcons {
+            if let urlAsURL = URL(string: Subscriptions.icon(for: comment.subreddit.lowercased())!.unescapeHTML) {
+                let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                iconString.append(NSAttributedString(attachment: attachment))
+                attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
+            }
+            let tapString = NSMutableAttributedString(string: "  r/\(comment.subreddit)", attributes: attrs)
+            tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(comment.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+
+            iconString.append(tapString)
         } else {
-            subString.addAttribute(NSAttributedString.Key.foregroundColor, value: ColorUtil.theme.fontColor, range: NSRange.init(location: 0, length: subString.length))
+            if color != ColorUtil.baseColor {
+                let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
+                iconString = preString
+                let tapString = NSMutableAttributedString(string: "r/\(comment.subreddit)", attributes: attrs)
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(comment.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                iconString.append(tapString)
+            } else {
+                let tapString = NSMutableAttributedString(string: "r/\(comment.subreddit)", attributes: attrs)
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(comment.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                iconString = tapString
+            }
         }
+
+        let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: comment.created as NSDate, numericDates: true))  •  ", attributes: attrs)
+        
+        let boldString = NSMutableAttributedString(string: "\(comment.score)pts", attributes: attrs)
+        boldString.addAttributes([.foregroundColor: uC], range: NSRange(location: 0, length: boldString.length))
+        endString.append(boldString)
+        
+        endString.append(NSAttributedString(string: "  •  \(comment.submissionTitle)", attributes: attrs))
         
         let infoString = NSMutableAttributedString()
-        infoString.append(boldString)
+        infoString.append(iconString)
         infoString.append(endString)
-        infoString.append(subString)
         
-        titleText.append(NSAttributedString.init(string: "\n", attributes: nil))
-        titleText.append(infoString)
-
-        return titleText
+        return infoString
     }
-    
-    var registered: Bool = false
-    var currentLink: URL?
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    var comment: CommentObject?
-    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
-    public weak var navViewController: UIViewController?
-    
-    @objc func openComment(sender: UITapGestureRecognizer? = nil) {
-        VCPresenter.openRedditLink(self.comment!.permalink, parentViewController?.navigationController, parentViewController)
-    }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

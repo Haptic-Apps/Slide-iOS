@@ -178,8 +178,8 @@ class SettingsGestures: BubbleSettingTableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -193,31 +193,31 @@ class SettingsGestures: BubbleSettingTableViewController {
     override func loadView() {
         canForceTouch = (UIApplication.shared.keyWindow?.rootViewController?.traitCollection.forceTouchCapability ?? .unknown) == .available
         super.loadView()
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Gestures"
         self.headers = ["Submissions", "Comments", "Main view edge shortcut"]
         createCell(submissionGesturesCell, nil, isOn: false, text: "Submission gestures mode")
-        self.submissionGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.submissionGesturesCell.detailTextLabel?.textColor = UIColor.fontColor
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.submissionGesturesCell.detailTextLabel?.numberOfLines = 0
         self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
-        self.submissionGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.submissionGesturesCell.contentView.backgroundColor = UIColor.foregroundColor
         self.submissionGesturesCell.accessoryType = .disclosureIndicator
 
         createCell(disableBannerCell, disableBanner, isOn: SettingValues.disableBanner, text: "Open comments from banner image")
-        self.disableBannerCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.disableBannerCell.detailTextLabel?.textColor = UIColor.fontColor
         self.disableBannerCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.disableBannerCell.detailTextLabel?.numberOfLines = 0
         self.disableBannerCell.detailTextLabel?.text = "Enabling this will open comments when clicking on the submission banner image"
-        self.disableBannerCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.disableBannerCell.contentView.backgroundColor = UIColor.foregroundColor
 
         createCell(commentGesturesCell, nil, isOn: false, text: "Comment gestures mode")
-        self.commentGesturesCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.commentGesturesCell.detailTextLabel?.textColor = UIColor.fontColor
         self.commentGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.commentGesturesCell.detailTextLabel?.numberOfLines = 0
         self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
-        self.commentGesturesCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        self.commentGesturesCell.contentView.backgroundColor = UIColor.foregroundColor
         self.commentGesturesCell.accessoryType = .disclosureIndicator
         
         self.tableView.register(GesturePreviewCell.classForCoder(), forCellReuseIdentifier: "submissiongesturepreview")
@@ -226,7 +226,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         updateCells()
         self.tableView.tableFooterView = UIView()
         
-        commentCell.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        commentCell.contentView.backgroundColor = UIColor.foregroundColor
         let label = UILabel()
         for view in commentCell.contentView.subviews {
             view.removeFromSuperview()
@@ -244,20 +244,20 @@ class SettingsGestures: BubbleSettingTableViewController {
     }
     
     func getText() -> NSAttributedString {
-        let color = ColorUtil.theme.fontColor
+        let color = UIColor.fontColor
         
         let boldFont = FontGenerator.boldFontOfSize(size: 12, submission: false)
         
-        let scoreString = NSMutableAttributedString(string: "[score hidden]", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): color]))
+        let scoreString = NSMutableAttributedString(string: "[score hidden]", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: color])
         
-        let endString = NSMutableAttributedString(string: "  •  3d", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let endString = NSMutableAttributedString(string: "  •  3d", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
-        let authorStringNoFlair = NSMutableAttributedString(string: "u/ccrama\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let authorStringNoFlair = NSMutableAttributedString(string: "u/ccrama\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         let infoString = NSMutableAttributedString(string: "")
             infoString.append(authorStringNoFlair)
         
-        infoString.append(NSAttributedString(string: "  •  ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor])))
+        infoString.append(NSAttributedString(string: "  •  ", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor]))
         infoString.append(scoreString)
         infoString.append(endString)
         
@@ -266,8 +266,8 @@ class SettingsGestures: BubbleSettingTableViewController {
         infoString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: infoString.length))
         
         let newTitle = NSMutableAttributedString(attributedString: infoString)
-            newTitle.append(NSAttributedString.init(string: "\n\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 5)])))
-        newTitle.append(TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Swipe here to test the gestures out!</p>", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+            newTitle.append(NSAttributedString.init(string: "\n\n", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 5)]))
+        newTitle.append(TextDisplayStackView.createAttributedChunk(baseHTML: "<p>Swipe here to test the gestures out!</p>", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil))
 
         return newTitle
     }
@@ -280,35 +280,35 @@ class SettingsGestures: BubbleSettingTableViewController {
         createCell(sideShortcutActionCell, nil, isOn: false, text: "Edge swipe shortcut")
 
         createLeftView(cell: forceTouchSubmissionCell, image: SettingValues.submissionActionForceTouch == .NONE ? "fullscreen" : SettingValues.submissionActionForceTouch.getPhoto(), color: SettingValues.submissionActionForceTouch == .NONE ? GMColor.lightGreen500Color() :SettingValues.submissionActionForceTouch.getColor())
-        self.forceTouchSubmissionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.forceTouchSubmissionCell.detailTextLabel?.textColor = UIColor.fontColor
         self.forceTouchSubmissionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.forceTouchSubmissionCell.detailTextLabel?.numberOfLines = 0
         self.forceTouchSubmissionCell.detailTextLabel?.text = SettingValues.submissionActionForceTouch == .NONE ? "Peek content" : SettingValues.submissionActionForceTouch.getTitle()
         self.forceTouchSubmissionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: doubleTapActionCell, image: SettingValues.commentActionDoubleTap.getPhoto(), color: SettingValues.commentActionDoubleTap.getColor())
-        self.doubleTapActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.doubleTapActionCell.detailTextLabel?.textColor = UIColor.fontColor
         self.doubleTapActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleTapActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapActionCell.detailTextLabel?.text = SettingValues.commentActionDoubleTap.getTitle()
         self.doubleTapActionCell.imageView?.layer.cornerRadius = 5
         
         createLeftView(cell: forceTouchActionCell, image: SettingValues.commentActionForceTouch.getPhoto(), color: SettingValues.commentActionForceTouch.getColor())
-        self.forceTouchActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.forceTouchActionCell.detailTextLabel?.textColor = UIColor.fontColor
         self.forceTouchActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.forceTouchActionCell.detailTextLabel?.numberOfLines = 0
         self.forceTouchActionCell.detailTextLabel?.text = SettingValues.commentActionForceTouch.getTitle()
         self.forceTouchActionCell.imageView?.layer.cornerRadius = 5
 
         createLeftView(cell: sideShortcutActionCell, image: SettingValues.sideGesture.getPhoto(), color: SettingValues.sideGesture.getColor())
-        self.sideShortcutActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.sideShortcutActionCell.detailTextLabel?.textColor = UIColor.fontColor
         self.sideShortcutActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.sideShortcutActionCell.detailTextLabel?.numberOfLines = 0
         self.sideShortcutActionCell.detailTextLabel?.text = SettingValues.sideGesture.description()
         self.sideShortcutActionCell.imageView?.layer.cornerRadius = 5
         
         createLeftView(cell: doubleTapSubActionCell, image: SettingValues.submissionActionDoubleTap.getPhoto(), color: SettingValues.submissionActionDoubleTap.getColor())
-        self.doubleTapSubActionCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.doubleTapSubActionCell.detailTextLabel?.textColor = UIColor.fontColor
         self.doubleTapSubActionCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.doubleTapSubActionCell.detailTextLabel?.numberOfLines = 0
         self.doubleTapSubActionCell.detailTextLabel?.text = SettingValues.submissionActionDoubleTap.getTitle()
@@ -377,17 +377,6 @@ class SettingsGestures: BubbleSettingTableViewController {
         }
     }
     
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }
 
 public class GesturePreviewCell: InsetCell {
@@ -481,8 +470,8 @@ public class GesturePreviewCell: InsetCell {
         right.layer.cornerRadius = 10
         right.clipsToBounds = true
         
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-        self.backgroundColor = ColorUtil.theme.foregroundColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
+        self.backgroundColor = UIColor.foregroundColor
     }
     
     func showAction(_ callback: @escaping (_ action: SettingValues.CommentAction) -> Void) {
@@ -520,7 +509,7 @@ public class GesturePreviewCell: InsetCell {
                 action()
             }
         } else {
-            view.backgroundColor = ColorUtil.theme.fontColor
+            view.backgroundColor = UIColor.fontColor
             view.image = nil
             view.alpha = 0.5
         }
@@ -540,7 +529,7 @@ public class GesturePreviewCell: InsetCell {
                 action()
             }
         } else {
-            view.backgroundColor = ColorUtil.theme.fontColor
+            view.backgroundColor = UIColor.fontColor
             view.image = nil
             view.alpha = 0.5
         }
@@ -560,7 +549,7 @@ public class GesturePreviewCell: InsetCell {
         self.body = UIView().then {
             $0.layer.cornerRadius = 6
             $0.clipsToBounds = true
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = UIColor.backgroundColor
         }
         
         self.left = UIStackView().then {

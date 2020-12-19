@@ -53,7 +53,6 @@ PODS:
   - SwiftyJSON (5.0.0)
   - TGPControls (5.1.0)
   - YoutubePlayer-in-WKWebView (0.3.4)
-  - YYText (1.0.7)
 
 DEPENDENCIES:
   - Alamofire (~> 4.3)
@@ -74,7 +73,6 @@ DEPENDENCIES:
   - SwiftyJSON (from `https://github.com/ccrama/SwiftyJSON.git`, branch `hotfix-xcode12`)
   - TGPControls
   - YoutubePlayer-in-WKWebView (~> 0.3.0)
-  - YYText
 
 SPEC REPOS:
   trunk:
@@ -95,7 +93,6 @@ SPEC REPOS:
     - SwiftLint
     - TGPControls
     - YoutubePlayer-in-WKWebView
-    - YYText
 
 EXTERNAL SOURCES:
   DTCoreText:
@@ -162,8 +159,7 @@ SPEC CHECKSUMS:
   SwiftyJSON: f0574c07d8ca1644050db687067209e3033a89a0
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
-  YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: f3d5434b3387a84e7106b422142f47f6745fbb1f
+PODFILE CHECKSUM: 921cd225b4120efa1cb2e0c32101c3932f6ceb0c
 
 COCOAPODS: 1.10.0

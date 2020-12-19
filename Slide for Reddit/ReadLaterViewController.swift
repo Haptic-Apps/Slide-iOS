@@ -73,14 +73,14 @@ public extension UIViewController {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
-        titleLabel.textColor = ColorUtil.theme.fontColor
+        titleLabel.textColor = UIColor.fontColor
         titleLabel.textAlignment = .center
         titleLabel.sizeToFit()
 
         let subTitleLabel = UILabel()
         subTitleLabel.text = subtitle
         subTitleLabel.font = UIFont.systemFont(ofSize: 11)
-        subTitleLabel.textColor = ColorUtil.theme.fontColor
+        subTitleLabel.textColor = UIColor.fontColor
         subTitleLabel.textAlignment = .center
         subTitleLabel.lineBreakMode = .byTruncatingTail
         subTitleLabel.sizeToFit()

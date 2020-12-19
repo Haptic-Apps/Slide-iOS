@@ -201,8 +201,7 @@ class SubmissionObject: RedditObject {
     
     func update(submission: Link) {
         var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
-        bodyHtml = bodyHtml.replacingOccurrences(of: "<div class=\"md\">", with: "")
-        
+
         var json: JSONDictionary?
         json = submission.baseJson
         
@@ -310,7 +309,7 @@ class SubmissionObject: RedditObject {
         self.isArchived = submission.archived
         self.isLocked = submission.locked
         do {
-            try self.contentUrl = ((submission.url?.absoluteString) ?? "").convertHtmlSymbols() ?? ""
+            try self.contentUrl = (submission.url?.absoluteString.isEmpty ?? true) ? nil : submission.url?.absoluteString.convertHtmlSymbols()
         } catch {
             self.contentUrl = (submission.url?.absoluteString) ?? ""
         }

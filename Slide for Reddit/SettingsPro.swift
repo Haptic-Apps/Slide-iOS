@@ -38,7 +38,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -75,7 +75,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     var six = UILabel()
 
     func doCells(_ reset: Bool = true) {
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Support Slide!"
         self.tableView.separatorStyle = .none
@@ -83,48 +83,48 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.night.textLabel?.text = "Auto night mode"
         self.night.detailTextLabel?.text = "Select a custom night theme and night hours, Slide does the rest"
         self.night.detailTextLabel?.numberOfLines = 0
-        self.night.backgroundColor = ColorUtil.theme.foregroundColor
-        self.night.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.night.backgroundColor = UIColor.foregroundColor
+        self.night.textLabel?.textColor = UIColor.fontColor
         self.night.imageView?.image = UIImage(sfString: SFSymbol.moonStarsFill, overrideString: "night")?.toolbarIcon()
-        self.night.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.night.imageView?.tintColor = UIColor.fontColor
+        self.night.detailTextLabel?.textColor = UIColor.fontColor
         
         self.username.textLabel?.text = "Username scrubbing"
         self.username.detailTextLabel?.text = "Keep your account names a secret"
         self.username.detailTextLabel?.numberOfLines = 0
-        self.username.backgroundColor = ColorUtil.theme.foregroundColor
-        self.username.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.username.backgroundColor = UIColor.foregroundColor
+        self.username.textLabel?.textColor = UIColor.fontColor
         self.username.imageView?.image = UIImage(sfString: SFSymbol.xmark, overrideString: "hide")?.toolbarIcon()
-        self.username.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.username.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.username.imageView?.tintColor = UIColor.fontColor
+        self.username.detailTextLabel?.textColor = UIColor.fontColor
 
         self.icons.textLabel?.text = "Premium Icons"
         self.icons.detailTextLabel?.text = "Freshen up your homescreen with a new icon"
         self.icons.detailTextLabel?.numberOfLines = 0
-        self.icons.backgroundColor = ColorUtil.theme.foregroundColor
-        self.icons.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.icons.backgroundColor = UIColor.foregroundColor
+        self.icons.textLabel?.textColor = UIColor.fontColor
         self.icons.imageView?.image = UIImage(named: "ic_retroapple")?.getCopy(withSize: CGSize(width: 25, height: 25))
         self.icons.imageView?.layer.cornerRadius = 10
         self.icons.imageView?.clipsToBounds = true
-        self.icons.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.icons.detailTextLabel?.textColor = UIColor.fontColor
 
         self.backup.textLabel?.text = "Backup and Restore"
         self.backup.detailTextLabel?.text = "Sync your Slide settings between devices"
         self.backup.detailTextLabel?.numberOfLines = 0
-        self.backup.backgroundColor = ColorUtil.theme.foregroundColor
-        self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.backup.backgroundColor = UIColor.foregroundColor
+        self.backup.textLabel?.textColor = UIColor.fontColor
         self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon()
-        self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.backup.imageView?.tintColor = UIColor.fontColor
+        self.backup.detailTextLabel?.textColor = UIColor.fontColor
 
         self.custom.textLabel?.text = "Custom theme colors"
         self.custom.detailTextLabel?.text = "Choose a custom color for your themes"
         self.custom.detailTextLabel?.numberOfLines = 0
-        self.custom.backgroundColor = ColorUtil.theme.foregroundColor
-        self.custom.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.custom.backgroundColor = UIColor.foregroundColor
+        self.custom.detailTextLabel?.textColor = UIColor.fontColor
+        self.custom.textLabel?.textColor = UIColor.fontColor
         self.custom.imageView?.image = UIImage(sfString: SFSymbol.eyedropperFull, overrideString: "accent")?.toolbarIcon()
-        self.custom.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.custom.imageView?.tintColor = UIColor.fontColor
         
         self.themes.textLabel?.text = "Custom app themes"
         self.themes.detailTextLabel?.text = "Unlocks powerful theme customization options"
@@ -137,7 +137,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         
         self.restore.textLabel?.text = "Already a supporter?"
         self.restore.accessoryType = .disclosureIndicator
-        self.restore.backgroundColor = ColorUtil.theme.foregroundColor
+        self.restore.backgroundColor = UIColor.foregroundColor
         self.restore.textLabel?.textColor = GMColor.lightGreen300Color()
         self.restore.imageView?.image = UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "restore")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen300Color())
         self.restore.imageView?.tintColor = GMColor.lightGreen300Color()
@@ -147,8 +147,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         let aboutArea = UIView()
         let about = UILabel(frame: CGRect.init(x: 0, y: 0, width: self.tableView.frame.size.width, height: 30))
         about.font = UIFont.systemFont(ofSize: 15)
-        aboutArea.backgroundColor = ColorUtil.theme.foregroundColor
-        about.textColor = ColorUtil.theme.fontColor
+        aboutArea.backgroundColor = UIColor.foregroundColor
+        about.textColor = UIColor.fontColor
         about.text = "Go Pro to enjoy some awesome new features while supporting open source software!\n\nThis project wouldn't be possible without your support, as being ad and tracker free is core to Slide's mission.\n-Carlos"
         about.numberOfLines = 0
         about.textAlignment = .left
@@ -180,47 +180,47 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         self.shadowbox.textLabel?.text = "Shadowbox mode"
         self.shadowbox.detailTextLabel?.text = "View your favorite content in a full-screen distraction free shadowbox"
         self.shadowbox.detailTextLabel?.numberOfLines = 0
-        self.shadowbox.backgroundColor = ColorUtil.theme.foregroundColor
-        self.shadowbox.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.shadowbox.backgroundColor = UIColor.foregroundColor
+        self.shadowbox.textLabel?.textColor = UIColor.fontColor
         self.shadowbox.imageView?.image = UIImage(named: "shadowbox")?.toolbarIcon()
-        self.shadowbox.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.shadowbox.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.shadowbox.imageView?.tintColor = UIColor.fontColor
+        self.shadowbox.detailTextLabel?.textColor = UIColor.fontColor
         
         self.gallery.textLabel?.text = "Gallery mode"
         self.gallery.detailTextLabel?.text = "r/pics never looked better"
         self.gallery.detailTextLabel?.numberOfLines = 0
-        self.gallery.backgroundColor = ColorUtil.theme.foregroundColor
-        self.gallery.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.gallery.backgroundColor = UIColor.foregroundColor
+        self.gallery.textLabel?.textColor = UIColor.fontColor
         self.gallery.imageView?.image = UIImage(sfString: SFSymbol.photoFillOnRectangleFill, overrideString: "image")?.toolbarIcon()
-        self.gallery.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.gallery.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.gallery.imageView?.tintColor = UIColor.fontColor
+        self.gallery.detailTextLabel?.textColor = UIColor.fontColor
         
         self.biometric.textLabel?.text = "Biometric lock"
         self.biometric.detailTextLabel?.text = "Keep Slide safe from prying eyes"
         self.biometric.detailTextLabel?.numberOfLines = 0
-        self.biometric.backgroundColor = ColorUtil.theme.foregroundColor
-        self.biometric.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.biometric.backgroundColor = UIColor.foregroundColor
+        self.biometric.textLabel?.textColor = UIColor.fontColor
         self.biometric.imageView?.image = UIImage(sfString: SFSymbol.lockFill, overrideString: "lockapp")?.toolbarIcon()
-        self.biometric.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.biometric.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.biometric.imageView?.tintColor = UIColor.fontColor
+        self.biometric.detailTextLabel?.textColor = UIColor.fontColor
         
         self.multicolumn.textLabel?.text = "Custom column count"
         self.multicolumn.detailTextLabel?.text = "A must-have for iPads! This option allows you to customize Multi Column and Gallery modes with a configurable number of columns"
         self.multicolumn.detailTextLabel?.numberOfLines = 0
-        self.multicolumn.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumn.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumn.backgroundColor = UIColor.foregroundColor
+        self.multicolumn.textLabel?.textColor = UIColor.fontColor
         self.multicolumn.imageView?.image = UIImage(named: "multicolumn")?.toolbarIcon()
-        self.multicolumn.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.multicolumn.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumn.imageView?.tintColor = UIColor.fontColor
+        self.multicolumn.detailTextLabel?.textColor = UIColor.fontColor
         
         self.autocache.textLabel?.text = "Autocache subreddits"
         self.autocache.detailTextLabel?.text = "Cache your favorite subreddits and comments for offline viewing"
         self.autocache.detailTextLabel?.numberOfLines = 0
-        self.autocache.backgroundColor = ColorUtil.theme.foregroundColor
-        self.autocache.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.autocache.backgroundColor = UIColor.foregroundColor
+        self.autocache.textLabel?.textColor = UIColor.fontColor
         self.autocache.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon()
-        self.autocache.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.autocache.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.autocache.imageView?.tintColor = UIColor.fontColor
+        self.autocache.detailTextLabel?.textColor = UIColor.fontColor
         
         three.addTapGestureRecognizer { (_) in
             IAPHandler.shared.purchaseMyProduct(index: 0)
@@ -228,7 +228,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.theme.fontColor
+            spinnerIndicator.color = UIColor.fontColor
             spinnerIndicator.startAnimating()
             
             self.alertController?.view.addSubview(spinnerIndicator)
@@ -306,38 +306,9 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     numberFormatter.locale = items[0].priceLocale
                     let price1Str = "Go pro for \(numberFormatter.string(from: items[0].price) ?? "$4.99")"
                     let price2Str = "Go pro and donate for \(numberFormatter.string(from: items[1].price) ?? "$7.99")"
-                    
-                    // TODO: - this
-                    /*
-                    let priceOldStr = "Go pro for \(price1Str)"
-                    let priceOldStr2 = "Go pro and donate for \(price2Str)"
-                    if priceOldStr != price1Str! && items[0].priceLocale.identifier.contains("en_US") {
-                        //Is a sale
-                        
-                        let crossedString = NSMutableAttributedString.init(string: "\(priceOldStr)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
-                        let crossedString2 = NSMutableAttributedString.init(string: "\(priceOldStr2)\n", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.strikethroughStyle): NSNumber(value: NSUnderlineStyle.single.rawValue)]))
-                        
-                        let newString = NSMutableAttributedString.init(string: price1Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
-                        let newString2 = NSMutableAttributedString.init(string: price2Str!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 18)]))
-                        
-                        let finalString = NSMutableAttributedString()
-                        let finalString2 = NSMutableAttributedString()
-                        
-                        finalString.append(crossedString)
-                        finalString.append(newString)
-                        
-                        finalString2.append(crossedString2)
-                        finalString2.append(newString2)
-                        
-                        self.three.attributedText = finalString
-                        self.six.attributedText = finalString2
-                        
-                        self.three.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                        self.six.frame = CGRect.init(x: (self.tableView.frame.size.width / 4) - 50, y: 150, width: 100, height: 80)
-                    } else {*/
-                        self.three.text = price1Str
-                        self.six.text = price2Str
-                //}
+                
+                    self.three.text = price1Str
+                    self.six.text = price2Str
                 }
             }
         }
@@ -515,7 +486,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
+        toReturn.backgroundColor = UIColor.foregroundColor
 
         switch section {
         case 0: label.text = "Already a Slide supporter?"
@@ -533,15 +504,4 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         }
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

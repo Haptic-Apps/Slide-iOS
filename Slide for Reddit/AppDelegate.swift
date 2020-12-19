@@ -552,12 +552,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.backgroundTaskId = UIApplication.shared.beginBackgroundTask(withName: "Download New Messages") {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
+            self.backgroundTaskId = UIBackgroundTaskIdentifier.invalid
         }
 
         func cleanup() {
             UIApplication.shared.endBackgroundTask(self.backgroundTaskId!)
-            self.backgroundTaskId = UIBackgroundTaskIdentifier(rawValue: convertFromUIBackgroundTaskIdentifier(UIBackgroundTaskIdentifier.invalid))
+            self.backgroundTaskId = UIBackgroundTaskIdentifier.invalid
         }
 
         NSLog("getData running...")
@@ -878,7 +878,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if SettingValues.biometrics {
             if backView == nil {
                 backView = UIView.init(frame: self.window!.frame)
-                backView?.backgroundColor = ColorUtil.theme.backgroundColor
+                backView?.backgroundColor = UIColor.backgroundColor
                 if let window = self.window {
                     window.insertSubview(backView!, at: 0)
                     backView!.edgeAnchors /==/ window.edgeAnchors
@@ -1110,14 +1110,9 @@ extension Session {
     }
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromUIBackgroundTaskIdentifier(_ input: UIBackgroundTaskIdentifier) -> Int {
-    return input.rawValue
-}
-
 class CustomSplitController: UISplitViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
             if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -1272,7 +1267,7 @@ class NoHomebarSplitViewController: UISplitViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
             if #available(iOS 13, *) {
                 return .darkContent
             } else {

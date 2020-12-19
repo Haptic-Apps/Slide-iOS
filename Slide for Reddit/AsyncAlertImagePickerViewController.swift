@@ -54,10 +54,10 @@ extension AlertController {
     }
     
     func setupTheme() {
-        self.visualStyle.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.92)
+        self.visualStyle.backgroundColor = UIColor.foregroundColor.withAlphaComponent(0.92)
         self.visualStyle.normalTextColor = ColorUtil.baseAccent
-        self.visualStyle.textFieldBorderColor = ColorUtil.theme.fontColor
-        self.visualStyle.actionHighlightColor = ColorUtil.theme.navIconColor
+        self.visualStyle.textFieldBorderColor = UIColor.fontColor
+        self.visualStyle.actionHighlightColor = UIColor.navIconColor
     }
 }
 

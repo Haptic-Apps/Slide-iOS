@@ -69,7 +69,7 @@ class SettingsWidget: BubbleSettingTableViewController {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Widget Configurations"
         self.headers = ["Subreddit Shortcut Widget"]
@@ -95,15 +95,15 @@ class SettingsWidget: BubbleSettingTableViewController {
             if indexPath.row == widgets.count {
                 let cell = InsetCell()
                 cell.textLabel?.text = "Create a new shortcut widget"
-                cell.textLabel?.textColor = ColorUtil.theme.fontColor
-                cell.backgroundColor = ColorUtil.theme.foregroundColor
+                cell.textLabel?.textColor = UIColor.fontColor
+                cell.backgroundColor = UIColor.foregroundColor
                 cell.accessoryType = .disclosureIndicator
                 return cell
             } else {
                 let cell = InsetCell()
                 cell.textLabel?.text = widgets[indexPath.row]
-                cell.textLabel?.textColor = ColorUtil.theme.fontColor
-                cell.backgroundColor = ColorUtil.theme.foregroundColor
+                cell.textLabel?.textColor = UIColor.fontColor
+                cell.backgroundColor = UIColor.foregroundColor
                 cell.accessoryType = .disclosureIndicator
                 return cell
             }
@@ -179,7 +179,7 @@ class SettingsEditWidget: UITableViewController {
     var subs: [String] = []
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -195,7 +195,7 @@ class SettingsEditWidget: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         
         tableView.reloadData()
         
@@ -227,7 +227,7 @@ class SettingsEditWidget: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
     }
     
     @objc func add(_ selector: AnyObject) {
@@ -251,7 +251,7 @@ class SettingsEditWidget: UITableViewController {
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
         
         return cell!
     }

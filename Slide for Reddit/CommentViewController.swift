@@ -14,7 +14,6 @@ import reddift
 import RLBAlertsPickers
 import SDCAlertView
 import UIKit
-import YYText
 
 class CommentViewController: MediaViewController, UITableViewDelegate, UITableViewDataSource, TTTAttributedCellDelegate, LinkCellViewDelegate, UISearchBarDelegate, SubmissionMoreDelegate, ReplyDelegate, UIScrollViewDelegate {
     
@@ -121,12 +120,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             if jump == nil {
                 jump = UIView.init(frame: CGRect.init(x: 70, y: 70, width: 0, height: 0)).then {
                     $0.clipsToBounds = true
-                    $0.backgroundColor = ColorUtil.theme.backgroundColor
+                    $0.backgroundColor = UIColor.backgroundColor
                     $0.layer.cornerRadius = 20
                 }
                 
                 let image = UIImageView.init(frame: CGRect.init(x: 50, y: 50, width: 0, height: 0)).then {
-                    $0.image = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: ColorUtil.theme.navIconColor)
+                    $0.image = UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")?.getCopy(withSize: CGSize.square(size: 30), withColor: UIColor.navIconColor)
                     $0.contentMode = .center
                 }
                 jump.addSubview(image)
@@ -421,7 +420,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var np = false
     var modLink = ""
     
-    var authorColor: UIColor = ColorUtil.theme.fontColor
+    var authorColor: UIColor = UIColor.fontColor
     
     func replySent(comment: Comment?, cell: CommentDepthCell?) {
         if comment != nil && cell != nil {
@@ -582,7 +581,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         if submission != nil {
-            self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : ColorUtil.theme.foregroundColor)
+            self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : (!SettingValues.reduceColor ? ColorUtil.getColorForSub(sub: submission!.subreddit) : UIColor.foregroundColor)
         }
         
         let landscape = size.width > size.height || (self.navigationController is TapBehindModalViewController && self.navigationController!.modalPresentationStyle == .pageSheet)
@@ -1096,7 +1095,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func setupTitleView(_ sub: String, icon: String) {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
@@ -1154,7 +1153,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func showSearchBar() {
         searchBar.alpha = 0
         
-        let cancelButtonAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor]
+        let cancelButtonAttributes = [NSAttributedString.Key.foregroundColor: UIColor.fontColor]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes, for: .normal)
         
         isSearch = true
@@ -1175,7 +1174,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         UIView.animate(withDuration: 0.5, animations: {
             self.searchBar.alpha = 1
         }, completion: { _ in
-            if !ColorUtil.theme.isLight {
+            if !UIColor.isLightTheme {
                 self.searchBar.keyboardAppearance = .dark
             }
             self.searchBar.becomeFirstResponder()
@@ -1192,7 +1191,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         isSearch = false
         
-        searchBar.tintColor = ColorUtil.theme.fontColor
+        searchBar.tintColor = UIColor.fontColor
         sortButton = UIButton(buttonImage: nil)
         sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
         let sortB = UIBarButtonItem.init(customView: sortButton)
@@ -1324,11 +1323,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         self.tableView.allowsSelection = false
         //self.tableView.layer.speed = 1.5
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
+        self.navigationController?.view.backgroundColor = UIColor.foregroundColor
         refreshControl = UIRefreshControl()
-        refreshControl?.tintColor = ColorUtil.theme.fontColor
+        refreshControl?.tintColor = UIColor.fontColor
         refreshControl?.attributedTitle = NSAttributedString(string: "")
         refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
         var top = CGFloat(64)
@@ -1343,9 +1342,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         searchBar.delegate = self
         searchBar.searchBarStyle = UISearchBar.Style.minimal
-        searchBar.textColor = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
+        searchBar.textColor = SettingValues.reduceColor && UIColor.isLightTheme ? UIColor.fontColor : .white
         searchBar.showsCancelButton = false
-        if !ColorUtil.theme.isLight {
+        if !UIColor.isLightTheme {
             searchBar.keyboardAppearance = .dark
         }
         
@@ -1445,24 +1444,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self.setupTitleView(submission.subreddit, icon: submission.subredditIcon ?? "")
         }
         self.updateToolbar()
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        self.navigationController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
+        self.navigationController?.view.backgroundColor = UIColor.foregroundColor
     }
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        if UIDevice.current.userInterfaceIdiom == .phone { //TODO: iPad there is a bug here
-            if #available(iOS 13.0, *) {
-                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                    if themeChanged {
-                        ColorUtil.matchTraitCollection()
-                    }
-                }
-            }
-        }
-    }
-    
+        
     @objc func cancelTapped() {
         hideSearchBar()
     }
@@ -1555,7 +1541,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 view.addSubview(headerCell.contentView)
                 self.tableView.tableHeaderView = view
             }
-            headerCell.layoutTitleImageViews()
+            headerCell.title.layoutTitleImageViews()
         }
     }
     
@@ -1623,7 +1609,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             navigationItem.rightBarButtonItem?.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -20)
             if !loaded {
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = SettingValues.reduceColor && ColorUtil.theme.isLight ? ColorUtil.theme.fontColor : .white
+                activityIndicator.color = SettingValues.reduceColor && UIColor.isLightTheme ? UIColor.fontColor : .white
                 if self.navigationController == nil {
                     self.view.addSubview(activityIndicator)
                     activityIndicator.centerAnchors /==/ self.view.centerAnchors
@@ -1638,7 +1624,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         } else {
             if !loaded {
                 activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-                activityIndicator.color = ColorUtil.theme.navIconColor
+                activityIndicator.color = UIColor.navIconColor
                 self.view.addSubview(activityIndicator)
                 activityIndicator.centerAnchors /==/ self.view.centerAnchors
                 activityIndicator.startAnimating()
@@ -1666,7 +1652,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var activityIndicator = UIActivityIndicatorView()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
             if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -1875,13 +1861,13 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
             if let comment = thing.0 as? Comment {
                 if PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) {
-                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[user blocked]</b></p>", fontSize: 16, submission: false, accentColor: color, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
                 } else {
-                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                    self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.bodyHtml, fontSize: 16, submission: false, accentColor: color, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
                 }
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[(thing.0 as! More).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             }
         }
     }
@@ -1895,10 +1881,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 first = false
             }
             if let comment = thing as? CommentObject {
-                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.htmlBody, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: comment.htmlBody, fontSize: 16, submission: false, accentColor: color, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             } else if let more = thing as? MoreObject {
                 let attr = NSMutableAttributedString(string: "more")
-                self.text[more.getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[more.getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             }
         }
     }
@@ -1910,10 +1896,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         for thing in newComments {
             if let comment = thing as? CommentObject {
                 let html = comment.htmlBody
-                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[comment.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: color, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             } else {
                 let attr = NSMutableAttributedString(string: "more")
-                self.text[(thing as! MoreObject).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                self.text[(thing as! MoreObject).getId()] = LinkParser.parse(attr, color, font: UIFont.systemFont(ofSize: 16), fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             }
             
         }
@@ -2188,12 +2174,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         if parent != nil && parent is PagingCommentViewController {
             parent?.toolbarItems = items
-            parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-            parent?.navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+            parent?.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+            parent?.navigationController?.toolbar.tintColor = UIColor.fontColor
         } else {
             toolbarItems = items
-            navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-            navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+            navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+            navigationController?.toolbar.tintColor = UIColor.fontColor
         }
     }
     
@@ -2262,7 +2248,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Are you sure you want to block u/\(name)?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Are you sure you want to block u/\(name)?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         alert.addAction(confirmAction)
         alert.addCancelButton()
@@ -2509,7 +2495,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                             }
                             realPosition += 1
                         }
-                        self.text[cell.comment!.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[deleted]</b></p>", fontSize: 16, submission: false, accentColor: self.color ?? ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+                        self.text[cell.comment!.getId()] = TextDisplayStackView.createAttributedChunk(baseHTML: "<p><b>[deleted]</b></p>", fontSize: 16, submission: false, accentColor: self.color ?? ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
                         self.doArrays()
                         self.tableView.reloadData()
                     }
@@ -2736,7 +2722,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             } else {
                 cell.setMore(more: (innerContent as! MoreObject), depth: cDepth[thing]!, depthColors: commentDepthColors, parent: self)
             }
-            cell.content = content[thing]
+            cell.content = innerContent
         }
         
         return cell
@@ -2951,7 +2937,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     realPosition += 1
                                 }
                                 
-                                if self.comments.count > realPosition && self.comments[realPosition] != nil {
+                                if self.comments.count > realPosition {
                                     self.comments.remove(at: realPosition)
                                 } else {
                                     return
@@ -3182,7 +3168,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                                 realPosition += 1
                                             }
                                             
-                                            if self.comments.count > realPosition && self.comments[realPosition] != nil {
+                                            if self.comments.count > realPosition {
                                                 self.comments.remove(at: realPosition)
                                             } else {
                                                 return
@@ -3336,7 +3322,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended)
+        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended) && !(otherGestureRecognizer.view is UIScrollView)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -3382,13 +3368,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
             
             guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
-            for view in cell.commentBody.recursiveSubviews {
-                let cellPoint = recognizer.location(in: view)
-                if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
-                    recognizer.cancel()
-                    return
-                }
-            }
+
             tableView.panGestureRecognizer.cancel()
             disableDismissalRecognizers()
             translatingCell = cell
@@ -3400,17 +3380,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             enableDismissalRecognizers()
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
 }
 
 class ParentCommentViewController: UIViewController {
@@ -3428,7 +3397,7 @@ class ParentCommentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView = UIScrollView().then {
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubview(scrollView)
@@ -3515,11 +3484,9 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             parentCell.content = comment
             parentCell.contentView.isUserInteractionEnabled = false
             
-            var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: parentCell.title.attributedText!)!
-            let textSize = layout.textBoundingSize
+            let textHeight = parentCell.title.attributedText!.height(containerWidth: UIScreen.main.bounds.size.width * 0.85)
             
-            size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textSize.height)// TODO: - fix height
+            let size = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: parentCell.commentBody.estimatedHeight + 24 + textHeight)
             let detailViewController = ParentCommentViewController(view: parentCell.contentView, size: size)
             detailViewController.preferredContentSize = CGSize(width: size.width, height: min(size.height, 300))
             
@@ -3537,7 +3504,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
         if let popover = viewControllerToCommit.popoverPresentationController {
             popover.sourceView = self.tableView
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.foregroundColor
+            popover.backgroundColor = UIColor.foregroundColor
             popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
             //detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
             popover.delegate = self
@@ -3581,7 +3548,7 @@ extension CommentViewController: Cacheable {
                     
                 }
                 if submissionComments == nil {
-                    submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as! SubmissionComments
+                    submissionComments = NSEntityDescription.insertNewObject(forEntityName: "SubmissionComments", into: context) as? SubmissionComments
                 }
 
                 submissionComments.submissionId = submission.getId()

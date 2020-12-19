@@ -8,7 +8,6 @@
 
 import Anchorage
 import UIKit
-import YYText
 
 final class GalleryLinkCellView: LinkCellView {
     
@@ -69,7 +68,7 @@ final class GalleryLinkCellView: LinkCellView {
         let attText = CachedTitle.getTitleAttributedString(link, force: false, gallery: true, full: full)
         title.attributedText = attText
         
-        layoutTitleImageViews()
+        title.layoutTitleImageViews()
     }
     
     override func refresh(np: Bool = false) {

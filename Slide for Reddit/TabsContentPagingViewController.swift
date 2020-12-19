@@ -28,7 +28,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
     var del: TabsContentPagingViewControllerDelegate?
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
             if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -79,7 +79,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
 
         tabBar?.removeFromSuperview()
         tabBar = TabsPagingTitleCollectionView(withTabs: titles, delegate: self)
-        tabBar.backgroundColor = ColorUtil.theme.foregroundColor
+        tabBar.backgroundColor = UIColor.foregroundColor
         
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: tabBar.collectionView.panGestureRecognizer)
@@ -135,12 +135,16 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
             History.inboxSeen()
         }
         
-        view.backgroundColor = ColorUtil.theme.backgroundColor
+        view.backgroundColor = UIColor.backgroundColor
 
         self.dataSource = self
         self.delegate = self
 
         self.navigationController?.view.backgroundColor = UIColor.clear
+        
+        if (self as? ProfileViewController)?.friends ?? false {
+            openTo += 1
+        }
         
         currentIndex = openTo
         let firstViewController = vCs[openTo]
@@ -151,13 +155,12 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
                 break
             }
         }
-
-        doToolbarOffset()
-
+        
         setViewControllers([firstViewController],
                 direction: .forward,
-                animated: true,
-                completion: nil)
+                animated: true) { (_) in
+            self.doToolbarOffset()
+        }
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -271,6 +274,7 @@ extension TabsContentPagingViewController: PagingTitleDelegate {
     }
 
     func didSetWidth() {
+        self.doToolbarOffset()
     }
 }
 

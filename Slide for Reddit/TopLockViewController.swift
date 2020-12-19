@@ -20,9 +20,9 @@ public class TopLockViewController: UIViewController {
         imageView.image = UIImage(named: "roundicon")
         unlockButton.backgroundColor = .clear
         unlockButton.setTitle("Tap to Unlock Slide", for: .normal)
-        unlockButton.setTitleColor(ColorUtil.theme.fontColor, for: .normal)
+        unlockButton.setTitleColor(UIColor.fontColor, for: .normal)
         unlockButton.addTarget(self, action: #selector(doBios), for: .touchUpInside)
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         self.view.addSubviews(imageView, unlockButton)
         
         imageView.widthAnchor /==/ 150
