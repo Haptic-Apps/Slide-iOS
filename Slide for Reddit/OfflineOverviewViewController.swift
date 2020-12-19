@@ -40,7 +40,7 @@ class OfflineOverviewViewController: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Offline content"
         self.tableView.separatorStyle = .none
@@ -55,13 +55,13 @@ class OfflineOverviewViewController: UITableViewController {
         let row = indexPath.row
         let sub = subs[row]
         
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.textLabel?.textColor = UIColor.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.accessoryType = .disclosureIndicator
-        cell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        cell.detailTextLabel?.textColor = UIColor.fontColor
         cell.detailTextLabel?.numberOfLines = 0
         cell.detailTextLabel?.text = subComments[sub] ?? false ? "Comments cached \(DateFormatter().timeSince(from: subTime[sub] ?? NSDate(), numericDates: true))" : ""
        // if indexPath.row == 0 {

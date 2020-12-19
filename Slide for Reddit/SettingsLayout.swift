@@ -281,7 +281,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true, np: false)
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
-        linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        linkCell.contentView.backgroundColor = UIColor.backgroundColor
         link.innerView.heightAnchor /==/ link.estimateHeight(false, true, np: false)
         link.innerView.widthAnchor /==/ min(self.tableView.frame.size.width, 350)
         linkCell.contentView.addSubview(link.innerView)
@@ -495,8 +495,8 @@ class SettingsLayout: BubbleSettingTableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -511,7 +511,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         super.loadView()
         
         headers = ["", "Display", "Information line", "Flairs", "Thumbnails", "Advanced"]
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Card layout"
         
@@ -519,31 +519,31 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(thumbInfoCell, thumbInfo, isOn: SettingValues.thumbTag, text: "Show link type on thumbnail")
 
         createCell(cardModeCell, isOn: false, text: "View type")
-        cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        cardModeCell.detailTextLabel?.textColor = UIColor.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(imageCell, isOn: false, text: "Image size")
-        imageCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        imageCell.detailTextLabel?.textColor = UIColor.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(actionBarCell, isOn: false, text: "Button bar mode")
-        actionBarCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        actionBarCell.detailTextLabel?.textColor = UIColor.fontColor
         actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text post preview images")
-        hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        hideImageSelftextCell.detailTextLabel?.textColor = UIColor.fontColor
         hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show image previews on text-only posts"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         createCell(coloredFlairsCell, coloredFlairs, isOn: SettingValues.coloredFlairs, text: "Show flair colors")
-        coloredFlairsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        coloredFlairsCell.detailTextLabel?.textColor = UIColor.fontColor
         coloredFlairsCell.detailTextLabel?.text = "When enabled, flairs will be colored for supported subreddits"
         coloredFlairsCell.detailTextLabel?.numberOfLines = 0
         coloredFlairsCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -568,12 +568,12 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Hide banner image on link submissions")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
         createCell(moreCell, more, isOn: SettingValues.menuButton, text: "Menu button")
-        flatModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        flatModeCell.detailTextLabel?.textColor = UIColor.fontColor
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows throughout Slide"
         flatModeCell.detailTextLabel?.numberOfLines = 0
 
         createCell(reduceElevationCell, reduceElevation, isOn: SettingValues.reduceElevation, text: "Reduce Elevation")
-        reduceElevationCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        reduceElevationCell.detailTextLabel?.textColor = UIColor.fontColor
         reduceElevationCell.detailTextLabel?.text = "Disables shadows on cards and images"
         reduceElevationCell.detailTextLabel?.numberOfLines = 0
 

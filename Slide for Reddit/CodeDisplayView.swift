@@ -12,7 +12,6 @@ import reddift
 import SDWebImage
 import Then
 import UIKit
-import YYText
 
 class CodeDisplayView: UIScrollView {
     
@@ -48,7 +47,7 @@ class CodeDisplayView: UIScrollView {
             }
             let baseHtml = DTHTMLAttributedStringBuilder.init(html: string.trimmed().data(using: .unicode)!, options: [DTUseiOS6Attributes: true, DTDefaultTextColor: baseColor, DTDefaultFontFamily: "Courier", DTDefaultFontSize: FontGenerator.fontOfSize(size: 16, submission: false).pointSize, DTDefaultFontName: "Courier"], documentAttributes: nil).generatedAttributedString()!
             let attr = NSMutableAttributedString(attributedString: baseHtml)
-            let cell = LinkParser.parse(attr, baseColor, font: UIFont(name: "Courier", size: 16)!, fontColor: ColorUtil.theme.fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
+            let cell = LinkParser.parse(attr, baseColor, font: UIFont(name: "Courier", size: 16)!, fontColor: UIColor.fontColor, linksCallback: linksCallback, indexCallback: indexCallback)
             baseData.append(cell)
         }
     }
@@ -65,7 +64,7 @@ class CodeDisplayView: UIScrollView {
     }
     
     func addSubviews() {
-        let finalString = NSMutableAttributedString.init()
+        var finalString = NSMutableAttributedString()
         var index = 0
         for row in baseData {
             finalString.append(row)
@@ -74,20 +73,23 @@ class CodeDisplayView: UIScrollView {
             }
             index += 1
         }
-        baseLabel.attributedText = finalString
         
-        let size = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let layout = YYTextLayout(containerSize: size, text: finalString)!
-        let textSizeB = layout.textBoundingSize
+        while finalString.string.endsWith("\n") {
+            finalString = NSMutableAttributedString(attributedString: finalString.attributedSubstring(from: NSRange(location: 0, length: finalString.length - 1)))
+        }
+        baseLabel.attributedText = finalString
+                
+        let textHeight = finalString.height(containerWidth: .infinity)
         
         addSubview(baseLabel)
         contentInset = UIEdgeInsets.init(top: 8, left: 8, bottom: 0, right: 8)
         baseLabel.widthAnchor /==/ getWidestCell()
-        globalHeight = textSizeB.height + 16
-        baseLabel.heightAnchor /==/ textSizeB.height
+        globalHeight = textHeight + 16
+        baseLabel.heightAnchor /==/ textHeight
+        baseLabel.verticalCompressionResistancePriority = .required
         baseLabel.leftAnchor /==/ leftAnchor
         baseLabel.topAnchor /==/ topAnchor
-        contentSize = CGSize.init(width: getWidestCell() + 16, height: textSizeB.height)
+        contentSize = CGSize.init(width: getWidestCell() + 16, height: textHeight)
     }
     
     func getWidestCell() -> CGFloat {

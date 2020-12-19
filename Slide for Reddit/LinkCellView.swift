@@ -19,7 +19,6 @@ import SDCAlertView
 import SDWebImage
 import Then
 import UIKit
-import YYText
 
 protocol LinkCellViewDelegate: class {
     func upvote(_ cell: LinkCellView)
@@ -40,69 +39,7 @@ enum CurrentType {
     case thumb, banner, text, autoplay, none
 }
 
-class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    
-    func linkTapped(url: URL, text: String) {
-        linkClicked = true
-        if url.absoluteString == CachedTitle.AWARD_KEY {
-            showAwardMenu()
-            return
-        }
-        
-        if !text.isEmpty {
-            self.parentViewController?.showSpoiler(text)
-        } else {
-            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: link!)
-        }
-    }
-
-    func linkLongTapped(url: URL) {
-        longBlocking = true
-        
-        if url.absoluteString == CachedTitle.AWARD_KEY {
-            showAwardMenu()
-            return
-        }
-
-        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
-        
-        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
-            let shareItems: Array = [url]
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = self.innerView
-            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-        }
-        
-        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
-            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-        }
-
-        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
-            }
-        }
-
-        let open = OpenInChromeController.init()
-        if open.isChromeInstalled() {
-            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                open.openInChrome(url, callbackURL: nil, createNewTab: true)
-            }
-        }
-        
-        if #available(iOS 10.0, *) {
-            HapticUtility.hapticActionStrong()
-        } else if SettingValues.hapticFeedback {
-            AudioServicesPlaySystemSound(1519)
-        }
-        
-        if parentViewController != nil {
-            alertController.show(parentViewController!)
-        }
-    }
+class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UIGestureRecognizerDelegate {
     
     @objc func upvote(sender: UITapGestureRecognizer? = nil) {
        // TODO: - maybe? innerView.blink(color: GMColor.orange500Color())
@@ -154,7 +91,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var thumbImageContainer: UIView!
     var thumbImage: UIImageView!
     var thumbText: UILabel!
-    var title: UITextView!
+    var title: TitleUITextView!
     var score: UILabel!
     var box: UIStackView!
     var sideButtons: UIStackView!
@@ -223,6 +160,20 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var bannerHeightConstraint: [NSLayoutConstraint] = []
     
     var videoID: String = ""
+    
+    var currentAccountTransitioningManager = ProfileInfoPresentationManager()
+
+    //Can't have parameters that target an iOS version :/
+    private var _savedPreview: Any?
+    @available(iOS 13.0, *)
+    fileprivate var savedPreview: UITargetedPreview? {
+        get {
+            return _savedPreview as? UITargetedPreview
+        }
+        set {
+            self._savedPreview = newValue
+        }
+    }
 
     var accessibilityView: UIView {
         return full ? innerView : self
@@ -239,10 +190,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     func configureView() {
         if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
-            innerView = RoundedCornerView(radius: 15, cornerColor: ColorUtil.theme.foregroundColor)
-            self.innerView.backgroundColor = ColorUtil.theme.backgroundColor //The rounded corners code will take care of the foreground color
+            innerView = RoundedCornerView(radius: 15, cornerColor: UIColor.foregroundColor)
+            self.innerView.backgroundColor = UIColor.backgroundColor //The rounded corners code will take care of the foreground color
         } else {
-            self.innerView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.innerView.backgroundColor = UIColor.foregroundColor
         }
 
         if full {
@@ -250,18 +201,19 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         } else {
             self.addSubview(innerView)
         }
+        
         accessibilityView.accessibilityIdentifier = "Link Cell View"
         accessibilityView.accessibilityHint = "Opens the post view for this post"
         accessibilityView.isAccessibilityElement = true
         accessibilityView.accessibilityTraits = UIAccessibilityTraits.link
         
-        self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
+        self.thumbImageContainer = RoundedCornerView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: UIColor.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image Container"
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
             $0.frame = CGRect(x: 0, y: 8, width: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0), height: (SettingValues.largerThumbnail ? 75 : 50) - (SettingValues.postViewMode == .COMPACT ? 15 : 0))
         }
         
-        self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: ColorUtil.theme.foregroundColor).then {
+        self.thumbImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 10, cornerColor: UIColor.foregroundColor).then {
             $0.accessibilityIdentifier = "Thumbnail Image"
             $0.backgroundColor = UIColor.white
             if #available(iOS 11.0, *) {
@@ -284,11 +236,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText = UILabel().then {
             $0.accessibilityIdentifier = "Link Type Label"
             if !ColorUtil.shouldBeNight() {
-                $0.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
-                $0.textColor = ColorUtil.theme.foregroundColor
+                $0.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
+                $0.textColor = UIColor.foregroundColor
             } else {
-                $0.backgroundColor = ColorUtil.theme.foregroundColor.withAlphaComponent(0.5)
-                $0.textColor = ColorUtil.theme.fontColor
+                $0.backgroundColor = UIColor.foregroundColor.withAlphaComponent(0.5)
+                $0.textColor = UIColor.fontColor
             }
             $0.textAlignment = .center
             $0.adjustsFontSizeToFitWidth = true
@@ -308,14 +260,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.thumbText.heightAnchor /==/ 20
         self.thumbText.bottomAnchor /==/ self.thumbImage.bottomAnchor + 2
                 
-        self.bannerImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor).then {
+        self.bannerImage = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor).then {
             $0.accessibilityIdentifier = "Banner Image"
             $0.contentMode = SettingValues.postImageMode == .SHORT_IMAGE && self is BannerLinkCellView ? .scaleAspectFit : .scaleAspectFill
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
             $0.clipsToBounds = true
-            $0.backgroundColor = ColorUtil.theme.backgroundColor
+            $0.backgroundColor = UIColor.backgroundColor
         }
         
         let layout = BadgeLayoutManager()
@@ -328,27 +280,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         self.title = TitleUITextView(delegate: self, textContainer: container).then {
             $0.accessibilityIdentifier = "Post Title"
-            $0.clipsToBounds = false
-            $0.textContainer.lineFragmentPadding = 0
-            $0.textContainerInset = .zero
-            $0.showsHorizontalScrollIndicator = false
-            $0.showsVerticalScrollIndicator = false
-            $0.layer.isOpaque = true
-            $0.isOpaque = true
-            $0.isSelectable = false
-            $0.layoutManager.allowsNonContiguousLayout = false
-            $0.isScrollEnabled = false
-            $0.layer.backgroundColor = ColorUtil.theme.foregroundColor.cgColor
-            $0.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-            $0.layoutManager.usesFontLeading = false
-            $0.contentInset = .zero
-            $0.contentInsetAdjustmentBehavior = .never
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
-            $0.isUserInteractionEnabled = true
-            for subview in $0.subviews {
-                subview.isOpaque = true
-                subview.backgroundColor = ColorUtil.theme.foregroundColor
-            }
+            $0.doSetup(background: true)
         }
         
         self.infoBox = UIStackView().then {
@@ -463,7 +395,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         self.score = UILabel().then {
             $0.accessibilityIdentifier = "Score Label"
             $0.numberOfLines = 1
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.isOpaque = true
         }
         
@@ -471,7 +403,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Score Label vertical"
             $0.numberOfLines = 1
             $0.textAlignment = .center
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.isOpaque = true
         }
         
@@ -479,9 +411,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             $0.accessibilityIdentifier = "Comment Count Label"
             $0.numberOfLines = 1
             $0.font = FontGenerator.boldFontOfSize(size: 12, submission: true)
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.isOpaque = true
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
         }
         
         self.taglabel = UILabel().then {
@@ -925,7 +857,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
-                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                        self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                     }
                 } else {
                     print("Direction change to -1")
@@ -940,7 +872,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     typeImage.image = UIImage(named: action.getPhoto())?.getCopy(withSize: CGSize.square(size: 30), withColor: .white)
                     typeImage.isHidden = true
                     UIView.animate(withDuration: 0.1) {
-                        self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                        self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                     }
                 }
             }
@@ -988,7 +920,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }, completion: { (_) in
                 })
                 UIView.animate(withDuration: 0.2) {
-                    self.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                    self.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
                 }
             } else if progress > 0.35 && previousProgress <= 0.35 && isTwoForDirection(left: direction == 1) {
                 action = getSecondAction(left: direction == 1)
@@ -1040,7 +972,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             doAction(item: self.action)
             UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = UIColor.backgroundColor
                 self.typeImage.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
                 self.innerView.frame.origin.x = self.originalPos
             }, completion: { (_) in
@@ -1058,7 +990,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseInOut, animations: {
                 self.typeImage.alpha = 0
                 self.innerView.frame.origin.x = self.originalPos
-                self.backgroundColor = ColorUtil.theme.backgroundColor
+                self.backgroundColor = UIColor.backgroundColor
             }, completion: { (_) in
                 self.typeImage.removeFromSuperview()
                 self.typeImage = nil
@@ -1403,8 +1335,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         return viewWidth * ratio
     }
     
-    let currentAccountTransitioningDelegate = ProfileInfoPresentationManager()
-
     func refreshLink(_ submission: SubmissionObject, np: Bool) {
         self.link = submission
         
@@ -1444,51 +1374,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
         
-        layoutTitleImageViews()
-        title.isScrollEnabled = false
+        title.layoutTitleImageViews()
     }
-    
-    //Should be moved into TitleUITextView.swift
-    func layoutTitleImageViews() {
-        title.subviews.forEach { (view) in
-            if view is UIImageView {
-                view.removeFromSuperview()
-            }
-        }
-        title.sizeToFit()
-        title.layoutManager.textStorage?.enumerateAttribute(.attachment, in: NSRange(location: 0, length: title.attributedText.length)) { attr, bgStyleRange, _ in
-            var rects = [CGRect]()
-            if let attachment = attr as? AsyncTextAttachmentNoLoad {
-                let url = attachment.imageURL
-                if let url = url {
-                    let bgStyleGlyphRange = title.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
-                    title.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
-                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
-                        var rect = self.title.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
-                        var baseline = 0
-                        baseline = Int(truncating: self.title.layoutManager.textStorage!.attribute(.baselineOffset, at: self.title.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
-
-                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2) + (attachment.bounds.size.height < 20 ? 2 : 0)
-                        rect.size = attachment.bounds.size
-                        let insetTop = CGFloat.zero
-                        rects.append(rect.offsetBy(dx: 0, dy: insetTop))
-                    }
-                    if let first = rects.first {
-                        let imageView = UIImageView(frame: first)
-                        title.addSubview(imageView)
-                        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)])
-                                                
-                        if attachment.rounded {
-                            imageView.backgroundColor = attachment.backgroundColor
-                            imageView.clipsToBounds = true
-                            imageView.layer.cornerRadius = first.size.height / 2
-                        }
-                    }
-                }
-            }
-        }
-    }
-            
+                
     @objc func doDTap(_ sender: AnyObject) {
         typeImage = UIImageView().then {
             $0.accessibilityIdentifier = "Action type"
@@ -1625,14 +1513,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
             
+        if !full {
+            self.contentView.isHidden = true
+        }
         self.linkClicked = false
 
         self.full = self is FullLinkCellView
         self.parentViewController = parent
         self.link = submission
-        if navViewController == nil && nav != nil {
-            navViewController = nav
-        }
 
         self.shouldLoadVideo = false
         self.loadedImage = nil
@@ -1642,8 +1530,8 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             shadow.removeFromSuperlayer()
             round.shadowLayer = nil
         }
-        comments.textColor = ColorUtil.theme.navIconColor
-        title.textColor = ColorUtil.theme.navIconColor
+        comments.textColor = UIColor.navIconColor
+        title.textColor = UIColor.navIconColor
 
         activeSet = true
 
@@ -1821,7 +1709,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     thumbImage.image = LinkCellImageCache.web
                 }
                 if let round = thumbImage as? RoundedImageView {
-                    round.setCornerRadius()
+                    if full {
+                        round.setCornerRadius(rect: CGRect(x: 0, y: 0, width: SettingValues.largerThumbnail ? 75 : 50, height: SettingValues.largerThumbnail ? 75 : 50))
+                    } else {
+                        round.setCornerRadius()
+                    }
                 }
             } else {
                 thumbText.isHidden = false
@@ -2000,7 +1892,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 taglabel.text = " \(text.uppercased()) "
             } else {
                 tagbody.isHidden = true
-                let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 14, submission: true)]))
+                let finalText = NSMutableAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: true)])
                 finalText.append(NSAttributedString.init(string: "\n\(submission.domain)"))
                 info.attributedText = finalText
             }
@@ -2014,7 +1906,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             crosspostDone = true
             let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
             let popup = UILabel()
-            outer.backgroundColor = ColorUtil.theme.backgroundColor
+            outer.backgroundColor = UIColor.backgroundColor
             popup.textAlignment = .left
             popup.isUserInteractionEnabled = true
             
@@ -2026,7 +1918,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             outer.layer.cornerRadius = 5
             outer.clipsToBounds = true
             
-            let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+            let icon = UIImageView(image: UIImage(named: "crosspost")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.fontColor))
             outer.addSubviews(icon, popup)
             icon.leftAnchor /==/ outer.leftAnchor + CGFloat(8)
             icon.centerYAnchor /==/ outer.centerYAnchor
@@ -2039,26 +1931,26 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             infoBox.spacing = 4
             
-            let colorF = ColorUtil.theme.fontColor
+            let colorF = UIColor.fontColor
             
-            let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF] as [String: Any]
+            let attrs = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
             }
             
-            let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            let endString = NSMutableAttributedString(string: "\nCrossposted by", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: colorF])
             
-            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor ?? "", small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): colorF]))
+            let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.crosspostAuthor ?? "", small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12), NSAttributedString.Key.foregroundColor: colorF])
             
             /* Maybe enable this later
              let userColor = ColorUtil.getColorForUser(name: submission.crosspostAuthor)
              if AccountController.currentName == submission.author {
-             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: UIColor.init(hexString: "#FFB74D"), NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
              } else if userColor != ColorUtil.baseColor {
-             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
+             authorString.addAttributes(convertToNSAttributedStringKeyDictionary([kTTTBackgroundFillColorAttributeName: userColor, NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor): UIColor.white, kTTTBackgroundFillPaddingAttributeName: UIEdgeInsets.init(top: 1, left: 1, bottom: 1, right: 1), kTTTBackgroundCornerRadiusAttributeName: 3]), range: NSRange.init(location: 0, length: authorString.length))
              }*/
             
             endString.append(authorString)
@@ -2449,8 +2341,10 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func editSelftext() {
         let reply = ReplyViewController.init(submission: link!, sub: (self.link?.subreddit)!) { (cr) in
             DispatchQueue.main.async(execute: { () -> Void in
-                self.setLink(submission: SubmissionObject.linkToSubmissionObject(submission: cr!), parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
-                self.showBody(width: self.innerView.frame.size.width - 24)
+                if let parent = self.parentViewController {
+                    self.setLink(submission: SubmissionObject.linkToSubmissionObject(submission: cr!), parent: parent, nav: parent.navigationController, baseSub: (self.link?.subreddit)!, np: false)
+                    self.showBody(width: self.innerView.frame.size.width - 24)
+                }
             })
         }
         
@@ -2561,7 +2455,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                         flairDictionary[(text != nil && !text!.isEmpty) ? text! : flair.text] = NSDictionary()
                         self.link!.flairJSON = flairDictionary.jsonString()
                         _ = CachedTitle.getTitle(submission: self.link!, full: true, true, false, gallery: false)
-                        self.setLink(submission: self.link!, parent: self.parentViewController!, nav: self.navViewController!, baseSub: (self.link?.subreddit)!, np: false)
+                        if let parent = self.parentViewController {
+                            self.setLink(submission: self.link!, parent: parent, nav: parent.navigationController, baseSub: (self.link?.subreddit)!, np: false)
+                        }
                         if self.textView != nil {
                             self.showBody(width: self.innerView.frame.size.width - 24)
                         }
@@ -2596,7 +2492,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             sideUpvote.image = LinkCellImageCache.upvoteTintedSmall
             attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         default:
-            attrs = ([NSAttributedString.Key.foregroundColor: ColorUtil.theme.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
+            attrs = ([NSAttributedString.Key.foregroundColor: UIColor.navIconColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)])
         }
         
         var scoreInt = link.score
@@ -2624,31 +2520,31 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             let subScore = NSMutableAttributedString(string: (scoreInt >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(scoreInt) / Double(1000))) : " \(scoreInt)", attributes: attrs)
             let scoreRatio =
                 NSMutableAttributedString(string: (SettingValues.upvotePercentage && full && link.upvoteRatio > 0) ?
-                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): comments.font ?? UIFont.systemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): comments.textColor ?? ColorUtil.theme.fontColor]))
+                    " (\(Int(link.upvoteRatio * 100))%)" : "", attributes: [NSAttributedString.Key.font: comments.font ?? UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: comments.textColor ?? UIColor.fontColor])
             
-            var attrsNew: [String: Any] = [:]
+            var attrsNew: [NSAttributedString.Key: Any] = [:]
             if scoreRatio.length > 0 {
                 let numb = (link.upvoteRatio)
                 if numb <= 0.5 {
                     if numb <= 0.1 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue500Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.blue500Color()]
                     } else if numb <= 0.3 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue400Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.blue400Color()]
                     } else {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.blue300Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.blue300Color()]
                     }
                 } else {
                     if numb >= 0.9 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange500Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.orange500Color()]
                     } else if numb >= 0.7 {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange400Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.orange400Color()]
                     } else {
-                        attrsNew = [convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): GMColor.orange300Color()]
+                        attrsNew = [NSAttributedString.Key.foregroundColor: GMColor.orange300Color()]
                     }
                 }
             }
             
-            scoreRatio.addAttributes(convertToNSAttributedStringKeyDictionary(attrsNew), range: NSRange.init(location: 0, length: scoreRatio.length))
+            scoreRatio.addAttributes(attrsNew, range: NSRange.init(location: 0, length: scoreRatio.length))
             
             subScore.append(scoreRatio)
             score.attributedText = subScore
@@ -2686,13 +2582,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if type != .IMAGE && type != .SELF && type != .NONE && !thumb {
                 let outer = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: 0, height: 48))
                 let popup = UILabel()
-                outer.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.getColorForSub(sub: link.subreddit).withAlphaComponent(0.2))
+                outer.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: link.subreddit), 0.2)
                 popup.textAlignment = .left
                 popup.isUserInteractionEnabled = true
                 
                 let finalText: NSMutableAttributedString!
-                let firstPart = NSMutableAttributedString.init(string: type.getTitle(link.url), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                let secondPart = NSMutableAttributedString.init(string: "\n" + (link.contentUrl ?? ""), attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                let firstPart = NSMutableAttributedString(string: type.getTitle(link.url), attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+                let secondPart = NSMutableAttributedString(string: "\n" + (link.contentUrl ?? ""), attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
                 firstPart.append(secondPart)
                 finalText = firstPart
                 popup.attributedText = finalText
@@ -2705,7 +2601,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 outer.layer.cornerRadius = 5
                 outer.clipsToBounds = true
                 
-                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
+                let icon = UIImageView(image: UIImage(named: type.getImage())!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.fontColor))
                 outer.addSubviews(icon, popup)
                 icon.leftAnchor /==/ outer.leftAnchor + CGFloat(8)
                 icon.centerYAnchor /==/ outer.centerYAnchor
@@ -2744,12 +2640,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 
                 let finalText: NSMutableAttributedString!
                 if textParts.count > 1 {
-                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
-                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12)]))
+                    let firstPart = NSMutableAttributedString.init(string: textParts[0], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
+                    let secondPart = NSMutableAttributedString.init(string: "\n" + textParts[1], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
                     firstPart.append(secondPart)
                     finalText = firstPart
                 } else {
-                    finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+                    finalText = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
                 }
                 popup.attributedText = finalText
                 
@@ -2950,7 +2846,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     var previewedImage = false
     var previewedVideo = false
     var previewedURL: URL?
-    weak var navViewController: UIViewController?
     
     @objc func openLink(sender: UITapGestureRecognizer? = nil) {
         if let link = link {
@@ -3059,7 +2954,7 @@ extension UILabel {
             textAttachment.image = image as? UIImage
         } else {
             
-            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: ColorUtil.theme.navIconColor)
+            let img = UIImage(named: imageName)?.getCopy(withSize: .square(size: self.font.pointSize), withColor: UIColor.navIconColor)
             textAttachment.image = img
             LinkCellView.imageDictionary.setObject(img!, forKey: imageName as NSCopying)
         }
@@ -3114,7 +3009,7 @@ private extension UIView {
 public extension UIImageView {
     func loadImageWithPulsingAnimation(atUrl url: URL?, withPlaceHolderImage placeholderImage: UIImage?, overrideSize: CGSize? = nil, isBannerView: Bool) {
         let oldBackgroundColor: UIColor? = self.backgroundColor
-        self.backgroundColor = ColorUtil.theme.fontColor
+        self.backgroundColor = UIColor.fontColor
         startPulsingAnimation()
 
         DispatchQueue.global(qos: .userInteractive).async {
@@ -3126,10 +3021,10 @@ public extension UIImageView {
                     if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) && ((self.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
                         self.contentMode = .scaleAspectFit
                         
-                        let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: ColorUtil.theme.foregroundColor)
+                        let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor)
                         backView.image = self.image?.sd_blurredImage(withRadius: 15)
                         backView.contentMode = .scaleAspectFill
-                        backView.backgroundColor = ColorUtil.theme.backgroundColor
+                        backView.backgroundColor = UIColor.backgroundColor
                         backView.tag = 2000 //Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors /==/ self.edgeAnchors
@@ -3215,32 +3110,6 @@ class PostActionsManager {
     }
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
 @available(iOS 13.0, *)
 extension LinkCellView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
@@ -3258,6 +3127,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                     
                     self.parentViewController?.present(vc, animated: true, completion: nil)
                 } else {
+                    if let vc = vc as? ProfilePreviewViewController {
+                        VCPresenter.openRedditLink("/u/\(vc.account)", nil, self.parentViewController)
+                        return
+                    }
+
                     if vc is WebsiteViewController || vc is SFHideSafariViewController {
                         self.previewedVC = nil
                         if let url = self.previewedURL {
@@ -3280,24 +3154,77 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     
+    func createRectsTargetedPreview(textView: TitleUITextView, location: CGPoint, snapshot: UIView) -> UITargetedPreview? {
+        let rects = self.getLocationForPreviewedText(textView, textView.convert(location, from: self.innerView), self.previewedURL?.absoluteString)
+        var convertedRects = [CGRect]()
+        
+        var minX = CGFloat.greatestFiniteMagnitude, maxX = -CGFloat.greatestFiniteMagnitude,
+            minY = CGFloat.greatestFiniteMagnitude, maxY = -CGFloat.greatestFiniteMagnitude
+
+        for rect in rects {
+            convertedRects.append(self.innerView.convert(rect, from: textView))
+        }
+        
+        for rect in convertedRects {
+            minX = min(rect.minX, minX)
+            maxX = max(rect.maxX, maxX)
+            minY = min(rect.minY, minY)
+            maxY = max(rect.maxY, maxY)
+        }
+        
+        let weightedCenterpoint = CGPoint(x: (minX + maxX) / 2, y: (minY + maxY) / 2)
+
+        let target = UIPreviewTarget(container: self.innerView, center: weightedCenterpoint)
+        let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
+        parameters.backgroundColor = UIColor.backgroundColor
+        
+        let path = UIBezierPath(wrappingAround: convertedRects)
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = path.cgPath
+        snapshot.layer.mask = maskLayer
+
+        let snapshotContainer = UIView(frame: snapshot.bounds)
+        snapshotContainer.addSubview(snapshot)
+        snapshot.layer.mask = maskLayer
+
+        return UITargetedPreview(view: snapshotContainer, parameters: parameters, target: target)
+    }
+    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        self.savedPreview = createPreview(interaction, configuration: configuration)
+        return self.savedPreview
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForDismissingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return self.savedPreview
+    }
+        
+    func createPreview(_ interaction: UIContextMenuInteraction, configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         
-        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(interaction.location(in: self.innerView)) {
-            let location = interaction.location(in: self.textView)
-            
-            if self.textView.firstTextView.frame.contains(location) {
-                return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(self.textView.firstTextView, location, self.previewedURL?.absoluteString) ?? parameters)
-            } else if self.textView.overflow.frame.contains(location) {
-                let innerLocation = self.textView.convert(location, to: self.textView.overflow)
+        let location = interaction.location(in: self.innerView)
+        if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            guard let snapshot = self.innerView.snapshotView(afterScreenUpdates: false) else {
+                  return nil
+            }
+
+            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+                return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
+            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+                let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        return UITargetedPreview(view: self.textView, parameters: self.getLocationForPreviewedText(view as! YYLabel, innerLocation, self.previewedURL?.absoluteString, self.textView) ?? parameters)
+                    if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
+                        return createRectsTargetedPreview(textView: view, location: location, snapshot: snapshot)
                     }
                 }
             }
-            return UITargetedPreview(view: self.textView, parameters: parameters)
+            return nil
+        } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
+            guard let snapshot = self.innerView.snapshotView(afterScreenUpdates: false) else {
+                  return nil
+            }
+            return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
         } else if videoView != nil && !videoView.isHidden && videoView.frame.contains(interaction.location(in: self.innerView)) {
             return UITargetedPreview(view: self.videoView, parameters: parameters)
         } else if bannerImage != nil && !bannerImage.isHidden && bannerImage.frame.contains(interaction.location(in: self.innerView)) {
@@ -3309,64 +3236,23 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         }
     }
     
-    func getLocationForPreviewedText(_ label: YYLabel, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> UIPreviewParameters? {
-        if inputURL == nil {
-            return nil
-        }
-        let point = label.superview?.convert(location, to: label) ?? location
-        var params: UIPreviewParameters?
-        if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                attributedText.enumerateAttribute(
-                    .link,
-                    in: NSRange(location: 0, length: attributedText.length)
-                ) { (value, range, _) in
-                    if let url = value as? NSURL {
-                        if url.absoluteString == inputURL! {
-                            let baseRects = layoutManager.selectionRects(for: YYTextRange(range: range))
-                            var cgs = [NSValue]()
-                            for rect in baseRects {
-                                if changeRectTo != nil {
-                                    cgs.append(NSValue(cgRect: changeRectTo!.convert(rect.rect, from: label)))
-                                } else {
-                                    cgs.append(NSValue(cgRect: rect.rect))
-                                }
-                            }
-                            params = UIPreviewParameters(textLineRects: cgs)
-                            params?.backgroundColor = .clear
-                        }
-                    }
-                }
-            }
-        }
-        return params
-    }
-    
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        let location = interaction.location(in: self.innerView)
+
         let saveArea = self.innerView.convert(location, to: self.buttons)
-        if full && self.textView != nil && !self.textView.isHidden && self.textView.frame.contains(location) {
-            let innerPoint = self.innerView.convert(location, to: self.textView)
-            if self.textView.firstTextView.frame.contains(innerPoint) {
-                if let config = getConfigurationForTextView(self.textView.firstTextView, innerPoint) {
-                    return config
-                }
-            } else if self.textView.overflow.frame.contains(innerPoint) {
-                let innerLocation = self.innerView.convert(innerPoint, to: self.textView.overflow)
-                print(innerLocation)
+        if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+                return getConfigurationForTextView(self.textView.firstTextView, location)
+            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+                let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        if let config = getConfigurationForTextView(view as! YYLabel, innerLocation) {
-                            return config
-                        }
+                    if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
+                        return getConfigurationForTextView(view, location)
                     }
                 }
             }
-            if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
-                return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-                    return self.del?.getMoreMenu(self)
-                })
-            }
+        } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
+            return getConfigurationForTextView(self.title, location)
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true
             return getConfigurationForVideo(url: url)
@@ -3379,32 +3265,80 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.makeContextMenu()
             })
-        } else if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+        }
+        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.del?.getMoreMenu(self)
             })
         }
+
         return nil
     }
     
-    func getConfigurationForTextView(_ label: YYLabel, _ location: CGPoint) -> UIContextMenuConfiguration? {
-        let point = label.superview?.convert(location, to: label) ?? location
-                if let attributedText = label.attributedText, let layoutManager = YYTextLayout(containerSize: label.frame.size, text: attributedText) {
-            let locationFinal = layoutManager.textPosition(for: point, lineIndex: layoutManager.lineIndex(for: point))
-            if locationFinal < 1000000 {
-                let attributes = attributedText.attributes(at: Int(locationFinal), effectiveRange: nil)
-                for attribute in attributes {
-                    if attribute.value is NSURL {
-                        if let url = (attribute.value as! NSURL).absoluteURL {
-                            return getConfigurationFor(url: url)
+    func getLocationForPreviewedText(_ label: TitleUITextView, _ location: CGPoint, _ inputURL: String?, _ changeRectTo: UIView? = nil) -> [CGRect] {
+        if inputURL == nil {
+            return [CGRect]()
+        }
+        
+        let point = location
+
+        var rects = [CGRect]()
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage {
+            let index = layoutManager.characterIndex(for: point, in: label.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+            
+            if index < textStorage.length {
+                var range = NSRange.zero
+
+                if (attributedText.attribute(NSAttributedString.Key.urlAction, at: index, effectiveRange: &range) as? URL) != nil {
+                    layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                        rects.append(rect)
+                    }
+                } else if let highlight = attributedText.attribute(NSAttributedString.Key.textHighlight, at: index, effectiveRange: &range) as? TextHighlight {
+                    if (highlight.userInfo["url"] as? URL) != nil {
+                        layoutManager.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: label.textContainer) { (rect, _) in
+                            rects.append(rect)
                         }
                     }
                 }
             }
         }
-        return nil
+        return rects
     }
-    
+
+    func getConfigurationForTextView(_ label: TitleUITextView, _ location: CGPoint) -> UIContextMenuConfiguration? {
+        let point = label.convert(location, from: self.innerView)
+
+        var configuration: UIContextMenuConfiguration?
+        var found = false
+        if let attributedText = label.attributedText, let layoutManager = label.layoutManager as? BadgeLayoutManager, let textStorage = layoutManager.textStorage, !found {
+            let characterRange = layoutManager.characterRange(forGlyphRange: NSRange(location: 0, length: attributedText.length), actualGlyphRange: nil)
+            textStorage.enumerateAttributes(in: characterRange, options: .longestEffectiveRangeNotRequired) { (attrs, bgStyleRange, _) in
+                for attr in attrs {
+                    if let url = attr.value as? URL ?? (attr.value as? TextHighlight)?.userInfo["url"] as? URL {
+                        let bgStyleGlyphRange = layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                        layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                            let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                            var rect = layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                            var baseline = 0
+                            baseline = Int(truncating: textStorage.attribute(.baselineOffset, at: layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+                            
+                            rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2)
+                            rect.size.height = usedRect.height - CGFloat(baseline) * 1.5
+                            let insetTop = CGFloat.zero
+                            
+                            let offsetRect = rect.offsetBy(dx: 0, dy: insetTop)
+                            if offsetRect.contains(point) {
+                                configuration = self.getConfigurationFor(url: url)
+                                found = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return configuration
+    }
+
     func contextMenuInteractionDidEnd(_ interaction: UIContextMenuInteraction) {
         self.previewedVC = nil
         self.previewedImage = false
@@ -3414,6 +3348,12 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     func getConfigurationFor(url: URL) -> UIContextMenuConfiguration {
         self.previewedURL = url
         return UIContextMenuConfiguration(identifier: nil, previewProvider: { () -> UIViewController? in
+            if url.absoluteString.starts(with: "/u/") {
+                let vc = ProfilePreviewViewController(accountNamed: url.absoluteString.replacingOccurrences(of: "/u/", with: ""))
+                self.previewedVC = vc
+                return vc
+            }
+
             if let vc = self.parentViewController?.getControllerForUrl(baseUrl: url, link: self.link!) {
                 self.previewedVC = vc
                 if vc is SingleSubredditViewController || vc is CommentViewController || vc is WebsiteViewController || vc is SFHideSafariViewController || vc is SearchViewController {
@@ -3425,34 +3365,56 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             return nil
         }, actionProvider: { (_) -> UIMenu? in
             var children = [UIMenuElement]()
-            
-            children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
-                let shareItems: Array = [url]
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = self.innerView
-                if let presenter = activityViewController.popoverPresentationController {
-                    presenter.sourceView = self.innerView
-                    presenter.sourceRect = self.innerView.bounds
-                }
-                self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-            })
-            children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
-                UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-            })
+            if url.absoluteString.starts(with: "/u/") {
+                let username = url.absoluteString.replacingOccurrences(of: "/u/", with: "")
 
-            children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            })
-            
-            let open = OpenInChromeController.init()
-            if open.isChromeInstalled() {
-                children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
-                    open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                children.append(UIAction(title: "Visit profile", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
+                    VCPresenter.openRedditLink(url.absoluteString, self.parentViewController?.navigationController, self.parentViewController)
                 })
-            }
 
-            return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
+                children.append(UIAction(title: "Send Message", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
+                    VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parentViewController?.navigationController, self.parentViewController)
+                })
+
+                children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
+                    guard let self = self else { return }
+                    if let parent = self.parentViewController {
+                        PostActions.block(username, parent: parent) {
+                            
+                        }
+                    }
+                }))
+
+                return UIMenu(title: "u/\(username)", image: nil, identifier: nil, children: children)
+            } else {
+                children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
+                    let shareItems: Array = [url]
+                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+                    activityViewController.popoverPresentationController?.sourceView = self.innerView
+                    if let presenter = activityViewController.popoverPresentationController {
+                        presenter.sourceView = self.innerView
+                        presenter.sourceRect = self.innerView.bounds
+                    }
+                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+                })
+                children.append(UIAction(title: "Copy URL", image: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) { _ in
+                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+                    BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+                })
+
+                children.append(UIAction(title: "Open in default app", image: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) { _ in
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                })
+                
+                let open = OpenInChromeController.init()
+                if open.isChromeInstalled() {
+                    children.append(UIAction(title: "Open in Chrome", image: UIImage(named: "world")!.menuIcon()) { _ in
+                        open.openInChrome(url, callbackURL: nil, createNewTab: true)
+                    })
+                }
+
+                return UIMenu(title: "Link Options", image: nil, identifier: nil, children: children)
+            }
         })
     }
 
@@ -3703,7 +3665,7 @@ class RoundedImageView: UIImageView {
         let path = UIBezierPath(roundedRect: rect ?? self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         maskLayer?.removeFromSuperlayer()
         maskLayer = CAShapeLayer()
-        maskLayer.frame = self.layer.bounds
+        maskLayer.frame = rect ?? self.layer.bounds
         maskLayer.path = path.cgPath
         self.layer.mask = maskLayer
         self.layer.masksToBounds = true
@@ -3720,30 +3682,87 @@ extension NSAttributedString {
         )
         return boundingBox.height
     }
-    func height2(containerWidth: CGFloat) -> CGFloat {
-        let textStorage = NSTextStorage(attributedString: self)
-        let size = CGSize(width: containerWidth, height: CGFloat.greatestFiniteMagnitude)
-        let boundingRect = CGRect(origin: .zero, size: size)
+    
+    func width(containerWidth: CGFloat) -> CGFloat {
+        let size = CGSize(width: containerWidth, height: .infinity)
+        let boundingBox = self.boundingRect(
+            with: size,
+            options: [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics],
+            context: nil
+        )
+        return boundingBox.width
+    }
+}
 
-        let textContainer = NSTextContainer(size: size)
-        textContainer.lineFragmentPadding = 0
+extension LinkCellView: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        linkClicked = true
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
+        
+        if !text.isEmpty {
+            self.parentViewController?.showSpoiler(text)
+        } else {
+            self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: link!)
+        }
+    }
 
-        let layoutManager = NSLayoutManager()
-        layoutManager.addTextContainer(textContainer)
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
 
-        textStorage.addLayoutManager(layoutManager)
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.innerView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }
 
-        self.enumerateAttribute(.attachment, in: NSRange(location: 0, length: self.length), options: []) { (value, range, _) in
-            if let attachment = value as? NSTextAttachment {
-                layoutManager.setAttachmentSize(CGSize.square(size: 24), forGlyphRange: range)
-                layoutManager.setNeedsLayout(forAttachment: attachment)
-                layoutManager.setNeedsDisplay(forAttachment: attachment)
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
             }
         }
-        layoutManager.glyphRange(forBoundingRect: boundingRect, in: textContainer)
 
-        let rect = layoutManager.usedRect(for: textContainer)
-
-        return rect.integral.size.height
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        
+        if parentViewController != nil {
+            alertController.show(parentViewController!)
+        }
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentViewController {
+            let vc = ProfileInfoViewController(accountNamed: profile)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = currentAccountTransitioningManager
+            parent.present(vc, animated: true)
+        }
     }
 }

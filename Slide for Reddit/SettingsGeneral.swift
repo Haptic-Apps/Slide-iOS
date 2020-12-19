@@ -164,7 +164,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.textLabel?.textColor = UIColor.fontColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.detailTextLabel?.numberOfLines = 0
@@ -199,57 +199,57 @@ class SettingsGeneral: BubbleSettingTableViewController {
         createCell(scrollSidebar, scrollSidebarSwitch, isOn: SettingValues.scrollSidebar, text: "Reset sidebar automatically")
 
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
-        self.alwaysShowHeader.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.alwaysShowHeader.detailTextLabel?.textColor = UIColor.fontColor
         self.alwaysShowHeader.detailTextLabel?.numberOfLines = 0
         
         self.hideFAB.detailTextLabel?.text = "Pro tip: long on the button to quickly change the action"
-        self.hideFAB.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.hideFAB.backgroundColor = ColorUtil.theme.foregroundColor
-        self.hideFAB.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.hideFAB.detailTextLabel?.textColor = UIColor.fontColor
+        self.hideFAB.backgroundColor = UIColor.foregroundColor
+        self.hideFAB.textLabel?.textColor = UIColor.fontColor
         self.hideFAB.detailTextLabel?.numberOfLines = 0
 
         self.scrubUsername.detailTextLabel?.text = "Hide your username everywhere"
-        self.scrubUsername.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.scrubUsername.backgroundColor = ColorUtil.theme.foregroundColor
-        self.scrubUsername.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.scrubUsername.detailTextLabel?.textColor = UIColor.fontColor
+        self.scrubUsername.backgroundColor = UIColor.foregroundColor
+        self.scrubUsername.textLabel?.textColor = UIColor.fontColor
 
         self.buttonType.detailTextLabel?.text = SettingValues.fabType.getTitle()
-        self.buttonType.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.buttonType.backgroundColor = ColorUtil.theme.foregroundColor
-        self.buttonType.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.buttonType.detailTextLabel?.textColor = UIColor.fontColor
+        self.buttonType.backgroundColor = UIColor.foregroundColor
+        self.buttonType.textLabel?.textColor = UIColor.fontColor
 
         self.postSorting.textLabel?.text = "Default subreddit sorting"
         self.postSorting.detailTextLabel?.text = SettingValues.defaultSorting.description
-        self.postSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.postSorting.backgroundColor = ColorUtil.theme.foregroundColor
-        self.postSorting.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.postSorting.detailTextLabel?.textColor = UIColor.fontColor
+        self.postSorting.backgroundColor = UIColor.foregroundColor
+        self.postSorting.textLabel?.textColor = UIColor.fontColor
 
         self.searchSorting.textLabel?.text = "Default search sorting"
         self.searchSorting.detailTextLabel?.text = "Sort by \(SettingValues.defaultSearchSorting.path.capitalize())"
-        self.searchSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.searchSorting.backgroundColor = ColorUtil.theme.foregroundColor
-        self.searchSorting.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.searchSorting.detailTextLabel?.textColor = UIColor.fontColor
+        self.searchSorting.backgroundColor = UIColor.foregroundColor
+        self.searchSorting.textLabel?.textColor = UIColor.fontColor
        
         self.scrollSidebar.textLabel?.text = "Reset Sidebar automatically"
         self.scrollSidebar.detailTextLabel?.text = "Reset search and scroll to the top of the subreddit menu automatically"
-        self.scrollSidebar.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.scrollSidebar.backgroundColor = ColorUtil.theme.foregroundColor
-        self.scrollSidebar.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.scrollSidebar.detailTextLabel?.textColor = UIColor.fontColor
+        self.scrollSidebar.backgroundColor = UIColor.foregroundColor
+        self.scrollSidebar.textLabel?.textColor = UIColor.fontColor
 
         self.commentLimit.textLabel?.text = "Number of comments to load"
         self.commentLimit.detailTextLabel?.text = "\(SettingValues.commentLimit) comments"
-        self.commentLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.commentLimit.backgroundColor = ColorUtil.theme.foregroundColor
-        self.commentLimit.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.commentLimit.detailTextLabel?.textColor = UIColor.fontColor
+        self.commentLimit.backgroundColor = UIColor.foregroundColor
+        self.commentLimit.textLabel?.textColor = UIColor.fontColor
         self.commentLimit.contentView.addTapGestureRecognizer { (_) in
             self.showCountMenu(false)
         }
 
         self.postLimit.textLabel?.text = "Number of posts to load"
         self.postLimit.detailTextLabel?.text = "\(SettingValues.submissionLimit) posts"
-        self.postLimit.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.postLimit.backgroundColor = ColorUtil.theme.foregroundColor
-        self.postLimit.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.postLimit.detailTextLabel?.textColor = UIColor.fontColor
+        self.postLimit.backgroundColor = UIColor.foregroundColor
+        self.postLimit.textLabel?.textColor = UIColor.fontColor
         self.postLimit.contentView.addTapGestureRecognizer { (_) in
             self.showCountMenu(true)
         }
@@ -263,9 +263,9 @@ class SettingsGeneral: BubbleSettingTableViewController {
         } else {
             self.notifications.textLabel?.text = "New message notifications"
             self.notifications.detailTextLabel?.text = "Requires iOS 10 or newer"
-            self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-            self.notifications.backgroundColor = ColorUtil.theme.foregroundColor
-            self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
+            self.notifications.detailTextLabel?.textColor = UIColor.fontColor
+            self.notifications.backgroundColor = UIColor.foregroundColor
+            self.notifications.textLabel?.textColor = UIColor.fontColor
         }
         
         if SettingValues.dontHideTopBar {
@@ -282,20 +282,20 @@ class SettingsGeneral: BubbleSettingTableViewController {
         
         self.notifications.textLabel?.text = "New message notifications"
         self.notifications.detailTextLabel?.text = "Check for new mail when iOS allows Slide to wake from background"
-        self.notifications.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.notifications.backgroundColor = ColorUtil.theme.foregroundColor
-        self.notifications.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.notifications.detailTextLabel?.textColor = UIColor.fontColor
+        self.notifications.backgroundColor = UIColor.foregroundColor
+        self.notifications.textLabel?.textColor = UIColor.fontColor
 
         self.matchSilence.detailTextLabel?.text = "Follows mute switch and silent mode"
-        self.matchSilence.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.matchSilence.backgroundColor = ColorUtil.theme.foregroundColor
-        self.matchSilence.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.matchSilence.detailTextLabel?.textColor = UIColor.fontColor
+        self.matchSilence.backgroundColor = UIColor.foregroundColor
+        self.matchSilence.textLabel?.textColor = UIColor.fontColor
 
         self.commentSorting.textLabel?.text = "Default comment sorting"
         self.commentSorting.detailTextLabel?.text = SettingValues.defaultCommentSorting.description
-        self.commentSorting.backgroundColor = ColorUtil.theme.foregroundColor
-        self.commentSorting.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.commentSorting.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.commentSorting.backgroundColor = UIColor.foregroundColor
+        self.commentSorting.detailTextLabel?.textColor = UIColor.fontColor
+        self.commentSorting.textLabel?.textColor = UIColor.fontColor
 
         self.tableView.tableFooterView = UIView()
         
@@ -327,7 +327,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         initialSelection.append((0, (submissions ? SettingValues.submissionLimit - min : SettingValues.commentLimit - min) / step))
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Select \(submissions ? "submission" : "comment") limit", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Select \(submissions ? "submission" : "comment") limit", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         let pickerView = PickerViewViewControllerColored(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
             switch index.column {
@@ -576,7 +576,7 @@ public class InsetCell: UITableViewCell {
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        self.backgroundColor = ColorUtil.theme.foregroundColor
+        self.backgroundColor = UIColor.foregroundColor
 
         if !top && !bottom {
             let shape = CAShapeLayer()
@@ -658,7 +658,7 @@ class BubbleSettingTableViewController: UITableViewController {
 
     override func loadView() {
         super.loadView()
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -666,7 +666,7 @@ class BubbleSettingTableViewController: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 24, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = UIColor.backgroundColor
         
         if headers.isEmpty {
             return UIView()
@@ -678,7 +678,7 @@ class BubbleSettingTableViewController: UITableViewController {
     var headers = [String]()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -693,6 +693,6 @@ class BubbleSettingTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        tableView.separatorColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.fontColor.withAlphaComponent(0.15))
+        tableView.separatorColor = UIColor.foregroundColorOverlaidWithFont(0.15)
     }
 }

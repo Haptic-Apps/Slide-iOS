@@ -86,7 +86,7 @@ class SettingsFont: BubbleSettingTableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Font settings"
         headers = ["Submissions", "Comments", "Link options"]
@@ -133,7 +133,7 @@ class SettingsFont: BubbleSettingTableViewController {
         sliderSub.value = CGFloat(SettingValues.postFontOffset)
         sliderSub.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
         sliderSub.minimumTrackTintColor = ColorUtil.baseAccent
-        sliderSub.maximumTrackTintColor = ColorUtil.theme.fontColor
+        sliderSub.maximumTrackTintColor = UIColor.fontColor
         
         submissionSize.contentView.addSubview(sliderSub)
         if let label = submissionSize.textLabel {
@@ -172,7 +172,7 @@ class SettingsFont: BubbleSettingTableViewController {
         slider.value = CGFloat(SettingValues.commentFontOffset)
         slider.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
         slider.minimumTrackTintColor = ColorUtil.baseAccent
-        slider.maximumTrackTintColor = ColorUtil.theme.fontColor
+        slider.maximumTrackTintColor = UIColor.fontColor
         
         commentSize.contentView.addSubview(slider)
         if let label = commentSize.textLabel {
@@ -325,7 +325,7 @@ class SettingsFont: BubbleSettingTableViewController {
 
         cell.style()
         if indexPath == IndexPath(row: 3, section: 0) || indexPath == IndexPath(row: 3, section: 1) {
-            cell.backgroundColor = ColorUtil.theme.backgroundColor
+            cell.backgroundColor = UIColor.backgroundColor
         }
         return cell
     }
@@ -591,9 +591,9 @@ extension SettingsFont: FontSelectionTableViewControllerDelegate {
 
 private extension UITableViewCell {
     func style() {
-        backgroundColor = ColorUtil.theme.foregroundColor
-        textLabel?.textColor = ColorUtil.theme.fontColor
-        detailTextLabel?.textColor = ColorUtil.theme.fontColor.withAlphaComponent(0.7)
+        backgroundColor = UIColor.foregroundColor
+        textLabel?.textColor = UIColor.fontColor
+        detailTextLabel?.textColor = UIColor.fontColor.withAlphaComponent(0.7)
     }
 }
 

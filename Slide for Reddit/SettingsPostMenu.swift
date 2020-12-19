@@ -19,7 +19,7 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         headers = ["Active actions", "Disabled actions"]
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         
         enabled.append(contentsOf: SettingValues.PostOverflowAction.getMenuNone())
         all.append(contentsOf: SettingValues.PostOverflowAction.cases.filter({ !enabled.contains($0) }))
@@ -52,7 +52,7 @@ class SettingsPostMenu: BubbleSettingTableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -68,8 +68,8 @@ class SettingsPostMenu: BubbleSettingTableViewController {
         
         let c = UITableViewCell(style: .default, reuseIdentifier: nil)
         c.textLabel?.text = thing.getTitle()
-        c.backgroundColor = ColorUtil.theme.foregroundColor
-        c.textLabel?.textColor = ColorUtil.theme.fontColor
+        c.backgroundColor = UIColor.foregroundColor
+        c.textLabel?.textColor = UIColor.fontColor
         c.imageView?.image = thing.getImage()
         c.showsReorderControl = true
         

@@ -65,8 +65,8 @@ class SettingsHistory: BubbleSettingTableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -80,7 +80,7 @@ class SettingsHistory: BubbleSettingTableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "History"
         self.headers = ["Settings", "Clear history", "Export data"]
@@ -93,23 +93,23 @@ class SettingsHistory: BubbleSettingTableViewController {
         exportCollectionsCell.accessoryType = .disclosureIndicator
 
         dotCell.detailTextLabel?.numberOfLines = 0
-        dotCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        dotCell.detailTextLabel?.textColor = UIColor.fontColor
         dotCell.detailTextLabel?.text = "Enabling this will disable the 'grayed out' effect of read submissions"
         
         createCell(hideSeenCell, hideSeen, isOn: SettingValues.hideSeen, text: "Hide read posts automatically")
         hideSeenCell.detailTextLabel?.numberOfLines = 0
-        hideSeenCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        hideSeenCell.detailTextLabel?.textColor = UIColor.fontColor
         hideSeenCell.detailTextLabel?.text = "Enabling this may lead to no posts loading in a subreddit"
 
         clearHistory.textLabel?.text = "Clear submission history"
-        clearHistory.backgroundColor = ColorUtil.theme.foregroundColor
-        clearHistory.textLabel?.textColor = ColorUtil.theme.fontColor
+        clearHistory.backgroundColor = UIColor.foregroundColor
+        clearHistory.textLabel?.textColor = UIColor.fontColor
         clearHistory.selectionStyle = UITableViewCell.SelectionStyle.none
         clearHistory.accessoryType = .disclosureIndicator
 
         clearSubs.textLabel?.text = "Clear subreddit history"
-        clearSubs.backgroundColor = ColorUtil.theme.foregroundColor
-        clearSubs.textLabel?.textColor = ColorUtil.theme.fontColor
+        clearSubs.backgroundColor = UIColor.foregroundColor
+        clearSubs.textLabel?.textColor = UIColor.fontColor
         clearSubs.selectionStyle = UITableViewCell.SelectionStyle.none
         clearSubs.accessoryType = .disclosureIndicator
 
