@@ -1784,8 +1784,34 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             authorStringNoFlair.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorStringNoFlair.length))
         }
 
-        let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(comment.flair.unescapeHTML)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: UIColor.backgroundColor, NSAttributedString.Key.foregroundColor: UIColor.fontColor])
-        
+        let flairString: NSMutableAttributedString? = nil
+        if SettingValues.showFlairs {
+            let flairsDict = comment.flairDictionary
+            let flairTitle = NSMutableAttributedString(string: "", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+            if !flairsDict.keys.isEmpty {
+                for key in flairsDict.keys {
+                    let flair = flairsDict[key] as? NSDictionary
+                    if let url = flair?["url"] as? String, SettingValues.imageFlairs {
+                        if let urlAsURL = URL(string: url) {
+                            let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: UIColor.foregroundColor)
+                            attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                            flairTitle.append(NSAttributedString(attachment: attachment))
+                        }
+                    } else {
+                        let flair = flairsDict[key] as? NSDictionary
+                        if let color = flair?["color"] as? String, SettingValues.coloredFlairs {
+                            let singleFlair = NSMutableAttributedString(string: "\u{00A0}\(key)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(hexString: color), NSAttributedString.Key.foregroundColor: UIColor.white])
+                            flairTitle.append(singleFlair)
+                        } else {
+                            let singleFlair = NSMutableAttributedString(string: "\u{00A0}\(key)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor.backgroundColor, NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+                            flairTitle.append(singleFlair)
+                        }
+                    }
+                }
+                flairString = flairTitle
+            }
+        }
+
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
         let spacer = NSMutableAttributedString.init(string: "  ")
@@ -1813,6 +1839,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(authorStringNoFlair)
         } else {
             infoString.append(authorString)
+        }
+        
+        if let flairs = flairString {
+            infoString.append(flairs)
         }
 
         let tag = ColorUtil.getTagForUser(name: comment.author)

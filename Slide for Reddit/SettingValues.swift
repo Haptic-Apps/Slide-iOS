@@ -534,6 +534,7 @@ class SettingValues {
 
         SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
         SettingValues.desktopMode = true //todo disable this
+        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) //Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 

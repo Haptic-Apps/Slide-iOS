@@ -1109,7 +1109,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.desktopMode {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in
