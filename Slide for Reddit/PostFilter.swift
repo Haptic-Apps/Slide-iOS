@@ -143,7 +143,7 @@ class PostFilter {
 
         for link in input {
             if link is SubmissionObject {
-                if !matches(link as! SubmissionObject, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! SubmissionObject).name) {
+                if !matches(link as! SubmissionObject, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains(link.getId()) {
                     toReturn.append(link)
                 }
             } else if link is CommentObject {

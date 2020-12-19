@@ -208,8 +208,8 @@ class SubmissionsDataSource {
                         var converted: [SubmissionObject] = []
                         var ids = [String]()
                         for link in newLinks {
-                            ids.append(link.id)
                             let newRS = SubmissionObject.linkToSubmissionObject(submission: link)
+                            ids.append(newRS.getId())
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
