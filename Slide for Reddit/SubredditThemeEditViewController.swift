@@ -31,7 +31,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     var resetCard = UIView()
     
     //Delegate will handle instant color changes
-    var delegate: SubredditThemeEditViewControllerDelegate
+    weak var delegate: SubredditThemeEditViewControllerDelegate?
 
     init(subreddit: String, delegate: SubredditThemeEditViewControllerDelegate) {
         self.subreddit = subreddit
@@ -57,13 +57,13 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     //Configure wells and set constraints
     func configureLayout() {
         primary = UILabel().then {
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.text = "Primary color"
             $0.font = UIFont.boldSystemFont(ofSize: 16)
             $0.textAlignment = .left
         }
         accent = UILabel().then {
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.text = "Accent color"
             $0.font = UIFont.boldSystemFont(ofSize: 16)
             $0.textAlignment = .left
@@ -82,24 +82,24 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
             $0.addTarget(self, action: #selector(colorWellChangedAccent(_:)), for: .valueChanged)
         }
 
-        primaryCard.backgroundColor = ColorUtil.theme.backgroundColor
+        primaryCard.backgroundColor = UIColor.backgroundColor
         primaryCard.clipsToBounds = true
         primaryCard.layer.cornerRadius = 10
         
         primaryCard.addSubviews(primary, primaryWell!)
         
-        accentCard.backgroundColor = ColorUtil.theme.backgroundColor
+        accentCard.backgroundColor = UIColor.backgroundColor
         accentCard.clipsToBounds = true
         accentCard.layer.cornerRadius = 10
         
         accentCard.addSubviews(accent, accentWell!)
 
-        resetCard.backgroundColor = ColorUtil.theme.backgroundColor
+        resetCard.backgroundColor = UIColor.backgroundColor
         resetCard.clipsToBounds = true
         resetCard.layer.cornerRadius = 10
         
         let resetLabel = UILabel().then {
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.text = "Reset colors"
             $0.font = UIFont.boldSystemFont(ofSize: 16)
             $0.textAlignment = .left
@@ -112,9 +112,9 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         
         resetCard.addTapGestureRecognizer { (_) in
             self.setupTitleView(self.subreddit)
-            self.delegate.didChangeColors(false, color: ColorUtil.getColorForSub(sub: self.subreddit))
+            self.delegate?.didChangeColors(false, color: ColorUtil.getColorForSub(sub: self.subreddit))
             
-            if !self.delegate.didClear() {
+            if !(self.delegate?.didClear() ?? true) {
                 UserDefaults.standard.removeObject(forKey: "color+" + self.subreddit)
                 UserDefaults.standard.removeObject(forKey: "accent+" + self.subreddit)
                 UserDefaults.standard.synchronize()
@@ -163,7 +163,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
         if let selected = primaryWell?.selectedColor {
             ColorUtil.setColorForSub(sub: subreddit, color: selected)
             setupTitleView(subreddit)
-            delegate.didChangeColors(false, color: selected)
+            delegate?.didChangeColors(false, color: selected)
         }
     }
 
@@ -171,7 +171,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     @objc func colorWellChangedAccent(_ sender: Any) {
         if let selected = accentWell?.selectedColor {
             ColorUtil.setAccentColorForSub(sub: subreddit, color: selected)
-            delegate.didChangeColors(true, color: selected)
+            delegate?.didChangeColors(true, color: selected)
         }
     }
     
@@ -179,7 +179,7 @@ class SubredditThemeEditViewController: UIViewController, UIColorPickerViewContr
     func setupTitleView(_ sub: String) {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(sub)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         

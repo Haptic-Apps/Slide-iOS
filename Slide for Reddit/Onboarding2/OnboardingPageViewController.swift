@@ -103,8 +103,8 @@ extension OnboardingPageViewController: UIPageViewControllerDataSource {
                 button.text = "Done"
 
                 UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-                    button.layer.backgroundColor = ColorUtil.theme.backgroundColor.cgColor
-                    button.textColor = ColorUtil.theme.fontColor
+                    button.layer.backgroundColor = UIColor.backgroundColor.cgColor
+                    button.textColor = UIColor.fontColor
                 })
             }
         }

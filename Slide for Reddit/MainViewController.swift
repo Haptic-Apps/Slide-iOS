@@ -83,7 +83,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -134,7 +134,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterBadge!.text = "\(count)"
             readLaterBadge!.insets = CGSize.zero
             readLaterBadge!.font = UIFont.boldSystemFont(ofSize: 10)
-            readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.theme.navIconColor : UIColor.white
+            readLaterBadge!.textColor = SettingValues.reduceColor ? UIColor.navIconColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
             readLater.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
@@ -313,7 +313,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             UserDefaults.standard.setValue(true, forKey: "done" + token.name)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.theme.fontColor
+            spinnerIndicator.color = UIColor.fontColor
             spinnerIndicator.startAnimating()
             
             alertController?.view.addSubview(spinnerIndicator)
@@ -447,7 +447,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func doLeftItem() {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
@@ -626,11 +626,11 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             if !SettingValues.done6() {
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                     let viewController = OnboardingViewController()
-                    viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+                    viewController.view.backgroundColor = UIColor.foregroundColor
                     let newParent = TapBehindModalViewController.init(rootViewController: viewController)
                     newParent.navigationBar.shadowImage = UIImage()
                     newParent.navigationBar.isTranslucent = false
-                    newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+                    newParent.navigationBar.barTintColor = UIColor.foregroundColor
 
                     newParent.navigationBar.shadowImage = UIImage()
                     newParent.navigationBar.isTranslucent = false
@@ -789,24 +789,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     @objc func showDrawer(_ sender: AnyObject) {
-    }
-
-    // MARK: - Other stuff
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        if #available(iOS 13.0, *) {
-            if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-                    ColorUtil.matchTraitCollection()
-                }
-            } else {
-                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                    if themeChanged {
-                        ColorUtil.matchTraitCollection()
-                    }
-                }
-            }
-        }
     }
 }
 

@@ -10,6 +10,10 @@ import Anchorage
 import Foundation
 import reddift
 
+protocol TabsContentPagingViewControllerDelegate: class {
+    func shouldUpdateButtons()
+}
+
 class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewControllerDataSource, UINavigationControllerDelegate {
     var vCs: [UIViewController] = []
     var lastPosition: CGFloat = 0
@@ -20,9 +24,11 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
     var selected = false
     var stickyBelow = UIView()
     var shouldScroll: Bool = true
+    var openTo = 0
+    var del: TabsContentPagingViewControllerDelegate?
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
             if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -73,7 +79,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
 
         tabBar?.removeFromSuperview()
         tabBar = TabsPagingTitleCollectionView(withTabs: titles, delegate: self)
-        tabBar.backgroundColor = ColorUtil.theme.foregroundColor
+        tabBar.backgroundColor = UIColor.foregroundColor
         
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: tabBar.collectionView.panGestureRecognizer)
@@ -89,7 +95,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
         
         stickyBelow = UIView().then {
             $0.backgroundColor = ColorUtil.baseAccent
-            $0.layer.cornerRadius = 5
+            $0.layer.cornerRadius = 2.5
             $0.clipsToBounds = true
         }
 
@@ -123,19 +129,25 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
 
         tabBar.horizontalAnchors /==/ self.view.horizontalAnchors
         tabBar.sizeToFit()
-        
+                
         if self is InboxViewController {
             time = History.getInboxSeen()
             History.inboxSeen()
         }
         
-        view.backgroundColor = ColorUtil.theme.backgroundColor
+        view.backgroundColor = UIColor.backgroundColor
 
         self.dataSource = self
         self.delegate = self
 
         self.navigationController?.view.backgroundColor = UIColor.clear
-        let firstViewController = vCs[0]
+        
+        if (self as? ProfileViewController)?.friends ?? false {
+            openTo += 1
+        }
+        
+        currentIndex = openTo
+        let firstViewController = vCs[openTo]
 
         for view in view.subviews {
             if view is UIScrollView {
@@ -143,11 +155,12 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
                 break
             }
         }
-
+        
         setViewControllers([firstViewController],
                 direction: .forward,
-                animated: true,
-                completion: nil)
+                animated: true) { (_) in
+            self.doToolbarOffset()
+        }
     }
 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -246,8 +259,7 @@ extension TabsContentPagingViewController: PagingTitleDelegate {
 
         let currentWidth = layout.widthAt(currentIndex)
         
-        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
-
+        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2)
         let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
             (currentWidth / 2) - // Width of current cell
             (self.tabBar!.collectionView.frame.size.width / 2) +
@@ -262,6 +274,7 @@ extension TabsContentPagingViewController: PagingTitleDelegate {
     }
 
     func didSetWidth() {
+        self.doToolbarOffset()
     }
 }
 

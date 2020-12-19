@@ -16,21 +16,21 @@ class PlaceholderViewController: UIViewController {
         
         navigationController?.setNavigationBarHidden(true, animated: false)
 
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
 
         let image = UIImage(named: "slideoverlay")!
         
         let imageView = UIImageView().then {
             $0.image = image
             $0.alpha = 0.6
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
             $0.layer.cornerRadius = (25)
             $0.clipsToBounds = true
             $0.contentMode = .scaleAspectFit
         }
 
         let label = UILabel().then {
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.font = UIFont.boldSystemFont(ofSize: 12)
             $0.textAlignment = .center
         }

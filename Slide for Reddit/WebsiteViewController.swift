@@ -53,14 +53,10 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         }
         
         updateToolbar()
-        webView.getCookies() { data in
-              print("=========================================")
-              print(data)
-        }
 
         navigationController?.setToolbarHidden(false, animated: false)
-        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+        navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+        navigationController?.toolbar.tintColor = UIColor.fontColor
     }
     
     func updateToolbar() {
@@ -248,7 +244,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                 if self.needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
                     self.needsReload = false
                     webView.alpha = 0
-                    webView.superview?.backgroundColor = ColorUtil.theme.backgroundColor
+                    webView.superview?.backgroundColor = UIColor.backgroundColor
                     let pending = UIAlertController(title: "Syncing with Reddit...", message: nil, preferredStyle: .alert)
 
                     let indicator = UIActivityIndicatorView(frame: pending.view.bounds)
@@ -546,11 +542,6 @@ extension WKWebView {
         self.configuration.processPool = WKProcessPool()
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
 
 extension WebsiteViewController: WKScriptMessageHandler {

@@ -40,7 +40,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -52,8 +52,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         }
     }
 
-    lazy var slideInTransitioningDelegate = SlideInPresentationManager()
-    lazy var postContentTransitioningDelegate = PostContentPresentationManager()
+    var postContentTransitioningManager = PostContentPresentationManager()
 
     var subChanged = false
 
@@ -109,8 +108,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
                 let safariVC = SFHideSafariViewController(url: url, configuration: config)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                    safariVC.preferredBarTintColor = UIColor.foregroundColor
+                    safariVC.preferredControlTintColor = UIColor.fontColor
                     vc = safariVC
                 } else {
                     let web = WebsiteViewController(url: url, subreddit: "")
@@ -192,8 +191,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                     config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
                     let safariVC = SFHideSafariViewController(url: contentUrl!, configuration: config)
                     if #available(iOS 10.0, *) {
-                        safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
-                        safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                        safariVC.preferredBarTintColor = UIColor.foregroundColor
+                        safariVC.preferredControlTintColor = UIColor.fontColor
                     } else {
                         // Fallback on earlier versions
                     }
@@ -208,8 +207,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
                 let safariVC = SFHideSafariViewController(url: contentUrl!, configuration: config)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                    safariVC.preferredBarTintColor = UIColor.foregroundColor
+                    safariVC.preferredControlTintColor = UIColor.fontColor
                 } else {
                     // Fallback on earlier versions
                 }
@@ -225,8 +224,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
             config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
             let safariVC = SFHideSafariViewController(url: contentUrl!, configuration: config)
             if #available(iOS 10.0, *) {
-                safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
-                safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                safariVC.preferredBarTintColor = UIColor.foregroundColor
+                safariVC.preferredControlTintColor = UIColor.fontColor
             } else {
                 // Fallback on earlier versions
             }
@@ -262,8 +261,8 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
                 let safariVC = SFHideSafariViewController(url: url, configuration: config)
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.foregroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                    safariVC.preferredBarTintColor = UIColor.foregroundColor
+                    safariVC.preferredControlTintColor = UIColor.fontColor
                     vc = safariVC
                 } else {
                     let web = WebsiteViewController(url: url, subreddit: "")
@@ -332,15 +331,10 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 let controller = getControllerForUrl(baseUrl: contentUrl!, lq: lq, link: link)!
                 if let sourceView = heroView,
                     let modalController = controller as? ModalMediaViewController {
-
-//                    slideInTransitioningDelegate.direction = .bottom
-//                    slideInTransitioningDelegate.coverageRatio = 0.6
-//                    modalController.transitioningDelegate = slideInTransitioningDelegate
-//                    modalController.modalPresentationStyle = .custom
                     modalController.finalSize = finalSize
                     modalController.previewImage = (sourceView as? UIImageView)?.image
-                    postContentTransitioningDelegate.sourceImageView = sourceView
-                    modalController.transitioningDelegate = postContentTransitioningDelegate
+                    self.postContentTransitioningManager.sourceImageView = sourceView
+                    modalController.transitioningDelegate = postContentTransitioningManager
                     modalController.modalPresentationStyle = .custom
 
                     present(modalController, animated: true, completion: nil)
@@ -363,7 +357,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
     func setBarColors(color: UIColor) {
         self.color = color
         if SettingValues.reduceColor {
-            self.color = ColorUtil.theme.foregroundColor
+            self.color = UIColor.foregroundColor
         }
         setNavColors()
     }
@@ -372,9 +366,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         if let navigationController = navigationController {
             navigationController.navigationBar.shadowImage = UIImage()
             navigationController.navigationBar.barTintColor = color
-            navigationController.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([
-                NSAttributedString.Key.foregroundColor.rawValue: SettingValues.reduceColor ? ColorUtil.theme.fontColor : UIColor.white as Any,
-            ])
+            navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: SettingValues.reduceColor ? UIColor.fontColor : UIColor.white]
             // If no color was specified but the color muxer is doing its thing,
             // grab the "from" color so that we don't get a white flash.
             if color == nil,
@@ -389,15 +381,4 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         navigationController?.navigationBar.shadowImage = UIImage()
         setNavColors()
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

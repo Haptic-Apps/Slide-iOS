@@ -29,7 +29,7 @@ class ReadLaterContributionLoader: ContributionLoader {
     
     var paginator: Paginator
     var content: [RedditObject]
-    var delegate: ContentListingViewController?
+    weak var delegate: ContentListingViewController?
     var paging = true
     var ids = [Link]()
     

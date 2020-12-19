@@ -54,7 +54,7 @@ class SplitMainViewController: MainViewController {
 
     override func colorChanged(_ color: UIColor) {
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
-        inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : color
+        inHeadView.backgroundColor = SettingValues.reduceColor ? UIColor.foregroundColor : color
         if SettingValues.hideStatusBar {
             inHeadView.backgroundColor = .clear
         }
@@ -205,8 +205,8 @@ class SplitMainViewController: MainViewController {
     override func viewDidLoad() {
         SplitMainViewController.isFirst = true
         
-        self.color1 = ColorUtil.theme.foregroundColor
-        self.color2 = ColorUtil.theme.foregroundColor
+        self.color1 = UIColor.foregroundColor
+        self.color2 = UIColor.foregroundColor
         
         self.restartVC()
         self.navigationController?.modalPresentationStyle = .currentContext
@@ -277,9 +277,9 @@ class SplitMainViewController: MainViewController {
     @objc func onThemeChanged() {
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
-        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
-        self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+        navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+        navigationController?.toolbar.tintColor = UIColor.fontColor
+        self.parent?.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         doRetheme()
     }
@@ -362,7 +362,7 @@ class SplitMainViewController: MainViewController {
             setupTabBar(finalSubs)
         }
         setupBaseBarColors(ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
-        toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         self.doButtons()
         MainViewController.needsReTheme = false
     }
@@ -398,7 +398,7 @@ class SplitMainViewController: MainViewController {
     
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.isTranslucent = false
-        self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+        self.parent?.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         
         setNeedsStatusBarAppearanceUpdate()
@@ -552,8 +552,8 @@ class SplitMainViewController: MainViewController {
                 self.color1 = ColorUtil.baseColor
                 self.color2 = ColorUtil.getColorForSub(sub: (firstViewController ).sub)
             } else {
-                self.color1 = ColorUtil.theme.foregroundColor
-                self.color2 = ColorUtil.theme.foregroundColor
+                self.color1 = UIColor.foregroundColor
+                self.color2 = UIColor.foregroundColor
             }
             
             DispatchQueue.main.async {
@@ -606,8 +606,8 @@ class SplitMainViewController: MainViewController {
         }
         
         CachedTitle.titles.removeAll()
-        view.backgroundColor = ColorUtil.theme.backgroundColor
-        splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        view.backgroundColor = UIColor.backgroundColor
+        splitViewController?.view.backgroundColor = UIColor.foregroundColor
         SubredditReorderViewController.changed = false
         
         finalSubs = []
@@ -798,7 +798,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 if text == "" {
                     let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
                     alert.setupTheme()
-                    alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                    alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
                     alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
                         self.navigation(homeViewController, didRequestNewMulti: ())
                     }))
@@ -949,9 +949,9 @@ extension SplitMainViewController: NavigationHomeDelegate {
             let alert = AlertController.init(title: "Caption", message: "", preferredStyle: .alert)
             
             alert.setupTheme()
-            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             
             alert.addCloseButton()
             alert.addBlurView()
@@ -973,9 +973,9 @@ extension SplitMainViewController: NavigationHomeDelegate {
             let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
             
             alert.setupTheme()
-            alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             
             alert.addCloseButton()
             alert.addBlurView()
@@ -1324,7 +1324,7 @@ class ProgressHeaderView: UIView {
     
     init() {
         title = UILabel().then {
-            $0.textColor = ColorUtil.theme.fontColor
+            $0.textColor = UIColor.fontColor
             $0.font = UIFont.systemFont(ofSize: 14)
             $0.text = ""
             $0.textAlignment = .center

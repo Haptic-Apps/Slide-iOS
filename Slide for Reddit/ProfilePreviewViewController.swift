@@ -1,9 +1,9 @@
 //
-//  ProfileInfoViewController.swift
+//  ProfilePreviewViewController.swift
 //  Slide for Reddit
 //
-//  Created by Carlos Crane on 9/15/19.
-//  Copyright © 2019 Haptic Apps. All rights reserved.
+//  Created by Carlos Crane on 12/15/20.
+//  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
 import Anchorage
@@ -15,11 +15,9 @@ import SDWebImage
 import Then
 import UIKit
 
-class ProfileInfoViewController: UIViewController {
+class ProfilePreviewViewController: UIViewController {
     
     var user: Account?
-    weak var profile: UIViewController?
-    var interactionController: ProfileInfoDismissInteraction?
     
     /// Overall height of the content view, including its out-of-bounds elements.
     var contentViewHeight: CGFloat {
@@ -47,14 +45,7 @@ class ProfileInfoViewController: UIViewController {
         $0.backgroundColor = .clear
     }
     
-    var closeButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.getCopy(withSize: .square(size: 30), withColor: .white), for: UIControl.State.normal)
-        $0.contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 24, right: 24)
-        $0.accessibilityLabel = "Close"
-    }
-
     // Content
-    
     var accountNameLabel = UILabel().then {
         $0.font = FontGenerator.boldFontOfSize(size: 28, submission: false)
         $0.textColor = UIColor.fontColor
@@ -86,7 +77,7 @@ class ProfileInfoViewController: UIViewController {
         }
     }
     
-    var header = ProfileHeaderView()
+    var header = AccountInfoHeader()
     var account: String
     
     init(accountNamed: String) {
@@ -103,10 +94,7 @@ class ProfileInfoViewController: UIViewController {
         
         setupViews()
         setupConstraints()
-        setupActions()
-                
-        interactionController = ProfileInfoDismissInteraction(viewController: self)
-        
+                        
         configureForAccount(named: account)
     }
     
@@ -135,12 +123,9 @@ class ProfileInfoViewController: UIViewController {
 }
 
 // MARK: - Setup
-extension ProfileInfoViewController {
+extension ProfilePreviewViewController {
     func setupViews() {
-        
         view.addSubview(backgroundView)
-        
-        view.addSubview(closeButton)
 
         view.addSubview(contentView)
         contentView.addSubview(accountImageView)
@@ -148,8 +133,6 @@ extension ProfileInfoViewController {
         contentView.addSubview(accountAgeLabel)
         
         contentView.addSubview(header)
-        header.delegate = self
-                
         contentView.addSubview(spinner)
         
     }
@@ -157,42 +140,30 @@ extension ProfileInfoViewController {
     func setupConstraints() {
         
         backgroundView.edgeAnchors /==/ view.edgeAnchors
+        view.backgroundColor = .clear
+                        
+        contentView.edgeAnchors /==/ view.edgeAnchors
         
-        if #available(iOS 11, *) {
-            closeButton.topAnchor /==/ view.safeTopAnchor
-            closeButton.leftAnchor /==/ view.safeLeftAnchor
-            
-        } else {
-            closeButton.topAnchor /==/ view.safeTopAnchor + 24
-            closeButton.leftAnchor /==/ view.safeLeftAnchor
-        }
-                
-        contentView.horizontalAnchors /==/ view.horizontalAnchors
-        contentView.bottomAnchor /==/ view.bottomAnchor
-        
+        accountImageView.topAnchor /==/ contentView.topAnchor + 16
         accountImageView.leftAnchor /==/ contentView.safeLeftAnchor + 20
-        accountImageView.centerYAnchor /==/ contentView.topAnchor
         accountImageView.sizeAnchors /==/ CGSize.square(size: 100)
         
-        accountNameLabel.topAnchor /==/ contentView.topAnchor + 8
+        accountNameLabel.topAnchor /==/ contentView.topAnchor + 16
         accountNameLabel.leftAnchor /==/ accountImageView.rightAnchor + 20
         accountNameLabel.rightAnchor /==/ contentView.rightAnchor - 20
         
         accountAgeLabel.leftAnchor /==/ accountNameLabel.leftAnchor
         accountAgeLabel.topAnchor /==/ accountNameLabel.bottomAnchor
         
-        header.topAnchor /==/ accountAgeLabel.bottomAnchor + 22
+        header.topAnchor /==/ accountImageView.bottomAnchor + 15
         header.horizontalAnchors /==/ contentView.safeHorizontalAnchors + 20
         header.bottomAnchor /==/ contentView.safeBottomAnchor - 16
         
         spinner.centerAnchors /==/ header.centerAnchors
+        
+        self.preferredContentSize = CGSize(width: self.contentView.frame.size.width, height: 100 + 16 + 15 + 16 + 25 + 70 + 8 + 45)
     }
-    
-    func setupActions() {
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(didRequestClose))
-        backgroundView.addGestureRecognizer(recognizer)
-    }
-    
+        
     func generateButtons(trophy: Trophy) -> UIView {
         let baseView = UIView()
         let more = UIImageView.init(frame: CGRect.init(x: 0, y: 0, width: 50, height: 50))
@@ -280,7 +251,7 @@ extension ProfileInfoViewController {
                     DispatchQueue.main.async {
                         self.getTrophies(account)
                         if self.user != nil {
-                            self.accountImageView.sd_setImage(with: URL(string: self.user!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+                            self.accountImageView.sd_setImage(with: URL(string: self.user!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 100), withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                                 guard let strongSelf = self else { return }
                                 strongSelf.accountImageView.image = image
                             }
@@ -342,130 +313,11 @@ extension ProfileInfoViewController {
             self.accountAgeLabel.alpha = isOn ? 0 : 1
         }
     }
-    
 }
 
-extension ProfileInfoViewController: ProfileHeaderViewDelegate {
-    func didRequestPrivateMessage() {
-        if user == nil {
-            return
-        }
-        VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(name: user!.name, completion: { (_) in })), parentVC: self)
+class AccountInfoHeader: UIView {
+    var user: Account?
 
-    }
-    
-    func didRequestRemoveFriend() {
-        if user == nil {
-            return
-        }
-
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.unfriend(user!.name, completion: { (_) in
-                DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: "Unfriended u/\(self.user!.name)", seconds: 3, context: self)
-                }
-            })
-        } catch {
-            
-        }
-    }
-    
-    func didRequestAddFriend() {
-        if user == nil {
-            return
-        }
-
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.friend(user!.name, completion: { (result) in
-                if result.error != nil {
-                    print(result.error!)
-                }
-                DispatchQueue.main.async {
-                    BannerUtil.makeBanner(text: "Friended u/\(self.user!.name)", seconds: 3, context: self)
-                }
-            })
-        } catch {
-            
-        }
-    }
-    
-    //TODO make tags and colors work without a viewcontroller context
-    func didRequestSetColor() {
-        if let profile = profile as? ProfileViewController {
-            self.dismiss(animated: true) {
-                profile.pickColor(sender: self)
-            }
-        }
-    }
-    
-    func didRequestEditTag() {
-        if let profile = profile as? ProfileViewController {
-            self.dismiss(animated: true) {
-                profile.tagUser()
-            }
-        }
-    }
-}
-
-// MARK: - Actions
-extension ProfileInfoViewController {
-    @objc func didRequestClose() {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    @objc func privateMessage(_ sender: UIButton) {
-        self.present(ReplyViewController(name: user!.name, completion: { (_) in
-            
-        }), animated: true)
-    }
-
-    @objc func colorChangeRequested() {
-        // TODO: - this
-        
-    }
-
-    @objc func tagUserRequested() {
-       // TODO: - this
-    }
-
-    @objc func friendRequested(_ sender: UIButton) {
-       // TODO: - this
-    }
-    
-    @objc func unfreindRequested(_ sender: UIButton) {
-       // TODO: - this
-    }
-}
-
-// MARK: - Accessibility
-extension ProfileInfoViewController {
-    
-    override func accessibilityPerformEscape() -> Bool {
-        super.accessibilityPerformEscape()
-        didRequestClose()
-        return true
-    }
-    
-    override var accessibilityViewIsModal: Bool {
-        get {
-            return true
-        }
-        set { } // swiftlint:disable:this unused_setter_value
-    }
-}
-
-protocol ProfileHeaderViewDelegate: AnyObject {
-    func didRequestPrivateMessage()
-    func didRequestRemoveFriend()
-    func didRequestAddFriend()
-    func didRequestSetColor()
-    func didRequestEditTag()
-}
-
-class ProfileHeaderView: UIView {
-    
-    weak var delegate: ProfileHeaderViewDelegate?
-    
     var commentKarmaLabel: UILabel = UILabel().then {
         $0.numberOfLines = 0
         $0.font = FontGenerator.fontOfSize(size: 12, submission: true)
@@ -485,48 +337,20 @@ class ProfileHeaderView: UIView {
         $0.textColor = UIColor.fontColor
         $0.accessibilityTraits = UIAccessibilityTraits.button
     }
-    
-    var messageCell = UITableViewCell().then {
-        $0.configure(text: "Private Message", imageName: "inbox", sfSymbolName: .envelopeFill, imageColor: GMColor.yellow500Color())
-    }
-
-    var user: Account?
-
-    var friendCell = UITableViewCell()
-
-    var colorCell = UITableViewCell().then {
-        $0.configure(text: "Set user color", imageName: "add", sfSymbolName: .eyedropperFull, imageColor: GMColor.yellow500Color())
-    }
-
-    //let tag = ColorUtil.getTagForUser(name: user.name)
-    var tagCell = UITableViewCell().then {
-        //\((tag != nil) ? " (currently \(tag!))" : "")"
-        $0.configure(text: "Tag user", imageName: "flag", sfSymbolName: .tagFill, imageColor: GMColor.orange500Color())
-    }
-    
     var infoStack = UIStackView().then {
         $0.spacing = 8
         $0.axis = .horizontal
         $0.distribution = .equalSpacing
     }
-    
-    var cellStack = UIStackView().then {
-        $0.spacing = 2
-        $0.axis = .vertical
-    }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubviews(infoStack, trophyArea, cellStack)
+        addSubviews(infoStack, trophyArea)
         infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(messageCell, friendCell, colorCell, tagCell)
-        
         self.clipsToBounds = true
         
         setupAnchors()
-        setupActions()
-        
         setAccount(nil)
     }
     
@@ -546,9 +370,6 @@ class ProfileHeaderView: UIView {
             attributedString.append(subt)
             return attributedString
         }()
-        
-        self.friendCell.configure(text: account?.isFriend ?? false ? "Remove friend" : "Add friend", imageName: "profile", sfSymbolName: account?.isFriend ?? false ? SFSymbol.personBadgeMinusFill : SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
-        
         postKarmaLabel.attributedText = {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.linkKarma.delimiter ?? "0")", attributes: attrs)
@@ -565,38 +386,6 @@ class ProfileHeaderView: UIView {
         trophyArea.topAnchor /==/ infoStack.bottomAnchor + 25
         trophyArea.heightAnchor /==/ 70
         trophyArea.horizontalAnchors /==/ horizontalAnchors + 8
-        
-        cellStack.topAnchor /==/ trophyArea.bottomAnchor + 26
-        cellStack.horizontalAnchors /==/ horizontalAnchors
-        
-        messageCell.heightAnchor /==/ 50
-        friendCell.heightAnchor /==/ 50
-        tagCell.heightAnchor /==/ 50
-        colorCell.heightAnchor /==/ 50
-        
-        cellStack.bottomAnchor /==/ bottomAnchor
-    }
-    
-    func setupActions() {
-        friendCell.addTapGestureRecognizer { [weak self] (_) in
-            guard let strongSelf = self else { return }
-            if strongSelf.user?.isFriend ?? false {
-                strongSelf.delegate?.didRequestRemoveFriend()
-            } else {
-                strongSelf.delegate?.didRequestAddFriend()
-            }
-        }
-        messageCell.addTapGestureRecognizer { [weak self] (_) in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestPrivateMessage()
-        }
-        colorCell.addTapGestureRecognizer { [weak self] (_) in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestSetColor()
-        }
-        tagCell.addTapGestureRecognizer { [weak self] (_) in
-            guard let strongSelf = self else { return }
-            strongSelf.delegate?.didRequestEditTag()
-        }
+        trophyArea.bottomAnchor /==/ bottomAnchor
     }
 }

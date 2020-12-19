@@ -120,12 +120,12 @@ class FontSelectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "fontCell")
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         tableView.separatorStyle = .none
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -200,8 +200,8 @@ extension FontSelectionTableViewController {
         let fontItem = allFonts[indexPath.row]
         cell.textLabel?.font = fontItem.font(ofSize: 16)
         cell.textLabel?.text = fontItem.displayedName
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
         if fontItem.storedName == currentFont {
             cell.accessoryType = .checkmark
         } else {
