@@ -2544,20 +2544,21 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             }
             return nil
         }, actionProvider: { (_) -> UIMenu? in
+            var children = [UIMenuElement]()
             if url.absoluteString.starts(with: "/u/") {
                 let username = url.absoluteString.replacingOccurrences(of: "/u/", with: "")
 
                 children.append(UIAction(title: "Visit profile", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
-                    VCPresenter.openRedditLink(url.absoluteString, self.parentViewController?.navigationController, self.parentViewController)
+                    VCPresenter.openRedditLink(url.absoluteString, self.parent?.navigationController, self.parent)
                 })
 
                 children.append(UIAction(title: "Send Message", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
-                    VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parentViewController?.navigationController, self.parentViewController)
+                    VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parent?.navigationController, self.parent)
                 })
 
                 children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
                     guard let self = self else { return }
-                    if let parent = self.parentViewController {
+                    if let parent = self.parent {
                         PostActions.block(username, parent: parent) {
                             
                         }
@@ -2566,8 +2567,6 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
 
                 return UIMenu(title: "u/\(username)", image: nil, identifier: nil, children: children)
             } else {
-                var children = [UIMenuElement]()
-                
                 children.append(UIAction(title: "Share URL", image: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) { _ in
                     let shareItems: Array = [url]
                     let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
