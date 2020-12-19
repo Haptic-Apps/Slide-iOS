@@ -3242,17 +3242,23 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
             if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
-                return getConfigurationForTextView(self.textView.firstTextView, location)
+                if let config = getConfigurationForTextView(self.textView.firstTextView, location) {
+                    return config
+                }
             } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
-                        return getConfigurationForTextView(view, location)
+                        if let config = getConfigurationForTextView(view, location) {
+                            return config
+                        }
                     }
                 }
             }
         } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
-            return getConfigurationForTextView(self.title, location)
+            if let config = getConfigurationForTextView(self.title, location) {
+                return config
+            }
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true
             return getConfigurationForVideo(url: url)
@@ -3266,6 +3272,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 return self.makeContextMenu()
             })
         }
+        
         if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.del?.getMoreMenu(self)

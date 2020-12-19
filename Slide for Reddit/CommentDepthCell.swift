@@ -2388,42 +2388,34 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         } else if self.contentView.convert(self.sideView.frame, to: self.contentView).contains(location) {
             return getConfigurationParentComment()
         } else if self.contentView.convert(self.title.frame, to: self.contentView).contains(location) {
-            return getConfigurationForTextView(self.title, location)
+            if let config = getConfigurationForTextView(self.title, location) {
+                return config
+            }
         } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
-            return getConfigurationForTextView(self.commentBody.firstTextView, location)
+            if let config = getConfigurationForTextView(self.commentBody.firstTextView, location) {
+                return config
+            }
         } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
             let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if view.frame.contains(innerLocation) && view is TitleUITextView {
-                    return getConfigurationForTextView(view as! TitleUITextView, location)
-                }
-            } else if self.commentBody.overflow.frame.contains(location) {
-                let innerLocation = self.commentBody.convert(location, to: self.commentBody.overflow)
-                for view in self.commentBody.overflow.subviews {
-                    if view.frame.contains(innerLocation) && view is YYLabel {
-                        if let config = getConfigurationForTextView(view as! YYLabel, innerLocation) {
-                            return config
-                        }
+                    if let config = getConfigurationForTextView(view as! TitleUITextView, location) {
+                        return config
                     }
                 }
-            } else if self.commentBody.links.frame.contains(location) {
-                /* TODO - find the links from the subviews?
-                for view in self.commentBody.links.subviews[0].subviews {
-                    if view is UIButton {
-                    }
-                }*/
             }
-            if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
-                if self.parent?.menuCell == self {
-                    if let parent = self.parent {
-                        let menu = self.getMoreMenu(parent)
-                        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-                            return menu
-                        })
-                    }
-                } else {
-                    self.showMenuAnimated()
+        }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+            if self.parent?.menuCell == self {
+                if let parent = self.parent {
+                    let menu = self.getMoreMenu(parent)
+                    return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                        return menu
+                    })
                 }
+            } else {
+                self.showMenuAnimated()
             }
         }
         return nil
