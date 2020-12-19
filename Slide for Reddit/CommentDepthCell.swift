@@ -588,14 +588,12 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         parent?.doAction(cell: self, action: item, indexPath: currentPath)
     }
 
-    /* ignored
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if gestureRecognizer.view == self.title {
-            let link = self.title.link(at: touch.location(in: self.title), withTouch: touch)
-            return link == nil
+        if touch.view?.isKind(of: UIButton.classForCoder()) ?? false {
+            return false
         }
         return true
-    }*/
+    }
 
     var long = UILongPressGestureRecognizer.init(target: self, action: nil)
 

@@ -409,6 +409,7 @@ public class TextDisplayStackView: UIStackView {
             } else if block.startsWith("<pre><code>") {
                 let body = CodeDisplayView.init(baseHtml: block, color: baseFontColor, linksCallback: linksCallback, indexCallback: indexCallback)
                 body.accessibilityIdentifier = "Code block"
+                body.scrollView?.panGestureRecognizer.cancelsTouchesInView = true
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors /==/ overflow.horizontalAnchors
                 //if !ignoreHeight {

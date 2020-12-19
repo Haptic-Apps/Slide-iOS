@@ -3323,7 +3323,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended)
+        return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended) && !(otherGestureRecognizer.view is UIScrollView)
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
