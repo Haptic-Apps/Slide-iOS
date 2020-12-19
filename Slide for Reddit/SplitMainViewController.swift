@@ -210,8 +210,6 @@ class SplitMainViewController: MainViewController {
         
         self.restartVC()
         self.navigationController?.modalPresentationStyle = .currentContext
-
-        doButtons()
         
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false

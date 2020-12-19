@@ -3213,9 +3213,9 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                   return nil
             }
 
-            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+            if self.textView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
                 return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
-            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            } else if self.textView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
@@ -3245,11 +3245,11 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
-            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+            if self.textView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
                 if let config = getConfigurationForTextView(self.textView.firstTextView, location) {
                     return config
                 }
-            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            } else if self.textView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {

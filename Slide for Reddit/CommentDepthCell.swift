@@ -2399,9 +2399,9 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             return UITargetedPreview(view: snapshot, parameters: parameters, target: UIPreviewTarget(container: self.sideView, center: self.sideView.center))
         } else if self.contentView.convert(self.title.frame, to: self.contentView).contains(location) {
             return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
-        } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
+        } else if self.commentBody.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             return createRectsTargetedPreview(textView: self.commentBody.firstTextView, location: location, snapshot: snapshot)
-        } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
+        } else if self.commentBody.convert(self.commentBody.frame, to: self.contentView).contains(location) {
             let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
@@ -2425,11 +2425,11 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             if let config = getConfigurationForTextView(self.title, location) {
                 return config
             }
-        } else if self.contentView.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
+        } else if self.commentBody.convert(self.commentBody.firstTextView.frame, to: self.contentView).contains(location) {
             if let config = getConfigurationForTextView(self.commentBody.firstTextView, location) {
                 return config
             }
-        } else if self.contentView.convert(self.commentBody.frame, to: self.contentView).contains(location) {
+        } else if self.commentBody.convert(self.commentBody.frame, to: self.contentView).contains(location) {
             let innerLocation = self.commentBody.convert(self.contentView.convert(location, to: self.commentBody), to: self.commentBody.overflow)
             for view in self.commentBody.overflow.subviews {
                 if view.frame.contains(innerLocation) && view is TitleUITextView {
