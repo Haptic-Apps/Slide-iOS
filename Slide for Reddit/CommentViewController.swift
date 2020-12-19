@@ -719,12 +719,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     @available(iOS 13, *)
     func getMoreMenu(_ cell: LinkCellView) -> UIMenu? {
-        if let nav = self.navigationController {
+        if self.navigationController != nil {
             return PostActions.getMoreContextMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: 0)
         }
         return nil
     }
-
 
     func readLater(_ cell: LinkCellView) {
         guard let link = cell.link else {

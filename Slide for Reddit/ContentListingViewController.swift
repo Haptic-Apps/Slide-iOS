@@ -602,7 +602,6 @@ extension ContentListingViewController: LinkCellViewDelegate {
         return nil
     }
 
-    
     func upvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
