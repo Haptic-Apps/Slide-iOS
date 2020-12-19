@@ -3176,7 +3176,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         let target = UIPreviewTarget(container: self.innerView, center: weightedCenterpoint)
         let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
-        parameters.backgroundColor = UIColor.backgroundColor
+        parameters.backgroundColor = UIColor.foregroundColor
         
         let path = UIBezierPath(wrappingAround: convertedRects)
         let maskLayer = CAShapeLayer()

@@ -1784,7 +1784,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             authorStringNoFlair.addAttributes([NSAttributedString.Key.textHighlight: TextHighlight(["url": URL(string: "/u/\(comment.author)") ?? URL(string: "about://blank")!, "profile": comment.author])], range: NSRange(location: 0, length: authorStringNoFlair.length))
         }
 
-        let flairString: NSMutableAttributedString? = nil
+        var flairString: NSMutableAttributedString? = nil
         if SettingValues.showFlairs {
             let flairsDict = comment.flairDictionary
             let flairTitle = NSMutableAttributedString(string: "", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
