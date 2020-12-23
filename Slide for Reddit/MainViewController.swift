@@ -622,19 +622,28 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
-        if !SettingValues.done6() || !SettingValues.doneVersion() {
-            if !SettingValues.done6() {
+        if !SettingValues.done7() || !SettingValues.doneVersion() {
+            if !SettingValues.done7() {
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                     let viewController = OnboardingViewController()
-                    viewController.view.backgroundColor = UIColor.foregroundColor
+                    viewController.view.backgroundColor = OnboardingViewController.versionBackgroundColor
                     let newParent = TapBehindModalViewController.init(rootViewController: viewController)
                     newParent.navigationBar.shadowImage = UIImage()
                     newParent.navigationBar.isTranslucent = false
-                    newParent.navigationBar.barTintColor = UIColor.foregroundColor
-
+                    newParent.navigationBar.barTintColor = OnboardingViewController.versionBackgroundColor
                     newParent.navigationBar.shadowImage = UIImage()
-                    newParent.navigationBar.isTranslucent = false
+                    newParent.navigationBar.setBackgroundImage(UIImage(), for: .default)
 
+                    if #available(iOS 13, *) {
+                        let navBarAppearance = UINavigationBarAppearance()
+                        navBarAppearance.configureWithOpaqueBackground()
+                        navBarAppearance.shadowColor = .clear
+                        navBarAppearance.shadowImage = UIImage()
+                        navBarAppearance.backgroundColor = OnboardingViewController.versionBackgroundColor
+                        newParent.navigationBar.standardAppearance = navBarAppearance
+                        newParent.navigationBar.scrollEdgeAppearance = navBarAppearance
+                    }
+                    
                     let button = UIButtonWithContext.init(type: .custom)
                     button.parentController = newParent
                     button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -694,7 +703,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             
                             settings.set(storedTitle, forKey: "vtitle")
                             settings.set(storedLink, forKey: "vlink")
-                            if SettingValues.done6() && !SettingValues.doneVersion() {
+                            if SettingValues.done7() && !SettingValues.doneVersion() {
                                 DispatchQueue.main.async {
                                     SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
                                 }

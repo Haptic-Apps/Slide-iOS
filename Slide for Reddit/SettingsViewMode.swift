@@ -14,6 +14,7 @@ import UIKit
 class SettingsViewMode: BubbleSettingTableViewController {
     
     var singleMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "single")
+    var desktopMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "desktop")
     var splitMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "split")
     var multicolumnMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multi")
     var multicolumnCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multicount")
@@ -29,6 +30,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     var disablePopup = InsetCell()
     var disablePopupSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var desktopModeSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     var disablePopupSubreddit = InsetCell()
@@ -59,6 +63,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
         } else if changed == disablePopupSwitch {
             SettingValues.disablePopupIpad = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disablePopupIpad)
+        } else if changed == desktopModeSwitch {
+            SettingValues.desktopMode = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_desktopMode)
         } else if changed == disablePopupSubredditSwitch {
             SettingValues.disableSubredditPopupIpad = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableSubredditPopupIpad)
@@ -99,6 +106,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         createCell(multicolumnCount, isOn: false, text: "Multi-column count (Pro)")
         createCell(multicolumnPortraitCount, isOn: false, text: "Portrait Multi-column count (Pro)")
         createCell(galleryCount, isOn: false, text: "Gallery-mode column count (Pro)")
+        createCell(desktopMode, desktopModeSwitch, isOn: SettingValues.desktopMode, text: "Desktop Mode")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
         self.singleMode.detailTextLabel?.textColor = UIColor.fontColor
@@ -111,6 +119,12 @@ class SettingsViewMode: BubbleSettingTableViewController {
         self.splitMode.backgroundColor = UIColor.foregroundColor
         self.splitMode.textLabel?.textColor = UIColor.fontColor
         self.splitMode.detailTextLabel?.numberOfLines = 0
+        
+        self.desktopMode.detailTextLabel?.text = "Always show Slide Navigation sidebar, right-click shortcuts on Submissions and Comments"
+        self.desktopMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.desktopMode.backgroundColor = UIColor.foregroundColor
+        self.desktopMode.textLabel?.textColor = UIColor.fontColor
+        self.desktopMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
         self.multicolumnMode.detailTextLabel?.textColor = UIColor.fontColor
@@ -212,6 +226,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             case 0: return self.singleMode
             case 1: return self.splitMode
             case 2: return self.multicolumnMode
+            case 3: return self.desktopMode
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -377,11 +392,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var ipadOffset = 0
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        var isIpad = false
+        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+            isIpad = true
             ipadOffset = 3
         }
         switch section {
-        case 0: return 3
+        case 0: return 3 + (isIpad ? 1 : 0)
         case 1: return 4 + ipadOffset
         default: fatalError("Unknown number of sections")
         }

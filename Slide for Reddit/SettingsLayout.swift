@@ -631,7 +631,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return 6
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

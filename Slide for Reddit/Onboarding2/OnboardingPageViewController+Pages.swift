@@ -51,6 +51,8 @@ class OnboardingSplashPageViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.setupMovingViews()
+        self.baseView.alpha = 1
+        shouldMove = true
         self.view.clipsToBounds = true
     }
     
@@ -128,7 +130,6 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func getInitialFrame(for view: PreviewSubredditView, in lane: Int) -> CGRect {
-        print("Lane is \(CGRect(x: CGFloat(bubbles * 30), y: CGFloat(lane) * 30, width: 200, height: 30))")
         return CGRect(x: CGFloat(bubbles * 30), y: CGFloat(lane) * 30, width: 200, height: 30)
     }
 
@@ -164,13 +165,13 @@ class OnboardingSplashPageViewController: UIViewController {
     }
     
     func setupViews() {
-        let newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
+        let newTitle = NSMutableAttributedString(string: text.split("\n").first ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)])
         newTitle.append(NSAttributedString(string: "\n"))
-        newTitle.append(NSMutableAttributedString(string: text.split("\n").last ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)]))
+        newTitle.append(NSMutableAttributedString(string: text.split("\n").last ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30)]))
 
         self.textView = UILabel().then {
             $0.font = UIFont.boldSystemFont(ofSize: 30)
-            $0.textColor = UIColor.fontColor
+            $0.textColor = UIColor.white
             $0.textAlignment = .center
             $0.numberOfLines = 0
             $0.attributedText = newTitle
@@ -178,7 +179,7 @@ class OnboardingSplashPageViewController: UIViewController {
         
         self.subTextView = UILabel().then {
             $0.font = UIFont.systemFont(ofSize: 15)
-            $0.textColor = UIColor.fontColor
+            $0.textColor = UIColor.white
             $0.textAlignment = .center
             $0.text = subText
         }
@@ -243,32 +244,32 @@ class PreviewSubredditView: UIView {
     func randomizeColors() {
         let seed = Int.random(in: 0...100)
         if seed < 30 {
-            self.bubble.backgroundColor = UIColor.fontColor
-            self.label.backgroundColor = UIColor.fontColor
+            self.bubble.backgroundColor = UIColor(hexString: "#05d9e8")
+            self.label.backgroundColor = UIColor(hexString: "#05d9e8")
             self.label.alpha = 0.6
         } else if seed < 50 {
-            self.bubble.backgroundColor = GMColor.green500Color()
-            self.label.backgroundColor = GMColor.green500Color()
+            self.bubble.backgroundColor = UIColor(hexString: "#ff2a6d")
+            self.label.backgroundColor = UIColor(hexString: "#ff2a6d")
             self.label.alpha = 0.6
         } else if seed < 60 {
-            self.bubble.backgroundColor = GMColor.red500Color()
-            self.label.backgroundColor = GMColor.red500Color()
+            self.bubble.backgroundColor = UIColor(hexString: "#d1f7ff")
+            self.label.backgroundColor = UIColor(hexString: "#d1f7ff")
             self.label.alpha = 0.6
         } else if seed < 70 {
-            self.bubble.backgroundColor = GMColor.orange500Color()
-            self.label.backgroundColor = GMColor.orange500Color()
+            self.bubble.backgroundColor = UIColor(hexString: "#005678")
+            self.label.backgroundColor = UIColor(hexString: "#005678")
             self.label.alpha = 0.6
         } else if seed < 80 {
-            self.bubble.backgroundColor = GMColor.yellow500Color()
-            self.label.backgroundColor = GMColor.yellow500Color()
+            self.bubble.backgroundColor = UIColor(hexString: "#650D89")
+            self.label.backgroundColor = UIColor(hexString: "#650D89")
             self.label.alpha = 0.6
         } else if seed < 90 {
-            self.bubble.backgroundColor = GMColor.purple500Color()
-            self.label.backgroundColor = GMColor.purple500Color()
+            self.bubble.backgroundColor = UIColor(hexString: "#f9cb0e")
+            self.label.backgroundColor = UIColor(hexString: "#f9cb0e")
             self.label.alpha = 0.6
         } else {
-            self.bubble.backgroundColor = GMColor.blue500Color()
-            self.label.backgroundColor = GMColor.blue500Color()
+            self.bubble.backgroundColor = UIColor(hexString: "#ff3864")
+            self.label.backgroundColor = UIColor(hexString: "#ff3864")
             self.label.alpha = 0.6
         }
     }
@@ -374,6 +375,86 @@ class OnboardingFeaturePageViewController: UIViewController {
         self.subText = ""
         self.image = UIImage()
         super.init(coder: coder)
+    }
+}
+
+/**
+ ViewController for a single page in the OnboardingPageViewController.
+ Shows a message about TestFlight and the TF subreddit.
+ */
+class OnboardingTFViewController: UIViewController {
+    var textView = UILabel()
+    var subTextView = UILabel()
+    var imageView = UIImageView()
+    var subButton = UIButton().then {
+        $0.backgroundColor = UIColor(hexString: "#F95200")
+        $0.titleLabel?.textColor = .white
+        $0.tintColor = .white
+        $0.addTarget(self, action: #selector(subTapped), for: UIControl.Event.touchUpInside)
+        $0.isEnabled = true
+        $0.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+        $0.layer.cornerRadius = 25
+        $0.setImage(Subscriptions.subreddits.contains("slide_ios_beta") ? UIImage(sfString: SFSymbol.checkmark, overrideString: "selected") : UIImage(sfString: SFSymbol.plus, overrideString: "ad"), for: .normal)
+        $0.setTitle(Subscriptions.subreddits.contains("slide_ios_beta") ? "   You're subscribed!" : "   Subscribe", for: .normal)
+        $0.isUserInteractionEnabled = true
+    }
+    
+    @objc func subTapped() {
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+            Subscriptions.subscribe("slide_ios_beta", true, session: session)
+            BannerUtil.makeBanner(text: "Subscribed to\nr/slide_ios_beta", color: ColorUtil.baseAccent, seconds: 3, context: self, top: true)
+            subButton.setImage(Subscriptions.subreddits.contains("slide_ios_beta") ? UIImage(sfString: SFSymbol.checkmark, overrideString: "selected") : UIImage(sfString: SFSymbol.plus, overrideString: "ad"), for: .normal)
+            subButton.setTitle(Subscriptions.subreddits.contains("slide_ios_beta") ? "You're already subscribed!" : "Subscribe", for: .normal)
+        }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.setupViews()
+        self.setupConstriants()
+    }
+    
+    func setupViews() {
+        self.textView = UILabel().then {
+            $0.font = UIFont.boldSystemFont(ofSize: 20)
+            $0.textColor = UIColor.fontColor
+            $0.numberOfLines = 0
+            $0.textAlignment = .center
+            $0.text = "TestFlight Beta Testing"
+        }
+        
+        self.subTextView = UILabel().then {
+            $0.font = UIFont.systemFont(ofSize: 15)
+            $0.textColor = UIColor.fontColor
+            $0.numberOfLines = 0
+            $0.textAlignment = .center
+            $0.text = "Subscribe to r/slide_ios_beta for information and discussion about v7 beta testing! Please post your feedback and bug reports to r/slide_ios_beta"
+        }
+
+        self.imageView = UIImageView(image: UIImage(named: "roundicon")).then {
+            $0.contentMode = .scaleAspectFill
+            $0.layer.cornerRadius = 50
+            $0.clipsToBounds = true
+        }
+        
+        self.view.addSubviews(imageView, textView, subTextView, subButton)
+    }
+    
+    func setupConstriants() {
+        textView.horizontalAnchors /==/ self.view.horizontalAnchors + 16
+        textView.topAnchor /==/ self.view.safeTopAnchor + 8
+        
+        imageView.centerAnchors /==/ self.view.centerAnchors
+        imageView.widthAnchor /==/ 100
+        imageView.heightAnchor /==/ 100
+        
+        subButton.centerXAnchor /==/ self.view.centerXAnchor
+        subButton.topAnchor /==/ imageView.bottomAnchor + 20
+        subButton.heightAnchor /==/ 50
+    
+        subTextView.horizontalAnchors /==/ self.view.horizontalAnchors + 16
+        subTextView.bottomAnchor /==/ self.view.safeBottomAnchor - 8
     }
 }
 

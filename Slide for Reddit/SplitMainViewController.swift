@@ -86,7 +86,11 @@ class SplitMainViewController: MainViewController {
         account.contentMode = .scaleAspectFill
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
-        if SettingValues.desktopMode {
+        var not13 = true
+        if #available(iOS 13.0, *) {
+            not13 = false
+        }
+        if SettingValues.desktopMode && (!not13 || SettingValues.appMode != .SPLIT) {
             account.isHidden = true
         }
 
@@ -146,7 +150,12 @@ class SplitMainViewController: MainViewController {
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.sizeAnchors /==/ CGSize.square(size: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
-        if SettingValues.desktopMode {
+        
+        var not13 = true
+        if #available(iOS 13.0, *) {
+            not13 = false
+        }
+        if SettingValues.desktopMode && (!not13 || SettingValues.appMode != .SPLIT) {
             account.isHidden = true
         }
 

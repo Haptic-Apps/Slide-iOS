@@ -533,7 +533,6 @@ class SettingValues {
         }
 
         SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
-        SettingValues.desktopMode = true //todo disable this
         SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) //Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
@@ -694,9 +693,9 @@ class SettingValues {
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
     }
 
-    public static func done6() -> Bool {
+    public static func done7() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil || settings.object(forKey: Bundle.main.releaseVersionNumber ?? "0") != nil
+        return settings.object(forKey: "7") != nil
     }
     
     public static func doneVersion() -> Bool {

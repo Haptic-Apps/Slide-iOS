@@ -17,6 +17,7 @@ import UIKit
  */
 enum OnboardingPageViewModel {
     case feature(text: String, subText: String, image: UIImage)
+    case testflight(enabled: Bool)
     case video(text: String, subText: String, video: String, aspectRatio: Float)
     case changelog(link: Link)
     case hardcodedChangelog(order: [String], paragraphs: [String: String])
@@ -28,6 +29,8 @@ enum OnboardingPageViewModel {
             return OnboardingFeaturePageViewController(text: text, subText: subText, image: image)
         case .splash(let text, let subText, let image):
             return OnboardingSplashPageViewController(text: text, subText: subText, image: image)
+        case .testflight(_):
+            return OnboardingTFViewController()
         case .changelog(let link):
             return OnboardingChangelogPageViewController(link: link)
         case .hardcodedChangelog(let order, let paragraphs):
@@ -38,9 +41,9 @@ enum OnboardingPageViewModel {
     }
 }
 
-class OnboardingPageViewController: UIPageViewController {
+class OnboardingPageViewController: ColorMuxPagingViewController {
 
-    private let models: [OnboardingPageViewModel]
+    public let models: [OnboardingPageViewModel]
     private let pages: [UIViewController]
 
     init(models: [OnboardingPageViewModel]) {
@@ -57,7 +60,7 @@ class OnboardingPageViewController: UIPageViewController {
         self.pages = []
         super.init(coder: coder)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -66,7 +69,6 @@ class OnboardingPageViewController: UIPageViewController {
         
         self.setViewControllers([pages[0]], direction: UIPageViewController.NavigationDirection.forward, animated: false, completion: nil)
     }
-
 }
 
 extension OnboardingPageViewController: UIPageViewControllerDelegate {
@@ -90,13 +92,37 @@ extension OnboardingPageViewController: UIPageViewControllerDataSource {
         return pages[index - 1]
     }
     
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        if let vc = pendingViewControllers.first, let page = self.pages.indexes(of: vc).first {
+            if page == 0 && currentIndex == 1 {
+                color1 = UIColor.foregroundColor
+                color2 = OnboardingViewController.versionBackgroundColor
+            } else if page == 1 && currentIndex == 0 {
+                color1 = OnboardingViewController.versionBackgroundColor
+                color2 = UIColor.foregroundColor
+            } else {
+                color1 = UIColor.foregroundColor
+                color2 = UIColor.foregroundColor
+            }
+        }
+
+    }
+    
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if let vc = self.viewControllers?.first, let page = self.pages.indexes(of: vc).first, let button = (self.parent as? OnboardingViewController)?.finishButton {
+            self.currentIndex = page
             if page == self.pages.count - 1 {
                 button.text = "Awesome!"
 
                 UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
                     button.layer.backgroundColor = GMColor.orange500Color().cgColor
+                    button.textColor = .white
+                })
+            } else if page == 0 {
+                button.text = "Done"
+
+                UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
+                    button.layer.backgroundColor = UIColor(hexString: "#50ECF6").cgColor
                     button.textColor = .white
                 })
             } else {
