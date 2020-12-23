@@ -56,7 +56,9 @@ class SubmissionObject: RedditObject {
     public var isSelf: Bool = false
     public var permalink: String = ""
     public var bannerUrl: String?
+    public var cachedImageUrl: String?
     public var thumbnailUrl: String?
+    public var smallerBannerUrl: String?
     public var lqURL: String?
     public var isLQ: Bool = false
     public var hasThumbnail: Bool = false
@@ -68,6 +70,8 @@ class SubmissionObject: RedditObject {
     public var hasVoted: Bool = false
     public var imageHeight: Int = 0
     public var imageWidth: Int = 0
+    public var imageHeightSmaller: Int = 0
+    public var imageWidthSmaller: Int = 0
     public var voteDirection: Bool = false
     public var isArchived: Bool = false
     public var isLocked: Bool = false
@@ -149,7 +153,12 @@ class SubmissionObject: RedditObject {
         self.voteDirection = model.voteDirection
         self.name = model.name
         self.videoPreview = model.videoPreview
-                
+        
+        self.cachedImageUrl = model.cachedImageUrl
+        self.smallerBannerUrl = model.smallerBannerUrl
+        self.imageHeightSmaller = Int(model.imageHeightSmaller)
+        self.imageWidthSmaller = Int(model.imageWidthSmaller)
+
         self.videoMP4 = model.videoMP4
         
         self.imageHeight = Int(model.imageHeight)
@@ -200,13 +209,17 @@ class SubmissionObject: RedditObject {
     }
     
     func update(submission: Link) {
-        var bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
+        let bodyHtml = submission.selftextHtml.replacingOccurrences(of: "<blockquote>", with: "<cite>").replacingOccurrences(of: "</blockquote>", with: "</cite>")
 
         var json: JSONDictionary?
         json = submission.baseJson
         
         var w: Int = 0
         var h: Int = 0
+        var ws: Int = 0
+        var hs: Int = 0
+        var previewSmaller: String?
+        
         var thumb = false //is thumbnail present
         var big = false //is big image present
         var lowq = false //is lq image present
@@ -269,11 +282,11 @@ class SubmissionObject: RedditObject {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
-                    preview = (previews!.last as? [String: Any])?["url"] as? String ?? preview
+                    previewSmaller = ((previews!.last as? [String: Any])?["url"] as? String ?? preview)?.replacingOccurrences(of: "&amp;", with: "&")
                     burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
 
-                    w = (previews!.last as? [String: Any])?["width"] as? Int ?? w
-                    h = (previews!.last as? [String: Any])?["height"] as? Int ?? h
+                    ws = (previews!.last as? [String: Any])?["width"] as? Int ?? w
+                    hs = (previews!.last as? [String: Any])?["height"] as? Int ?? h
 
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
@@ -355,6 +368,7 @@ class SubmissionObject: RedditObject {
 
         self.imageHeight = h
         self.imageWidth = w
+        self.smallerBannerUrl = previewSmaller
         self.distinguished = submission.distinguished.type
         self.isMod = submission.canMod
         self.isSelf = submission.isSelf
@@ -661,7 +675,12 @@ extension SubmissionObject: Cacheable {
             submissionModel.voteDirection = self.voteDirection
             submissionModel.name = self.name
             submissionModel.videoPreview = self.videoPreview
-                    
+
+            submissionModel.imageHeightSmaller = Int64(self.imageHeightSmaller)
+            submissionModel.imageWidthSmaller = Int64(self.imageWidthSmaller)
+            submissionModel.cachedImageUrl = self.cachedImageUrl
+            submissionModel.smallerBannerUrl = self.smallerBannerUrl
+
             submissionModel.videoMP4 = self.videoMP4
             
             submissionModel.imageHeight = Int64(self.imageHeight)

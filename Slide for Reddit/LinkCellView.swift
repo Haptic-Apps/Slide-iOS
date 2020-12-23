@@ -1809,7 +1809,17 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     round.setCornerRadius()
                 }
             } else {
-                let bannerImageUrl = URL(string: shouldShowLq ? submission.lqURL ?? "": submission.bannerUrl ?? "")
+                var imageToLoad = ""
+                if shouldShowLq {
+                    imageToLoad = submission.lqURL ?? ""
+                } else {
+                    imageToLoad = submission.smallerBannerUrl ?? ""
+                }
+                
+                if imageToLoad.isEmpty {
+                    imageToLoad = submission.bannerUrl ?? ""
+                }
+                let bannerImageUrl = URL(string: imageToLoad)
                 loadedImage = bannerImageUrl
                 bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
             }
@@ -2855,7 +2865,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     return
                 }
             }
-            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: Double(link.imageWidth), height: Double(link.imageHeight)), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: loadedImage?.absoluteString != link.bannerUrl && loadedImage != nil, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: Double(link.imageWidth), height: Double(link.imageHeight)), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }

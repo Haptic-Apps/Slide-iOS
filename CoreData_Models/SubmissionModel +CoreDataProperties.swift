@@ -61,6 +61,8 @@ extension SubmissionModel {
     @NSManaged public var isSelf: Bool
     @NSManaged public var permalink: String
     @NSManaged public var bannerUrl: String?
+    @NSManaged public var smallerBannerUrl: String?
+    @NSManaged public var cachedImageUrl: String?
     @NSManaged public var thumbnailUrl: String?
     @NSManaged public var lqURL: String?
     @NSManaged public var isLQ: Bool
@@ -73,6 +75,8 @@ extension SubmissionModel {
     @NSManaged public var hasVoted: Bool
     @NSManaged public var imageHeight: Int64
     @NSManaged public var imageWidth: Int64
+    @NSManaged public var imageHeightSmaller: Int64
+    @NSManaged public var imageWidthSmaller: Int64
     @NSManaged public var voteDirection: Bool
     @NSManaged public var isArchived: Bool
     @NSManaged public var isLocked: Bool
