@@ -6,11 +6,13 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Alamofire
 import Anchorage
 import AudioToolbox
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
+import SwiftyJSON
 import UIKit
 
 class SubredditHeaderView: UIView {
@@ -161,53 +163,79 @@ class SubredditHeaderView: UIView {
     }
     
     @objc func flair(_ selector: UITableViewCell) {
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.userFlairList(subreddit!.displayName, completion: { (result) in
-                switch result {
-                case .success(let flairList):
-                    DispatchQueue.main.async {
+        if let subName = subreddit?.displayName, let token = (UIApplication.shared.delegate as? AppDelegate)?.session?.token {
+            let requestString = "https://www.reddit.com/r/\(subName)/api/user_flair_v2.json"
+            Alamofire.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
+                guard let self = self else { return }
+                do {
+                    guard let data = response.data else {
+                        return
+                    }
+                    let json = try JSON(data: data)
+                    if let flairs = json.array {
                         let alert = DragDownAlertMenu(title: "Available flairs", subtitle: "r/\(self.subreddit!.displayName)", icon: nil)
                         
-                        for item in flairList {
-                            alert.addAction(title: item.text.isEmpty ? item.name : item.text, icon: nil, action: {
-                                self.setFlair(item)
-                            })
+                        for item in flairs {
+                            if let richtext = item["richtext"].array?[0] {
+                                let image = richtext["u"].stringValue
+                                let text = richtext["t"].stringValue
+                                let iconText = richtext["a"].stringValue
+                                let title = item["text"].stringValue
+                                let editable = item["text_editable"].boolValue
+                                let id = item["id"].stringValue
+
+                                if !image.isEmpty {
+                                    alert.addView(title: title, icon_url: image) { [weak self] in
+                                        guard let self = self else { return }
+                                        alert.dismiss(animated: true) {
+                                            if editable {
+                                                self.editFlair(flairID: id, flairText: iconText, subName: subName, icon: image)
+                                            } else {
+                                                self.submitFlairChange(id, subName: subName)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    alert.addAction(title: title, icon: nil) { [weak self] in
+                                        guard let self = self else { return }
+                                        alert.dismiss(animated: true) {
+                                            if editable {
+                                                self.editFlair(flairID: id, flairText: text, subName: subName, icon: image)
+                                            } else {
+                                                self.submitFlairChange(id, subName: subName)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         
                         alert.show(self.parentController)
                     }
-                case .failure(let error):
-                    print(error)
-                    
+                } catch {
                 }
-            })
-        } catch {
-            
+            }
         }
     }
     
     var flairText: String?
     
-    func setFlair(_ flair: FlairTemplate) {
-        if flair.editable {
-            let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
-            
-            alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "save-1")?.menuIcon(), action: {
-                alert.dismiss(animated: true) { [weak self] in
-                    guard let self = self else { return }
-                    self.submitFlairChange(flair, text: alert.getText() ?? "")
-                }
-            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
-            
-            alert.show(parentController)
-        } else {
-            submitFlairChange(flair)
-        }
+    func editFlair(flairID: String, flairText: String, subName: String, icon: String?) {
+        let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "", icon: icon)
+        
+        alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "save-1")?.menuIcon(), action: {
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.submitFlairChange(flairID, subName: subName, text: alert.getText() ?? flairText)
+            }
+        }, inputPlaceholder: "Flair text...", inputValue: flairText, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+        
+        alert.show(parentController)
     }
     
-    func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {
+    func submitFlairChange(_ flairID: String, subName: String, text: String? = "") {
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.flairUser(self.subreddit!.displayName, flairId: flair.id, username: AccountController.currentName, text: text ?? "") { result in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairUser(subName, flairId: flairID, username: AccountController.currentName, text: text ?? "") { result in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -218,7 +246,7 @@ class SubredditHeaderView: UIView {
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentController)
-                        self.flair.textLabel?.text = text?.isEmpty ?? true ? flair.name : text
+                        //TODO update flair view on sidebar
                     }
                 }}
         } catch {

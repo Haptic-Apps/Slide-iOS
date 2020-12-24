@@ -495,7 +495,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             }
             
             if let url = URL(string: icon!) {
-                if ContentType.isImage(uri: url) {
+                if ContentType.isImage(uri: url) || icon?.endsWith("/icon") ?? false {
                     image.loadImageWithPulsingAnimation(atUrl: url, withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                 } else {
                     image.image = LinkCellImageCache.web
