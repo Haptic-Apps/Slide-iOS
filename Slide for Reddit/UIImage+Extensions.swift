@@ -154,6 +154,9 @@ extension UIImage {
     func navIcon(_ white: Bool = false) -> UIImage {
         if #available(iOS 13.0, *) {
             let lightImage = navIconThemed(white, night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
             let darkImage = navIconThemed(white, night: true)
             
             let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
@@ -170,6 +173,9 @@ extension UIImage {
     func smallIcon() -> UIImage {
         if #available(iOS 13.0, *) {
             let lightImage = smallIconThemed(night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
             let darkImage = smallIconThemed(night: true)
             
             let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
@@ -186,6 +192,9 @@ extension UIImage {
     func toolbarIcon() -> UIImage {
         if #available(iOS 13.0, *) {
             let lightImage = toolbarIconThemed(night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
             let darkImage = toolbarIconThemed(night: true)
             
             let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
@@ -202,6 +211,10 @@ extension UIImage {
     func menuIcon() -> UIImage {
         if #available(iOS 13.0, *) {
             let lightImage = menuIconThemed(night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
+
             let darkImage = menuIconThemed(night: true)
             
             let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)

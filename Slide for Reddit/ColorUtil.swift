@@ -352,7 +352,7 @@ extension UIColor {
     static var foregroundColor: UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.foregroundColor :
                     ColorUtil.theme.foregroundColor
             }
@@ -364,7 +364,7 @@ extension UIColor {
     static var backgroundColor: UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.backgroundColor :
                     ColorUtil.theme.backgroundColor
             }
@@ -376,7 +376,7 @@ extension UIColor {
     static var fontColor: UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.fontColor :
                     ColorUtil.theme.fontColor
             }
@@ -388,7 +388,7 @@ extension UIColor {
     static func fontColorOverlaid(withForeground: Bool, _ percent: CGFloat) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.fontColor.add(overlay: (withForeground ? ColorUtil.nightTheme.foregroundColor : ColorUtil.nightTheme.backgroundColor).withAlphaComponent(percent)) :
                     ColorUtil.theme.fontColor.add(overlay: (withForeground ? ColorUtil.theme.foregroundColor : ColorUtil.theme.backgroundColor).withAlphaComponent(percent))
             }
@@ -400,7 +400,7 @@ extension UIColor {
     static func fontColorOverlaid(withForeground: Bool, _ percent: CGFloat, _ dark: Bool) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (_) -> UIColor in
-                return dark ?
+                return dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.fontColor.add(overlay: (withForeground ? ColorUtil.nightTheme.foregroundColor : ColorUtil.nightTheme.backgroundColor).withAlphaComponent(percent)) :
                     ColorUtil.theme.fontColor.add(overlay: (withForeground ? ColorUtil.theme.foregroundColor : ColorUtil.theme.backgroundColor).withAlphaComponent(percent))
             }
@@ -412,7 +412,7 @@ extension UIColor {
     static func foregroundColorOverlaidWithFont(_ percent: CGFloat) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.foregroundColor.add(overlay: ColorUtil.nightTheme.fontColor.withAlphaComponent(percent)) :
                     ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.fontColor.withAlphaComponent(percent))
             }
@@ -424,7 +424,7 @@ extension UIColor {
     static func foregroundColorOverlaid(with color: UIColor, _ percent: CGFloat) -> UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.foregroundColor.add(overlay: color.withAlphaComponent(percent)) :
                     ColorUtil.theme.foregroundColor.add(overlay: color.withAlphaComponent(percent))
             }
@@ -436,7 +436,7 @@ extension UIColor {
     static var navIconColor: UIColor {
         if #available(iOS 13.0, *) {
             return UIColor { (traits) -> UIColor in
-                return traits.userInterfaceStyle == .dark ?
+                return traits.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ?
                     ColorUtil.nightTheme.navIconColor :
                     ColorUtil.theme.navIconColor
             }
@@ -447,7 +447,7 @@ extension UIColor {
     
     static var isLightTheme: Bool {
         if #available(iOS 13.0, *) {
-            return UITraitCollection.current.userInterfaceStyle != .dark ? ColorUtil.theme.isLight : ColorUtil.nightTheme.isLight
+            return UITraitCollection.current.userInterfaceStyle != .dark && SettingValues.nightModeEnabled ? ColorUtil.theme.isLight : ColorUtil.nightTheme.isLight
         } else {
             return ColorUtil.swappedTheme.isLight
         }

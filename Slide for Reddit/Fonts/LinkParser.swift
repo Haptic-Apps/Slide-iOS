@@ -13,7 +13,8 @@ class LinkParser {
     public static func parse(_ attributedString: NSAttributedString, _ color: UIColor, font: UIFont, bold: UIFont? = nil, fontColor: UIColor, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) -> NSMutableAttributedString {
         var finalBold: UIFont
         if bold == nil {
-            finalBold = font.makeBold()
+            let descriptor = font.fontDescriptor.withSymbolicTraits(UIFontDescriptor.SymbolicTraits.traitBold) ?? font.fontDescriptor
+            finalBold = UIFont(descriptor: descriptor, size: font.pointSize)
         } else {
             finalBold = bold!
         }
@@ -121,7 +122,8 @@ class LinkParser {
                     }
 
                     if isItalic {
-                        newFont = newFont.withTraits(traits: .traitItalic)
+                        let descriptor = newFont.fontDescriptor.withSymbolicTraits(UIFontDescriptor.SymbolicTraits.traitItalic) ?? newFont.fontDescriptor
+                        newFont = UIFont(descriptor: descriptor, size: f.pointSize)
                     }
                     
                     string.removeAttribute(.font, range: range)

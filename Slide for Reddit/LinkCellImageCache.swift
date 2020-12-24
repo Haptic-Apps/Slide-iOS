@@ -106,7 +106,9 @@ public class LinkCellImageCache {
         if #available(iOS 13.0, *) {
             var lightImage = UIImage.convertGradientToImage(colors: [topColorLight, nextColorLight], frame: CGSize.square(size: 150))
             lightImage = lightImage.overlayWith(image: baseImage, posX: ((size.width - baseImage.size.width) / 2), posY: ((size.height - baseImage.size.height) / 2))
-
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
             var darkImage = UIImage.convertGradientToImage(colors: [topColorDark, nextColorDark], frame: CGSize.square(size: 150))
             darkImage = darkImage.overlayWith(image: baseImage, posX: ((size.width - baseImage.size.width) / 2), posY: ((size.height - baseImage.size.height) / 2))
 
