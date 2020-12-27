@@ -574,6 +574,15 @@ extension UIView {
         self.addGestureRecognizer(tapGestureRecognizer)
     }
     
+    public func addLongTapGestureRecognizerReturn(action: ((_ sender: UIGestureRecognizer) -> Void)?) -> UILongPressGestureRecognizer {
+        self.isUserInteractionEnabled = true
+        self.longTapGestureRecognizerAction = action
+        let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
+        tapGestureRecognizer.minimumPressDuration = 0.36
+        self.addGestureRecognizer(tapGestureRecognizer)
+        return tapGestureRecognizer
+    }
+    
     public func addLongTapGestureRecognizer(delegate: UIGestureRecognizerDelegate, action: ((_ sender: UIGestureRecognizer) -> Void)?) {
         self.isUserInteractionEnabled = true
         self.longTapGestureRecognizerAction = action

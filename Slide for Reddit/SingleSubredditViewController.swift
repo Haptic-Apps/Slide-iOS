@@ -1573,7 +1573,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         }
 
                     } else {
-                        if let url = URL.init(string: submission.bannerUrl ?? "") {
+                        if let url = URL.init(string: submission.smallerBannerUrl ?? "") {
                             urls.append(url)
                         }
                     }

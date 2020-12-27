@@ -1718,7 +1718,29 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview!), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                
+                if (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false {
+                    self.thumbImage.image = LinkCellImageCache.web
+                    (self.thumbImage as? RoundedImageView)?.setCornerRadius()
+                    
+                    let urlsToTest = [submission.thumbnailUrl, submission.smallPreview]
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        for testString in urlsToTest {
+                            if let baseString = testString, let url = URL(string: baseString) {
+                                if let image = SDImageCache.shared.imageFromCache(forKey: SDWebImageManager.shared.cacheKey(for: url)) {
+                                    DispatchQueue.main.async {
+                                        self.thumbImage.image = image
+                                        (self.thumbImage as? RoundedImageView)?.setCornerRadius()
+                                    }
+                                    break
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview!), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                }
+
                 if let round = thumbImage as? RoundedImageView {
                     round.setCornerRadius()
                 }
@@ -1821,7 +1843,52 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 }
                 let bannerImageUrl = URL(string: imageToLoad)
                 loadedImage = bannerImageUrl
-                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
+                
+                if (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false {
+                    let urlsToTest = [submission.bannerUrl, submission.smallerBannerUrl, submission.lqURL]
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        for testString in urlsToTest {
+                            if let baseString = testString, let url = URL(string: baseString) {
+                                if let image = SDImageCache.shared.imageFromCache(forKey: SDWebImageManager.shared.cacheKey(for: url)) {
+                                    DispatchQueue.main.async {
+                                        self.bannerImage.image = image
+                                        
+                                        if SettingValues.postImageMode == .SHORT_IMAGE && self.bannerImage.superview != nil {
+                                            if ((self.bannerImage.image?.size.height ?? 0) / (self.bannerImage.image?.size.width ?? 0)) > ( self.bannerImage.frame.size.height / self.bannerImage.frame.size.width) && ((self.bannerImage.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
+                                                self.bannerImage.contentMode = .scaleAspectFit
+                                                
+                                                let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor)
+                                                backView.image = self.bannerImage.image?.sd_blurredImage(withRadius: 15)
+                                                backView.contentMode = .scaleAspectFill
+                                                backView.backgroundColor = UIColor.backgroundColor
+                                                backView.tag = 2000 //Need to find a solution to this, tags are bad
+                                                self.bannerImage.superview?.addSubview(backView)
+                                                backView.edgeAnchors /==/ self.bannerImage.edgeAnchors
+                                                self.bannerImage.backgroundColor = .clear
+                                                
+                                                if #available(iOS 11.0, *) {
+                                                    backView.accessibilityIgnoresInvertColors = true
+                                                }
+                                                backView.clipsToBounds = true
+                                                backView.setCornerRadius(rect: self.bannerImage.bounds)
+                                                
+                                                self.bannerImage.superview?.bringSubviewToFront(self.bannerImage)
+                                            } else {
+                                                self.bannerImage.contentMode = .scaleAspectFill //Otherwise, fill view
+                                            }
+                                        }
+
+                                        (self.bannerImage as? RoundedImageView)?.setCornerRadius()
+                                    }
+                                    self.loadedImage = url
+                                    break
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
+                }
             }
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
@@ -3021,7 +3088,7 @@ public extension UIImageView {
         let oldBackgroundColor: UIColor? = self.backgroundColor
         self.backgroundColor = UIColor.fontColor
         startPulsingAnimation()
-
+        
         DispatchQueue.global(qos: .userInteractive).async {
             self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: overrideSize != nil ? [.imageThumbnailPixelSize: CGSize(width: overrideSize!.width * UIScreen.main.scale, height: overrideSize!.height * UIScreen.main.scale)] : [:], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation

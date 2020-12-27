@@ -288,7 +288,7 @@ public class AutoCache: NSObject {
                 big = false
             }
 
-            let shouldShowLq = SettingValues.dataSavingEnabled && submission.isLQ //Wifi will be disabled here
+            let shouldShowLq = SettingValues.dataSavingEnabled && submission.isLQ // Wifi will be disabled here
             if type == ContentType.CType.SELF && SettingValues.hideImageSelftext || SettingValues.noImages && submission.isSelf {
                 big = false
                 thumb = false
@@ -326,7 +326,7 @@ public class AutoCache: NSObject {
             }
         }
         for url in urls {
-            SDWebImageDownloader.shared.downloadImage(with: url, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: nil) { (_, data, _, _) in
+            SDWebImageDownloader.shared.downloadImage(with: url, options: [.allowInvalidSSLCertificates], progress: nil) { (_, data, _, _) in
                 if let data = data {
                     SDImageCache.shared.storeImageData(toDisk: data, forKey: SDWebImageManager.shared.cacheKey(for: url))
                 }
