@@ -163,7 +163,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var currentAccountTransitioningManager = ProfileInfoPresentationManager()
 
-    //Can't have parameters that target an iOS version :/
+    // Can't have parameters that target an iOS version :/
     private var _savedPreview: Any?
     @available(iOS 13.0, *)
     fileprivate var savedPreview: UITargetedPreview? {
@@ -191,7 +191,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func configureView() {
         if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
             innerView = RoundedCornerView(radius: 15, cornerColor: UIColor.foregroundColor)
-            self.innerView.backgroundColor = UIColor.backgroundColor //The rounded corners code will take care of the foreground color
+            self.innerView.backgroundColor = UIColor.backgroundColor // The rounded corners code will take care of the foreground color
         } else {
             self.innerView.backgroundColor = UIColor.foregroundColor
         }
