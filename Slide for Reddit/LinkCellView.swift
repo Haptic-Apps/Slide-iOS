@@ -1231,7 +1231,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         func didHit(_ view: UIView) -> Bool {
             let convertedPoint = view.convert(point, from: self)
-            return view.bounds.insetBy(dx: insets.width, dy: insets.height).contains(convertedPoint)
+            return view.bounds.insetBy(dx: insets.width, dy: insets.height).contains(convertedPoint) && !view.isHidden
         }
 
         var testedViews: [UIView] = [
