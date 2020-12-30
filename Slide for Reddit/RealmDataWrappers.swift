@@ -31,7 +31,7 @@ class RealmDataWrapper {
         var lqUrl: String = "" //lq banner url
         
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
-        let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+        var preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
         
         var videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["hls_url"] as? String)
         
@@ -85,6 +85,12 @@ class RealmDataWrapper {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
+                    preview = (previews!.last as? [String: Any])?["url"] as? String ?? preview
+                    burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
+
+                    w = (previews!.last as? [String: Any])?["width"] as? Int ?? w
+                    h = (previews!.last as? [String: Any])?["height"] as? Int ??  h
+                    
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
@@ -100,6 +106,11 @@ class RealmDataWrapper {
             }
             
         }
+        
+        if (preview ?? "").contains(".gif?") {
+            preview = nil
+        }
+
         let rSubmission = RSubmission()
         do {
             try rSubmission.smallPreview = ((previews?.first as? [String: Any])?["url"] as? String)?.convertHtmlSymbols() ?? ""
@@ -218,6 +229,26 @@ class RealmDataWrapper {
             }
         }
         rSubmission.awardsJSON = jsonDict.jsonString()
+        
+        let flairDict = NSMutableDictionary()
+        for item in submission.baseJson["link_flair_richtext"] as? [AnyObject] ?? [] {
+            if let flair = item as? JSONDictionary {
+                if flair["e"] as? String == "text" {
+                    if let title = (flair["t"] as? String)?.unescapeHTML {
+                        if let color = submission.baseJson["link_flair_background_color"] as? String, !color.isEmpty {
+                            flairDict[title.trimmed()] = ["color": color]
+                        } else {
+                            flairDict[title.trimmed()] = [:]
+                        }
+                    }
+                } else if flair["e"] as? String == "emoji" {
+                    if let title = (flair["a"] as? String)?.unescapeHTML, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
+                        flairDict[title.trimmed()] = ["url": url, "fallback": fallback]
+                    }
+                }
+            }
+        }
+        rSubmission.flairJSON = flairDict.jsonString()
 
         rSubmission.gallery.removeAll()
         for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
@@ -227,6 +258,7 @@ class RealmDataWrapper {
                 }
             }
         }
+
 
         rSubmission.pollOptions.removeAll()
         for item in (submission.baseJson["poll_data"] as? JSONDictionary)?["options"] as? [AnyObject] ?? [] {
@@ -246,15 +278,25 @@ class RealmDataWrapper {
         rSubmission.approvedBy = submission.baseJson["approved_by"] as? String ?? ""
         rSubmission.approved = !rSubmission.approvedBy.isEmpty()
         
-        if json?["crosspost_parent_list"] != nil {
+        if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
             rSubmission.isCrosspost = true
-            let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
-            let author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
-            let permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            let sub = (crosspostParent.first as? [String: Any])?["subreddit"] as? String ?? ""
+            let author = (crosspostParent.first as? [String: Any])?["author"] as? String ?? ""
+            let permalink = (crosspostParent.first as? [String: Any])?["permalink"] as? String ?? ""
             rSubmission.crosspostSubreddit = sub
             rSubmission.crosspostAuthor = author
             rSubmission.crosspostPermalink = permalink
+            
+            rSubmission.gallery.removeAll()
+            for item in ((crosspostParent.first as? [String: Any])?["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
+                if let image = ((crosspostParent.first as? [String: Any])?["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
+                    if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
+                        rSubmission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                    }
+                }
+            }
         }
+
         return rSubmission
     }
     
@@ -277,7 +319,7 @@ class RealmDataWrapper {
         var lqUrl: String = "" //lq banner url
         
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
-        let preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
+        var preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
         
         var videoPreview = (((json?["media"] as? [String: Any])?["reddit_video"] as? [String: Any])?["hls_url"] as? String)
         if videoPreview != nil && videoPreview!.isEmpty || videoPreview == nil {
@@ -329,6 +371,12 @@ class RealmDataWrapper {
                     lqUrl = (submission.url?.absoluteString)!
                     lqUrl = lqUrl.substring(0, length: lqUrl.lastIndexOf(".")!) + (SettingValues.lqLow ? "m" : "l") + lqUrl.substring(lqUrl.lastIndexOf(".")!, length: lqUrl.length - lqUrl.lastIndexOf(".")!)
                 } else {
+                    preview = (previews!.last as? [String: Any])?["url"] as? String ?? preview
+                    burl = (preview!.replacingOccurrences(of: "&amp;", with: "&"))
+
+                    w = (previews!.last as? [String: Any])?["width"] as? Int ?? w
+                    h = (previews!.last as? [String: Any])?["height"] as? Int ??  h
+                    
                     let length = previews?.count
                     if SettingValues.lqLow && length! >= 3 {
                         lqUrl = ((previews?[1] as? [String: Any])?["url"] as? String)!
@@ -345,6 +393,10 @@ class RealmDataWrapper {
             
         }
         
+        if (preview ?? "").contains(".gif?") {
+            preview = nil
+        }
+
         let jsonDict = NSMutableDictionary()
         for item in submission.baseJson["all_awardings"] as? [AnyObject] ?? [] {
             if let award = item as? JSONDictionary {
@@ -371,6 +423,26 @@ class RealmDataWrapper {
             }
         }
         rSubmission.awardsJSON = jsonDict.jsonString()
+        
+        let flairDict = NSMutableDictionary()
+        for item in submission.baseJson["link_flair_richtext"] as? [AnyObject] ?? [] {
+            if let flair = item as? JSONDictionary {
+                if flair["e"] as? String == "text" {
+                    if let title = (flair["t"] as? String)?.unescapeHTML {
+                        if let color = submission.baseJson["link_flair_background_color"] as? String, !color.isEmpty {
+                            flairDict[title.trimmed()] = ["color": color]
+                        } else {
+                            flairDict[title.trimmed()] = [:]
+                        }
+                    }
+                } else if flair["e"] as? String == "emoji" {
+                    if let title = (flair["a"] as? String)?.unescapeHTML, let url = flair["u"] as? String, let fallback = flair["a"] as? String {
+                        flairDict[title.trimmed()] = ["url": url, "fallback": fallback]
+                    }
+                }
+            }
+        }
+        rSubmission.flairJSON = flairDict.jsonString()
 
         rSubmission.gallery.removeAll()
         for item in (submission.baseJson["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
@@ -467,14 +539,23 @@ class RealmDataWrapper {
 
         rSubmission.cakeday = submission.baseJson["author_cakeday"] as? Bool ?? false
 
-        if json?["crosspost_parent_list"] != nil {
+        if let crosspostParent = json?["crosspost_parent_list"] as? [Any] {
             rSubmission.isCrosspost = true
-            let sub = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["subreddit"] as? String ?? ""
-            let author = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["author"] as? String ?? ""
-            let permalink = ((json?["crosspost_parent_list"] as? [Any])?.first as? [String: Any])?["permalink"] as? String ?? ""
+            let sub = (crosspostParent.first as? [String: Any])?["subreddit"] as? String ?? ""
+            let author = (crosspostParent.first as? [String: Any])?["author"] as? String ?? ""
+            let permalink = (crosspostParent.first as? [String: Any])?["permalink"] as? String ?? ""
             rSubmission.crosspostSubreddit = sub
             rSubmission.crosspostAuthor = author
             rSubmission.crosspostPermalink = permalink
+            
+            rSubmission.gallery.removeAll()
+            for item in ((crosspostParent.first as? [String: Any])?["gallery_data"] as? JSONDictionary)?["items"] as? [JSONDictionary] ?? [] {
+                if let image = ((crosspostParent.first as? [String: Any])?["media_metadata"] as? JSONDictionary)?[item["media_id"] as! String]  as? JSONDictionary {
+                    if image["s"] != nil && (image["s"] as? JSONDictionary)?["u"] != nil {
+                        rSubmission.gallery.append((image["s"] as? JSONDictionary)?["u"] as! String)
+                    }
+                }
+            }
         }
 
         rSubmission.reports.removeAll()
@@ -681,6 +762,7 @@ class RSubmission: Object {
     
     var reports = List<String>()
     @objc dynamic var awardsJSON = ""
+    @objc dynamic var flairJSON = ""
     var gallery = List<String>()
     var pollOptions = List<String>()
     @objc dynamic var pollTotal = -1

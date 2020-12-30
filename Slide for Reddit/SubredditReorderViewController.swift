@@ -278,7 +278,10 @@ class SubredditReorderViewController: UITableViewController {
         
         for i in selectedPinnedRows {
             print("Unpin \(pinned[i.row])")
-            newPins.remove(at: i.row)
+            let item = pinned[i.row]
+            newPins.removeAll { (pin) -> Bool in
+                return pin == item
+            }
         }
         
         for i in selectedSubRows {

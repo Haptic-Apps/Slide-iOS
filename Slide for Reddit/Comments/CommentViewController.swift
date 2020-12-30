@@ -1583,6 +1583,7 @@ class CommentViewController: MediaViewController {
                 }
                 tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom + keyboardHeight, right: 0)
             }
+            headerCell.layoutTitleImageViews()
         }
     }
 

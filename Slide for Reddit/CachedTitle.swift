@@ -71,14 +71,35 @@ class CachedTitle {
         let attributedTitle = NSMutableAttributedString(string: submission.title.unescapeHTML, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: brightF])
 
         var newlineDone = false
-        if !submission.flair.isEmpty {
-            let flairTitle = NSMutableAttributedString.init(string: "\u{00A0}\(submission.flair)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
-
-            if !newlineDone {
-                newlineDone = true
-                attributedTitle.append(NSAttributedString(string: "\n"))
+        if SettingValues.showFlairs {
+            let flairsDict = submission.flairJSON.dictionaryValue()
+            let flairTitle = NSMutableAttributedString(string: "", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: brightF])
+            if !flairsDict.keys.isEmpty {
+                for key in flairsDict.keys {
+                    let flair = flairsDict[key] as? NSDictionary
+                    if let url = flair?["url"] as? String, SettingValues.imageFlairs {
+                        if let urlAsURL = URL(string: url) {
+                            let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
+                            attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                            flairTitle.append(NSAttributedString(attachment: attachment))
+                        }
+                    } else {
+                        let flair = flairsDict[key] as? NSDictionary
+                        if let color = flair?["color"] as? String, SettingValues.coloredFlairs {
+                            let singleFlair = NSMutableAttributedString(string: "\u{00A0}\(key)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: UIColor(hexString: color), NSAttributedString.Key.foregroundColor: UIColor.white])
+                            flairTitle.append(singleFlair)
+                        } else {
+                            let singleFlair = NSMutableAttributedString(string: "\u{00A0}\(key)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key.badgeColor: ColorUtil.theme.backgroundColor, NSAttributedString.Key.foregroundColor: brightF])
+                            flairTitle.append(singleFlair)
+                        }
+                    }
+                }
+                if !newlineDone {
+                    newlineDone = true
+                    attributedTitle.append(NSAttributedString(string: "\n"))
+                }
+                attributedTitle.append(flairTitle)
             }
-            attributedTitle.append(flairTitle)
         }
         
         if submission.nsfw {
@@ -471,17 +492,10 @@ class CachedTitle {
                 Subscriptions.subIcons[link.subreddit.lowercased()] = link.subreddit_icon.unescapeHTML
             }
             if let urlAsURL = URL(string: Subscriptions.icon(for: link.subreddit.lowercased())!.unescapeHTML) {
-                if loadImages {
-                    let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
-                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
-                    iconString.append(NSAttributedString(attachment: attachment))
-                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
-                } else {
-                    let attachment = NSTextAttachment()
-                    attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
-                    iconString.append(NSAttributedString(attachment: attachment))
-                    attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
-                }
+                let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                attachment.bounds = CGRect(x: 0, y: 0, width: 24, height: 24)
+                iconString.append(NSAttributedString(attachment: attachment))
+                attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
             }
             let tapString = NSMutableAttributedString(string: "  r/\(link.subreddit)", attributes: attrs)
             tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
@@ -574,17 +588,11 @@ class CachedTitle {
                         let url = award[1]
                         let testString = NSMutableAttributedString(string: "test", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
                         if let urlAsURL = URL(string: url) {
-                            if loadImages {
-                                let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
+                            let size = testString.boundingRect(with: CGSize(width: CGFloat.infinity, height: CGFloat.infinity), options: [], context: nil)
 
-                                let attachment = AsyncTextAttachment(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
-                                attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
-                                attachments.append(attachment)
-                            } else {
-                                let attachment = NSTextAttachment()
-                                attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
-                                attachments.append(attachment)
-                            }
+                            let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: ColorUtil.theme.foregroundColor)
+                            attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                            attachments.append(attachment)
                         }
                     }
                 }

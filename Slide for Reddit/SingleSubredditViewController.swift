@@ -90,7 +90,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var translatingCell: LinkCellView?
     var isGallery = false
 
-    var parentController: MainViewController?
+    weak var parentController: MainViewController?
     var accentChosen: UIColor?
     var primaryChosen: UIColor?
 
@@ -189,7 +189,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !UIApplication.shared.isSplitOrSlideOver && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
@@ -1515,7 +1515,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && type == .SELF {
                     thumb = false
-                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 && SettingValues.postImageMode != .THUMBNAIL {
                     big = true
                 }
 
@@ -1604,25 +1604,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let fullImage = ContentType.fullImage(t: type)
         let halfScreen = UIScreen.main.bounds.height / 2
-        var didRatio = false
         
         if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
-        } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
-            submissionHeight = 200
-        } else if big {
-            didRatio = true
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !isGallery) ? CGFloat(10) : CGFloat(0)))
-            if (SettingValues.postImageMode == .SHORT_IMAGE) && !(ContentType.displayVideo(t: type) && type != .VIDEO) {
-                submissionHeight = h > halfScreen ? halfScreen : h
-            } else {
-                if h == 0 {
-                    submissionHeight = 200
-                } else {
-                    submissionHeight = h
-                }
-            }
         }
         
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
@@ -1657,7 +1642,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if thumb && type == .SELF {
             thumb = false
-        } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
             big = true
         }
         
@@ -1769,14 +1754,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
-        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) && !didRatio {
-            submissionHeight = submissionHeight > halfScreen ? halfScreen : submissionHeight
-        } else if big && !didRatio {
+        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
+            let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
+            var tempHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
+            submissionHeight = tempHeight > halfScreen ? halfScreen : tempHeight
+        } else if big {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
         
-        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 && SettingValues.postImageMode != .THUMBNAIL {
              submissionHeight = 200
         }
         
