@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/22/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import Embassy
 import MaterialComponents.MDCActivityIndicator
@@ -90,7 +89,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var translatingCell: LinkCellView?
     var isGallery = false
 
-    var parentController: MainViewController?
+    weak var parentController: MainViewController?
     var accentChosen: UIColor?
     var primaryChosen: UIColor?
 
@@ -132,7 +131,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var lastYUsed = CGFloat(0)
 
     var listingId: String = "" //a random id for use in Realm
-
     var fab: UIButton?
     var fabHelper: UIView?
 
@@ -189,7 +187,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && !UIApplication.shared.isSplitOrSlideOver && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
@@ -369,7 +367,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             oldCount = dataSource.content.count
         }
 
-        if toolbarEnabled && !MainViewController.isOffline {
+        if toolbarEnabled && Constants.shared.isNetworkOnline {
             //showMenuNav()
             self.navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
@@ -638,7 +636,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             })
         }
 
-        if (single || parent is SplitMainViewController) && !MainViewController.isOffline {
+        if (single || parent is SplitMainViewController) && Constants.shared.isNetworkOnline {
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
             /*UIView.animate(withDuration: 0.25) {
@@ -648,14 +646,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     self.menu.widthAnchor /==/ 56
                     self.menu.heightAnchor /==/ 56
                     self.menu.leftAnchor /==/ topView.leftAnchor
-
                     self.more.deactivateImmediateConstraints()
                     self.more.topAnchor /==/ topView.topAnchor
                     self.more.widthAnchor /==/ 56
                     self.more.heightAnchor /==/ 56
                     self.more.rightAnchor /==/ topView.rightAnchor
                 }
-
                 self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.view.frame.width, height: self.menuNav?.view.frame.height ?? 0)
                 self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
                 self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
@@ -731,7 +727,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             self.fabHelper = nil
         }
         
-        if !MainViewController.isOffline && !SettingValues.hiddenFAB {
+        if Constants.shared.isNetworkOnline && !SettingValues.hiddenFAB {
             self.fab = ExpandedHitTestButton(frame: CGRect.init(x: (size.width / 2) - 70, y: -20, width: 140, height: 45))
             self.fab!.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
             self.fab!.accessibilityHint = sub
@@ -873,7 +869,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         }
                         if let styles = data["style"] as? [String: Any] {
                             if let headerUrl = styles["bannerBackgroundImage"] as? String {
-                                if !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline && SettingValues.dataSavingEnabled) {
+                                if !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi() && SettingValues.dataSavingEnabled) {
                                     self.headerImage = URL(string: headerUrl.unescapeHTML)
                                 }
                             }
@@ -990,9 +986,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             SingleSubredditViewController.firstPresented = false
         }
                 
-        let offline = MainViewController.isOffline
 
-        if single && !offline {
+        if single && Constants.shared.isNetworkOnline {
             doToolbar()
             
             sortButton = UIButton.init(type: .custom)
@@ -1087,7 +1082,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     } else {
                                         if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
                                             //self.menuNav?.setSubredditObject(subreddit: r)
-
                                             if SettingValues.saveHistory {
                                                 if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
                                                     Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
@@ -1113,7 +1107,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } catch {
                 }
             }
-        } else if offline && single && !self.dataSource.loading && !self.dataSource.loaded {
+        } else if !Constants.shared.isNetworkOnline && single && !self.dataSource.loading && !self.dataSource.loaded {
             title = sub
             //hideMenuNav()
             dataSource.getData(reload: true, force: true)
@@ -1502,7 +1496,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if !SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
+        if (SettingValues.dataSavingEnabled && (SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.noImages) || !SettingValues.dataSavingEnabled {
             for submission in values {
                 var thumb = submission.thumbnail
                 var big = submission.banner
@@ -1515,7 +1509,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if thumb && type == .SELF {
                     thumb = false
-                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+                } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 && SettingValues.postImageMode != .THUMBNAIL {
                     big = true
                 }
 
@@ -1541,43 +1535,43 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
                 if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                         || SettingValues.noImages && submission.isSelf {
-                        big = false
-                        thumb = false
-                    }
-                    
-                    if big || !submission.thumbnail {
-                        thumb = false
-                    }
-                    
-                    if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
-                        thumb = true
-                    }
-                    
-                    if thumb && !big {
-                        if submission.thumbnailUrl == "nsfw" {
-                        } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
-                        } else {
-                            if let url = URL.init(string: submission.thumbnailUrl) {
-                                urls.append(url)
-                            }
+                    big = false
+                    thumb = false
+                }
+
+                if big || !submission.thumbnail {
+                    thumb = false
+                }
+
+                if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
+                    thumb = true
+                }
+
+                if thumb && !big {
+                    if submission.thumbnailUrl == "nsfw" {
+                    } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                    } else {
+                        if let url = URL.init(string: submission.thumbnailUrl) {
+                            urls.append(url)
                         }
                     }
-                    
-                    if big {
-                        if shouldShowLq {
-                            if let url = URL.init(string: submission.lqUrl) {
-                                urls.append(url)
-                            }
-                            
-                        } else {
-                            if let url = URL.init(string: submission.bannerUrl) {
-                                urls.append(url)
-                            }
+                }
+
+                if big {
+                    if shouldShowLq {
+                        if let url = URL.init(string: submission.lqUrl) {
+                            urls.append(url)
+                        }
+
+                    } else {
+                        if let url = URL.init(string: submission.bannerUrl) {
+                            urls.append(url)
                         }
                     }
                 }
             }
-            SDWebImagePrefetcher.shared.prefetchURLs(urls)
+        }
+        SDWebImagePrefetcher.shared.prefetchURLs(urls)
         }
     }
     
@@ -1604,25 +1598,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         let fullImage = ContentType.fullImage(t: type)
         let halfScreen = UIScreen.main.bounds.height / 2
-        var didRatio = false
         
         if !fullImage && submissionHeight < 75 {
             big = false
             thumb = true
-        } else if big && (( SettingValues.postImageMode == .CROPPED_IMAGE)) && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
-            submissionHeight = 200
-        } else if big {
-            didRatio = true
-            let h = getHeightFromAspectRatio(imageHeight: submissionHeight, imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: itemWidth - ((SettingValues.postViewMode != .CARD && SettingValues.postViewMode != .CENTER && !isGallery) ? CGFloat(10) : CGFloat(0)))
-            if (SettingValues.postImageMode == .SHORT_IMAGE) && !(ContentType.displayVideo(t: type) && type != .VIDEO) {
-                submissionHeight = h > halfScreen ? halfScreen : h
-            } else {
-                if h == 0 {
-                    submissionHeight = 200
-                } else {
-                    submissionHeight = h
-                }
-            }
         }
         
         if type == .SELF && SettingValues.hideImageSelftext || SettingValues.hideImageSelftext && !big {
@@ -1650,14 +1629,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = true
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
         
         if thumb && type == .SELF {
             thumb = false
-        } else if type == .SELF && !SettingValues.hideImageSelftext && submission.height > 0 {
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
             big = true
         }
         
@@ -1769,14 +1748,16 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
             submissionHeight = 200
-        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) && !didRatio {
-            submissionHeight = submissionHeight > halfScreen ? halfScreen : submissionHeight
-        } else if big && !didRatio {
+        } else if big && SettingValues.postImageMode == .SHORT_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
+            let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
+            var tempHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
+            submissionHeight = tempHeight > halfScreen ? halfScreen : tempHeight
+        } else if big {
             let bannerPadding = (SettingValues.postViewMode != .CARD || isGallery) ? (isGallery ? CGFloat(3) : CGFloat(5)) : CGFloat(0)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.height == 0 ? 275 : submission.height), imageWidth: CGFloat(submission.width == 0 ? 400 : submission.width), viewWidth: width - paddingLeft - paddingRight - (bannerPadding * 2))
         }
         
-        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+        if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 && SettingValues.postImageMode != .THUMBNAIL {
              submissionHeight = 200
         }
         
@@ -1876,7 +1857,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -1937,7 +1918,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 let lighterSub = sub.add(overlay: UIColor.white.withAlphaComponent(0.4))
                 var coloredIcon = UIImage.convertGradientToImage(colors: [lighterSub, sub], frame: CGSize.square(size: 150))
                 coloredIcon = coloredIcon.overlayWith(image: UIImage(named: "slideoverlay")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
-                let imageData: Data = coloredIcon.pngData()! 
+                let imageData: Data = coloredIcon.pngData()!
                 let base64String = imageData.base64EncodedString()
 
                 // send EOF
@@ -2081,6 +2062,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
         self.emptyStateView.isHidden = true
         PagingCommentViewController.savedComment = nil
+        LinkCellView.checkedWifi = false
     }
     
     func loadOffline() {
@@ -2228,7 +2210,6 @@ extension SingleSubredditViewController {
          }))
          self.present(alert, animated: true)
          }
-
          }*/
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
@@ -2620,7 +2601,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         
         //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
-
         if row > dataSource.content.count - 4 {
             if !dataSource.loading && !dataSource.nomore {
                 self.dataSource.getData(reload: false)
@@ -2636,7 +2616,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 //        // TODO: - Implement
 //    }
 //}
-
 // MARK: - Link Cell View Delegate
 extension SingleSubredditViewController: LinkCellViewDelegate {
 
@@ -3202,13 +3181,13 @@ public class PageCell: UICollectionViewCell {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 public class LinksHeaderCellView: UICollectionViewCell {
@@ -3346,10 +3325,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 self.del?.showSortMenu(self)
             }
             sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
-
             var sortWidth = 25 + 8 + 8 + (sortTitle.text ?? "").size(with: sortTitle.font).width
             sort.widthAnchor /==/ sortWidth
-
             buttonBase.addArrangedSubview(sort)
             finalWidth += sortWidth + 8*/
             if Subscriptions.subreddits.contains(sub) {

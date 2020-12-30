@@ -2719,7 +2719,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
@@ -2729,7 +2729,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).WidgetConfigIntent";
@@ -2737,6 +2737,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2752,7 +2753,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
@@ -2762,7 +2763,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).bundledwidgetconfigintent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2770,6 +2771,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};
@@ -2786,12 +2789,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
@@ -2801,7 +2804,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2819,12 +2822,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
 				INFOPLIST_FILE = "Slide for Apple Watch/Info.plist";
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2833,7 +2836,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
@@ -2847,7 +2851,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
@@ -2856,7 +2860,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
@@ -2865,7 +2869,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Debug;
@@ -2880,7 +2884,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
@@ -2889,7 +2893,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 				PRODUCT_NAME = "${TARGET_NAME}";
@@ -2898,7 +2902,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				USR_WATCHKIT_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug.watchkitapp";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp";
 				WATCHOS_DEPLOYMENT_TARGET = 4.3;
 			};
 			name = Release;
@@ -2914,7 +2919,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -2924,7 +2929,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
@@ -2932,6 +2937,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -2946,7 +2952,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -2956,7 +2962,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).bundledOpen-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2964,6 +2970,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};
@@ -3101,7 +3109,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
@@ -3110,7 +3118,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3119,13 +3127,14 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -warn-long-expression-type-checking=300 -Xfrontend -warn-long-function-bodies=300";
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -3140,7 +3149,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -3150,7 +3159,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3163,7 +3172,8 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
-				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide-debug";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};
@@ -3185,6 +3195,7 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -3206,6 +3217,8 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Slide for Reddit.app/Slide for Reddit";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};
@@ -3226,6 +3239,7 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -3246,6 +3260,8 @@
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "Slide for Reddit";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};
@@ -3274,6 +3290,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Slide for Reddit";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -3301,6 +3318,8 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "Slide for Reddit";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};
@@ -3318,7 +3337,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3328,7 +3347,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).widgets";
@@ -3336,6 +3355,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Debug;
 		};
@@ -3353,7 +3373,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 210;
+				CURRENT_PROJECT_VERSION = 215;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3363,7 +3383,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 6.0.10;
+				MARKETING_VERSION = 6.0.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ccrama.me.redditslide.bundledwidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3371,6 +3391,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USR_BASE_IDENTIFIER = "$(USR_DOMAIN).redditslide";
+				USR_WATCHKIT_IDENTIFIER = "$(USR_BASE_IDENTIFIER).watchkitapp.watchkitextension";
 			};
 			name = Release;
 		};

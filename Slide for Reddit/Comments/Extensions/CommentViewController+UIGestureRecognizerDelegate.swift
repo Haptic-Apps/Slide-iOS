@@ -29,7 +29,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             }
         }
     }
-    
+        
     func setupSwipeGesture() {
         shouldSetupSwipe = true
         if swipeBackAdded {
@@ -52,7 +52,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         shouldSetupSwipe = false
         swipeBackAdded = true
     }
-    
+        
     func setupFullSwipeView(_ view: UIView?) {
         if shouldSetupSwipe == false || SettingValues.commentGesturesMode == .FULL {
             return
@@ -103,7 +103,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return !(otherGestureRecognizer == cellGestureRecognizer && otherGestureRecognizer.state != .ended)
     }
-    
+        
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = panGestureRecognizer.translation(in: tableView)
@@ -127,7 +127,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         return false
     }
-    
+
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {

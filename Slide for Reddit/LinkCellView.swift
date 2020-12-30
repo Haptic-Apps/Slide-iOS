@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/35/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import AudioToolbox
 import AVKit
@@ -1308,7 +1307,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             reply,
             edit,
         ]
-
+        
         if SettingValues.actionBarMode.isSide() {
             testedViews += [
                 sideUpvote,
@@ -1438,8 +1437,49 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         let finalTitle = CachedTitle.getTitleAttributedString(link, force: force, gallery: false, full: full)
         title.attributedText = finalTitle
         
+        layoutTitleImageViews()
         title.isScrollEnabled = false
+    }
+    
+    //Should be moved into TitleUITextView.swift
+    func layoutTitleImageViews() {
+        title.subviews.forEach { (view) in
+            if view is UIImageView {
+                view.removeFromSuperview()
+            }
+        }
         title.sizeToFit()
+        title.layoutManager.textStorage?.enumerateAttribute(.attachment, in: NSRange(location: 0, length: title.attributedText.length)) { attr, bgStyleRange, _ in
+            var rects = [CGRect]()
+            if let attachment = attr as? AsyncTextAttachmentNoLoad {
+                let url = attachment.imageURL
+                if let url = url {
+                    let bgStyleGlyphRange = title.layoutManager.glyphRange(forCharacterRange: bgStyleRange, actualCharacterRange: nil)
+                    title.layoutManager.enumerateLineFragments(forGlyphRange: bgStyleGlyphRange) { _, usedRect, textContainer, lineRange, _ in
+                        let rangeIntersection = NSIntersectionRange(bgStyleGlyphRange, lineRange)
+                        var rect = self.title.layoutManager.boundingRect(forGlyphRange: rangeIntersection, in: textContainer)
+                        var baseline = 0
+                        baseline = Int(self.title.layoutManager.textStorage!.attribute(.baselineOffset, at: self.title.layoutManager.characterIndexForGlyph(at: bgStyleGlyphRange.location), effectiveRange: nil) as? NSNumber ?? 0)
+
+                        rect.origin.y = usedRect.origin.y + CGFloat(baseline / 2) + (attachment.bounds.size.height < 20 ? 2 : 0)
+                        rect.size = attachment.bounds.size
+                        let insetTop = CGFloat.zero
+                        rects.append(rect.offsetBy(dx: 0, dy: insetTop))
+                    }
+                    if let first = rects.first {
+                        let imageView = UIImageView(frame: first)
+                        title.addSubview(imageView)
+                        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)])
+                                                
+                        if attachment.rounded {
+                            imageView.backgroundColor = attachment.backgroundColor
+                            imageView.clipsToBounds = true
+                            imageView.layer.cornerRadius = first.size.height / 2
+                        }
+                    }
+                }
+            }
+        }
     }
             
     @objc func doDTap(_ sender: AnyObject) {
@@ -1715,7 +1755,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         
         if thumb && type == .SELF {
             thumb = false
-        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 {
+        } else if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
             big = true
         }
         
@@ -1858,7 +1898,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 submissionHeight = test ? 150 : 200
             }
             
-            if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 {
+            if type == .SELF && !SettingValues.hideImageSelftext && submissionHeight > 200 && SettingValues.postImageMode != .THUMBNAIL {
                  submissionHeight = 200
             }
             bannerImage.isUserInteractionEnabled = true
@@ -2037,6 +2077,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.setNeedsLayout()
             self.layoutForType()
         }
+
     }
 
     private func refreshAccessibility(submission: RSubmission) {
@@ -2126,6 +2167,24 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var currentType: CurrentType = .none
+    static var checkedWifi = false
+    static var cachedCheckWifi = false
+    
+    public static func checkWiFi() -> Bool {
+        if !checkedWifi {
+            checkedWifi = true
+            let networkStatus = Reachability().connectionStatus()
+            switch networkStatus {
+            case .Unknown, .Offline:
+                cachedCheckWifi = false
+            case .Online(.WWAN):
+                cachedCheckWifi = false
+            case .Online(.WiFi):
+                cachedCheckWifi = true
+            }
+        }
+        return cachedCheckWifi
+    }
     
     var videoURL: URL?
     weak var videoTask: URLSessionDataTask?
@@ -2751,7 +2810,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 30) //5px is subtracted from the bottom
-
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
@@ -3016,7 +3074,6 @@ private extension UIView {
             }
         })
     }
-
 }
 
 public extension UIImageView {
@@ -3026,12 +3083,8 @@ public extension UIImageView {
 
         startPulsingAnimation()
 
-        var frame = CGSize(width: self.frame.size.width * UIScreen.main.scale, height: self.frame.size.height * UIScreen.main.scale)
-        if let newSize = overrideSize {
-            frame = CGSize(width: newSize.width * UIScreen.main.scale, height: newSize.height * UIScreen.main.scale)
-        }
         DispatchQueue.global(qos: .userInteractive).async {
-            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates], context: [.imageThumbnailPixelSize: frame], progress: nil) { (_, _, cacheType, _) in
+            self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: overrideSize != nil ? [.imageThumbnailPixelSize: CGSize(width: overrideSize!.width * UIScreen.main.scale, height: overrideSize!.height * UIScreen.main.scale)] : [:], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
                 self.backgroundColor = oldBackgroundColor
                 
@@ -3130,28 +3183,28 @@ class PostActionsManager {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 @available(iOS 13.0, *)
@@ -3604,7 +3657,7 @@ class RoundedImageView: UIImageView {
         let path = UIBezierPath(roundedRect: rect ?? self.bounds, byRoundingCorners: .allCorners, cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
         maskLayer?.removeFromSuperlayer()
         maskLayer = CAShapeLayer()
-        maskLayer.frame = self.bounds
+        maskLayer.frame = self.layer.bounds
         maskLayer.path = path.cgPath
         self.layer.mask = maskLayer
         self.layer.masksToBounds = true

@@ -713,7 +713,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         
-        if UIDevice.current.userInterfaceIdiom == .pad && !UIApplication.shared.isSplitOrSlideOver {
+        if UIDevice.current.userInterfaceIdiom == .pad && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)

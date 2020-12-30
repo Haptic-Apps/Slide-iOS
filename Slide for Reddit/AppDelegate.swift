@@ -138,6 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let window = UIWindow(frame: UIScreen.main.bounds)
             self.window = window
             didFinishLaunching(window: window)
+
             launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
             let remoteNotif = launchOptions?[UIApplication.LaunchOptionsKey.localNotification] as? UILocalNotification
             

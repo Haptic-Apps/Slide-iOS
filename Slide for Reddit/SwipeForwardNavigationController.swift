@@ -235,7 +235,11 @@ extension SwipeForwardNavigationController {
             not14 = false
         }
         if let secondaryAsNav = secondaryViewController as? UINavigationController, (UIDevice.current.userInterfaceIdiom == .phone || not14) {
-            viewControllers += secondaryAsNav.viewControllers
+            for viewController in secondaryAsNav.viewControllers {
+                if !viewControllers.contains(viewController) {
+                    viewControllers.append(viewController)
+                }
+            }
         }
     }
 
@@ -243,7 +247,7 @@ extension SwipeForwardNavigationController {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
-            push(pushedViewController, animated: UIApplication.shared.isSplitOrSlideOver ? false : true) {
+            push(pushedViewController, animated: (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac()) ? false : true) {
                 if !self.pushableViewControllers.isEmpty {
                     self.pushableViewControllers.removeLast()
                     callback?()
@@ -255,25 +259,19 @@ extension SwipeForwardNavigationController {
 
 extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-        var not14 = true
-        if #available(iOS 14, *) {
-            not14 = false
-        }
-        
-        return self //Disable left sidebar
-
-        /*if UIDevice.current.userInterfaceIdiom == .phone || not14 {
-            guard let primaryNavigation = primaryViewController as? UINavigationController else {
-              return nil
+        if #available(iOS 13, *) {
+            return self //Disable left sidebar
+        } else {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                guard let primaryNavigation = primaryViewController as? UINavigationController else {
+                  return nil
+                }
+                return decomposeStackForTransitionToRegular(primaryNavigation)
             }
-            
-            return decomposeStackForTransitionToRegular(primaryNavigation)
-
         }
-        return nil*/
+        return nil
     }
     
-    /* Unused
     func decomposeStackForTransitionToRegular(_ navigationController: UINavigationController) -> UIViewController? {
         var main: UIViewController?
         var newViewControllers = [UIViewController]()
@@ -299,7 +297,7 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
             return SwipeForwardNavigationController(rootViewController: main)
         }
         return nil
-    } */
+    }
 }
 
 extension SwipeForwardNavigationController: UINavigationControllerDelegate {

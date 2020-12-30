@@ -575,10 +575,10 @@ class CommentViewController: MediaViewController {
                 jump.addSubview(image)
                 image.edgeAnchors /==/ jump.edgeAnchors
                 jump.addTapGestureRecognizer { (_) in
-                    self.goDown(self.jump)
+                    self.scrollDown(self.jump)
                 }
                 jump.addLongTapGestureRecognizer { (_) in
-                    self.goUp(self.jump)
+                    self.scrollUp(self.jump)
                 }
             }
             
@@ -695,134 +695,10 @@ class CommentViewController: MediaViewController {
         
         progressDot.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         liveB = UIBarButtonItem.init(customView: progressDot)
-
         self.navigationItem.rightBarButtonItems = [self.sortB, self.searchB, self.liveB]
         
         progressDot.layer.add(pulseAnimation, forKey: "scale")
         progressDot.layer.add(fadeAnimation, forKey: "fade")
-    }
-    
-    
-    func applyFilters() {
-        if PostFilter.filter([submission!], previous: nil, baseSubreddit: "all").isEmpty {
-            self.navigationController?.popViewController(animated: true)
-        }
-    }
-    
-    
-    func openComments(id: String, subreddit: String?) {
-        //don't do anything
-    }
-    
-    
-    func editSent(cr: Comment?, cell: CommentDepthCell) {
-        if cr != nil {
-            DispatchQueue.main.async(execute: { () -> Void in
-                var realPosition = 0
-
-                var comment = cell.comment!
-                for c in self.comments {
-                    let id = c
-                    if id == comment.getIdentifier() {
-                        break
-                    }
-                    realPosition += 1
-                }
-
-                var insertIndex = 0
-                for c in self.dataArray {
-                    let id = c
-                    if id == comment.getIdentifier() {
-                        break
-                    }
-                    insertIndex += 1
-                }
-
-                comment = RealmDataWrapper.commentToRComment(comment: cr!, depth: self.cDepth[comment.getIdentifier()] ?? 1)
-                self.dataArray.remove(at: insertIndex)
-                self.dataArray.insert(comment.getIdentifier(), at: insertIndex)
-                self.comments.remove(at: realPosition)
-                self.comments.insert(comment.getIdentifier(), at: realPosition)
-                self.content[comment.getIdentifier()] = comment
-                self.updateStringsSingle([comment])
-                self.doArrays()
-                self.isEditing = false
-                self.isReply = false
-                self.tableView.reloadData()
-                self.discard()
-            })
-        }
-    }
-    
-    
-    func replySent(comment: Comment?, cell: CommentDepthCell?) {
-        if comment != nil && cell != nil {
-            DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = (self.cDepth[cell!.comment!.getIdentifier()] ?? 0) + 1
-
-                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
-                self.cDepth[comment!.getId()] = startDepth
-
-                var realPosition = 0
-                for c in self.comments {
-                    let id = c
-                    if id == cell!.comment!.getIdentifier() {
-                        break
-                    }
-                    realPosition += 1
-                }
-
-                var insertIndex = 0
-                for c in self.dataArray {
-                    let id = c
-                    if id == cell!.comment!.getIdentifier() {
-                        break
-                    }
-                    insertIndex += 1
-                }
-
-                var ids: [String] = []
-                for item in queue {
-                    let id = item.getIdentifier()
-                    ids.append(id)
-                    self.content[id] = item
-                }
-
-                self.dataArray.insert(contentsOf: ids, at: insertIndex + 1)
-                self.comments.insert(contentsOf: ids, at: realPosition + 1)
-                self.updateStringsSingle(queue)
-                self.doArrays()
-                self.isReply = false
-                self.isEditing = false
-                self.tableView.reloadData()
-
-            })
-        } else if comment != nil && cell == nil {
-            DispatchQueue.main.async(execute: { () -> Void in
-                let startDepth = 1
-
-                let queue: [Object] = [RealmDataWrapper.commentToRComment(comment: comment!, depth: startDepth)]
-                self.cDepth[comment!.getId()] = startDepth
-
-                let realPosition = 0
-                self.menuId = nil
-
-                var ids: [String] = []
-                for item in queue {
-                    let id = item.getIdentifier()
-                    ids.append(id)
-                    self.content[id] = item
-                }
-
-                self.dataArray.insert(contentsOf: ids, at: 0)
-                self.comments.insert(contentsOf: ids, at: realPosition == 0 ? 0 : realPosition + 1)
-                self.updateStringsSingle(queue)
-                self.doArrays()
-                self.isReply = false
-                self.isEditing = false
-                self.tableView.reloadData()
-            })
-        }
     }
     
     /// Loads and inserts incoming live comments.
@@ -1737,6 +1613,7 @@ class CommentViewController: MediaViewController {
                 }
                 tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom + keyboardHeight, right: 0)
             }
+            headerCell.layoutTitleImageViews()
         }
     }
 
