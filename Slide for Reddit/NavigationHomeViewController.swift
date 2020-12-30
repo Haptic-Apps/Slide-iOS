@@ -220,9 +220,9 @@ class NavigationHomeViewController: UIViewController {
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
         let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
-        if !landscape {
+        //if !landscape {
             self.view.addSubview(inHeadView)
-        }
+        //}
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = ColorUtil.theme.foregroundColor
@@ -568,16 +568,20 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         } else {
             let thing: String
             if isSearching {
-                print(users)
-                print(suggestions)
-                print(indexPath.row)
                 if (indexPath.row > suggestions.count - 1 || suggestions.count == 0) && users.count > 0 {
+                    if users.count > indexPath.row - suggestions.count {
+                        
+                    }
                     thing = users[indexPath.row - suggestions.count]
                     let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                     c.setProfile(profile: thing, nav: self)
                     cell = c
                 } else {
-                    thing = suggestions[indexPath.row]
+                    if suggestions.count <= indexPath.row {
+                        thing = ""
+                    } else {
+                        thing = suggestions[indexPath.row]
+                    }
                     let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
                     c.setSubreddit(subreddit: thing, nav: self, exists: true)
                     cell = c
@@ -1014,9 +1018,11 @@ class CurrentAccountHeaderView: UIView {
         let forwardItem = UIBarButtonItem(customView: forwardButton)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
-        //parent.toolbarItems.rightBarButtonItems = [forwardItem, rightItem]
-
+        if UIApplication.shared.isMac() {
+            parent.toolbarItems = [leftItem, space, rightItem]
+        } else {
+            parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedNotificationPosted), name: .onAccountChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountChangedToGuestNotificationPosted), name: .onAccountChangedToGuest, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onAccountMailCountChanged), name: .onAccountMailCountChanged, object: nil)

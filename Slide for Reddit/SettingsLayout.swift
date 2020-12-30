@@ -33,6 +33,21 @@ class SettingsLayout: BubbleSettingTableViewController {
         $0.onTintColor = ColorUtil.baseAccent
     }
 
+    var showFlairsCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "flairs")
+    var showFlairs = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    
+    var imageFlairsCell: UITableViewCell = InsetCell()
+    var imageFlairs = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    
+    var coloredFlairsCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "colors")
+    var coloredFlairs = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+
     var largerThumbnailCell: UITableViewCell = InsetCell()
     var largerThumbnail = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -187,6 +202,15 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == save {
             SettingValues.saveButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_saveButton)
+        } else if changed == showFlairs {
+            SettingValues.showFlairs = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showFlairs)
+        } else if changed == coloredFlairs {
+            SettingValues.coloredFlairs = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_coloredFlairs)
+        } else if changed == imageFlairs {
+            SettingValues.imageFlairs = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_imageFlairs)
         } else if changed == readLater {
             SettingValues.readLaterButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_readLaterButton)
@@ -488,7 +512,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     override func loadView() {
         super.loadView()
         
-        headers = ["", "Display", "Information line", "Thumbnails", "Advanced"]
+        headers = ["", "Display", "Information line", "Flairs", "Thumbnails", "Advanced"]
         self.view.backgroundColor = ColorUtil.theme.backgroundColor
         // set the title
         self.title = "Card layout"
@@ -519,6 +543,15 @@ class SettingsLayout: BubbleSettingTableViewController {
         hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show image previews on text-only posts"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+
+        createCell(coloredFlairsCell, coloredFlairs, isOn: SettingValues.coloredFlairs, text: "Show flair colors")
+        coloredFlairsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        coloredFlairsCell.detailTextLabel?.text = "When enabled, flairs will be colored for supported subreddits"
+        coloredFlairsCell.detailTextLabel?.numberOfLines = 0
+        coloredFlairsCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        
+        createCell(showFlairsCell, showFlairs, isOn: SettingValues.showFlairs, text: "Show flair on submissions")
+        createCell(imageFlairsCell, imageFlairs, isOn: SettingValues.imageFlairs, text: "Show flair images")
 
         createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Content type in title")
         createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Hide Reddit awards line")
@@ -560,15 +593,42 @@ class SettingsLayout: BubbleSettingTableViewController {
             hide.isEnabled = false
             save.isEnabled = false
             readLater.isEnabled = false
+            
+            hideCell.contentView.alpha = 0.5
+            saveCell.contentView.alpha = 0.5
+            readLaterCell.contentView.alpha = 0.5
         } else {
             hide.isEnabled = true
             save.isEnabled = true
             readLater.isEnabled = true
+            
+            hideCell.contentView.alpha = 1
+            saveCell.contentView.alpha = 1
+            readLaterCell.contentView.alpha = 1
+
         }
         if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
+            
+            thumbLinkCell.contentView.alpha = 0.5
         } else {
             thumbLink.isEnabled = true
+            
+            thumbLinkCell.contentView.alpha = 1
+        }
+        
+        if !SettingValues.showFlairs {
+            coloredFlairs.isEnabled = false
+            imageFlairs.isEnabled = false
+            
+            coloredFlairsCell.contentView.alpha = 0.5
+            imageFlairsCell.contentView.alpha = 0.5
+        } else {
+            coloredFlairs.isEnabled = true
+            imageFlairs.isEnabled = true
+            
+            coloredFlairsCell.contentView.alpha = 1
+            imageFlairsCell.contentView.alpha = 1
         }
     }
     
@@ -618,6 +678,13 @@ class SettingsLayout: BubbleSettingTableViewController {
             }
         case 3:
             switch indexPath.row {
+            case 0: return self.showFlairsCell
+            case 1: return self.imageFlairsCell
+            case 2: return self.coloredFlairsCell
+            default: fatalError("Unknown row in section 3")
+            }
+        case 4:
+            switch indexPath.row {
             case 0: return self.largerThumbnailCell
             case 1: return self.leftThumbCell
             case 2: return self.thumbLinkCell
@@ -625,7 +692,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 
             default: fatalError("Unknown row in section 3")
             }
-        case 4:
+        case 5:
             switch indexPath.row {
             case 0: return self.selftextCell
             case 1: return self.smalltagCell
@@ -646,8 +713,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         case 0: return 1
         case 1: return 5
         case 2: return 8
-        case 3: return 4
-        case 4: return 7
+        case 3: return 3
+        case 4: return 4
+        case 5: return 7
         default: fatalError("Unknown number of sections")
         }
     }

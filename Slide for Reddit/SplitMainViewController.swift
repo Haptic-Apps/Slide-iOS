@@ -252,7 +252,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
 
-        if let splitViewController = splitViewController, !UIApplication.shared.isSplitOrSlideOver {
+        if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
     }
@@ -897,7 +897,17 @@ extension SplitMainViewController: NavigationHomeDelegate {
     
     func navigation(_ homeViewController: NavigationHomeViewController, didRequestSettingsMenu: Void) {
         let settings = SettingsViewController()
-        doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: settings)
+        var iOS13 = false
+        if #available(iOS 13.0, *) {
+            iOS13 = true
+        }
+        if UIDevice.current.userInterfaceIdiom == .phone && !iOS13 {
+            doOpen(.POPOVER_AFTER_NAVIGATION, homeViewController) {
+                self.navigationController?.pushViewController(settings, animated: false)
+            }
+        } else {
+            doOpen(OpenState.POPOVER_ANY_NAV, homeViewController, toExecute: nil, toPresent: settings)
+        }
     }
     
     func navigation(_ homeViewController: NavigationHomeViewController, goToMultireddit multireddit: String) {
@@ -1034,7 +1044,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
                     is14Column = true
                 }
 
@@ -1074,7 +1084,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || UIApplication.shared.isSplitOrSlideOver) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
                     is14Column = true
                 }
 

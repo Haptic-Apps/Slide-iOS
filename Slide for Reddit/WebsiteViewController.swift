@@ -304,7 +304,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func loadUrl() {
-        if url?.host == "twitter.com" {
+        if url?.host == "twitter.com" && UIDevice.current.userInterfaceIdiom == .pad {
             webView.customUserAgent = "Googlebot/2.1 (+http://www.google.com/bot.html)"
         }
         let myURLRequest: URLRequest = URLRequest(url: url!)

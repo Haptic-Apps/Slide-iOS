@@ -127,7 +127,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         }
         return false
     }
-        
+
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
         
         if recognizer.view != nil {

@@ -84,14 +84,14 @@ public class AsyncTextAttachment: NSTextAttachment {
     }
     
     private func getCacheImage(with: URL) -> UIImage? {
-        return SDImageCache.shared.imageFromCache(forKey: with.absoluteString)
+        return SDImageCache.shared.imageFromCache(forKey: with.absoluteString + "-round")
     }
     
     private func downloadImage(with: URL) {
         SDWebImageDownloader.shared.downloadImage(with: with, options: [.decodeFirstFrameOnly], progress: nil) { (image, data, _, _) in
             let roundedImage = image?.circleCorners(finalSize: self.bounds.size)
             DispatchQueue.global(qos: .background).async {
-                SDImageCache.shared.storeImage(toMemory: roundedImage, forKey: with.absoluteString)
+                SDImageCache.shared.storeImage(toMemory: roundedImage, forKey: with.absoluteString + "-round")
             }
 
             self.display(roundedImage, with: data, url: with)
@@ -190,5 +190,55 @@ extension NSLayoutManager {
         for range in ranges.reversed() {
             self.invalidateDisplay(forCharacterRange: range)
         }
+    }
+}
+
+public class AsyncTextAttachmentNoLoad: NSTextAttachment {
+    /// Remote URL for the image
+    public var imageURL: URL?
+    
+    /// Whether to round the image corners
+    public var rounded: Bool
+    
+    /// Color for background of image
+    public var backgroundColor: UIColor?
+    
+    /// To specify an absolute display size.
+    public var displaySize: CGSize?
+    
+    /// if determining the display size automatically this can be used to specify a maximum width. If it is not set then the text container's width will be used
+    public var maximumDisplayWidth: CGFloat?
+    
+    /// A delegate to be informed of the finished download
+    public weak var delegate: AsyncTextAttachmentDelegate?
+    
+    /// Remember the text container from delegate message, the current one gets updated after the download
+    weak var textContainer: NSTextContainer?
+    
+    /// The size of the downloaded image. Used if we need to determine display size
+    private var originalImageSize: CGSize?
+    
+    /// Designated initializer
+    public init(imageURL: URL? = nil, delegate: AsyncTextAttachmentDelegate? = nil, rounded: Bool, backgroundColor: UIColor?) {
+        self.imageURL = imageURL
+        self.delegate = delegate
+        self.rounded = rounded
+        self.backgroundColor = backgroundColor
+        super.init(data: nil, ofType: nil)
+        self.image = UIImage()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override public var image: UIImage? {
+        didSet {
+            originalImageSize = image?.size
+        }
+    }
+                    
+    public override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
+        return self.bounds
     }
 }

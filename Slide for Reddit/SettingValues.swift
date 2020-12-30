@@ -145,6 +145,9 @@ class SettingValues {
     public static let pref_portraitMultiColumnCount = "MULTICOLUMN_COUNT_PORTRAIT"
     public static let pref_gfycatAPI = "USE_GFYCAT_API"
     public static let pref_scrollSidebar = "SCROLL_SIDEBAR"
+    public static let pref_imageFlairs = "IMAGE_FLAIRS"
+    public static let pref_coloredFlairs = "COLORED_FLAIRS"
+    public static let pref_showFlairs = "SHOW_FLAIRS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -286,6 +289,9 @@ class SettingValues {
     public static var disableMulticolumnCollections = false
     public static var disableSubredditPopupIpad = false
     public static var gfycatAPI = true
+    public static var imageFlairs = false
+    public static var coloredFlairs = false
+    public static var showFlairs = true
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -582,6 +588,9 @@ class SettingValues {
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
         SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
+        SettingValues.imageFlairs = settings.object(forKey: SettingValues.pref_imageFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_imageFlairs)
+        SettingValues.coloredFlairs = settings.object(forKey: SettingValues.pref_coloredFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_coloredFlairs)
+        SettingValues.showFlairs = settings.object(forKey: SettingValues.pref_showFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_showFlairs)
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
         SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)
