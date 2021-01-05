@@ -36,18 +36,29 @@ extension CommentViewController: UIScrollViewDelegate {
     
     /// Upon the user scrolling through comments.
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let currentY = scrollView.contentOffset.y
-
-        if !SettingValues.pinToolbar && !isReply && !isSearch {
-            if currentY > lastYUsed && currentY > 60 {
+        var currentY = scrollView.contentOffset.y
+        
+        //Sometimes the ScrollView will jump one time in the wrong direction. Unsure why this is happening, but this
+        //will check for that case and ignore it
+        if currentY > lastY && lastY < olderY {
+            currentY = lastY
+        }
+        
+        if !SettingValues.dontHideTopBar && !isReply && !isSearch {
+            if currentY <= (tableView.tableHeaderView?.frame.size.height ?? 20) + 64 + 10 {
+                liveView?.removeFromSuperview()
+                liveView = nil
+                liveNewCount = 0
+            }
+            if currentY > lastY && currentY > 60 {
                 if navigationController != nil && !isHiding && !isToolbarHidden && !(scrollView.contentOffset.y >= (scrollView.contentSize.height - scrollView.frame.size.height)) {
-                    hideNavigationBars(inHeader: true)
+                    hideUI(inHeader: true)
                 }
-            } else if (currentY < lastYUsed - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
-                showNavigationBars()
+            } else if (currentY < lastY - 15 || currentY < 100) && !isHiding && navigationController != nil && (isToolbarHidden) {
+                showUI()
             }
         }
-        lastYUsed = currentY
+        olderY = lastY
         lastY = currentY
     }
     

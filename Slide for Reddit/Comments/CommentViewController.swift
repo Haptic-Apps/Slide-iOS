@@ -371,7 +371,7 @@ class CommentViewController: MediaViewController {
         if navigationController != nil {
             sortButton = UIButton(buttonImage: nil)
             sortButton.accessibilityLabel = "Change sort type"
-            sortButton.addTarget(self, action: #selector(self.sort(_:)), for: UIControl.Event.touchUpInside)
+            sortButton.addTarget(self, action: #selector(sortCommentsAction(_:)), for: UIControl.Event.touchUpInside)
             sortB = UIBarButtonItem.init(customView: sortButton)
             
             doSortImage(sortButton)
@@ -406,7 +406,7 @@ class CommentViewController: MediaViewController {
             }
         }
         
-        doStartupItems()
+        initialSetup()
 
         if headerCell.videoView != nil && !(headerCell?.videoView?.isHidden ?? true) {
             headerCell.videoView?.player?.play()
@@ -480,7 +480,7 @@ class CommentViewController: MediaViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         
         if loaded && finishedPush == false && first {
-            self.reloadTableViewAnimated()
+            self.tableViewReloadingAnimation()
         }
         self.finishedPush = true
         
@@ -632,6 +632,61 @@ class CommentViewController: MediaViewController {
     func popoverPresentationControllerShouldDismissPopover(_ popoverPresentationController: UIPopoverPresentationController) -> Bool {
         self.setAlphaOfBackgroundViews(alpha: 1)
         return true
+    }
+    
+    /// Enables hiding of toolbar.
+    /// - Parameter inHeader: Bool
+    func hideUI(inHeader: Bool) {
+        isHiding = true
+        //self.tableView.endEditing(true)
+        if inHeadView.superview == nil {
+            doHeadView(self.view.frame.size)
+        }
+        
+        if !isGoingDown {
+            (navigationController)?.setNavigationBarHidden(true, animated: true)
+            
+            if SettingValues.hideBottomBar {
+                (self.navigationController)?.setToolbarHidden(true, animated: true)
+            }
+        }
+        self.isToolbarHidden = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.createJumpButton()
+            strongSelf.isHiding = false
+        }
+    }
+
+    
+    /// Enables display of toolbar.
+    func showUI() {
+        (navigationController)?.setNavigationBarHidden(false, animated: true)
+        (navigationController)?.setToolbarHidden(false, animated: true)
+        if live {
+            progressDot.layer.removeAllAnimations()
+            let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")
+            pulseAnimation.duration = 0.5
+            pulseAnimation.toValue = 1.2
+            pulseAnimation.fromValue = 0.2
+            pulseAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            pulseAnimation.autoreverses = false
+            pulseAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            let fadeAnimation = CABasicAnimation(keyPath: "opacity")
+            fadeAnimation.duration = 0.5
+            fadeAnimation.toValue = 0
+            fadeAnimation.fromValue = 2.5
+            fadeAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            fadeAnimation.autoreverses = false
+            fadeAnimation.repeatCount = Float.greatestFiniteMagnitude
+            
+            progressDot.layer.add(pulseAnimation, forKey: "scale")
+            progressDot.layer.add(fadeAnimation, forKey: "fade")
+        }
+        self.isToolbarHidden = false
+        self.removeJumpButton()
     }
     
     // MARK: - Live Mode

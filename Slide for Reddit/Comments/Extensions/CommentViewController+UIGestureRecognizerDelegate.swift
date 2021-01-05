@@ -128,5 +128,42 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         return false
     }
 
+    @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
+            
+            if recognizer.view != nil {
+                let velocity = recognizer.velocity(in: recognizer.view!)
+
+                if (velocity.x < 0 && (SettingValues.commentActionLeftLeft == .NONE && SettingValues.commentActionLeftRight == .NONE) && translatingCell == nil) || (velocity.x > 0 && (SettingValues.commentGesturesMode == .HALF || SettingValues.commentGesturesMode == .HALF_FULL || (SettingValues.commentActionRightLeft == .NONE && SettingValues.commentActionRightRight == .NONE)) && translatingCell == nil) {
+                    return
+                }
+            }
+
+            if recognizer.state == .began || translatingCell == nil {
+                let point = recognizer.location(in: self.tableView)
+                let indexpath = self.tableView.indexPathForRow(at: point)
+                if indexpath == nil {
+                    recognizer.cancel()
+                    return
+                }
+
+                guard let cell = self.tableView.cellForRow(at: indexpath!) as? CommentDepthCell else { return }
+                for view in cell.commentBody.recursiveSubviews {
+                    let cellPoint = recognizer.location(in: view)
+                    if (view is UIScrollView || view is CodeDisplayView || view is TableDisplayView) && view.bounds.contains(cellPoint) {
+                        recognizer.cancel()
+                        return
+                    }
+                }
+                tableView.panGestureRecognizer.cancel()
+                disableDismissalRecognizers()
+                translatingCell = cell
+            }
+            
+            translatingCell?.handlePan(recognizer)
+            if recognizer.state == .ended || recognizer.state == .cancelled {
+                translatingCell = nil
+                enableDismissalRecognizers()
+            }
+        }
     
 }
