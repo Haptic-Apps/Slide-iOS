@@ -192,7 +192,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
     }
 
     func loadContent() {
-        let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+        let shouldShowLq = SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline)
         let imageURL: URL
         if let lqURL = data.lqURL, !SettingValues.loadContentHQ && shouldShowLq && !forceHD {
             imageURL = lqURL
@@ -206,7 +206,7 @@ class ImageMediaViewController: EmbeddableMediaViewController {
             }
             viewInHDButton.isHidden = true
         }
-
+    
         setProgressViewVisible(true)
 
         loadImage(imageURL: imageURL) { [weak self] (image, isPreview, finalSize) in
@@ -310,7 +310,6 @@ class ImageMediaViewController: EmbeddableMediaViewController {
                 })
         }
     }
-
 }
 
 // MARK: - Actions

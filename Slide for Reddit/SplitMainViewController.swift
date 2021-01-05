@@ -399,8 +399,7 @@ class SplitMainViewController: MainViewController {
         doReAppearToolbar()
 
         ReadLater.delegate = self
-        if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
-            MainViewController.isOffline = true
+        if !Constants.shared.isNetworkOnline {
             let offlineVC = OfflineOverviewViewController(subs: finalSubs)
             VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
         }
@@ -594,7 +593,6 @@ class SplitMainViewController: MainViewController {
         SubredditReorderViewController.changed = false
         
         finalSubs = []
-        LinkCellView.cachedInternet = nil
         
         finalSubs.append(contentsOf: Subscriptions.pinned)
         finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.containsIgnoringCase($0) }))

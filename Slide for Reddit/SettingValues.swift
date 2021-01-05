@@ -438,7 +438,7 @@ class SettingValues {
         case .ALWAYS:
             return true
         case .WIFI:
-            return LinkCellView.checkWiFi()
+            return Constants.shared.isNetworkOnline
         case .NEVER:
             return false
         case .TAP:

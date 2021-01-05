@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/35/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import AudioToolbox
 import AVKit
@@ -1721,8 +1720,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             thumb = true
             big = false
         }
-        let checkWifi = LinkCellView.checkWiFi()
-        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && checkWifi)
+        
+        let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline)
+        
         if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
             || SettingValues.noImages && submission.isSelf {
             big = false
@@ -1748,7 +1748,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
         }
         
-        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && checkWifi) {
+        if SettingValues.noImages && SettingValues.dataSavingEnabled && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) {
             big = false
             thumb = false
         }
@@ -2167,24 +2167,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var currentType: CurrentType = .none
-    static var checkedWifi = false
-    static var cachedCheckWifi = false
-    
-    public static func checkWiFi() -> Bool {
-        if !checkedWifi {
-            checkedWifi = true
-            let networkStatus = Reachability().connectionStatus()
-            switch networkStatus {
-            case .Unknown, .Offline:
-                cachedCheckWifi = false
-            case .Online(.WWAN):
-                cachedCheckWifi = false
-            case .Online(.WiFi):
-                cachedCheckWifi = true
-            }
-        }
-        return cachedCheckWifi
-    }
     
     var videoURL: URL?
     weak var videoTask: URLSessionDataTask?
@@ -2283,30 +2265,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
     }
     
-    public static var cachedInternet: Bool?
-    public static func checkInternet() -> Bool {
-        if LinkCellView.cachedInternet != nil {
-            return LinkCellView.cachedInternet!
-        }
-        let networkStatus = Reachability().connectionStatus()
-        switch networkStatus {
-        case .Unknown, .Offline:
-            LinkCellView.cachedInternet = false
-        case .Online(.WWAN):
-            LinkCellView.cachedInternet = true
-        case .Online(.WiFi):
-            LinkCellView.cachedInternet = true
-        }
-        return LinkCellView.cachedInternet!
-    }
-    
     @objc func showMore() {
         timer!.invalidate()
         if longBlocking {
             self.longBlocking = false
             return
         }
-        if !self.cancelled && LinkCellView.checkInternet() && parentViewController?.presentedViewController == nil {
+        if !self.cancelled && Constants.shared.isNetworkOnline && parentViewController?.presentedViewController == nil {
             if #available(iOS 10.0, *) {
                 HapticUtility.hapticActionStrong()
             } else if SettingValues.hapticFeedback {
@@ -2827,7 +2792,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
             
             let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 30) //5px is subtracted from the bottom
-
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
             
@@ -3151,7 +3115,7 @@ class PostActionsManager {
     var submission: RSubmission
 
     private lazy var networkActionsArePossible: Bool = {
-        return AccountController.isLoggedIn && LinkCellView.checkInternet()
+        return AccountController.isLoggedIn && Constants.shared.isNetworkOnline
     }()
 
     var isSaveEnabled: Bool {
@@ -3201,28 +3165,28 @@ class PostActionsManager {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 @available(iOS 13.0, *)
