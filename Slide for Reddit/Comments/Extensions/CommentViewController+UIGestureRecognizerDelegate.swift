@@ -129,7 +129,6 @@ extension CommentViewController: UIGestureRecognizerDelegate {
     }
 
     @objc func panCell(_ recognizer: UIPanGestureRecognizer) {
-        
         if recognizer.view != nil {
             let velocity = recognizer.velocity(in: recognizer.view!)
 

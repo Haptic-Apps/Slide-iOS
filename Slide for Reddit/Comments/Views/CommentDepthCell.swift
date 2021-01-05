@@ -2321,12 +2321,12 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                         if comment is RComment && (comment as! RComment).getIdentifier().contains(context) {
                             self.parent!.menuId = comment!.getIdentifier()
                             self.parent!.tableView.reloadData()
-                            if !SettingValues.pinToolbar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
-                                self.parent!.hideNavigationBars(inHeader: true)
+                            if !SettingValues.dontHideTopBar && self.parent!.navigationController != nil && !self.parent!.isHiding && !self.parent!.isToolbarHidden {
+                                self.parent!.hideUI(inHeader: true)
                             }
 
-                            self.parent!.goToCell(i: index)
-                            break
+                        self.parent!.goToCell(i: index)
+                        break
                         } else {
                             index += 1
                         }
@@ -2560,4 +2560,5 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
         }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
     }
+    
 }

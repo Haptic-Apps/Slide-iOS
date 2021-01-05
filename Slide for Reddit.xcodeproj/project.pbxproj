@@ -1479,7 +1479,6 @@
 		BE8FCA061E0C46090063B8EF /* Slide for Reddit */ = {
 			isa = PBXGroup;
 			children = (
-				BDFC36D225522D8A001EE42A /* Constants */,
 				BE7439F41E2162A8008BB63B /* AccountController.swift */,
 				BEC2FE18235BA2B100374013 /* adaway.json */,
 				BEDDA9921E19AEF2003CD6C3 /* AdDictionary.swift */,
@@ -1488,6 +1487,7 @@
 				BE4AB49C21BC4DAE001092C4 /* App Icons */,
 				BE8FCA071E0C46090063B8EF /* AppDelegate.swift */,
 				BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */,
+				BE3144FE25663674004A908C /* AsyncTextAttachment.swift */,
 				B776BFA91C6E10E78077FCE0 /* AutoCache.swift */,
 				BEC4A1B72331533400EE5114 /* AutoplayScrollViewHandler.swift */,
 				BEEA03CE20E2A411007A8928 /* BannerUtil.swift */,
@@ -1500,6 +1500,7 @@
 				BE3E5C0B1E160D7000749C0C /* ColorUtil.swift */,
 				BDFC34A92551209A001EE42A /* Comments */,
 				BEBF45DC1E23384500764BB8 /* comments.plist */,
+				BDFC36D225522D8A001EE42A /* Constants */,
 				BE6EA6E31E1DA24700E9E709 /* ContentListingViewController.swift */,
 				BEF3ACE11E15C101005848B6 /* ContentType.swift */,
 				BE780B671E35276600DAA1EB /* ContentUtilities */,
@@ -1542,7 +1543,10 @@
 				BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */,
 				090D6B7A20F3D8610052F3F6 /* Media */,
 				BEB2B2381E35D64F00BF761C /* MessageCellView.swift */,
+				BEBF3813256376AC00C91668 /* ModerationOverviewViewController.swift */,
 				B776BECBFCB8F58AC234156A /* ModerationViewController.swift */,
+				BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */,
+				BEBF38092563716B00C91668 /* ModlogContributionLoader.swift */,
 				B776B9FD1DF77B11274D680F /* ModMailContributionLoader.swift */,
 				B776BA7C2B7217C3875F3BEC /* ModQueueContributionLoader.swift */,
 				BE25CAD924C4B02700736CA5 /* NavigationHomeViewController.swift */,
@@ -1595,12 +1599,6 @@
 				BECF52432012AF7A00A310F9 /* VCPresenter.swift */,
 				BE11351B2159390700502C5B /* WatchSessionManager.swift */,
 				BE9BFDC724F7198200D74167 /* WrappingHeaderFlowLayout.swift */,
-				BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */,
-				BE836477254A3A8B00677F8A /* TrendingViewController.swift */,
-				BEBF38092563716B00C91668 /* ModlogContributionLoader.swift */,
-				BEBF3813256376AC00C91668 /* ModerationOverviewViewController.swift */,
-				BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */,
-				BE3144FE25663674004A908C /* AsyncTextAttachment.swift */,
 			);
 			path = "Slide for Reddit";
 			sourceTree = "<group>";
@@ -2495,7 +2493,6 @@
 				BE9742381F0409BA00BF48E0 /* SettingsComments.swift in Sources */,
 				BE25CADC24C4E3DA00736CA5 /* MainViewController.swift in Sources */,
 				BE314509256738FF004A908C /* TitleUITextView.swift in Sources */,
-				BE2F3F581EF886D9003C1B28 /* Reachability.swift in Sources */,
 				BE9BFF1D25182D8700C9F7EC /* OnboardingPageViewController.swift in Sources */,
 				098B5A4B20EFC6C000FE201B /* UILabel+Extensions.swift in Sources */,
 				BE9742301F0011E500BF48E0 /* TextLinkCellView.swift in Sources */,

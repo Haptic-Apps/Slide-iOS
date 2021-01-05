@@ -2167,24 +2167,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     var currentType: CurrentType = .none
-    static var checkedWifi = false
-    static var cachedCheckWifi = false
-    
-    public static func checkWiFi() -> Bool {
-        if !checkedWifi {
-            checkedWifi = true
-            let networkStatus = Reachability().connectionStatus()
-            switch networkStatus {
-            case .Unknown, .Offline:
-                cachedCheckWifi = false
-            case .Online(.WWAN):
-                cachedCheckWifi = false
-            case .Online(.WiFi):
-                cachedCheckWifi = true
-            }
-        }
-        return cachedCheckWifi
-    }
     
     var videoURL: URL?
     weak var videoTask: URLSessionDataTask?

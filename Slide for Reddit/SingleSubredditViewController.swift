@@ -869,7 +869,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         }
                         if let styles = data["style"] as? [String: Any] {
                             if let headerUrl = styles["bannerBackgroundImage"] as? String {
-                                if !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi() && SettingValues.dataSavingEnabled) {
+                                if !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline && SettingValues.dataSavingEnabled) {
                                     self.headerImage = URL(string: headerUrl.unescapeHTML)
                                 }
                             }
@@ -986,8 +986,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             SingleSubredditViewController.firstPresented = false
         }
                 
-
         if single && Constants.shared.isNetworkOnline {
+
             doToolbar()
             
             sortButton = UIButton.init(type: .custom)
@@ -1316,7 +1316,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
         alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-        
+    
         alert.contentView.addSubview(filterView)
         settings.didMove(toParent: alert)
 
@@ -1496,7 +1496,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     func preloadImages(_ values: [RSubmission]) {
         var urls: [URL] = []
-        if (SettingValues.dataSavingEnabled && (SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.noImages) || !SettingValues.dataSavingEnabled {
+        if (SettingValues.dataSavingEnabled && (SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.noImages) || !SettingValues.dataSavingEnabled {
             for submission in values {
                 var thumb = submission.thumbnail
                 var big = submission.banner
@@ -1532,7 +1532,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     big = false
                 }
 
-                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi())
+                let shouldShowLq = SettingValues.dataSavingEnabled && submission.lQ && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline)
                 if type == ContentType.CType.SELF && SettingValues.hideImageSelftext
                         || SettingValues.noImages && submission.isSelf {
                     big = false
@@ -1629,7 +1629,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = true
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -1857,7 +1857,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
         
-        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && LinkCellView.checkWiFi()) && SettingValues.dataSavingEnabled {
+        if SettingValues.noImages && !(SettingValues.dataSavingDisableWiFi && Constants.shared.isNetworkOnline) && SettingValues.dataSavingEnabled {
             big = false
             thumb = false
         }
@@ -2062,7 +2062,6 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
         self.isGallery = UserDefaults.standard.bool(forKey: "isgallery+" + sub)
         self.emptyStateView.isHidden = true
         PagingCommentViewController.savedComment = nil
-        LinkCellView.checkedWifi = false
     }
     
     func loadOffline() {
