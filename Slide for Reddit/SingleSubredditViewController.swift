@@ -5,7 +5,6 @@
 //  Created by Carlos Crane on 12/22/16.
 //  Copyright © 2016 Haptic Apps. All rights reserved.
 //
-
 import Anchorage
 import Embassy
 import MaterialComponents.MDCActivityIndicator
@@ -132,7 +131,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var lastYUsed = CGFloat(0)
 
     var listingId: String = "" //a random id for use in Realm
-
     var fab: UIButton?
     var fabHelper: UIView?
 
@@ -648,14 +646,12 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     self.menu.widthAnchor /==/ 56
                     self.menu.heightAnchor /==/ 56
                     self.menu.leftAnchor /==/ topView.leftAnchor
-
                     self.more.deactivateImmediateConstraints()
                     self.more.topAnchor /==/ topView.topAnchor
                     self.more.widthAnchor /==/ 56
                     self.more.heightAnchor /==/ 56
                     self.more.rightAnchor /==/ topView.rightAnchor
                 }
-
                 self.menuNav?.view.frame = CGRect(x: 0, y: (UIScreen.main.bounds.height - (self.menuNav?.bottomOffset ?? 0)), width: self.view.frame.width, height: self.menuNav?.view.frame.height ?? 0)
                 self.menu.transform = CGAffineTransform(scaleX: 1, y: 1)
                 self.more.transform = CGAffineTransform(scaleX: 1, y: 1)
@@ -1087,7 +1083,6 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     } else {
                                         if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
                                             //self.menuNav?.setSubredditObject(subreddit: r)
-
                                             if SettingValues.saveHistory {
                                                 if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
                                                     Subscriptions.addHistorySub(name: AccountController.currentName, sub: self.subInfo!.displayName)
@@ -1924,7 +1919,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 let lighterSub = sub.add(overlay: UIColor.white.withAlphaComponent(0.4))
                 var coloredIcon = UIImage.convertGradientToImage(colors: [lighterSub, sub], frame: CGSize.square(size: 150))
                 coloredIcon = coloredIcon.overlayWith(image: UIImage(named: "slideoverlay")!.getCopy(withSize: CGSize.square(size: 150)), posX: 0, posY: 0)
-                let imageData: Data = coloredIcon.pngData()! 
+                let imageData: Data = coloredIcon.pngData()!
                 let base64String = imageData.base64EncodedString()
 
                 // send EOF
@@ -2216,7 +2211,6 @@ extension SingleSubredditViewController {
          }))
          self.present(alert, animated: true)
          }
-
          }*/
 
         alertController.addAction(image: UIImage(named: "colors"), title: "Accent color", color: ColorUtil.accentColorForSub(sub: sub), style: .default) { _ in
@@ -2608,7 +2602,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         
         //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
         //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
-
         if row > dataSource.content.count - 4 {
             if !dataSource.loading && !dataSource.nomore {
                 self.dataSource.getData(reload: false)
@@ -2624,7 +2617,6 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 //        // TODO: - Implement
 //    }
 //}
-
 // MARK: - Link Cell View Delegate
 extension SingleSubredditViewController: LinkCellViewDelegate {
 
@@ -3190,13 +3182,13 @@ public class PageCell: UICollectionViewCell {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    guard let input = input else { return nil }
+    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    return input.rawValue
 }
 
 public class LinksHeaderCellView: UICollectionViewCell {
@@ -3334,10 +3326,8 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 self.del?.showSortMenu(self)
             }
             sortTitle.text = (del?.sort ?? LinkSortType.top).description.uppercased()
-
             var sortWidth = 25 + 8 + 8 + (sortTitle.text ?? "").size(with: sortTitle.font).width
             sort.widthAnchor /==/ sortWidth
-
             buttonBase.addArrangedSubview(sort)
             finalWidth += sortWidth + 8*/
             if Subscriptions.subreddits.contains(sub) {

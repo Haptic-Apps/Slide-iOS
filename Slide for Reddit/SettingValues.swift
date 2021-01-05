@@ -438,7 +438,12 @@ class SettingValues {
         case .ALWAYS:
             return true
         case .WIFI:
-            return LinkCellView.checkWiFi()
+            if #available(iOS 12.0, *) {
+                return NetworkMonitor.shared.online
+            } else {
+                // Fallback on earlier versions
+                return false
+            }
         case .NEVER:
             return false
         case .TAP:
