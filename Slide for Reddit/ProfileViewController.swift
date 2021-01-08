@@ -33,6 +33,8 @@ class ProfileViewController: TabsContentPagingViewController {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         self.titles = []
         
+        self.del = self
+        
         self.name = name
         self.session = (UIApplication.shared.delegate as! AppDelegate).session
         if let n = (session?.token.flatMap { (token) -> String? in
@@ -124,8 +126,8 @@ class ProfileViewController: TabsContentPagingViewController {
 
 extension ProfileViewController: TabsContentPagingViewControllerDelegate {
     func shouldUpdateButtons() {
-        if currentIndex >= 0 {
-            let current = content[currentIndex]
+        if currentIndex >= 1 {
+            let current = content[currentIndex - 1]
             if current == .comments || current == .submitted || current == .overview {
                 navigationItem.rightBarButtonItems = [ moreB!, sortB!]
             } else {

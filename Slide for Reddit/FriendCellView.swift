@@ -18,7 +18,7 @@ protocol FriendCellViewDelegate: class {
 class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
     var titleView: TitleUITextView!
     var icon = UIImageView()
-    var friend: FriendModel?
+    var friend: FriendObject?
     weak var delegate: FriendCellViewDelegate?
     var hasConfigured = false
     
@@ -66,7 +66,7 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         self.icon.verticalAnchors /==/ self.contentView.verticalAnchors + 20
     }
     
-    func setFriend(friend: FriendModel) {
+    func setFriend(friend: FriendObject) {
         if !hasConfigured {
             hasConfigured = true
             self.configureViews()

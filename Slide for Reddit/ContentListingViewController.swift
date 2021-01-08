@@ -309,12 +309,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             c.setComment(comment: (thing as! CommentObject), width: self.view.frame.size.width)
             cell = c
-        } else if thing is FriendModel {
+        } else if thing is FriendObject {
             //Show friend cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.delegate = self
 
-            c.setFriend(friend: (thing as! FriendModel))
+            c.setFriend(friend: (thing as! FriendObject))
             cell = c
         } else if thing is MessageObject {
             //Show message cell
@@ -333,6 +333,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.setLogItem(logItem: (thing as! ModLogObject), width: self.view.frame.size.width)
             cell = c
         }
+        // TODO: Don't use ! for these objects, could cause crashes with unknown objects
         
         return cell!
     }

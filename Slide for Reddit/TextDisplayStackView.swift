@@ -532,6 +532,7 @@ public class TextDisplayStackView: UIStackView {
             .replacingOccurrences(of: "</code>", with: "</font>")
             .replacingOccurrences(of: "<div class=\"md\">", with: "")
             .replacingOccurrences(of: "<p>", with: "<span>")
+            .replacingOccurrences(of: "</p>\n\n", with: "</span><br/><br/>")
             .replacingOccurrences(of: "</p>", with: "</span><br/>")
         if htmlBase.endsWith("\n</div>") {
             htmlBase = htmlBase.substring(0, length: htmlBase.length - 7)
