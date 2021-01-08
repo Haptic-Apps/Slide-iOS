@@ -531,9 +531,6 @@ public class TextDisplayStackView: UIStackView {
             .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
             .replacingOccurrences(of: "</code>", with: "</font>")
             .replacingOccurrences(of: "<div class=\"md\">", with: "")
-            .replacingOccurrences(of: "<p>", with: "<span>")
-            .replacingOccurrences(of: "</p>\n\n", with: "</span><br/><br/>")
-            .replacingOccurrences(of: "</p>", with: "</span><br/>")
         if htmlBase.endsWith("\n</div>") {
             htmlBase = htmlBase.substring(0, length: htmlBase.length - 7)
         }
@@ -798,7 +795,7 @@ private extension NSAttributedString {
      - Superscript is rendered incorrectly depending on the font
      */
     func fixCoreTextIssues(withFont font: UIFont) -> NSAttributedString {
-        return self.fixSuperscript(withFont: font)
+        return self.fixSuperscript(withFont: font).trimmedAttributedString()
     }
 
     /**
@@ -847,5 +844,19 @@ private extension NSAttributedString {
         }
 
         return mutable
+    }
+
+    // From https://stackoverflow.com/a/53007716/3697225
+    func trimmedAttributedString() -> NSAttributedString {
+        let invertedSet = CharacterSet.whitespacesAndNewlines.inverted
+        let startRange = string.rangeOfCharacter(from: invertedSet)
+        let endRange = string.rangeOfCharacter(from: invertedSet, options: .backwards)
+        guard let startLocation = startRange?.upperBound, let endLocation = endRange?.lowerBound else {
+            return NSAttributedString(string: string)
+        }
+        let location = string.distance(from: string.startIndex, to: startLocation) - 1
+        let length = string.distance(from: startLocation, to: endLocation) + 2
+        let range = NSRange(location: location, length: length)
+        return attributedSubstring(from: range)
     }
 }
