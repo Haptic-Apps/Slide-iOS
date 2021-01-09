@@ -846,17 +846,19 @@ private extension NSAttributedString {
         return mutable
     }
 
-    // From https://stackoverflow.com/a/53007716/3697225
+    // From https://github.com/rwbutler/TailorSwift/blob/master/TailorSwift/Classes/NSAttributedStringAdditions.swift
     func trimmedAttributedString() -> NSAttributedString {
         let invertedSet = CharacterSet.whitespacesAndNewlines.inverted
-        let startRange = string.rangeOfCharacter(from: invertedSet)
-        let endRange = string.rangeOfCharacter(from: invertedSet, options: .backwards)
+        let startRange = string.utf16.description.rangeOfCharacter(from: invertedSet)
+        let endRange = string.utf16.description.rangeOfCharacter(from: invertedSet, options: .backwards)
         guard let startLocation = startRange?.upperBound, let endLocation = endRange?.lowerBound else {
             return NSAttributedString(string: string)
         }
-        let location = string.distance(from: string.startIndex, to: startLocation) - 1
-        let length = string.distance(from: startLocation, to: endLocation) + 2
-        let range = NSRange(location: location, length: length)
-        return attributedSubstring(from: range)
+
+        let location = string.utf16.distance(from: string.startIndex, to: startLocation) - 1
+        let length = string.utf16.distance(from: startLocation, to: endLocation) + 2
+
+        let composedRange = (self.string as NSString).rangeOfComposedCharacterSequences(for: NSRange(location: location, length: length)) // Required or emojis cut off if they are at the end of the line
+        return attributedSubstring(from: composedRange)
     }
 }
