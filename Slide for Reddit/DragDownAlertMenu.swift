@@ -642,7 +642,7 @@ extension DragDownAlertMenu {
         }
         isSearchComplete = false
         do {
-            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), accountName: AccountController.currentName, query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                 switch result {
                 case .failure:
                     print(result.error!)

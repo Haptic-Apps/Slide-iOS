@@ -938,7 +938,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                 }
             })
             
-            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.subreddit), query: searchBar.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.subreddit), accountName: AccountController.currentName, query: searchBar.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                 switch result {
                 case .failure:
                     print(result.error!)

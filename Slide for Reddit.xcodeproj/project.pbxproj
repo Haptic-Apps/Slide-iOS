@@ -310,6 +310,7 @@
 		BE8AE94321F9225000E1C0D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE8AE94221F9225000E1C0D1 /* Main.storyboard */; };
 		BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */; };
 		BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */; };
+		BE8EA67325A80F4B0094718E /* SubredditToolbarSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8EA67225A80F4B0094718E /* SubredditToolbarSearchViewController.swift */; };
 		BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA071E0C46090063B8EF /* AppDelegate.swift */; };
 		BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */; };
 		BE8FCA0F1E0C46090063B8EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE8FCA0E1E0C46090063B8EF /* Assets.xcassets */; };
@@ -335,7 +336,6 @@
 		BE9BFF2725182EDB00C9F7EC /* v6howtonavigate.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */; };
 		BE9E23C5257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E23C3257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift */; };
 		BE9E23C6257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E23C4257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift */; };
-		BEA3370F258C849B002D0819 /* SubredditToolbarSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA3370E258C849B002D0819 /* SubredditToolbarSearchViewController.swift */; };
 		BEA86AD5257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */; };
 		BEA86AD6257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */; };
 		BEA86AD7257C3AF700770A62 /* Reddit.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BEA86AD3257C3AF700770A62 /* Reddit.xcdatamodeld */; };
@@ -821,6 +821,7 @@
 		BE8AE94221F9225000E1C0D1 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
 		BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarginedTableViewCell.swift; sourceTree = "<group>"; };
+		BE8EA67225A80F4B0094718E /* SubredditToolbarSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditToolbarSearchViewController.swift; sourceTree = "<group>"; };
 		BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Slide for Reddit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE8FCA071E0C46090063B8EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSubredditViewController.swift; sourceTree = "<group>"; };
@@ -854,7 +855,6 @@
 		BE9BFF2625182ED500C9F7EC /* v6howtonavigate.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = v6howtonavigate.mp4; sourceTree = "<group>"; };
 		BE9E23C3257F4DB500E363D0 /* SubmissionComments+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubmissionComments+CoreDataClass.swift"; sourceTree = "<group>"; };
 		BE9E23C4257F4DB500E363D0 /* SubmissionComments+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubmissionComments+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		BEA3370E258C849B002D0819 /* SubredditToolbarSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditToolbarSearchViewController.swift; sourceTree = "<group>"; };
 		BEA86AD4257C3AF700770A62 /* Reddit.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Reddit.xcdatamodel; sourceTree = "<group>"; };
 		BEAD1F74251424CB0096A216 /* SubredditThemeEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditThemeEditViewController.swift; sourceTree = "<group>"; };
 		BEAE6A4A2564CCC100EF0806 /* ModLogCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModLogCellView.swift; sourceTree = "<group>"; };
@@ -1599,7 +1599,6 @@
 				BEBF45DA1E23383D00764BB8 /* seen.plist */,
 				B776B89DC40DC7FB5ECB6C4A /* SFHideSafariViewController.swift */,
 				BE7BFB411F128F9B009CA2E1 /* Sidebar.swift */,
-				BEA3370E258C849B002D0819 /* SubredditToolbarSearchViewController.swift */,
 				BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */,
 				BEC814EB24BD43EE005C8E8C /* SiriShortcuts.swift */,
 				BEE9385320CF31C80021BE80 /* Slide for Reddit.entitlements */,
@@ -1611,6 +1610,7 @@
 				BE7439EC1E201C22008BB63B /* SubredditCellView.swift */,
 				BE776389211B732B002F2969 /* SubredditFindReturnViewController.swift */,
 				BE2DEAB31E2693C100FBF0B5 /* SubredditHeaderView.swift */,
+				BE8EA67225A80F4B0094718E /* SubredditToolbarSearchViewController.swift */,
 				BE2DEAB11E26916700FBF0B5 /* SubSidebarViewController.swift */,
 				BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */,
 				BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */,
@@ -2443,7 +2443,7 @@
 				BE84B283257DAC5A00A90C5D /* ModlogModel+CoreDataClass.swift in Sources */,
 				BEC912A0258B19AA00E65F34 /* UIBezierPath+Helpers.swift in Sources */,
 				BE2B8A091E25EEDF0053D493 /* SettingsViewController.swift in Sources */,
-				BEA3370F258C849B002D0819 /* SubredditToolbarSearchViewController.swift in Sources */,
+				BE8EA67325A80F4B0094718E /* SubredditToolbarSearchViewController.swift in Sources */,
 				BEE206FA1F1DE286008BB5F1 /* WrappingFlowLayout.swift in Sources */,
 				09F411CD20F3EEA600D23A42 /* ModalMediaViewController.swift in Sources */,
 				BE7439F51E2162A8008BB63B /* AccountController.swift in Sources */,

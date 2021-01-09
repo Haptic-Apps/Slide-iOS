@@ -1299,7 +1299,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         }
 
-        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") {
+        if sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" {
             alert.addTextInput(title: "All results in \(sub)...", icon: nil, enabled: false, action: searchAction, inputPlaceholder: "What are you looking for?", inputIcon: UIImage(sfString: SFSymbol.magnifyingglass, overrideString: "search")!, textRequired: true, exitOnAction: true)
             alert.addAction(title: "All results in all of Reddit...", icon: nil, enabled: true, action: searchAllAction)
         } else {
