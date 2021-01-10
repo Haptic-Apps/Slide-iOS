@@ -495,7 +495,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             }
             
             if let url = URL(string: icon!) {
-                if ContentType.isImage(uri: url) {
+                if ContentType.isImage(uri: url) || icon?.endsWith("/icon") ?? false {
                     image.loadImageWithPulsingAnimation(atUrl: url, withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                 } else {
                     image.image = LinkCellImageCache.web
@@ -642,7 +642,7 @@ extension DragDownAlertMenu {
         }
         isSearchComplete = false
         do {
-            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), accountName: AccountController.currentName, query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                 switch result {
                 case .failure:
                     print(result.error!)

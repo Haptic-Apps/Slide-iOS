@@ -492,6 +492,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             case .SINGLE, .MULTI_COLUMN:
                 if UIApplication.shared.isSplitOrSlideOver {
                     setupSplitPaneLayout(splitViewController)
+                } else if SettingValues.desktopMode {
+                    splitViewController.preferredDisplayMode = .oneBesideSecondary
+                    if #available(iOS 14.0, *) {
+                        splitViewController.preferredSplitBehavior = .displace
+                    }
                 } else {
                     splitViewController.preferredDisplayMode = .secondaryOnly
                     if #available(iOS 14.0, *) {
@@ -508,8 +513,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func setupSplitPaneLayout(_ splitViewController: UISplitViewController) {
         if #available(iOS 14.0, *) {
-            splitViewController.preferredDisplayMode = .oneBesideSecondary
-            splitViewController.preferredSplitBehavior = .displace
+            if SettingValues.desktopMode {
+                splitViewController.preferredDisplayMode = .twoBesideSecondary
+                splitViewController.preferredSplitBehavior = .tile
+            } else {
+                splitViewController.preferredDisplayMode = .oneBesideSecondary
+                splitViewController.preferredSplitBehavior = .displace
+            }
         } else {
             splitViewController.preferredDisplayMode = .allVisible
         }
@@ -1042,6 +1052,7 @@ extension URL {
         return results
     }
 }
+
 extension Session {
     /**
      Refresh own token.

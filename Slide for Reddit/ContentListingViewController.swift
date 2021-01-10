@@ -309,12 +309,12 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
 
             c.setComment(comment: (thing as! CommentObject), width: self.view.frame.size.width)
             cell = c
-        } else if thing is FriendModel {
+        } else if thing is FriendObject {
             //Show friend cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.delegate = self
 
-            c.setFriend(friend: (thing as! FriendModel))
+            c.setFriend(friend: (thing as! FriendObject))
             cell = c
         } else if thing is MessageObject {
             //Show message cell
@@ -333,6 +333,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.setLogItem(logItem: (thing as! ModLogObject), width: self.view.frame.size.width)
             cell = c
         }
+        // TODO: Don't use ! for these objects, could cause crashes with unknown objects
         
         return cell!
     }
@@ -594,6 +595,14 @@ extension ContentListingViewController: LinkCellViewDelegate {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
     
+    @available(iOS 13, *)
+    func getMoreMenu(_ cell: LinkCellView) -> UIMenu? {
+        if let nav = self.navigationController {
+            return PostActions.getMoreContextMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
+        return nil
+    }
+
     func upvote(_ cell: LinkCellView) {
         do {
             try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in

@@ -44,6 +44,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
         self.navigationController?.delegate = self
         navigationController?.setNavigationBarHidden(false, animated: true)
         setupBaseBarColors()
+        self.del?.shouldUpdateButtons()
         appearOthers()
     }
     

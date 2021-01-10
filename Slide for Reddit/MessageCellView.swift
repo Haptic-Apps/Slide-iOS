@@ -56,10 +56,11 @@ class MessageCellView: UICollectionViewCell {
             guard let self = self, let message = self.message else { return }
             self.delegate?.doReply(to: message, cell: self)
         }
-        self.innerView.addLongTapGestureRecognizer { [weak self] (_) in
+        let long = self.innerView.addLongTapGestureRecognizerReturn { [weak self] (_) in
             guard let self = self, let message = self.message else { return }
             self.delegate?.showMenu(for: message, cell: self)
         }
+        self.text?.parentLongPress = long
     }
     
     func configureLayout() {
@@ -91,7 +92,7 @@ class MessageCellView: UICollectionViewCell {
     public static func getTitleText(message: MessageObject) -> NSAttributedString {
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
         let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
-        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor] as [NSAttributedString.Key: Any]
+        var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColorOverlaid(withForeground: true, 0.24)] as [NSAttributedString.Key: Any]
 
         var infoString: NSMutableAttributedString
         if message.wasComment {
@@ -136,9 +137,9 @@ class MessageCellView: UICollectionViewCell {
             let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: message.author, small: false))\u{00A0}", attributes: authorAttributes)
 
             let endString = NSMutableAttributedString(string: "  •  \(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))  •  from ", attributes: attrs)
-            authorString.append(endString)
+            endString.append(authorString)
             
-            if message.isNew {
+            if !ActionStates.isRead(s: message) {
                 attrs[.foregroundColor] = GMColor.red500Color()
             }
             attrs[.font] = FontGenerator.boldFontOfSize(size: 16, submission: true)

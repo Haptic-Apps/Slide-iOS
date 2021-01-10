@@ -242,7 +242,10 @@ class AnyModalViewController: UIViewController {
             size = self.view.bounds.size
         }
 
-        self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
+        let newRect = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
+        if newRect.size != self.videoView.frame.size {
+            self.videoView.frame = newRect
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -839,13 +842,15 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
         } else if panGesture.state == .changed {
-            viewToMove.frame.origin = CGPoint(
+            var newFrame = viewToMove.frame
+            newFrame.origin = CGPoint(
                 x: 0,
                 y: originalPosition!.y + translation.y
             )
+
+            viewToMove.frame = newFrame
             let progress = translation.y / (self.view.frame.size.height / 2)
             self.view.alpha = 1 - (abs(progress) * 1.3)
-            
         } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
             

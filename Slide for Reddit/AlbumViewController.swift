@@ -450,16 +450,18 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         navItem?.title = "\(urlStringKeys.firstIndex(of: ((viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(urlStringKeys.count)"
-        let currentVc = self.viewControllers!.first!
+        if let vc = self.viewControllers?.first, let page = self.urlStringKeys.firstIndex(of: ((vc as? ModalMediaViewController)?.embeddedVC.data.baseURL?.absoluteString) ?? "") {
+            self.currentIndex = page
 
-        if (currentVc as! ModalMediaViewController).embeddedVC == nil {
-            self.viewToMove = (currentVc as! ModalMediaViewController).view
-        } else {
-            let embedded = (currentVc as! ModalMediaViewController).embeddedVC
-            if let image = embedded as? ImageMediaViewController {
-                self.viewToMove = image.imageView
-            } else if let video = embedded as? VideoMediaViewController {
-                self.viewToMove = video.videoView
+            if (vc as? ModalMediaViewController)?.embeddedVC == nil {
+                self.viewToMove = (vc as? ModalMediaViewController)?.view
+            } else {
+                let embedded = (vc as? ModalMediaViewController)?.embeddedVC
+                if let image = embedded as? ImageMediaViewController {
+                    self.viewToMove = image.imageView
+                } else if let video = embedded as? VideoMediaViewController {
+                    self.viewToMove = video.videoView
+                }
             }
         }
     }
@@ -515,5 +517,4 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         return paths[0].appending(key + ".mp4")
     }
-    
 }

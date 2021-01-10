@@ -175,9 +175,12 @@ public class TextDisplayStackView: UIStackView {
         let indexCallback: () -> Int = {
             return allLinks.count
         }
+        
         if htmlString.contains("<table") || htmlString.contains("<pre><code") || htmlString.contains("<cite") {
             var blocks = TextDisplayStackView.getBlocks(htmlString)
-            
+            if blocks[0] == "<div class=\"md\">" {
+                blocks.remove(at: 0)
+            }
             var startIndex = 0
             
             let newTitle = NSMutableAttributedString(attributedString: title)
@@ -191,15 +194,22 @@ public class TextDisplayStackView: UIStackView {
                 startIndex = 1
             }
             
-            firstTextView.attributedText = newTitle
-            firstTextView.sizeToFit()
+            if !newTitle.string.isEmpty {
+                firstTextView.isHidden = false
+                firstTextView.attributedText = newTitle
+                firstTextView.sizeToFit()
+            } else {
+                firstTextView.attributedText = nil
+                firstTextView.frame = CGRect.zero
+                firstTextView.isHidden = true
+            }
 
-            if !ignoreHeight {
+            if !ignoreHeight && !newTitle.string.isEmpty {
 //                let framesetterB = CTFramesetterCreateWithAttributedString(newTitle)
 //                let textSizeB = CTFramesetterSuggestFrameSizeWithConstraints(framesetterB, CFRange(), nil, CGSize.init(width: estimatedWidth, height: CGFloat.greatestFiniteMagnitude), nil)
 //                estimatedHeight += textSizeB.height
 
-                let textHeight = firstTextView.attributedText!.height(containerWidth: estimatedWidth)
+                let textHeight = firstTextView.attributedText?.height(containerWidth: estimatedWidth) ?? 0
                 estimatedHeight += textHeight
             }
             
@@ -521,8 +531,6 @@ public class TextDisplayStackView: UIStackView {
             .replacingOccurrences(of: "<code>", with: "<font color=\"blue\">")
             .replacingOccurrences(of: "</code>", with: "</font>")
             .replacingOccurrences(of: "<div class=\"md\">", with: "")
-            .replacingOccurrences(of: "<p>", with: "<span>")
-            .replacingOccurrences(of: "</p>", with: "</span><br/>")
         if htmlBase.endsWith("\n</div>") {
             htmlBase = htmlBase.substring(0, length: htmlBase.length - 7)
         }
@@ -787,7 +795,7 @@ private extension NSAttributedString {
      - Superscript is rendered incorrectly depending on the font
      */
     func fixCoreTextIssues(withFont font: UIFont) -> NSAttributedString {
-        return self.fixSuperscript(withFont: font)
+        return self.fixSuperscript(withFont: font).trimmedAttributedString()
     }
 
     /**
@@ -836,5 +844,21 @@ private extension NSAttributedString {
         }
 
         return mutable
+    }
+
+    // From https://github.com/rwbutler/TailorSwift/blob/master/TailorSwift/Classes/NSAttributedStringAdditions.swift
+    func trimmedAttributedString() -> NSAttributedString {
+        let invertedSet = CharacterSet.whitespacesAndNewlines.inverted
+        let startRange = string.utf16.description.rangeOfCharacter(from: invertedSet)
+        let endRange = string.utf16.description.rangeOfCharacter(from: invertedSet, options: .backwards)
+        guard let startLocation = startRange?.upperBound, let endLocation = endRange?.lowerBound else {
+            return NSAttributedString(string: string)
+        }
+
+        let location = string.utf16.distance(from: string.startIndex, to: startLocation) - 1
+        let length = string.utf16.distance(from: startLocation, to: endLocation) + 2
+
+        let composedRange = (self.string as NSString).rangeOfComposedCharacterSequences(for: NSRange(location: location, length: length)) // Required or emojis cut off if they are at the end of the line
+        return attributedSubstring(from: composedRange)
     }
 }

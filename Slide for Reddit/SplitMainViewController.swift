@@ -86,6 +86,14 @@ class SplitMainViewController: MainViewController {
         account.contentMode = .scaleAspectFill
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
+        var not13 = true
+        if #available(iOS 13.0, *) {
+            not13 = false
+        }
+        if SettingValues.desktopMode && (!not13 || SettingValues.appMode != .SPLIT) {
+            account.isHidden = true
+        }
+
         account.sizeAnchors /==/ CGSize.square(size: 30)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
@@ -142,11 +150,20 @@ class SplitMainViewController: MainViewController {
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.sizeAnchors /==/ CGSize.square(size: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
+        
+        var not13 = true
+        if #available(iOS 13.0, *) {
+            not13 = false
+        }
+        if SettingValues.desktopMode && (!not13 || SettingValues.appMode != .SPLIT) {
+            account.isHidden = true
+        }
+
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
-
+        
         if #available(iOS 13, *) {
             let interaction = UIContextMenuInteraction(delegate: self)
             self.accountB.customView?.addInteraction(interaction)
@@ -202,8 +219,6 @@ class SplitMainViewController: MainViewController {
         
         self.restartVC()
         self.navigationController?.modalPresentationStyle = .currentContext
-
-        doButtons()
         
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
@@ -1101,7 +1116,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.desktopMode {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in

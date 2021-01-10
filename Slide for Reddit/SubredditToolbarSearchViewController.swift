@@ -249,11 +249,11 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
                 return
             }
             if text.contains(" ") {
-                //do search
+                // do search
                 VCPresenter.showVC(viewController: SearchViewController(subreddit: self.subreddit, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
             } else {
-                //go to sub
-                //TODO this parentController?.goToSubreddit(subreddit: text)
+                // go to sub
+                // TODO this parentController?.goToSubreddit(subreddit: text)
             }
         }
     }
@@ -475,9 +475,9 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
             blurView.verticalAnchors /==/ backgroundView.verticalAnchors
         }
         
-        //let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
-        //backgroundView.addGestureRecognizer(tapGesture)
-        //TODO collapse
+        // let tapGesture = UITapGestureRecognizer(target: self, action: #selector(collapse))
+        // backgroundView.addGestureRecognizer(tapGesture)
+        // TODO collapse
         
         parentController!.view.addSubview(backgroundView)
         backgroundView.edgeAnchors /==/ parentController!.view.edgeAnchors
@@ -499,7 +499,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
-        //collapse()
+        // collapse()
         completion?()
     }
 
@@ -519,9 +519,9 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
     func configureViews() {
 
-        //horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
-        //horizontalSubGroup.delegate = self
-        //view.addSubview(horizontalSubGroup)
+        // horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
+        // horizontalSubGroup.delegate = self
+        // view.addSubview(horizontalSubGroup)
         subInfoLabel = TextDisplayStackView(fontSize: 14, submission: false, color: .blue, width: (parentController?.view ?? self.view).frame.size.width - 16, baseFontColor: UIColor.fontColor, delegate: self)
         subInfoLabel.isUserInteractionEnabled = true
 
@@ -562,9 +562,9 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
     func configureLayout() {
     
-        //horizontalSubGroup.topAnchor /==/ view.topAnchor
-        //horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
-        //horizontalSubGroup.heightAnchor /==/ 90
+        // horizontalSubGroup.topAnchor /==/ view.topAnchor
+        // horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
+        // horizontalSubGroup.heightAnchor /==/ 90
 
         headerView.topAnchor /==/ view.topAnchor
         headerView.horizontalAnchors /==/ view.horizontalAnchors
@@ -662,8 +662,8 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
 
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
-            //self.horizontalSubGroup.setColors()
-            //self.horizontalSubGroup.backgroundColor = UIColor.foregroundColor
+            // self.horizontalSubGroup.setColors()
+            // self.horizontalSubGroup.backgroundColor = UIColor.foregroundColor
             self.headerView.backgroundColor = UIColor.foregroundColor
             self.dragHandleView.backgroundColor = UIColor.fontColor.withAlphaComponent(0.2)
             self.searchBar.tintColor = UIColor.fontColor
@@ -741,7 +741,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }    
 }
 
-//This should be handled by the parent view controller, unused
+// This should be handled by the parent view controller, unused
 extension SubredditToolbarSearchViewController: TextDisplayStackViewDelegate {
     func linkTapped(url: URL, text: String) {
         
@@ -938,7 +938,7 @@ extension SubredditToolbarSearchViewController: UISearchBarDelegate {
                 }
             })
             
-            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.subreddit), query: searchBar.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.subreddit), accountName: AccountController.currentName, query: searchBar.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                 switch result {
                 case .failure:
                     print(result.error!)
@@ -1034,22 +1034,22 @@ extension SubredditToolbarSearchViewController: UIScrollViewDelegate {
 
 extension SubredditToolbarSearchViewController: HorizontalSubredditGroupDelegate {
     func horizontalSubredditGroup(_ horizontalSubredditGroup: HorizontalSubredditGroup, didRequestSubredditWithName name: String) {
-        //TODO this parentController?.goToSubreddit(subreddit: name)
+        // TODO this parentController?.goToSubreddit(subreddit: name)
     }
 }
 
 extension SubredditToolbarSearchViewController {
     @objc func keyboardWillBeShown(notification: NSNotification) {
-        //get the end position keyboard frame
+        // get the end position keyboard frame
         let keyInfo: Dictionary = notification.userInfo!
         var keyboardFrame: CGRect = keyInfo[UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
-        //convert it to the same view coords as the tableView it might be occluding
+        // convert it to the same view coords as the tableView it might be occluding
         keyboardFrame = self.tableView.convert(keyboardFrame, to: self.tableView)
-        //calculate if the rects intersect
+        // calculate if the rects intersect
         let intersect: CGRect = keyboardFrame.intersection(self.tableView.bounds)
         if !intersect.isNull {
-            //yes they do - adjust the insets on tableview to handle it
-            //first get the duration of the keyboard appearance animation
+            // yes they do - adjust the insets on tableview to handle it
+            // first get the duration of the keyboard appearance animation
             let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
             // Change the table insets to match - animated to the same duration of the keyboard appearance
             UIView.animate(withDuration: duration, animations: {
@@ -1242,7 +1242,7 @@ class SubscribedSubredditsSectionProvider {
 
         // Insert pinned section if any pinned subs exist
         if !pinnedSubs.isEmpty {
-            sections[Keys.pinned.rawValue] = Subscriptions.pinned//.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
+            sections[Keys.pinned.rawValue] = Subscriptions.pinned // .sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
         }
 
         // Insert "multi" section for multireddits

@@ -54,6 +54,8 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         self.collectionViewLayout.delegate = self
 
         self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        registerCells()
+
         self.addSubview(collectionView)
         collectionView.edgeAnchors /==/ self.edgeAnchors
         collectionView.backgroundColor = .clear
@@ -63,12 +65,13 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         self.collectionView.bounces = false
         self.collectionView.showsHorizontalScrollIndicator = false
         self.collectionView.showsVerticalScrollIndicator = false
-        
+        self.collectionView.contentInsetAdjustmentBehavior = .never
+        self.collectionView.contentInset = UIEdgeInsets(top: 0, left: 300, bottom: 0, right: 0)
+
         if SettingValues.fullWidthHeaderCells && !(self is TabsPagingTitleCollectionView) {
             self.collectionView.isUserInteractionEnabled = false
         }
         
-        registerCells()
     }
     
     public override var intrinsicContentSize: CGSize {
@@ -342,8 +345,8 @@ extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
             return CGSize(width: collectionView.frame.size.width, height: 40)
         }
         if SettingValues.subredditIcons && !(self is TabsPagingTitleCollectionView) {
-            var width = CGFloat(30) //icon size
-            width += 4 //icon leading padding
+            var width = CGFloat(30) // icon size
+            width += 4 // icon leading padding
             
             if collectionView.frame.size.width > 400 {
                 width += 24 //title padding
@@ -354,7 +357,7 @@ extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
             return CGSize(width: width, height: 40)
         } else {
             var width = CGFloat(0) //icon size
-            width += 8 //title padding
+            width += 8 // title padding
             width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
             return CGSize(width: width, height: 40)
         }

@@ -31,6 +31,8 @@ protocol LinkCellViewDelegate: class {
     func deleteSelf(_ cell: LinkCellView)
     func mod(_ cell: LinkCellView)
     func readLater(_ cell: LinkCellView)
+    
+    @available(iOS 13, *) func getMoreMenu(_ cell: LinkCellView) -> UIMenu?
 }
 
 enum CurrentType {
@@ -161,7 +163,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     
     var currentAccountTransitioningManager = ProfileInfoPresentationManager()
 
-    //Can't have parameters that target an iOS version :/
+    // Can't have parameters that target an iOS version :/
     private var _savedPreview: Any?
     @available(iOS 13.0, *)
     fileprivate var savedPreview: UITargetedPreview? {
@@ -189,7 +191,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     func configureView() {
         if (SettingValues.postViewMode == .CARD || SettingValues.postViewMode == .CENTER) && !full && !(self is GalleryLinkCellView) && !SettingValues.flatMode {
             innerView = RoundedCornerView(radius: 15, cornerColor: UIColor.foregroundColor)
-            self.innerView.backgroundColor = UIColor.backgroundColor //The rounded corners code will take care of the foreground color
+            self.innerView.backgroundColor = UIColor.backgroundColor // The rounded corners code will take care of the foreground color
         } else {
             self.innerView.backgroundColor = UIColor.foregroundColor
         }
@@ -1229,7 +1231,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
 
         func didHit(_ view: UIView) -> Bool {
             let convertedPoint = view.convert(point, from: self)
-            return view.bounds.insetBy(dx: insets.width, dy: insets.height).contains(convertedPoint)
+            return view.bounds.insetBy(dx: insets.width, dy: insets.height).contains(convertedPoint) && !view.isHidden
         }
 
         var testedViews: [UIView] = [
@@ -1716,7 +1718,29 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             } else {
                 thumbText.isHidden = false
                 thumbText.text = type.rawValue.uppercased()
-                thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview!), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                
+                if (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false {
+                    self.thumbImage.image = LinkCellImageCache.web
+                    (self.thumbImage as? RoundedImageView)?.setCornerRadius()
+                    
+                    let urlsToTest = [submission.thumbnailUrl, submission.smallPreview]
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        for testString in urlsToTest {
+                            if let baseString = testString, let url = URL(string: baseString) {
+                                if let image = SDImageCache.shared.imageFromCache(forKey: SDWebImageManager.shared.cacheKey(for: url)) {
+                                    DispatchQueue.main.async {
+                                        self.thumbImage.image = image
+                                        (self.thumbImage as? RoundedImageView)?.setCornerRadius()
+                                    }
+                                    break
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    thumbImage.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? (submission.thumbnailUrl ?? "") : submission.smallPreview!), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                }
+
                 if let round = thumbImage as? RoundedImageView {
                     round.setCornerRadius()
                 }
@@ -1807,9 +1831,64 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     round.setCornerRadius()
                 }
             } else {
-                let bannerImageUrl = URL(string: shouldShowLq ? submission.lqURL ?? "": submission.bannerUrl ?? "")
+                var imageToLoad = ""
+                if shouldShowLq {
+                    imageToLoad = submission.lqURL ?? ""
+                } else {
+                    imageToLoad = submission.smallerBannerUrl ?? ""
+                }
+                
+                if imageToLoad.isEmpty {
+                    imageToLoad = submission.bannerUrl ?? ""
+                }
+                let bannerImageUrl = URL(string: imageToLoad)
                 loadedImage = bannerImageUrl
-                bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
+                
+                if (parentViewController as? SingleSubredditViewController)?.dataSource.offline ?? false {
+                    let urlsToTest = [submission.bannerUrl, submission.smallerBannerUrl, submission.lqURL]
+                    DispatchQueue.global(qos: .userInteractive).async {
+                        for testString in urlsToTest {
+                            if let baseString = testString, let url = URL(string: baseString) {
+                                if let image = SDImageCache.shared.imageFromCache(forKey: SDWebImageManager.shared.cacheKey(for: url)) {
+                                    DispatchQueue.main.async {
+                                        self.bannerImage.image = image
+                                        
+                                        if SettingValues.postImageMode == .SHORT_IMAGE && self.bannerImage.superview != nil {
+                                            if ((self.bannerImage.image?.size.height ?? 0) / (self.bannerImage.image?.size.width ?? 0)) > ( self.bannerImage.frame.size.height / self.bannerImage.frame.size.width) && ((self.bannerImage.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
+                                                self.bannerImage.contentMode = .scaleAspectFit
+                                                
+                                                let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor)
+                                                backView.image = self.bannerImage.image?.sd_blurredImage(withRadius: 15)
+                                                backView.contentMode = .scaleAspectFill
+                                                backView.backgroundColor = UIColor.backgroundColor
+                                                backView.tag = 2000 //Need to find a solution to this, tags are bad
+                                                self.bannerImage.superview?.addSubview(backView)
+                                                backView.edgeAnchors /==/ self.bannerImage.edgeAnchors
+                                                self.bannerImage.backgroundColor = .clear
+                                                
+                                                if #available(iOS 11.0, *) {
+                                                    backView.accessibilityIgnoresInvertColors = true
+                                                }
+                                                backView.clipsToBounds = true
+                                                backView.setCornerRadius(rect: self.bannerImage.bounds)
+                                                
+                                                self.bannerImage.superview?.bringSubviewToFront(self.bannerImage)
+                                            } else {
+                                                self.bannerImage.contentMode = .scaleAspectFill //Otherwise, fill view
+                                            }
+                                        }
+
+                                        (self.bannerImage as? RoundedImageView)?.setCornerRadius()
+                                    }
+                                    self.loadedImage = url
+                                    break
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    bannerImage.loadImageWithPulsingAnimation(atUrl: bannerImageUrl, withPlaceHolderImage: nil, overrideSize: CGSize(width: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - ((full && big ? CGFloat(5) : 0) * 2), height: submissionHeight), isBannerView: self is BannerLinkCellView)
+                }
             }
             NSLayoutConstraint.deactivate(self.bannerHeightConstraint)
             self.bannerHeightConstraint = batch {
@@ -2202,7 +2281,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
     
     @objc func showMore() {
-        timer!.invalidate()
+        timer?.invalidate()
         if longBlocking {
             self.longBlocking = false
             return
@@ -2853,7 +2932,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     return
                 }
             }
-            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: lq, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: Double(link.imageWidth), height: Double(link.imageHeight)), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
+            (parentViewController)?.setLink(link: link, shownURL: loadedImage, lq: loadedImage?.absoluteString != link.bannerUrl && loadedImage != nil, saveHistory: true, heroView: big ? bannerImage : thumbImage, finalSize: CGSize(width: Double(link.imageWidth), height: Double(link.imageHeight)), heroVC: parentViewController, upvoteCallbackIn: {[weak self] in
                 if let strongSelf = self {
                     strongSelf.upvote()
                 }
@@ -3009,7 +3088,7 @@ public extension UIImageView {
         let oldBackgroundColor: UIColor? = self.backgroundColor
         self.backgroundColor = UIColor.fontColor
         startPulsingAnimation()
-
+        
         DispatchQueue.global(qos: .userInteractive).async {
             self.sd_setImage(with: url, placeholderImage: placeholderImage, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: overrideSize != nil ? [.imageThumbnailPixelSize: CGSize(width: overrideSize!.width * UIScreen.main.scale, height: overrideSize!.height * UIScreen.main.scale)] : [:], progress: nil) { (_, _, cacheType, _) in
                 self.layer.removeAllAnimations() // Stop the pulsing animation
@@ -3163,6 +3242,10 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             convertedRects.append(self.innerView.convert(rect, from: textView))
         }
         
+        if convertedRects.isEmpty {
+            return nil
+        }
+        
         for rect in convertedRects {
             minX = min(rect.minX, minX)
             maxX = max(rect.maxX, maxX)
@@ -3174,7 +3257,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         let target = UIPreviewTarget(container: self.innerView, center: weightedCenterpoint)
         let parameters = UIPreviewParameters(textLineRects: convertedRects as [NSValue])
-        parameters.backgroundColor = UIColor.backgroundColor
+        parameters.backgroundColor = UIColor.foregroundColor
         
         let path = UIBezierPath(wrappingAround: convertedRects)
         let maskLayer = CAShapeLayer()
@@ -3207,9 +3290,9 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                   return nil
             }
 
-            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+            if self.textView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
                 return createRectsTargetedPreview(textView: self.title, location: location, snapshot: snapshot)
-            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            } else if self.textView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
@@ -3239,18 +3322,24 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
 
         let saveArea = self.innerView.convert(location, to: self.buttons)
         if full && self.textView != nil && !self.textView.isHidden && self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
-            if self.innerView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
-                return getConfigurationForTextView(self.textView.firstTextView, location)
-            } else if self.innerView.convert(self.textView.frame, to: self.innerView).contains(location) {
+            if self.textView.convert(self.textView.firstTextView.frame, to: self.innerView).contains(location) {
+                if let config = getConfigurationForTextView(self.textView.firstTextView, location) {
+                    return config
+                }
+            } else if self.textView.convert(self.textView.frame, to: self.innerView).contains(location) {
                 let innerLocation = self.textView.convert(self.innerView.convert(location, to: self.textView), to: self.textView.overflow)
                 for view in self.textView.overflow.subviews {
                     if let view = view as? TitleUITextView, view.frame.contains(innerLocation) {
-                        return getConfigurationForTextView(view, location)
+                        if let config = getConfigurationForTextView(view, location) {
+                            return config
+                        }
                     }
                 }
             }
         } else if self.innerView.convert(self.title.frame, to: self.innerView).contains(location) {
-            return getConfigurationForTextView(self.title, location)
+            if let config = getConfigurationForTextView(self.title, location) {
+                return config
+            }
         } else if let url = self.link?.url, videoView != nil && !videoView.isHidden && videoView.frame.contains(location) {
             self.previewedVideo = true
             return getConfigurationForVideo(url: url)
@@ -3264,6 +3353,13 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 return self.makeContextMenu()
             })
         }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+                return self.del?.getMoreMenu(self)
+            })
+        }
+
         return nil
     }
     
@@ -3540,7 +3636,6 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
     }
 
     func makeContextMenu() -> UIMenu {
-
         // Create a UIAction for sharing
         var buttons = [UIAction]()
         let create = UIAction(title: "Create a collection", image: UIImage(sfString: SFSymbol.folderFillBadgePlus, overrideString: "add")) { _ in

@@ -159,6 +159,21 @@ class PostActions: NSObject {
         alertController.show(parent)
     }
     
+    @available(iOS 13.0, *)
+    public static func getMoreContextMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) -> UIMenu {
+        // Create a UIAction for sharing
+        var buttons = [UIAction]()
+        if let link = cell.link {
+            for item in SettingValues.PostOverflowAction.getMenu(link, mutableList: mutableList) {
+                buttons.append(UIAction(title: item.getTitle(), image: item.getImage(), handler: { (action) in
+                    handleAction(action: item, cell: cell, parent: parent, nav: nav, mutableList: mutableList, delegate: delegate, index: index)
+                }))
+            }
+        }
+        // Create and return a UIMenu with the share action
+        return UIMenu(title: "Submission Options", children: buttons)
+    }
+    
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
        // TODO: - remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())

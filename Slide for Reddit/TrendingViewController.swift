@@ -124,7 +124,7 @@ class TrendingViewController: UITableViewController {
         self.tableView.register(TrendingCellView.classForCoder(), forCellReuseIdentifier: "trending")
         self.tableView.backgroundColor = UIColor.backgroundColor
                 
-        //TODO show loading indicator
+        // TODO show loading indicator
         tableView.reloadData()
         
         self.tableView.tableFooterView = UIView()

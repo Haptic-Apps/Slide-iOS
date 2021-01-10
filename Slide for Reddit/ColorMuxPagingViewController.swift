@@ -50,7 +50,6 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
         let point = scrollView.contentOffset
         var percentComplete: CGFloat
         percentComplete = abs(point.x - self.view.frame.size.width) / self.view.frame.size.width
@@ -130,7 +129,12 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         
     //From https://stackoverflow.com/a/25167681/3697225
     public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        let totalCount = ((self as? MainViewController)?.finalSubs ?? titles).count
+        var totalCount = titles.count
+        if let page = self as? OnboardingPageViewController {
+            totalCount = page.models.count
+        } else if let main = self as? MainViewController {
+            totalCount = main.finalSubs.count
+        }
         if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {

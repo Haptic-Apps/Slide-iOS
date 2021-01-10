@@ -42,7 +42,7 @@ class SearchContributionLoader: ContributionLoader {
                 if reload {
                     paginator = Paginator()
                 }
-                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: sorting, time: time, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), accountName: AccountController.currentName, query: query, paginator: paginator, sort: sorting, time: time, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                     switch result {
                     case .failure:
                         print(result.error!)
