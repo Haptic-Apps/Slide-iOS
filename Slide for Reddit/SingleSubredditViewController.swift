@@ -1521,6 +1521,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 } else if type == .SELF && !SettingValues.hideImageSelftext && submission.imageHeight > 0 && SettingValues.postImageMode != .THUMBNAIL {
                     big = true
                 }
+                
+                    if SettingValues.postImageMode == .THUMBNAIL {
+                    big = false
+                    thumb = true
+                }
 
                 let fullImage = ContentType.fullImage(t: type)
 
