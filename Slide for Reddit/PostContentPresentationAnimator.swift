@@ -119,14 +119,14 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
         
         // Animate alpha
         
-        var isVideo = false
+        /* unused var isVideo = false
         if let vc = controller as? ModalMediaViewController, vc.embeddedVC is VideoMediaViewController {
             isVideo = true
         }
         
         if presentedViewController is AnyModalViewController {
             isVideo = true
-        }
+        }*/
         
         let initialAlpha: CGFloat = isPresentation ? 0.0 : 1.0
         //Assume 1, now that photos and videos have black backgrounds

@@ -50,7 +50,7 @@ class Filter: UITableViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -126,7 +126,7 @@ class Filter: UITableViewController {
         imageSwitch.isOn = enabled[0]
         imageSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.image.textLabel?.text = "Images"
-        self.image.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.image.textLabel?.textColor = UIColor.fontColor
         self.image.accessoryView = imageSwitch
         self.image.backgroundColor = .clear
         self.image.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -137,7 +137,7 @@ class Filter: UITableViewController {
         albumSwitch.isOn = enabled[1]
         albumSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.album.textLabel?.text = "Albums"
-        self.album.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.album.textLabel?.textColor = UIColor.fontColor
         self.album.accessoryView = albumSwitch
         self.album.backgroundColor = .clear
         self.album.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -148,7 +148,7 @@ class Filter: UITableViewController {
         gifSwitch.isOn = enabled[2]
         gifSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.gif.textLabel?.text = "Gifs"
-        self.gif.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.gif.textLabel?.textColor = UIColor.fontColor
         self.gif.accessoryView = gifSwitch
         self.gif.backgroundColor = .clear
         self.gif.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -159,7 +159,7 @@ class Filter: UITableViewController {
         videoSwitch.isOn = enabled[3]
         videoSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.video.textLabel?.text = "Videos"
-        self.video.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.video.textLabel?.textColor = UIColor.fontColor
         self.video.accessoryView = videoSwitch
         self.video.backgroundColor = .clear
         self.video.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -170,7 +170,7 @@ class Filter: UITableViewController {
         linkSwitch.isOn = enabled[4]
         linkSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.link.textLabel?.text = "Links"
-        self.link.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.link.textLabel?.textColor = UIColor.fontColor
         self.link.accessoryView = linkSwitch
         self.link.backgroundColor = .clear
         self.link.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -181,7 +181,7 @@ class Filter: UITableViewController {
         selftextSwitch.isOn = enabled[5]
         selftextSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.selftext.textLabel?.text = "Selftext"
-        self.selftext.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.selftext.textLabel?.textColor = UIColor.fontColor
         self.selftext.accessoryView = selftextSwitch
         self.selftext.backgroundColor = .clear
         self.selftext.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -192,7 +192,7 @@ class Filter: UITableViewController {
         nsfwSwitch.isOn = enabled[6]
         nsfwSwitch.addTarget(self, action: #selector(Filter.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.nsfw.textLabel?.text = "NSFW Content"
-        self.nsfw.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.nsfw.textLabel?.textColor = UIColor.fontColor
         self.nsfw.accessoryView = nsfwSwitch
         self.nsfw.backgroundColor = .clear
         self.nsfw.selectionStyle = UITableViewCell.SelectionStyle.none

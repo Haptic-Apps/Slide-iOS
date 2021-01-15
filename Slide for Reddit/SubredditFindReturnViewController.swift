@@ -84,8 +84,8 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
         self.automaticallyAdjustsScrollViewInsets = false
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
-        tableView.separatorColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
+        tableView.separatorColor = UIColor.backgroundColor
         tableView.separatorInset = .zero
         
         tableView.reloadData()
@@ -217,7 +217,7 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
         searchBar.spellCheckingType = .no
         searchBar.frame.size.height = 50
         searchBar.becomeFirstResponder()
-        if !ColorUtil.theme.isLight {
+        if !UIColor.isLightTheme {
             searchBar.keyboardAppearance = .dark
         }
 
@@ -263,12 +263,12 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = UIColor.backgroundColor
         
         switch section {
-        case 0: label.text  = "Preview"
-        case 1: label.text  = "Trending"
-        default: label.text  = ""
+        case 0: label.text = "Preview"
+        case 1: label.text = "Trending"
+        default: label.text = ""
         }
         return toReturn
     }

@@ -54,7 +54,7 @@ struct Current_AccountEntryView: View {
 
     @ViewBuilder
     var body: some View {
-        GeometryReader { geometry in
+        GeometryReader { _ in
             AccountView(imageData: entry.imageData, name: entry.name, karma: entry.karma, inbox: entry.inbox, readLater: entry.readLater)
         }
     }

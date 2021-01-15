@@ -8,7 +8,7 @@
 
 import Anchorage
 import AVKit
-import RealmSwift
+
 import RLBAlertsPickers
 import SDCAlertView
 import SDWebImage
@@ -22,14 +22,14 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     var bottomScroll = UIScrollView()
     var failureCallback: ((_ url: URL) -> Void)?
     var albumHash: String = ""
-    var galleryItems: List<String> = List<String>()
+    var galleryItems: [String] = [String]()
     
     init(urlB: URL) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         self.baseURL = urlB
     }
     
-    init(galleryItems: List<String>) {
+    init(galleryItems: [String]) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
         self.galleryItems = galleryItems
     }
@@ -67,7 +67,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                 animated: true,
                                 completion: { [weak self] (_) in
                                     guard let self = self else { return }
-                                    var currentVc = firstViewController
+                                    let currentVc = firstViewController
                                     if currentVc.embeddedVC == nil {
                                         self.viewToMove = currentVc.view
                                     } else {
@@ -147,7 +147,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                         animated: true,
                                         completion: { [weak self] (_) in
                                             guard let self = self else { return }
-                                            var currentVc = firstViewController
+                                            let currentVc = firstViewController
                                             if currentVc.embeddedVC == nil {
                                                 self.viewToMove = currentVc.view
                                             } else {
@@ -189,7 +189,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                             animated: true,
                                             completion: { [weak self] (_) in
                                                 guard let self = self else { return }
-                                                var currentVc = firstViewController
+                                                let currentVc = firstViewController
                                                 if currentVc.embeddedVC == nil {
                                                     self.viewToMove = currentVc.view
                                                 } else {
@@ -290,7 +290,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         navigationBar.isTranslucent = true
         navigationBar.tintColor = .white
         navItem = UINavigationItem(title: "Loading album...")
-        navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.white])
+        navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
 
         let close = UIButton.init(type: .custom)
         close.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon(true), for: UIControl.State.normal)
@@ -367,7 +367,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                     animated: true,
                                     completion: { [weak self] (_) in
                                         guard let self = self else { return }
-                                        var currentVc = firstViewController
+                                        let currentVc = firstViewController
                                         if currentVc.embeddedVC == nil {
                                             self.viewToMove = currentVc.view
                                         } else {
@@ -426,7 +426,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
                                         animated: true,
                                         completion: { [weak self] (_) in
                                             guard let self = self else { return }
-                                            var currentVc = firstViewController
+                                            let currentVc = firstViewController
                                             if currentVc.embeddedVC == nil {
                                                 self.viewToMove = currentVc.view
                                             } else {
@@ -450,16 +450,18 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         navItem?.title = "\(urlStringKeys.firstIndex(of: ((viewControllers!.first! as! ModalMediaViewController).embeddedVC.data.baseURL?.absoluteString)!)! + 1)/\(urlStringKeys.count)"
-        let currentVc = self.viewControllers!.first!
+        if let vc = self.viewControllers?.first, let page = self.urlStringKeys.firstIndex(of: ((vc as? ModalMediaViewController)?.embeddedVC.data.baseURL?.absoluteString) ?? "") {
+            self.currentIndex = page
 
-        if (currentVc as! ModalMediaViewController).embeddedVC == nil {
-            self.viewToMove = (currentVc as! ModalMediaViewController).view
-        } else {
-            let embedded = (currentVc as! ModalMediaViewController).embeddedVC
-            if let image = embedded as? ImageMediaViewController {
-                self.viewToMove = image.imageView
-            } else if let video = embedded as? VideoMediaViewController {
-                self.viewToMove = video.videoView
+            if (vc as? ModalMediaViewController)?.embeddedVC == nil {
+                self.viewToMove = (vc as? ModalMediaViewController)?.view
+            } else {
+                let embedded = (vc as? ModalMediaViewController)?.embeddedVC
+                if let image = embedded as? ImageMediaViewController {
+                    self.viewToMove = image.imageView
+                } else if let video = embedded as? VideoMediaViewController {
+                    self.viewToMove = video.videoView
+                }
             }
         }
     }
@@ -515,11 +517,4 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
         return paths[0].appending(key + ".mp4")
     }
-    
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

@@ -60,12 +60,12 @@ class Collections {
         return toReturn
     }
 
-    public static func isSavedCollectionAny(link: RSubmission) -> Bool {
-        return isSavedCollectionAny(id: link.getId())
+    public static func isSavedCollectionAny(link: SubmissionObject) -> Bool {
+        return isSavedCollectionAny(id: link.id)
     }
 
-    public static func isSavedCollectionAny(link: RSubmission, title: String) -> Bool {
-        return isSavedCollection(id: link.getId(), title: title)
+    public static func isSavedCollectionAny(link: SubmissionObject, title: String) -> Bool {
+        return isSavedCollection(id: link.id, title: title)
     }
 
     public static func isSavedCollectionAny(id: String) -> Bool {
@@ -74,13 +74,13 @@ class Collections {
 
     public static func isSavedCollection(id: String, title: String) -> Bool {
         return Collections.getCollectionIDs(title: title).contains(where: { (link) -> Bool in
-            return link.getId() == id
+            return link.id == id
         })
     }
 
     @discardableResult
-    public static func toggleSavedCollection(link: RSubmission, title: String) -> Bool {
-        let isMarkedReadLater = isSavedCollection(id: link.getId(), title: title)
+    public static func toggleSavedCollection(link: SubmissionObject, title: String) -> Bool {
+        let isMarkedReadLater = isSavedCollection(id: link.id, title: title)
         if isMarkedReadLater {
             Collections.removeFromCollection(link: link, title: title)
             return false
@@ -90,8 +90,8 @@ class Collections {
         }
     }
 
-    public static func addToCollection(link: RSubmission, title: String) {
-        addToCollection(id: link.getId(), title: title)
+    public static func addToCollection(link: SubmissionObject, title: String) {
+        addToCollection(id: link.id, title: title)
     }
     
     public static func addToCollection(id: String, title: String) {
@@ -106,8 +106,8 @@ class Collections {
         delegate?.didUpdate()
     }
 
-    public static func removeFromCollection(link: RSubmission, title: String) {
-        removeFromCollection(id: link.getId(), title: title)
+    public static func removeFromCollection(link: SubmissionObject, title: String) {
+        removeFromCollection(id: link.id, title: title)
         delegate?.didUpdate()
     }
     

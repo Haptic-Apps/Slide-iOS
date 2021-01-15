@@ -11,10 +11,10 @@
 //  Created by Oliver Drobnik on 01/09/2016.
 //  Copyright © 2016 Cocoanetics. All rights reserved.
 //
-import UIKit
+
 import MobileCoreServices
 import SDWebImage
-
+import UIKit
 
 @objc public protocol AsyncTextAttachmentDelegate {
     /// Called when the image has been loaded
@@ -148,7 +148,7 @@ extension NSLayoutManager {
         
         var refreshRanges = [NSRange]()
         
-        attributedString.enumerateAttribute(NSAttributedString.Key.attachment, in: range, options: []) { (value, effectiveRange, nil) in
+        attributedString.enumerateAttribute(NSAttributedString.Key.attachment, in: range, options: []) { (value, effectiveRange, _) in
             
             guard let foundAttachment = value as? NSTextAttachment, foundAttachment == attachment else {
                 return

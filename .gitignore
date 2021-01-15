@@ -70,8 +70,12 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-*.ipa
 *.dSYM.zip
+
+## Build Stuff
+DistributionSummary.plist
+ExportOptions.plist
+Packaging.log
 
 ## Xcode Patch
 *.xcodeproj/*

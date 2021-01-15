@@ -46,7 +46,7 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
         self.tableView.register(DraftCellView.classForCoder(), forCellReuseIdentifier: "draft")
         
         tableView.backgroundColor = .clear
-        tableView.separatorColor = ColorUtil.theme.backgroundColor
+        tableView.separatorColor = UIColor.backgroundColor
         tableView.separatorInset = UIEdgeInsets(top: 4, left: 0, bottom: 4, right: 0)
         
         tableView.reloadData()
@@ -85,12 +85,12 @@ class DraftFindReturnViewController: MediaTableViewController, UIGestureRecogniz
             
             self.contentView.backgroundColor = .clear
             self.backgroundColor = .clear
-            self.label.textColor = ColorUtil.theme.fontColor
+            self.label.textColor = UIColor.fontColor
             self.label.numberOfLines = 0
             self.label.clipsToBounds = true
             
             self.separator = UIView().then {
-                $0.backgroundColor = ColorUtil.theme.fontColor.withAlphaComponent(0.5)
+                $0.backgroundColor = UIColor.fontColor.withAlphaComponent(0.5)
             }
             
             self.contentView.addSubviews(label, separator)

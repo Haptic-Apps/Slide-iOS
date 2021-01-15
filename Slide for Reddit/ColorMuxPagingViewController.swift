@@ -11,7 +11,15 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
     public weak var navToMux: UINavigationBar?
     private weak var match: UICollectionView?
     public var dontMatch = false
-    
+    var currentIndex: Int = 0 {
+        didSet {
+            if let tabs = self as? TabsContentPagingViewController {
+                tabs.del?.shouldUpdateButtons()
+            }
+        }
+    }
+    var titles = [String]()
+
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         for view in self.view.subviews {
@@ -41,16 +49,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         self.match = scrollView
     }
     
-    var lastContentOffset: CGPoint = CGPoint.zero
-
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        var isRight = false //scroll to right
-        if self.lastContentOffset.x > scrollView.contentOffset.x {
-            isRight = true
-        }
-        
-        self.lastContentOffset = scrollView.contentOffset
-
         let point = scrollView.contentOffset
         var percentComplete: CGFloat
         percentComplete = abs(point.x - self.view.frame.size.width) / self.view.frame.size.width
@@ -82,56 +81,64 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             return min + (progress * (max - min))
         }
 
-        if let currentIndex = (self as? MainViewController)?.currentIndex, let totalCount = (self as? MainViewController)?.finalSubs.count {
-            if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
-                scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
-            } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
-                scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        let totalCount = ((self as? MainViewController)?.finalSubs ?? titles).count
+        if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width {
+            scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        }
+        if let strongMatch = match, !dontMatch {
+            var currentBackgroundOffset = strongMatch.contentOffset
+
+            let layout = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout)
+            let padding: CGFloat = 12
+                        
+            //Translate percentage of current view translation to the parent scroll view, add in original offset
+            let currentWidth = layout.widthAt(currentIndex)
+            let nextWidthIndex = currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1)
+            let lerped: CGFloat
+            var nextWidth = CGFloat.zero
+            if nextWidthIndex < 0 || nextWidthIndex > totalCount - 1 {
+                lerped = 0
+            } else {
+                nextWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1))
+                lerped = ((percentCompleteDirectional > 0 ? 1 : -1) * lerp(progress: percentComplete,
+                                                                               min: 0,
+                                                                               max: (currentWidth / 2) + (nextWidth / 2)))
             }
-            if let strongMatch = match, !dontMatch {
-                var currentBackgroundOffset = strongMatch.contentOffset
+            
+            let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
 
-                let layout = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout)
-                let padding: CGFloat = 12
-                            
-                //Translate percentage of current view translation to the parent scroll view, add in original offset
-                let currentWidth = layout.widthAt(currentIndex)
-                let nextWidthIndex = currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1)
-                let lerped: CGFloat
-                if nextWidthIndex < 0 || nextWidthIndex > totalCount - 1 {
-                    lerped = 0
-                } else {
-                    let nextWidth = layout.widthAt(currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1))
-                    lerped = ((percentCompleteDirectional > 0 ? 1 : -1) * lerp(progress: percentComplete,
-                                                                                   min: 0,
-                                                                                   max: (currentWidth / 2) + (nextWidth / 2)))
-                }
-                
-                let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
-
-                let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
-                    (currentWidth / 2) - // Width of current cell
-                    (strongMatch.frame.size.width / 2) +
-                    insetX -
-                    (padding) + // Padding
-                    lerped // progress between current width and next cell width
-                //print("%\(percentCompleteDirectional) lerp \(lerped) offset \(offsetX) to left \(layout.offsetAt(currentIndex - 1)) half width self \((currentWidth / 2)) parent \((strongMatch.frame.size.width / 2))")
-                currentBackgroundOffset.x = offsetX
-                strongMatch.contentOffset = currentBackgroundOffset
-                strongMatch.layoutIfNeeded()
+            let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
+                (currentWidth / 2) - // Width of current cell
+                (strongMatch.frame.size.width / 2) +
+                insetX -
+                (padding) + // Padding
+                lerped // progress between current width and next cell width
+                        
+            if let tabs = self as? TabsContentPagingViewController {
+                let toWidth = nextWidth + ((1 - percentComplete) * (currentWidth - nextWidth))
+                tabs.stickyBelow.frame = CGRect(x: offsetX + (tabs.tabBar!.collectionView.frame.size.width - toWidth) / 2, y: tabs.tabBar!.collectionView.frame.size.height - 5, width: toWidth, height: 5)
             }
-
+            
+            currentBackgroundOffset.x = offsetX
+            strongMatch.contentOffset = currentBackgroundOffset
+            strongMatch.layoutIfNeeded()
         }
     }
         
     //From https://stackoverflow.com/a/25167681/3697225
     public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        if let currentIndex = (self as? MainViewController)?.currentIndex, let totalCount = (self as? MainViewController)?.finalSubs.count {
-            if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
-                targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
-            } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
-                targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
-            }
+        var totalCount = titles.count
+        if let page = self as? OnboardingPageViewController {
+            totalCount = page.models.count
+        } else if let main = self as? MainViewController {
+            totalCount = main.finalSubs.count
+        }
+        if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
+        } else if currentIndex == totalCount - 1 && scrollView.contentOffset.x >= scrollView.bounds.size.width {
+            targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
         }
     }
 

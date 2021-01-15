@@ -9,38 +9,25 @@
 import Anchorage
 import AVFoundation
 import AVKit
+import CoreData
 import MaterialComponents.MaterialProgressView
-import RealmSwift
 import SDWebImage
-import YYText
 
-class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate, TextDisplayStackViewDelegate {
-    func linkTapped(url: URL, text: String) {
-        if !text.isEmpty {
-            self.showSpoiler(text)
-        } else {
-            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: submission)
-        }
-    }
-
-    func linkLongTapped(url: URL) {
-        
-    }
-    
+class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     var type: ContentType.CType = ContentType.CType.UNKNOWN
     
     var textView: TextDisplayStackView!
     var bodyScrollView = UIScrollView()
     var embeddedVC: EmbeddableMediaViewController!
     
-    var content: Object?
+    var content: RedditObject?
     var baseURL: URL?
     
-    var submission: RSubmission! {
-        return content as? RSubmission
+    var submission: SubmissionObject! {
+        return content as? SubmissionObject
     }
 
-    var titleLabel: YYLabel!
+    var titleLabel: TitleUITextView!
     var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
     var comment = UIImageView()
@@ -80,14 +67,14 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         }
     }
     
-    init(url: URL?, content: Object?, parent: ShadowboxViewController) {
+    init(url: URL?, content: RedditObject?, parent: ShadowboxViewController) {
         self.parentVC = parent
         self.baseURL = url
         self.content = content
         self.backgroundColor = .black
         super.init(nibName: nil, bundle: nil)
-        if content is RSubmission {
-            type = ContentType.getContentType(submission: content as? RSubmission)
+        if content is SubmissionObject {
+            type = ContentType.getContentType(submission: content as? SubmissionObject)
         } else {
             type = ContentType.getContentType(baseUrl: baseURL)
         }
@@ -98,7 +85,6 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             
             populateData()
             doBackground()
-            titleLabel.preferredMaxLayoutWidth = self.view.frame.size.width - 48
         }
         doBackground()
     }
@@ -108,11 +94,16 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     func configureView() {
-        self.titleLabel = YYLabel(frame: CGRect(x: 75, y: 8, width: 0, height: 0)).then {
-            $0.accessibilityIdentifier = "Title"
-            $0.font = FontGenerator.fontOfSize(size: 18, submission: true)
-            $0.isOpaque = false
-            $0.numberOfLines = 0
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.titleLabel = TitleUITextView(delegate: self, textContainer: container).then {
+            $0.doSetup()
         }
         
         self.upvote = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then {
@@ -263,30 +254,28 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         titleLabel.bottomAnchor /==/ gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
-        titleLabel.preferredMaxLayoutWidth = self.titleLabel.frame.size.width
         titleLabel.sizeToFit()
-
     }
 
     func populateData() {
         var archived = false
-        if let link = content as! RSubmission? {
-            archived = link.archived
+        if let link = content as! SubmissionObject? {
+            archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote.getCopy(withColor: .white)
             downvote.image = LinkCellImageCache.downvote.getCopy(withColor: .white)
-            var attrs: [String: Any] = [:]
+            var attrs: [NSAttributedString.Key: Any] = [:]
             switch  ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             default:
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true)]
             }
             
-            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            score.attributedText = NSAttributedString(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
             
             comments.text = "\(link.commentCount)"
             
@@ -296,28 +285,24 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             finalTitle.append(title.mainTitle!)
             
             titleLabel.attributedText = finalTitle
-
-            let size = CGSize(width: self.view.frame.size.width - 48, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: titleLabel.attributedText!)!
-            titleLabel.textLayout = layout
-            titleLabel.heightAnchor /==/ layout.textBoundingSize.height
-        } else if let link = content as! RComment? {
-            archived = link.archived
+            titleLabel.layoutTitleImageViews()
+        } else if let link = content as! CommentObject? {
+            archived = link.isArchived
             upvote.image = LinkCellImageCache.upvote
             downvote.image = LinkCellImageCache.downvote
-            var attrs: [String: Any] = [:]
+            var attrs: [NSAttributedString.Key: Any] = [:]
             switch ActionStates.getVoteDirection(s: link) {
             case .down:
                 downvote.image = LinkCellImageCache.downvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.downvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.downvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             case .up:
                 upvote.image = LinkCellImageCache.upvoteTinted
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.upvoteColor, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.upvoteColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true)]
             default:
-                attrs = ([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: true)])
+                attrs = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true)]
             }
             
-            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+            score.attributedText = NSAttributedString.init(string: (link.score >= 10000 && SettingValues.abbreviateScores) ? String(format: " %0.1fk", (Double(link.score) / Double(1000))) : " \(link.score)", attributes: attrs)
             
            // TODO: - what to do here titleLabel.setText(CachedTitle.getTitle(submission: link, full: false, false, true))
         }
@@ -332,8 +317,8 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
         if SettingValues.blackShadowbox || true { //Disable this setting completely
             self.backgroundColor = .black
         } else {
-            if content is RSubmission {
-                let thumbnail = (content as! RSubmission).thumbnailUrl
+            if content is SubmissionObject {
+                let thumbnail = (content as! SubmissionObject).thumbnailUrl ?? ""
                 if let url = URL(string: thumbnail) {
                     SDWebImageDownloader.shared.downloadImage(with: url, options: [.allowInvalidSSLCertificates, .scaleDownLargeImages], progress: { (_, _, _) in
                     }, completed: { (image, _, _, _) in
@@ -369,7 +354,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             bodyScrollView.horizontalAnchors /==/ topBody.horizontalAnchors + 12
             bodyScrollView.verticalAnchors /==/ topBody.verticalAnchors + 12
             textView.estimatedWidth = UIScreen.main.bounds.width - 24
-            textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! RSubmission).htmlBody)
+            textView.setTextWithTitleHTML(NSMutableAttributedString(), htmlString: (content as! SubmissionObject).htmlBody ?? "")
             bodyScrollView.addSubview(textView)
             textView.leftAnchor /==/ bodyScrollView.leftAnchor
             textView.widthAnchor /==/ textView.estimatedWidth
@@ -379,7 +364,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             parentVC?.panGestureRecognizer?.require(toFail: bodyScrollView.panGestureRecognizer)
             parentVC?.panGestureRecognizer2?.require(toFail: bodyScrollView.panGestureRecognizer)
             self.populated = true
-        } else if type != .ALBUM && type != .REDDIT_GALLERY && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is RSubmission && !(content as! RSubmission).nsfw) || SettingValues.nsfwPreviews) {
+        } else if type != .ALBUM && type != .REDDIT_GALLERY && (ContentType.displayImage(t: type) || ContentType.displayVideo(t: type)) && ((content is SubmissionObject && !(content as! SubmissionObject).isNSFW) || SettingValues.nsfwPreviews) {
             if !ContentType.displayVideo(t: type) || !populated {
                 self.populated = true
                 let embed = ModalMediaViewController.getVCForContent(ofType: type, withModel: EmbeddableMediaDataModel(baseURL: baseURL, lqURL: nil, text: nil, inAlbum: false, buttons: false))
@@ -397,7 +382,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             } else {
                 populated = false
             }
-        } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is RSubmission && (content as! RSubmission).nsfw) && !SettingValues.nsfwPreviews) {
+        } else if type == .LINK || type == .NONE || type == .ALBUM || type == .REDDIT_GALLERY || ((content is SubmissionObject && (content as! SubmissionObject).isNSFW) && !SettingValues.nsfwPreviews) {
             self.populated = true
             topBody.addSubviews(thumbImageContainer, infoContainer)
             thumbImageContainer.centerAnchors /==/ topBody.centerAnchors
@@ -438,24 +423,28 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 default:
                     text = "Link"
                 }
-            let finalText = NSMutableAttributedString.init(string: text, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 16, submission: true)]))
+            let finalText = NSMutableAttributedString.init(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)])
             finalText.append(NSAttributedString.init(string: "\n\(baseURL?.host ?? baseURL?.absoluteString ?? "")"))
             info.textAlignment = .center
             info.attributedText = finalText
-            if content is RSubmission {
-                let submission = content as! RSubmission
-                if submission.nsfw {
+            if content is SubmissionObject {
+                let submission = content as! SubmissionObject
+                if submission.isNSFW {
                     thumbImage.image = LinkCellImageCache.nsfw
-                } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty {
+                } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty {
                     if type == .REDDIT {
                         thumbImage.image = LinkCellImageCache.reddit
                     } else {
                         thumbImage.image = LinkCellImageCache.web
                     }
                 } else {
-                    let thumbURL = submission.thumbnailUrl
-                    DispatchQueue.global(qos: .userInteractive).async {
-                        self.thumbImage.sd_setImage(with: URL.init(string: thumbURL), placeholderImage: LinkCellImageCache.web)
+                    let thumbURL = submission.thumbnailUrl ?? ""
+                    if let url = URL(string: thumbURL) {
+                        DispatchQueue.global(qos: .userInteractive).async {
+                            self.thumbImage.sd_setImage(with: url, placeholderImage: LinkCellImageCache.web)
+                        }
+                    } else {
+                        thumbImage.image = LinkCellImageCache.web
                     }
                 }
             } else {
@@ -473,10 +462,10 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
       @objc func upvote(_ sender: AnyObject) {
-        if content is RSubmission {
-            let submission = content as! RSubmission
+        if content is SubmissionObject {
+            let submission = content as! SubmissionObject
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.getId(), completion: { (_) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .up ? .none : .up, name: submission.id, completion: { (_) in
                 })
                 ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .up ? .none : .up)
                 History.addSeen(s: submission)
@@ -488,10 +477,10 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     @objc func downvote(_ sender: AnyObject) {
-        if content is RSubmission {
-            let submission = content as! RSubmission
+        if content is SubmissionObject {
+            let submission = content as! SubmissionObject
             do {
-                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.getId(), completion: { (_) in
+                try (UIApplication.shared.delegate as! AppDelegate).session?.setVote(ActionStates.getVoteDirection(s: submission) == .down ? .none : .down, name: submission.id, completion: { (_) in
                 })
                 ActionStates.setVoteDirection(s: submission, direction: ActionStates.getVoteDirection(s: submission) == .down ? .none : .down)
                 History.addSeen(s: submission)
@@ -503,10 +492,10 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
 
     @objc func comments(_ sender: AnyObject) {
-        if content is RSubmission {
-            VCPresenter.openRedditLink((content as! RSubmission).permalink, nil, self)
-        } else if content is RComment {
-            VCPresenter.openRedditLink((content as! RComment).permalink, nil, self)
+        if content is SubmissionObject {
+            VCPresenter.openRedditLink((content as! SubmissionObject).permalink, nil, self)
+        } else if content is CommentObject {
+            VCPresenter.openRedditLink((content as! CommentObject).permalink, nil, self)
         }
     }
 
@@ -545,16 +534,27 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
             $0.widthAnchor /==/ space
         }
     }
-
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
+extension ShadowboxLinkViewController: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.showSpoiler(text)
+        } else {
+            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: submission)
+        }
+    }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
+    func linkLongTapped(url: URL) {
+        
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentVC {
+            let vc = ProfileInfoViewController(accountNamed: profile)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
+        }
+    }
 }

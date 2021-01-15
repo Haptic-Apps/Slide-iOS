@@ -16,21 +16,21 @@ class History {
     public static var currentVisits = [String]()
     
     //mark SubmissionsÏ
-    public static func getSeen(s: RSubmission) -> Bool {
+    public static func getSeen(s: SubmissionObject) -> Bool {
         if !SettingValues.saveHistory {
             return false
-        } else if s.nsfw && !SettingValues.saveNSFWHistory {
+        } else if s.isNSFW && !SettingValues.saveNSFWHistory {
             return false
         }
-        let fullname = s.getId()
+        let fullname = s.id
         if seenTimes.object(forKey: fullname) != nil {
             return true
         }
-        return (s.visited || s.likes != .none)
+        return (s.isVisited || s.likes != .none)
     }
     
-    public static func getSeenTime(s: RSubmission) -> Double {
-        let fullname = s.getId()
+    public static func getSeenTime(s: SubmissionObject) -> Double {
+        let fullname = s.id
         if let time = seenTimes.object(forKey: fullname) {
             if time is NSNumber {
                 return Double(truncating: time as! NSNumber)
@@ -49,16 +49,16 @@ class History {
     }
     
     public static var currentSeen: [String] = [String]()
-    public static func addSeen(s: RSubmission, skipDuplicates: Bool = true) {
-        if !SettingValues.saveNSFWHistory && s.nsfw {
+    public static func addSeen(s: SubmissionObject, skipDuplicates: Bool = true) {
+        if !SettingValues.saveNSFWHistory && s.isNSFW {
             
         } else if SettingValues.saveHistory {
-            let fullname = s.getId()
+            let fullname = s.id
             currentSeen.append(fullname)
             if !skipDuplicates || seenTimes.object(forKey: fullname) == nil {
                 seenTimes.setValue(NSNumber(value: NSDate().timeIntervalSince1970), forKey: fullname)
             }
-            currentVisits.append(s.getId())
+            currentVisits.append(s.id)
         }
     }
     
@@ -83,15 +83,15 @@ class History {
     }
     
     //mark Comments
-    public static func commentsSince(s: RSubmission) -> Int {
-        if let comments = commentCounts.object(forKey: s.getId()) {
-            return s.commentCount - (comments as! Int)
+    public static func commentsSince(s: SubmissionObject) -> Int {
+        if let comments = commentCounts.object(forKey: s.id) {
+            return Int(s.commentCount) - (comments as! Int)
         } else {
             return 0
         }
     }
     
-    public static func setComments(s: RSubmission) {
-        commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.getId())
+    public static func setComments(s: SubmissionObject) {
+        commentCounts.setValue(NSNumber(value: s.commentCount), forKey: s.id)
     }
 }
