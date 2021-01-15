@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20B28" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CommentModel" representedClassName="CommentModel" syncable="YES">
+        <attribute name="approvedBy" optional="YES" attributeType="String"/>
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="awardsJSON" optional="YES" attributeType="String"/>
+        <attribute name="controversality" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="depth" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="distinguished" optional="YES" attributeType="String"/>
+        <attribute name="edited" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="flairJSON" optional="YES" attributeType="String"/>
+        <attribute name="galleryJSON" optional="YES" attributeType="String"/>
+        <attribute name="hasVoted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="hidden" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="htmlBody" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="isApproved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isArchived" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCakeday" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isEdited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isMod" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isRemoved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSaved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isStickied" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="linkID" optional="YES" attributeType="String"/>
+        <attribute name="locked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="markdownBody" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="parentID" optional="YES" attributeType="String"/>
+        <attribute name="permalink" optional="YES" attributeType="String"/>
+        <attribute name="removalNote" optional="YES" attributeType="String"/>
+        <attribute name="removalReason" optional="YES" attributeType="String"/>
+        <attribute name="removedBy" optional="YES" attributeType="String"/>
+        <attribute name="reportsJSON" optional="YES" attributeType="String"/>
+        <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="scoreHidden" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="submissionTitle" optional="YES" attributeType="String"/>
+        <attribute name="subreddit" optional="YES" attributeType="String"/>
+        <attribute name="voteDirection" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="MoreModel" representedClassName="MoreModel" syncable="YES">
+        <attribute name="childrenString" optional="YES" attributeType="String"/>
+        <attribute name="count" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="parentID" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="SubmissionComments" representedClassName="SubmissionComments" syncable="YES">
+        <attribute name="commentsString" optional="YES" attributeType="String"/>
+        <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="submissionId" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="submissionId"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="SubmissionModel" representedClassName="SubmissionModel" syncable="YES">
+        <attribute name="approvedBy" optional="YES" attributeType="String"/>
+        <attribute name="archived" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="awardsJSON" optional="YES" attributeType="String"/>
+        <attribute name="bannerUrl" optional="YES" attributeType="String"/>
+        <attribute name="cachedImageUrl" optional="YES" attributeType="String"/>
+        <attribute name="commentCount" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="contentUrl" optional="YES" attributeType="String"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="crosspostAuthor" optional="YES" attributeType="String"/>
+        <attribute name="crosspostPermalink" optional="YES" attributeType="String"/>
+        <attribute name="crosspostSubreddit" optional="YES" attributeType="String"/>
+        <attribute name="distinguished" optional="YES" attributeType="String"/>
+        <attribute name="domain" optional="YES" attributeType="String"/>
+        <attribute name="edited" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="flairJSON" optional="YES" attributeType="String"/>
+        <attribute name="galleryJSON" optional="YES" attributeType="String"/>
+        <attribute name="hasBanner" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="hasThumbnail" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="hasVoted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="hidden" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="htmlBody" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="imageHeight" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imageHeightSmaller" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="imageWidth" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="imageWidthSmaller" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="isApproved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isArchived" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCakeday" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCrosspost" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isEdited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isLocked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isLQ" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isMod" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isNSFW" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isOC" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isRemoved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSaved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSelf" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isSpoiler" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isStickied" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isVisited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="locked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lqURL" optional="YES" attributeType="String"/>
+        <attribute name="markdownBody" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="permalink" optional="YES" attributeType="String"/>
+        <attribute name="pollJSON" optional="YES" attributeType="String"/>
+        <attribute name="removalNote" optional="YES" attributeType="String"/>
+        <attribute name="removalReason" optional="YES" attributeType="String"/>
+        <attribute name="removedBy" optional="YES" attributeType="String"/>
+        <attribute name="reportsJSON" optional="YES" attributeType="String"/>
+        <attribute name="saveDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="smallerBannerUrl" optional="YES" attributeType="String"/>
+        <attribute name="smallPreview" optional="YES" attributeType="String"/>
+        <attribute name="subreddit" optional="YES" attributeType="String"/>
+        <attribute name="subredditIcon" optional="YES" attributeType="String"/>
+        <attribute name="thumbnailUrl" optional="YES" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="upvoteRatio" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="videoMP4" optional="YES" attributeType="String"/>
+        <attribute name="videoPreview" optional="YES" attributeType="String"/>
+        <attribute name="voteDirection" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="SubredditPosts" representedClassName="SubredditPosts" syncable="YES">
+        <attribute name="posts" attributeType="String"/>
+        <attribute name="subreddit" attributeType="String"/>
+        <attribute name="time" attributeType="Date" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="subreddit"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <elements>
+        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="599"/>
+        <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
+        <element name="SubmissionComments" positionX="0" positionY="144" width="128" height="74"/>
+        <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="1004"/>
+        <element name="SubredditPosts" positionX="-36" positionY="9" width="128" height="74"/>
+    </elements>
+</model>

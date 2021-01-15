@@ -92,7 +92,7 @@ public class ColorPickerViewController: UIViewController {
         brightnessSlider.minColor = .black
         hueSlider.hasRainbow = true
         
-        hueSlider.actionBlock = { [unowned self] slider, newValue in
+        hueSlider.actionBlock = { [unowned self] _, newValue in
             CATransaction.begin()
             CATransaction.setValue(true, forKey: kCATransactionDisableActions)
             
@@ -112,7 +112,7 @@ public class ColorPickerViewController: UIViewController {
             CATransaction.commit()
         }
         
-        brightnessSlider.actionBlock = { [unowned self] slider, newValue in
+        brightnessSlider.actionBlock = { [unowned self] _, newValue in
             CATransaction.begin()
             CATransaction.setValue(true, forKey: kCATransactionDisableActions)
             
@@ -122,7 +122,7 @@ public class ColorPickerViewController: UIViewController {
             CATransaction.commit()
         }
         
-        saturationSlider.actionBlock = { [unowned self] slider, newValue in
+        saturationSlider.actionBlock = { [unowned self] _, newValue in
             CATransaction.begin()
             CATransaction.setValue(true, forKey: kCATransactionDisableActions)
             
@@ -141,7 +141,6 @@ public class ColorPickerViewController: UIViewController {
     func updateColorView() {
         colorView.backgroundColor = color
         selection?(color)
-        Log("set color = \(color.hexString)")
     }
 }
 
@@ -220,7 +219,7 @@ public class ColorPickerViewController: UIViewController {
     
     var continuous: Bool = true // if set, value change events are generated any time the value changes due to dragging. default = YES
     
-    var actionBlock: (GradientSlider, CGFloat) -> Void = { slider, newValue in }
+    var actionBlock: (GradientSlider, CGFloat) -> Void = { _, _ in }
     
     @IBInspectable var thickness: CGFloat = defaultThickness {
         didSet {
@@ -230,23 +229,23 @@ public class ColorPickerViewController: UIViewController {
     }
     
     var trackBorderColor: UIColor? {
-        set {
-            _trackLayer.borderColor = newValue?.cgColor
-        }
         get {
             if let color = _trackLayer.borderColor {
                 return UIColor(cgColor: color)
             }
             return nil
         }
+        set {
+            _trackLayer.borderColor = newValue?.cgColor
+        }
     }
     
     var trackBorderWidth: CGFloat {
-        set {
-            _trackLayer.borderWidth = newValue
-        }
         get {
             return _trackLayer.borderWidth
+        }
+        set {
+            _trackLayer.borderWidth = newValue
         }
     }
     

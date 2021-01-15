@@ -9,7 +9,6 @@
 import Anchorage
 import Then
 import UIKit
-import YYText
 
 class SettingsUserTags: UITableViewController {
     
@@ -41,7 +40,7 @@ class SettingsUserTags: UITableViewController {
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -56,7 +55,7 @@ class SettingsUserTags: UITableViewController {
     func doLayout() {
         setupBaseBarColors()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         
         let button = UIButtonWithContext.init(type: .custom)
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -76,7 +75,7 @@ class SettingsUserTags: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "User Tags"
         self.tableView.separatorStyle = .none
@@ -124,7 +123,7 @@ class SettingsUserTags: UITableViewController {
 }
 class TagCellView: UITableViewCell {
     
-    var title: YYLabel!
+    var title: TitleUITextView!
     var body = UIView()
     
     required init?(coder aDecoder: NSCoder) {
@@ -146,9 +145,16 @@ class TagCellView: UITableViewCell {
             $0.clipsToBounds = true
         }
         
-        self.title = YYLabel(frame: CGRect.zero).then {
-            $0.numberOfLines = 0
-            $0.font = UIFont.systemFont(ofSize: 16)
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        self.title = TitleUITextView(delegate: nil, textContainer: container).then {
+            $0.doSetup()
         }
         
         self.contentView.addSubview(body)
@@ -170,36 +176,22 @@ class TagCellView: UITableViewCell {
 
     func setTag(user: String, tag: String) {
         
-        let attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
+        let attributedTitle = NSMutableAttributedString(string: user, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)])
         if !tag.isEmpty {
             let spacer = NSMutableAttributedString.init(string: "  ")
             
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), .badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
 
             attributedTitle.append(spacer)
             attributedTitle.append(tagString)
         }
 
         title.attributedText = attributedTitle
-        body.backgroundColor = ColorUtil.theme.foregroundColor
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        title.layoutTitleImageViews()
+        
+        body.backgroundColor = UIColor.foregroundColor
+        self.backgroundColor = UIColor.backgroundColor
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }
 
 extension Dictionary {

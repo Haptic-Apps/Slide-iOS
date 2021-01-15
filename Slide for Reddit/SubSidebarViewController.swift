@@ -15,7 +15,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     var scrollView = UIScrollView()
     var subreddit: Subreddit?
     var filteredContent: [String] = []
-    var parentController: (UIViewController & MediaVCDelegate)?
+    weak var parentController: (UIViewController & MediaVCDelegate)?
 
     init(sub: Subreddit, parent: UIViewController & MediaVCDelegate) {
         super.init(nibName: nil, bundle: nil)
@@ -74,7 +74,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
         
         setNavColors()
         
-        scrollView.backgroundColor = ColorUtil.theme.backgroundColor
+        scrollView.backgroundColor = UIColor.backgroundColor
         scrollView.isUserInteractionEnabled = true
         
         self.doSubreddit(sub: subreddit!, UIScreen.main.bounds.width)

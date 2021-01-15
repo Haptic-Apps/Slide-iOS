@@ -13,23 +13,37 @@ import UIKit
 class OnboardingViewController: UIViewController {
 
      let models: [OnboardingPageViewModel] = [
-        .splash(text: "Welcome to\nSlide v6", subText: "Swipe to see what's new", image: UIImage(named: "ic_retroapple")!),
-        .video(text: "Subreddits have a new home!", subText: "Swipe from the left edge of the homepage to access your profile, search, and communities.", video: "v6howtonavigate", aspectRatio: 0.679),
-        .hardcodedChangelog(order: ["Subreddits have a new home", "iOS 14 ready", "Your subreddits have a new look", "The details"], paragraphs: ["Subreddits have a new home": "Navigating your subreddits and favorite Slide features has never been easier! Simply swipe from the left edge of the homepage to view the new-and-improved navigation menu. \nClosed something by accident? Swipe from the right edge of any toolbar to go back to where you were!", "iOS 14 ready": "Cover your homescreen in widgets yet? We sure have. Be sure to check out the new Subreddit Shortcut and Hot Posts widgets!",  "Your subreddits have a new look": "Subreddit colors and branding really come through in v6. Slide has already pulled themes from your favorite communities, but you can create your own styles using the improved Subreddit theme editor.", "The details": "• Search improvements across the board, including more accurate subreddit search results and quick previews of top search results when browsing posts\n• Gestures have been revamped, with a new style on submissions and improvements to the Gestures settings page\n• Pin your most-used Slide features to the navigation menu\n• Improved r/random support with a new navigation menu button\n• Media views will now show the title of the post you clicked from\n• New sorting indicators on the homepage and comments views\n• Added a History browser\n• Subreddit support for Siri Shortcuts\n• Redesigned split-page layout for iPad\n• Redesigned gestures system\n• Support for Reddit Galleries and Polls\n• Support for iPad Magic Keyboard\n• Pull-to-refresh is easier to do now\n• Reduced Slide’s memory usage by up to 70%\n• Bugs were squashed, performance was improved\n• Removed many bags of coffee (from my kitchen)"])
+        //TODO this for 6.1
+        .splash(text: "Welcome to\nSlide v7", subText: "Swipe to see what's new", image: UIImage(named: "slide_glow")!),
+        .testflight(enabled: true),
+        .hardcodedChangelog(order: [
+                                "AutoCache 2.0",
+                                "Desktop Mode",
+                                "Theme Engine revamp",
+                                "Text Render revamp",
+                                "Inbox and Profile redesign",
+                            ], paragraphs: [
+                                "AutoCache 2.0": "AutoCache has been rewritten from the ground up, and Slide has a shiny new backend! Apart from improvements to Offline Mode, these changes will make Slide faster and less resource-hungry",
+                                "Desktop Mode": "iPad and M1-Mac users can try out Slide's new Desktop Mode, which keeps Slide's sidebar locked in view and adds right-click actions to posts and comments",
+                                "Theme Engine revamp": "Night-mode changes on iOS 13 and 14 will be faster and more seamless in v7",
+                                "Text Render revamp": "Slide now has a completely custom text rendering system that will improve performance and rendering of complex selftext posts and comments. Haptic Touch on links has been re-written from the ground up, and you can now Haptic Touch on usernames to see a preview of any user's profile!",
+                                "Inbox and Profile redesign": "Your Slide Inbox and profile views have been redesigned, with a greater emphasis on Subreddit styling and better use of space ",
+                            ]),
     ]
 
     var pageViewController: OnboardingPageViewController!
     
     var widthSet = false
+    static let versionBackgroundColor = UIColor(hexString: "#010014")
 
     var finishButton = UILabel().then {
         $0.text = "Done"
         $0.accessibilityLabel = "Exit"
         $0.textAlignment = .center
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = .white
         $0.layer.cornerRadius = 20
         $0.clipsToBounds = true
-        $0.layer.backgroundColor = ColorUtil.theme.backgroundColor.cgColor
+        $0.layer.backgroundColor = UIColor(hexString: "#50ECF6").cgColor
     }
     
     override func accessibilityPerformEscape() -> Bool {
@@ -42,11 +56,20 @@ class OnboardingViewController: UIViewController {
 
         // Embed pageViewController
         pageViewController = OnboardingPageViewController(models: models)
+        pageViewController.titles = models.map({ (_) -> String in
+            return UUID().uuidString
+        })
+        pageViewController.viewToMux = self.view
+        pageViewController.color1 = OnboardingViewController.versionBackgroundColor
+        pageViewController.color2 = UIColor.foregroundColor
         view.addSubview(pageViewController.view)
         addChild(pageViewController)
         pageViewController.didMove(toParent: self)
         
+        self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        
         view.addSubview(finishButton)
+        view.backgroundColor = OnboardingViewController.versionBackgroundColor
 
         setupConstraints()
         
@@ -55,8 +78,8 @@ class OnboardingViewController: UIViewController {
         }
         
         let pageControl = UIPageControl.appearance()
-        pageControl.pageIndicatorTintColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3)
-        pageControl.currentPageIndicatorTintColor = ColorUtil.theme.fontColor
+        pageControl.pageIndicatorTintColor = UIColor.fontColor.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = UIColor.fontColor
     }
 
     private func setupConstraints() {
@@ -89,7 +112,8 @@ class OnboardingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        pageViewController.navToMux = self.navigationController?.navigationBar
+
         if let nav = navigationController as? SwipeForwardNavigationController {
             nav.interactivePushGestureRecognizer?.isEnabled = false
             nav.interactivePopGestureRecognizer?.isEnabled = false

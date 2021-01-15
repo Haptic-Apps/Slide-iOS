@@ -54,18 +54,18 @@ class SettingsIcon: BubbleSettingTableViewController {
         
         self.howToCell.textLabel?.text = "Want to see your icon design in Slide?"
         self.howToCell.detailTextLabel?.text = "Click here for more info"
-        self.howToCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.howToCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.howToCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.howToCell.imageView?.image = UIImage.init(sfString: SFSymbol.infoCircle, overrideString: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
-        self.howToCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.howToCell.backgroundColor = UIColor.foregroundColor
+        self.howToCell.detailTextLabel?.textColor = UIColor.fontColor
+        self.howToCell.textLabel?.textColor = UIColor.fontColor
+        self.howToCell.imageView?.image = UIImage.init(sfString: SFSymbol.infoCircle, overrideString: "download")?.toolbarIcon().getCopy(withColor: UIColor.fontColor)
+        self.howToCell.imageView?.tintColor = UIColor.fontColor
     }
     
     override func loadView() {
         super.loadView()
         
         headers = iconSections.map({ $0.title })
-        view.backgroundColor = ColorUtil.theme.backgroundColor
+        view.backgroundColor = UIColor.backgroundColor
         title = "App icon"
 
         tableView.tableFooterView = UIView()
@@ -142,7 +142,7 @@ private class IconCell: InsetCell {
     }
     
     func setupView() {
-        contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        contentView.backgroundColor = UIColor.foregroundColor
 
         contentView.addSubviews(iconView, textStack)
 
@@ -161,7 +161,7 @@ private class IconCell: InsetCell {
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.textAlignment = .left
         titleLabel.font = FontGenerator.fontOfSize(size: 18, submission: false)
-        titleLabel.textColor = ColorUtil.theme.fontColor
+        titleLabel.textColor = UIColor.fontColor
         titleLabel.setContentHuggingPriority(.defaultLow + 2, for: .vertical)
 
         textStack.addArrangedSubview(contributorLabel)
@@ -169,7 +169,7 @@ private class IconCell: InsetCell {
         contributorLabel.lineBreakMode = .byWordWrapping
         contributorLabel.textAlignment = .left
         contributorLabel.font = FontGenerator.fontOfSize(size: 14, submission: false)
-        contributorLabel.textColor = ColorUtil.theme.fontColor
+        contributorLabel.textColor = UIColor.fontColor
         contributorLabel.setContentHuggingPriority(.defaultLow + 1, for: .vertical)
     }
 

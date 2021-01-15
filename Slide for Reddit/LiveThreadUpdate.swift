@@ -11,32 +11,11 @@ import AudioToolbox
 import reddift
 import UIKit
 import WebKit
-import YYText
 
 class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
-    
-    var title: YYLabel!
+    var title: TitleUITextView!
     var image = UIImageView()
     var web = WKWebView()
-    
-    func attributedLabel(_ label: YYTextView!, didSelectLinkWith url: URL!) {
-        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 5
-        let bottommargin = 5
-        let leftmargin = 5
-        let rightmargin = 5
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
-        self.contentView.layer.cornerRadius = 15
-        self.contentView.clipsToBounds = true
-    }
-    
     var content: NSMutableAttributedString?
     var hasText = false
     
@@ -47,7 +26,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         super.init(frame: frame)
     }
     
-    var imageAnchors =  [NSLayoutConstraint]()
+    var imageAnchors = [NSLayoutConstraint]()
     
     var lsC: [NSLayoutConstraint] = []
     var url = ""
@@ -57,12 +36,16 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         if title == nil {
             self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
             
-            self.title = YYLabel()
-            title.numberOfLines = 0
-            title.lineBreakMode = NSLineBreakMode.byWordWrapping
-            title.font = FontGenerator.fontOfSize(size: 14, submission: true)
-            
-            title.textColor = ColorUtil.theme.fontColor
+            let layout = BadgeLayoutManager()
+            let storage = NSTextStorage()
+            storage.addLayoutManager(layout)
+            let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+            let container = NSTextContainer(size: initialSize)
+            container.widthTracksTextView = true
+            layout.addTextContainer(container)
+
+            self.title = TitleUITextView(delegate: self, textContainer: container)
+            self.title.doSetup()
             
             self.image = UIImageView(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 0))
             image.layer.cornerRadius = 15
@@ -75,7 +58,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.contentView.addSubview(image)
             self.contentView.addSubview(web)
 
-            self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.contentView.backgroundColor = UIColor.foregroundColor
             title.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
             image.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
             image.topAnchor /==/ self.contentView.topAnchor + 4
@@ -83,84 +66,10 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             web.verticalAnchors /==/ image.verticalAnchors
             self.title.topAnchor /==/ self.image.bottomAnchor + 4
             self.title.bottomAnchor /==/ self.contentView.bottomAnchor - 4
-            
-            let touchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                    for attr in attrs {
-                        if attr.value is YYTextHighlight {
-                            if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
-                                return
-                            }
-                        }
-                    }
-                })
-            }
-            
-            let longTouchLinkAction = { (containerView: UIView, text: NSAttributedString, range: NSRange, rect: CGRect) in
-                text.enumerateAttributes(in: range, options: .longestEffectiveRangeNotRequired, using: { (attrs, _, _) in
-                    for attr in attrs {
-                        if attr.value is YYTextHighlight {
-                            if let url = (attr.value as! YYTextHighlight).userInfo?["url"] as? URL {
-                                let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
-                                
-                                alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
-                                    let shareItems: Array = [url]
-                                    let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-                                    activityViewController.popoverPresentationController?.sourceView = self.contentView
-                                    self.parentViewController?.present(activityViewController, animated: true, completion: nil)
-                                }
-                                
-                                alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
-                                    UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
-                                    BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
-                                }
-                                
-                                alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
-                                    if #available(iOS 10.0, *) {
-                                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                                    } else {
-                                        UIApplication.shared.openURL(url)
-                                    }
-                                }
-                                
-                                let open = OpenInChromeController.init()
-                                if open.isChromeInstalled() {
-                                    alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
-                                        _ = open.openInChrome(url, callbackURL: nil, createNewTab: true)
-                                    }
-                                }
-                                
-                                if #available(iOS 10.0, *) {
-                                    HapticUtility.hapticActionStrong()
-                                } else if SettingValues.hapticFeedback {
-                                    AudioServicesPlaySystemSound(1519)
-                                }
-                                
-                                alertController.show(self.parentViewController)
-
-                                if #available(iOS 10.0, *) {
-                                    HapticUtility.hapticActionStrong()
-                                } else if SettingValues.hapticFeedback {
-                                    AudioServicesPlaySystemSound(1519)
-                                }
-                                return
-                            }
-                        }
-                    }
-                })
-            }
-            
-            self.title.isUserInteractionEnabled = true
-            self.title.highlightLongPressAction = longTouchLinkAction
-            self.title.highlightTapAction = touchLinkAction
         }
         
         let json = rawJson as! JSONDictionary
         parentViewController = parent
-        if navViewController == nil && nav != nil {
-            navViewController = nav
-        }
         
         if let url = json["original_url"] as? String {
             self.url = url
@@ -169,7 +78,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             self.addGestureRecognizer(commentClick)
         }
         
-        content = NSMutableAttributedString(string: "u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
+        content = NSMutableAttributedString(string: "u/\(json["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(json["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
         
         var bodyDone = false
         if let body = json["body_html"] as? String {
@@ -177,14 +86,11 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
                 let html = body.unescapeHTML
                 content?.append(NSAttributedString(string: "\n"))
                // TODO: - maybe link parsing here?
-                content?.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+                content?.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil))
                 let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
 
                 title.attributedText = content
-                let layout2 = YYTextLayout(containerSize: size, text: content!)!
-                title.textLayout = layout2
-                hasText = true
-                bodyDone = true
+                title.layoutTitleImageViews()
             }
         }
         
@@ -192,8 +98,7 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
             let size = CGSize(width: self.contentView.frame.size.width - 18, height: CGFloat.greatestFiniteMagnitude)
             
             title.attributedText = content
-            let layout2 = YYTextLayout(containerSize: size, text: content!)!
-            title.textLayout = layout2
+            title.layoutTitleImageViews()
         }
         
         imageHeight = 0
@@ -241,6 +146,24 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         }
     }
     
+    func attributedLabel(_ label: TitleUITextView!, didSelectLinkWith url: URL!) {
+        parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let topmargin = 5
+        let bottommargin = 5
+        let leftmargin = 5
+        let rightmargin = 5
+        
+        let f = self.contentView.frame
+        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
+        self.contentView.frame = fr
+        self.contentView.layer.cornerRadius = 15
+        self.contentView.clipsToBounds = true
+    }
+
     func getHeightFromAspectRatio(imageHeight: Int, imageWidth: Int) -> Int {
         let ratio = Double(imageHeight) / Double(imageWidth)
         let width = Double(contentView.frame.size.width - 16)
@@ -254,26 +177,71 @@ class LiveThreadUpdate: UICollectionViewCell, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var comment: RComment?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
+    var comment: CommentObject?
+    public weak var parentViewController: (UIViewController & MediaVCDelegate)?
+    public weak var navViewController: UIViewController?
     
     @objc func openContent(sender: UITapGestureRecognizer? = nil) {
-        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
+        parentViewController?.doShow(url: URL.init(string: url)!, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
     }
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
-}
+extension LiveThreadUpdate: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        self.parentViewController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+    }
+    
+    func linkLongTapped(url: URL) {
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.contentView
+            self.parentViewController?.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self.parentViewController)
+        }
+        
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        
+        alertController.show(self.parentViewController)
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-	return input.rawValue
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+    }
+    
+    func previewProfile(profile: String) {
+        if let parent = self.parentViewController {
+            let vc = ProfileInfoViewController(accountNamed: profile)
+            vc.modalPresentationStyle = .custom
+            vc.transitioningDelegate = ProfileInfoPresentationManager()
+            parent.present(vc, animated: true)
+        }
+    }
 }

@@ -59,8 +59,6 @@ public class GfyItem {
 	public var description: String?
 	public var copyrightClaimaint: String?
 	public var languageText: String?
-	public var fullDomainWhitelist: [String]?
-	public var fullGeoWhitelist: [String]?
 	public var iframeProfileImageVisible: String?
 
 /**

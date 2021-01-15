@@ -175,7 +175,6 @@ struct AccountEntry: TimelineEntry {
     public let readLater: Int
 }
 
-
 class ImageLoader: ObservableObject {
     /*
     Corresponds to USR_DOMAIN in info.plist, which derives its value
@@ -404,8 +403,8 @@ struct SubredditLoader {
     static func getSubredditInfo(subreddit: String, fromData data: Foundation.Data) -> SubredditPosts {
         var posts = [Post]()
         do {
-            let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-            if let json = json, json["data"] != nil && (json["data"] as? [String : Any])?["children"] != nil {
+            let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            if let json = json, json["data"] != nil && (json["data"] as? [String: Any])?["children"] != nil {
                 let children = (json["data"] as! [String: Any])["children"] as! [[String: Any]]
                 for child in children {
                     let data = child["data"] as! [String: Any]

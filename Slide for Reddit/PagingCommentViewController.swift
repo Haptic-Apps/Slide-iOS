@@ -50,7 +50,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -86,7 +86,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         
         let firstViewController: CommentViewController
         let sub = self.submissionDataSource.content[startIndex]
-        if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.getId() == sub.getId() {
+        if first && PagingCommentViewController.savedComment != nil && PagingCommentViewController.savedComment!.submission!.id == sub.id {
             firstViewController = PagingCommentViewController.savedComment!
         } else {
             let comment = CommentViewController.init(submission: sub, single: false)
@@ -125,7 +125,6 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
     }
 
-    var currentIndex = 0
     var lastPosition: CGFloat = 0
         
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
@@ -138,10 +137,10 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
 
         }
         currentIndex = -1
-        let id = PagingCommentViewController.savedComment!.submission!.getId()
+        let id = PagingCommentViewController.savedComment!.submission!.id
         for item in startIndex..<submissionDataSource.content.count {
             currentIndex += 1
-            if submissionDataSource.content[item].getId() == id {
+            if submissionDataSource.content[item].id == id {
                 break
             }
         }
@@ -153,11 +152,11 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
 
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        let id = (viewController as! CommentViewController).submission!.getId()
+        let id = (viewController as! CommentViewController).submission!.id
         var viewControllerIndex = -1
         for item in startIndex..<submissionDataSource.content.count {
             viewControllerIndex += 1
-            if submissionDataSource.content[item].getId() == id {
+            if submissionDataSource.content[item].id == id {
                 break
             }
         }
@@ -186,12 +185,12 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        let id = (viewController as! CommentViewController).submission!.getId()
+        let id = (viewController as! CommentViewController).submission!.id
 
         var viewControllerIndex = -1
         for item in startIndex..<submissionDataSource.content.count {
             viewControllerIndex += 1
-            if submissionDataSource.content[item].getId() == id {
+            if submissionDataSource.content[item].id == id {
                 break
             }
         }
@@ -253,7 +252,7 @@ extension PagingCommentViewController: SubmissionDataSouceDelegate {
     func preLoadItems() {
     }
     
-    func doPreloadImages(values: [RSubmission]) {
+    func doPreloadImages(values: [SubmissionObject]) {
     }
     
     func loadOffline() {

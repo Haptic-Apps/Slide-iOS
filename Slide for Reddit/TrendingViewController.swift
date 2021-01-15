@@ -6,8 +6,8 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
-import Anchorage
 import Alamofire
+import Anchorage
 import reddift
 import SDWebImage
 import SwiftyJSON
@@ -23,7 +23,7 @@ class TrendingViewController: UITableViewController {
     
     func loadData() {
         
-        spinnerIndicator.color = ColorUtil.theme.fontColor
+        spinnerIndicator.color = UIColor.fontColor
         self.tableView.addSubview(spinnerIndicator)
         spinnerIndicator.centerAnchors /==/ self.tableView.centerAnchors
         spinnerIndicator.sizeAnchors /==/ CGSize(width: 75, height: 75)
@@ -39,8 +39,8 @@ class TrendingViewController: UITableViewController {
                     let json = try JSON(data: data)
                     if let searches = json["trending_searches"].array {
                         for searchLinkJSON in searches {
-                            var searchItem = TrendingItem()
-                            var results = searchLinkJSON["results"]["data"]["children"].array
+                            let searchItem = TrendingItem()
+                            let results = searchLinkJSON["results"]["data"]["children"].array
                             if results != nil && results?.count ?? 0 > 0 {
                                 let linkData = results?[0]["data"]
                                 
@@ -48,8 +48,8 @@ class TrendingViewController: UITableViewController {
                                 searchItem.title = linkData?["title"].stringValue ?? ""
                                 searchItem.subreddit = linkData?["subreddit"].stringValue ?? ""
                                 searchItem.imageUrl = linkData?["thumbnail"].stringValue ?? ""
-                                searchItem.searchTerm = searchLinkJSON["query_string"].stringValue ?? ""
-                                searchItem.searchTitle = searchLinkJSON["display_string"].stringValue ?? ""
+                                searchItem.searchTerm = searchLinkJSON["query_string"].stringValue
+                                searchItem.searchTitle = searchLinkJSON["display_string"].stringValue
                                 self.trendingSearches.append(searchItem)
                             }
                         }
@@ -87,7 +87,7 @@ class TrendingViewController: UITableViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -104,7 +104,7 @@ class TrendingViewController: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 24, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = UIColor.backgroundColor
         
         switch section {
         case 0: label.text = "Trending Topics"
@@ -122,9 +122,9 @@ class TrendingViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.register(TrendingCellView.classForCoder(), forCellReuseIdentifier: "trending")
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
                 
-        //TODO show loading indicator
+        // TODO show loading indicator
         tableView.reloadData()
         
         self.tableView.tableFooterView = UIView()
@@ -178,7 +178,7 @@ class TrendingViewController: UITableViewController {
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
-            cell?.backgroundColor = ColorUtil.theme.foregroundColor
+            cell?.backgroundColor = UIColor.foregroundColor
             
             return cell!
         }
@@ -231,11 +231,11 @@ class TrendingCellView: UITableViewCell {
         self.clipsToBounds = true
 
         subName.font = UIFont.boldSystemFont(ofSize: 14)
-        subName.textColor = ColorUtil.theme.fontColor
+        subName.textColor = UIColor.fontColor
         
         subDot.layer.cornerRadius = (25 / 2)
         subDot.clipsToBounds = true
-        textView.textColor = ColorUtil.theme.fontColor
+        textView.textColor = UIColor.fontColor
         searchTitle.textColor = ColorUtil.baseAccent
         
         thumbView.layer.cornerRadius = 10
@@ -270,10 +270,10 @@ class TrendingCellView: UITableViewCell {
         searchTitle.text = item.searchTitle
         searchTitle.sizeToFit()
 
-        self.backgroundColor = ColorUtil.theme.backgroundColor
-        contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
+        contentView.backgroundColor = UIColor.backgroundColor
 
-        innerView.backgroundColor = ColorUtil.theme.foregroundColor
+        innerView.backgroundColor = UIColor.foregroundColor
     }
 
     func configureLayout() {

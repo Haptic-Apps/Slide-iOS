@@ -6,8 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
+
 import reddift
 
 class RelatedContributionLoader: ContributionLoader {
@@ -15,11 +16,11 @@ class RelatedContributionLoader: ContributionLoader {
         content = []
     }
     
-    var thing: RSubmission
+    var thing: SubmissionObject
     var sub: String
     var color: UIColor
     
-    init(thing: RSubmission, sub: String) {
+    init(thing: SubmissionObject, sub: String) {
         self.thing = thing
         self.sub = sub
         color = ColorUtil.getColorForUser(name: sub)
@@ -28,8 +29,8 @@ class RelatedContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [Object]
-    var delegate: ContentListingViewController?
+    var content: [RedditObject]
+    weak var delegate: ContentListingViewController?
     var paging = false
     var canGetMore = false
     
@@ -53,9 +54,9 @@ class RelatedContributionLoader: ContributionLoader {
                         let baseContent = listing.1.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
-                                self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
+                                self.content.append(CommentObject.commentToCommentObject(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                             }
                         }
 

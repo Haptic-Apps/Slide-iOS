@@ -43,7 +43,7 @@ public class VCPresenter {
             override13 = false
         }
         
-        var respectedOverride13 = override13
+        let respectedOverride13 = override13
 
         override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
         
@@ -104,7 +104,7 @@ public class VCPresenter {
             viewController.navigationItem.leftBarButtonItem = barButton
 
             if !(parentViewController is SplitMainViewController) && !(parentViewController?.parent is SplitMainViewController) {
-                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
+                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = nil
                 viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
             }
         }
@@ -115,8 +115,8 @@ public class VCPresenter {
         let newParent = TapBehindModalViewController(rootViewController: viewController)
         newParent.navigationBar.shadowImage = UIImage()
         newParent.navigationBar.isTranslucent = false
-        newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
-        newParent.view.backgroundColor = ColorUtil.theme.foregroundColor
+        newParent.navigationBar.barTintColor = UIColor.foregroundColor
+        newParent.view.backgroundColor = UIColor.foregroundColor
         let button = UIButtonWithContext.init(type: .custom)
         button.parentController = newParent
         button.contextController = parentViewController
@@ -124,7 +124,7 @@ public class VCPresenter {
         button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withSize: CGSize.square(size: 20)), for: UIControl.State.normal)
         button.frame = CGRect.init(x: -10, y: 0, width: 35, height: 35)
         button.clipsToBounds = true
-        button.layer.cornerRadius = 35/2
+        button.layer.cornerRadius = 35 / 2
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         let barButton = UIBarButtonItem.init(customView: button)
@@ -136,11 +136,11 @@ public class VCPresenter {
         if let delegate = (UIApplication.shared.delegate as? AppDelegate)?.transitionDelegateModal {
             newParent.transitioningDelegate = delegate
         }
-        newParent.view.backgroundColor = ColorUtil.theme.foregroundColor
+        newParent.view.backgroundColor = UIColor.foregroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.foregroundColor
+            popover.backgroundColor = UIColor.foregroundColor
             
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {
@@ -158,11 +158,11 @@ public class VCPresenter {
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+            viewController.view.backgroundColor = UIColor.foregroundColor
             let newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
-            newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+            newParent.navigationBar.barTintColor = UIColor.foregroundColor
 
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
@@ -206,11 +206,11 @@ public class VCPresenter {
         let barButton = UIBarButtonItem.init(customView: button)
         
         newParent.modalPresentationStyle = .popover
-        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
+        newParent.view.backgroundColor = UIColor.backgroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.backgroundColor
+            popover.backgroundColor = UIColor.backgroundColor
 
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {

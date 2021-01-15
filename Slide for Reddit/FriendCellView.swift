@@ -10,72 +10,83 @@ import Anchorage
 import AudioToolbox
 import reddift
 import UIKit
-import YYText
+
+protocol FriendCellViewDelegate: class {
+    func showProfile(name: String)
+}
 
 class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
-    
-    var title = YYLabel()
+    var titleView: TitleUITextView!
     var icon = UIImageView()
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let topmargin = 0
-        let bottommargin = 2
-        let leftmargin = 0
-        let rightmargin = 0
-        
-        let f = self.contentView.frame
-        let fr = f.inset(by: UIEdgeInsets(top: CGFloat(topmargin), left: CGFloat(leftmargin), bottom: CGFloat(bottommargin), right: CGFloat(rightmargin)))
-        self.contentView.frame = fr
-    }
+    var friend: FriendObject?
+    weak var delegate: FriendCellViewDelegate?
+    var hasConfigured = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configureViews() {
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+        self.titleView = TitleUITextView(delegate: nil, textContainer: container)
+        self.titleView.doSetup()
         
         self.contentView.layoutMargins = UIEdgeInsets.init(top: 2, left: 0, bottom: 0, right: 0)
-        self.title = YYLabel(frame: CGRect(x: 0, y: 0, width: contentView.frame.width, height: CGFloat.greatestFiniteMagnitude))
-        title.numberOfLines = 0
-        title.lineBreakMode = NSLineBreakMode.byWordWrapping
-        title.font = FontGenerator.fontOfSize(size: 18, submission: true)
-        title.textColor = ColorUtil.theme.fontColor
         
-        self.icon = UIImageView(image: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: ColorUtil.theme.fontColor))
-        self.contentView.addSubviews(title, icon)
+        self.icon = UIImageView(image: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.getCopy(withSize: CGSize.square(size: 20), withColor: UIColor.fontColor))
+        self.contentView.addSubviews(titleView, icon)
 
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
-        self.setupConstraints()
-        
-        self.contentView.addTapGestureRecognizer { (_) in
-            let prof = ProfileViewController.init(name: self.friend?.name ?? "")
-            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.parentViewController?.navigationController, parentViewController: self.parentViewController)
+        self.contentView.backgroundColor = UIColor.foregroundColor
+    }
+    
+    func configureGestures() {
+        self.contentView.addTapGestureRecognizer { [weak self] (_) in
+            guard let self = self, let friend = self.friend else { return }
+            self.delegate?.showProfile(name: friend.name)
         }
     }
     
-    func setupConstraints() {
-        self.title.leftAnchor /==/ self.icon.rightAnchor + 8
-        self.title.rightAnchor /==/ self.contentView.rightAnchor - 8
-        self.title.verticalAnchors /==/ self.contentView.verticalAnchors
+    func configureLayout() {
+        self.titleView.leftAnchor /==/ self.icon.rightAnchor + 8
+        self.titleView.rightAnchor /==/ self.contentView.rightAnchor - 8
+        self.titleView.verticalAnchors /==/ self.contentView.verticalAnchors
         self.icon.leftAnchor /==/ self.contentView.leftAnchor + 8
         self.icon.heightAnchor /==/ 30
         self.icon.widthAnchor /==/ 30
         self.icon.verticalAnchors /==/ self.contentView.verticalAnchors + 20
     }
     
-    func setFriend(friend: RFriend, parent: UIViewController & MediaVCDelegate) {
-        parentViewController = parent
+    func setFriend(friend: FriendObject) {
+        if !hasConfigured {
+            hasConfigured = true
+            self.configureViews()
+            self.configureLayout()
+            self.configureGestures()
+        }
+
         self.friend = friend
         let boldFont = FontGenerator.boldFontOfSize(size: 14, submission: false)
 
-        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
-        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): boldFont, convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let authorString = NSMutableAttributedString(string: "\u{00A0}\u{00A0}\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+        let authorStringNoFlair = NSMutableAttributedString(string: "\(AccountController.formatUsername(input: friend.name, small: false))\u{00A0}", attributes: [NSAttributedString.Key.font: boldFont, NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         let spacer = NSMutableAttributedString.init(string: "  ")
         let userColor = ColorUtil.getColorForUser(name: friend.name)
         var authorSmall = false
         if AccountController.currentName == friend.name {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor.init(hexString: "#FFB74D"), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([.badgeColor: UIColor(hexString: "#FFB74D"), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else if userColor != ColorUtil.baseColor {
-            authorString.addAttributes([NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: userColor, cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
+            authorString.addAttributes([.badgeColor: userColor, NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange.init(location: 1, length: authorString.length - 1))
         } else {
             authorSmall = true
         }
@@ -89,45 +100,18 @@ class FriendCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
         
         let tag = ColorUtil.getTagForUser(name: friend.name)
         if tag != nil {
-            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), NSAttributedString.Key(rawValue: YYTextBackgroundBorderAttributeName): YYTextBorder(fill: UIColor(rgb: 0x2196f3), cornerRadius: 3), NSAttributedString.Key.foregroundColor: UIColor.white])
+            let tagString = NSMutableAttributedString.init(string: "\u{00A0}\(tag!)\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: true), .badgeColor: UIColor(rgb: 0x2196f3), NSAttributedString.Key.foregroundColor: UIColor.white])
             infoString.append(spacer)
             infoString.append(tagString)
         }
-        
-        let messageClick = UITapGestureRecognizer(target: self, action: #selector(MessageCellView.doReply(sender:)))
-        messageClick.delegate = self
-        self.addGestureRecognizer(messageClick)
-        
+                
         let df = DateFormatter()
         df.dateFormat = "MM/dd/yyyy"
 
-        let endString = NSMutableAttributedString(string: "\nFriend since \(df.string(from: friend.friendSince as Date))", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.fontOfSize(size: 12, submission: false), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor]))
+        let endString = NSMutableAttributedString(string: "\nFriend since \(df.string(from: friend.friendSince as Date))", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         infoString.append(endString)
-        title.attributedText = infoString
+        titleView.attributedText = infoString
+        titleView.layoutTitleImageViews()
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    var friend: RFriend?
-    public var parentViewController: (UIViewController & MediaVCDelegate)?
-    public var navViewController: UIViewController?
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

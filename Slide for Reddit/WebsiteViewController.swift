@@ -23,7 +23,8 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var needsReload = false
     var completionFound = false
     var csrfToken = ""
-    
+    var progressObservation: NSKeyValueObservation?
+
     var savedChallengeURL: String? //Used for login with Apple
     public var reloadCallback: (() -> Void)?
     
@@ -52,14 +53,10 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         }
         
         updateToolbar()
-        webView.getCookies() { data in
-              print("=========================================")
-              print(data)
-        }
 
         navigationController?.setToolbarHidden(false, animated: false)
-        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
+        navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+        navigationController?.toolbar.tintColor = UIColor.fontColor
     }
     
     func updateToolbar() {
@@ -119,7 +116,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         
         alert.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")?.menuIcon(), action: {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(baseURL)
             }
@@ -158,7 +155,9 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     @objc func readerMode(_ sender: AnyObject) {
         if let url = webView.url ?? url {
-            let safariVC = SFHideSafariViewController(url: url, entersReaderIfAvailable: true)
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = true
+            let safariVC = SFHideSafariViewController(url: url, configuration: config)
             present(safariVC, animated: true, completion: nil)
         }
     }
@@ -169,12 +168,6 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        if setObserver {
-            webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
-            
-            //In case of swipe back
-            setObserver = false
-        }
         let myURLRequest: URLRequest = URLRequest(url: URL(string: "about://blank")!)
         webView.load(myURLRequest)
     }
@@ -243,19 +236,15 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var setObserver = false
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-        setObserver = true
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "estimatedProgress" {
-            myProgressView.progress = Float(webView.estimatedProgress)
+        
+        progressObservation = webView.observe(\.estimatedProgress, options: .new, changeHandler: { (webView, _) in
+            self.myProgressView.progress = Float(webView.estimatedProgress)
             if webView.estimatedProgress > 0.98 {
-                myProgressView.isHidden = true
-                if needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
-                    needsReload = false
+                self.myProgressView.isHidden = true
+                if self.needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
+                    self.needsReload = false
                     webView.alpha = 0
-                    webView.superview?.backgroundColor = ColorUtil.theme.backgroundColor
+                    webView.superview?.backgroundColor = UIColor.backgroundColor
                     let pending = UIAlertController(title: "Syncing with Reddit...", message: nil, preferredStyle: .alert)
 
                     let indicator = UIActivityIndicatorView(frame: pending.view.bounds)
@@ -267,7 +256,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
 
                     self.present(pending, animated: true, completion: nil)
                     
-                    checkCookiesUntilCompletion {
+                    self.checkCookiesUntilCompletion {
                         self.completionFound = true
 
                         self.webView.reload()
@@ -276,9 +265,10 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                     }
                 }
             } else {
-                myProgressView.isHidden = false
+                self.myProgressView.isHidden = false
             }
-        }
+        })
+        setObserver = true
     }
     
     func checkCookiesUntilCompletion(tries: Int = 0, _ completion: @escaping () -> Void) {
@@ -480,7 +470,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             URLQueryItem(name: "redirect_uri", value: "https://www.reddit.com"),
             URLQueryItem(name: "response_type", value: "code id_token"),
             URLQueryItem(name: "scope", value: "email"),
-            URLQueryItem(name: "response_mode", value: "form_post")
+            URLQueryItem(name: "response_mode", value: "form_post"),
         ]
 
         var urlComps = URLComponents(string: "https://appleid.apple.com/auth/authorize")!
@@ -524,7 +514,7 @@ extension WKWebView {
         self.evaluateJavaScript(script, completionHandler: {(result: Any?, error: Error?) -> Void in
             if error == nil {
                 if result != nil {
-                    resultString = result as! String
+                    resultString = result as? String
                 }
             } else {
                 resultString = "\(error.debugDescription)"
@@ -554,11 +544,6 @@ extension WKWebView {
 
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
-}
-
 extension WebsiteViewController: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "logHandler" {
@@ -569,10 +554,10 @@ extension WebsiteViewController: WKScriptMessageHandler {
 
 extension WKWebView {
 
-    private var httpCookieStore: WKHTTPCookieStore  { return WKWebsiteDataStore.default().httpCookieStore }
+    private var httpCookieStore: WKHTTPCookieStore { return WKWebsiteDataStore.default().httpCookieStore }
 
-    func getCookies(for domain: String? = nil, completion: @escaping ([String : Any])->())  {
-        var cookieDict = [String : AnyObject]()
+    func getCookies(for domain: String? = nil, completion: @escaping ([String: Any]) -> Void) {
+        var cookieDict = [String: AnyObject]()
         httpCookieStore.getAllCookies { cookies in
             for cookie in cookies {
                 if let domain = domain {

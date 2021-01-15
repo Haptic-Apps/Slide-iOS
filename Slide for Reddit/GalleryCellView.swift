@@ -8,7 +8,6 @@
 
 import reddift
 import UIKit
-import YYText
 
 class GalleryCellView: UITableViewCell {
     
@@ -17,9 +16,9 @@ class GalleryCellView: UITableViewCell {
     var commentsImage = UIImageView()
     
     var estimatedHeight = CGFloat(0)
-    var link: RSubmission?
+    var link: SubmissionObject?
     
-    func setLink(_ link: RSubmission, parent: UIViewController & MediaVCDelegate) {
+    func setLink(_ link: SubmissionObject, parent: UIViewController & MediaVCDelegate) {
         self.bannerImage = UIImageView(frame: CGRect(x: 0, y: 8, width: CGFloat.greatestFiniteMagnitude, height: 0))
         bannerImage.clipsToBounds = true
         bannerImage.contentMode = UIView.ContentMode.scaleAspectFit
@@ -49,9 +48,9 @@ class GalleryCellView: UITableViewCell {
 
         self.parentViewController = parent
         self.link = link
-        let preview = link.bannerUrl
-        let w = link.width
-        let h = link.height
+        let preview = link.bannerUrl ?? ""
+        let w = link.imageWidth
+        let h = link.imageHeight
         estimatedHeight = CGFloat(getHeightFromAspectRatio(imageHeight: h, imageWidth: w))
         bannerImage.sd_setImage(with: URL.init(string: preview))
         
@@ -66,7 +65,6 @@ class GalleryCellView: UITableViewCell {
             typeImage.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.navIcon(true)
         default:
             typeImage.image = UIImage()
-
         }
     }
     
@@ -85,7 +83,7 @@ class GalleryCellView: UITableViewCell {
         view.addGestureRecognizer(tap)
     }
     
-    var parentViewController: (UIViewController & MediaVCDelegate)?
+    weak var parentViewController: (UIViewController & MediaVCDelegate)?
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -96,7 +94,7 @@ class GalleryCellView: UITableViewCell {
     override func updateConstraints() {
         super.updateConstraints()
         
-        let views=["banner": bannerImage, "comments": commentsImage, "type": typeImage] as [String: Any]
+        let views = ["banner": bannerImage, "comments": commentsImage, "type": typeImage] as [String: Any]
 
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-2-[banner]-2-|",
                                                           options: NSLayoutConstraint.FormatOptions(rawValue: 0),

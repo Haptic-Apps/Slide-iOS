@@ -8,7 +8,7 @@
 
 import BiometricAuthentication
 import LicensesViewController
-import RealmSwift
+
 import RLBAlertsPickers
 import SDWebImage
 import UIKit
@@ -31,26 +31,26 @@ class SettingsBackup: BubbleSettingTableViewController {
     }
     
     func doCells(_ reset: Bool = true) {
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Backup"
         self.tableView.separatorStyle = .none
 
         self.backup.textLabel?.text = "Backup"
         self.backup.detailTextLabel?.text = "Backup your Slide data to iCloud"
-        self.backup.backgroundColor = ColorUtil.theme.foregroundColor
-        self.backup.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.backup.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
-        self.backup.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.backup.backgroundColor = UIColor.foregroundColor
+        self.backup.detailTextLabel?.textColor = UIColor.fontColor
+        self.backup.textLabel?.textColor = UIColor.fontColor
+        self.backup.imageView?.image = UIImage.init(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")?.toolbarIcon().getCopy(withColor: UIColor.fontColor)
+        self.backup.imageView?.tintColor = UIColor.fontColor
         
         self.restore.textLabel?.text = "Restore"
-        self.restore.backgroundColor = ColorUtil.theme.foregroundColor
-        self.restore.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.restore.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.restore.backgroundColor = UIColor.foregroundColor
+        self.restore.detailTextLabel?.textColor = UIColor.fontColor
+        self.restore.textLabel?.textColor = UIColor.fontColor
         self.restore.detailTextLabel?.text = "Restore your backup data from iCloud"
-        self.restore.imageView?.image = UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "restore")?.toolbarIcon().getCopy(withColor: ColorUtil.theme.fontColor)
-        self.restore.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.restore.imageView?.image = UIImage(sfString: SFSymbol.arrowClockwise, overrideString: "restore")?.toolbarIcon().getCopy(withColor: UIColor.fontColor)
+        self.restore.imageView?.tintColor = UIColor.fontColor
     }
 
     override func viewDidLoad() {

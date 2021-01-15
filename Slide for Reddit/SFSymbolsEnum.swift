@@ -1,4 +1,3 @@
-
 // Note: Cases that are commented out are symbols defined in the SFSymbols app
 // that nonetheless aren't available on-device (Apple bug)
 
@@ -2048,7 +2047,7 @@ public enum SFSymbol: String {
     case crop = "crop"
 
     /// 􀦆
-    @available(iOS 14,*) case crownFill = "crown.fill"
+    @available(iOS 14, *) case crownFill = "crown.fill"
 
     /// 􀍴
     case cropRotate = "crop.rotate"

@@ -42,7 +42,7 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -58,7 +58,7 @@ class SubredditReorderViewController: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         self.tableView.allowsSelectionDuringEditing = true
         self.tableView.allowsMultipleSelectionDuringEditing = true
         
@@ -139,7 +139,7 @@ class SubredditReorderViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
     }
     
     @objc func add(_ selector: AnyObject) {
@@ -164,7 +164,7 @@ class SubredditReorderViewController: UITableViewController {
 
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-        spinnerIndicator.color = ColorUtil.theme.fontColor
+        spinnerIndicator.color = UIColor.fontColor
         spinnerIndicator.startAnimating()
 
         alertController.view.addSubview(spinnerIndicator)
@@ -215,7 +215,7 @@ class SubredditReorderViewController: UITableViewController {
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
         let pinned = self.pinned.contains(thing)
         cell?.showPin(pinned)
         cell?.showsReorderControl = pinned
@@ -254,11 +254,11 @@ class SubredditReorderViewController: UITableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = UIColor.backgroundColor
         switch section {
         case 0: label.text = pinned.isEmpty ? "All Subreddits" : "Pinned"
-        case 1: label.text =  "All Subreddits"
-        default: label.text  = ""
+        case 1: label.text = "All Subreddits"
+        default: label.text = ""
         }
         return toReturn
     }

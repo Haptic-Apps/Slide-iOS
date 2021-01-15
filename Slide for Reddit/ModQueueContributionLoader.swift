@@ -6,8 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
+
 import reddift
 
 class ModQueueContributionLoader: ContributionLoader {
@@ -27,8 +28,8 @@ class ModQueueContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [Object]
-    var delegate: ContentListingViewController?
+    var content: [RedditObject]
+    weak var delegate: ContentListingViewController?
     var paging = true
     
     func getData(reload: Bool) {
@@ -50,9 +51,9 @@ class ModQueueContributionLoader: ContributionLoader {
                         let baseContent = listing.children.compactMap({ $0 })
                         for item in baseContent {
                             if item is Comment {
-                                self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
+                                self.content.append(CommentObject.commentToCommentObject(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                             }
                         }
                         self.paginator = listing.paginator

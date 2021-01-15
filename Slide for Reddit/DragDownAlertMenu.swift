@@ -58,14 +58,14 @@ extension UITextField {
         self.layer.cornerRadius = 15
         self.clipsToBounds = true
         self.becomeFirstResponder()
-        self.textColor = ColorUtil.theme.fontColor
-        self.backgroundColor = ColorUtil.theme.foregroundColor
-        self.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-        self.left(image: image, color: ColorUtil.theme.fontColor)
+        self.textColor = UIColor.fontColor
+        self.backgroundColor = UIColor.foregroundColor
+        self.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
+        self.left(image: image, color: UIColor.fontColor)
         //self.leftViewPadding = 12
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
-        self.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
+        self.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
         self.keyboardAppearance = .default
         self.keyboardType = .default
         self.returnKeyType = .done
@@ -165,16 +165,16 @@ class BottomActionCell: UITableViewCell {
     }
     
     func themeViews() {
-        self.background.backgroundColor = ColorUtil.theme.foregroundColor
+        self.background.backgroundColor = UIColor.foregroundColor
         self.background.layer.cornerRadius = 10
         self.background.clipsToBounds = true
         
-        self.title.textColor = ColorUtil.theme.fontColor
+        self.title.textColor = UIColor.fontColor
         self.title.font = UIFont.systemFont(ofSize: 16)
         
         self.icon.contentMode = .center
         
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.contentView.backgroundColor = UIColor.backgroundColor
     }
     
 }
@@ -198,7 +198,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var isSearch = false
     var searchSubreddit = ""
     var isSearchComplete = false
-    var results = [RSubmission]()
+    var results = [SubmissionObject]()
     var timer: Timer?
     var isSearching = false
     var taskSearch: URLSessionDataTask?
@@ -276,12 +276,12 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     func addTextInput(title: String, icon: UIImage?, enabled: Bool = true, action: @escaping () -> Void, inputPlaceholder: String, inputValue: String? = nil, inputIcon: UIImage, textRequired: Bool, exitOnAction: Bool) {
         let input = InsetTextField()
         
-        input.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: themeColor ?? ColorUtil.theme.fontColor, placeholder: inputPlaceholder)
+        input.setImageMode(image: inputIcon.getCopy(withSize: CGSize.square(size: 20)), accentColor: themeColor ?? UIColor.fontColor, placeholder: inputPlaceholder)
         input.addTarget(self, action: #selector(textChanged(_:)), for: UIControl.Event.editingChanged)
         input.addTarget(self, action: #selector(done(_:)), for: UIControl.Event.editingDidEndOnExit)
         input.text = inputValue
 
-        actions.append(AlertMenuInputAction(title: title, icon: icon, action: action, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? ColorUtil.theme.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
+        actions.append(AlertMenuInputAction(title: title, icon: icon, action: action, inputIcon: inputIcon, inputPlaceholder: inputPlaceholder, inputValue: inputValue, accentColor: themeColor ?? UIColor.fontColor, exitOnAction: exitOnAction, textRequired: textRequired))
         
         textFields.append(input)
         hasInput = true
@@ -307,7 +307,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             let cell = tableView.dequeueReusableCell(withIdentifier: "action") as! BottomActionCell
             cell.setAction(action: item, color: themeColor)
             if isSearch {
-                cell.backgroundColor = ColorUtil.theme.backgroundColor
+                cell.backgroundColor = UIColor.backgroundColor
                 cell.accessoryType = .disclosureIndicator
             }
             return cell
@@ -376,7 +376,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         self.tableView.widthAnchor /==/ min(self.view.frame.size.width, 450)
         self.tableView.bottomAnchor /==/ self.view.bottomAnchor + 20
         self.tableView.bounces = false
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         self.tableView.layer.cornerRadius = 15
         self.tableView.layer.masksToBounds = true
         let maxHeight: CGFloat
@@ -459,13 +459,13 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         label.numberOfLines = 2
         
         let toReturn = UIView()
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
-        let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)])
+        toReturn.backgroundColor = UIColor.backgroundColor
+        let attributedTitle = NSMutableAttributedString(string: self.descriptor, attributes: [NSAttributedString.Key.foregroundColor: themeColor ?? UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17)])
         if !subtitle.isEmpty {
-            attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? ColorUtil.theme.fontColor.withAlphaComponent(0.6)]))
+            attributedTitle.append(NSAttributedString(string: "\n" + subtitle, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13), NSAttributedString.Key.foregroundColor: themeColor?.withAlphaComponent(0.6) ?? UIColor.fontColor.withAlphaComponent(0.6)]))
         }
         label.attributedText = attributedTitle
-        let close = UIImageView(image: UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: themeColor ?? ColorUtil.theme.fontColor))
+        let close = UIImageView(image: UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: themeColor ?? UIColor.fontColor))
         close.contentMode = .center
         toReturn.addSubview(close)
         close.centerYAnchor /==/ toReturn.centerYAnchor
@@ -495,7 +495,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             }
             
             if let url = URL(string: icon!) {
-                if ContentType.isImage(uri: url) {
+                if ContentType.isImage(uri: url) || icon?.endsWith("/icon") ?? false {
                     image.loadImageWithPulsingAnimation(atUrl: url, withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                 } else {
                     image.image = LinkCellImageCache.web
@@ -534,7 +534,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         }
         
         let bar = UIView().then {
-            $0.backgroundColor = .clear // ColorUtil.theme.fontColor.withAlphaComponent(0.25)
+            $0.backgroundColor = .clear // UIColor.fontColor.withAlphaComponent(0.25)
         }
         toReturn.addSubview(bar)
         bar.horizontalAnchors /==/ toReturn.horizontalAnchors
@@ -546,7 +546,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         } else {
             let finalView = UIStackView().then {
                 $0.axis = .vertical
-                $0.backgroundColor = ColorUtil.theme.backgroundColor
+                $0.backgroundColor = UIColor.backgroundColor
             }
             finalView.addArrangedSubview(toReturn)
             toReturn.heightAnchor /==/ (subtitle.isEmpty ? 55 : 80)
@@ -642,7 +642,7 @@ extension DragDownAlertMenu {
         }
         isSearchComplete = false
         do {
-            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+            taskSearch = try! (UIApplication.shared.delegate as? AppDelegate)?.session?.getSearch(Subreddit.init(subreddit: self.searchSubreddit), accountName: AccountController.currentName, query: textView.text ?? "", paginator: Paginator(), sort: .relevance, time: .all, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                 switch result {
                 case .failure:
                     print(result.error!)
@@ -655,7 +655,7 @@ extension DragDownAlertMenu {
                     for item in listing.children.compactMap({ $0 }) {
                         if item is Comment {
                         } else if self.results.count < 10 {
-                            self.results.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                            self.results.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                         }
                     }
                     DispatchQueue.main.async {

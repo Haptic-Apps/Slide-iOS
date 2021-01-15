@@ -23,7 +23,6 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
     }
     
     public func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        print(error)
         print("Activate Complete")
     }
         
@@ -50,11 +49,11 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                     let children = message["context"] == nil ? listing.children : (listing.children[0] as! Comment).replies.children
                                     for child in children {
                                         if let comment = child as? Comment {
-                                            objects.append(["context": comment.id, "id": comment.getId(), "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score, "upvoted": (comment.likes) == VoteDirection.up, "downvoted": (comment.likes) == VoteDirection.down])
+                                            objects.append(["context": comment.id, "id": comment.id, "body": comment.bodyHtml, "submission": comment.linkId, "author": comment.author, "created": DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(comment.createdUtc)), numericDates: true), "score": comment.score, "upvoted": (comment.likes) == VoteDirection.up, "downvoted": (comment.likes) == VoteDirection.down])
                                             if comment.likes == VoteDirection.down {
-                                                ActionStates.downVotedFullnames.append(comment.getId())
+                                                ActionStates.downVotedFullnames.append(comment.id)
                                             } else if comment.likes == VoteDirection.up {
-                                                ActionStates.upVotedFullnames.append(comment.getId())
+                                                ActionStates.upVotedFullnames.append(comment.id)
                                             }
 
                                         }
@@ -91,8 +90,8 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                     print(vote)
                     try (UIApplication.shared.delegate as? AppDelegate)?.session?.setVote(vote, name: fullname, completion: { (result) in
                         switch result {
-                        case .success(_):
-                            var message = ["upvoted": (vote == .up), "downvoted": (vote == .down)]
+                        case .success:
+                            let message = ["upvoted": (vote == .up), "downvoted": (vote == .down)]
                             print(message)
                             replyHandler(message)
                             if let index = ActionStates.upVotedFullnames.firstIndex(of: fullname) {
@@ -143,7 +142,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                     }
                 }
                 print("REPLY SUBLIST")
-                replyHandler(["subs": colorDict as? NSDictionary, "orderedsubs": sublist as? NSArray, "pro": SettingValues.isPro])
+                replyHandler(["subs": colorDict, "orderedsubs": sublist, "pro": SettingValues.isPro])
             } else if message["links"] != nil {
                 if message["reset"] as? Bool ?? true {
                     self.paginator = Paginator()
@@ -172,7 +171,7 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                 for link in listing.children {
                                     let dict = NSMutableDictionary()
                                     for item in ((link as! Link).baseJson) {
-                                        if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created"  || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
+                                        if (item.key == "subreddit" || item.key == "author" || item.key == "title" || item.key == "thumbnail" || item.key == "is_self" || item.key == "over_18" || item.key == "score" || item.key == "num_comments" || item.key == "spoiler" || item.key == "locked" || item.key == "author" || item.key == "id" || item.key == "domain" || item.key == "permalink" || item.key == "url" || item.key == "created" || item.key == "stickied" || item.key == "link_flair_text") && (item.value is String || item.value is Int || item.value is Double) {
                                             if item.key == "created" {
                                                 dict["created"] = DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval((link as! Link).createdUtc)), numericDates: true)
                                             } else {
@@ -181,14 +180,14 @@ public class WatchSessionManager: NSObject, WCSessionDelegate {
                                         }
                                     }
                                     
-                                    dict["id"] = ((link as! Link)).getId()
+                                    dict["id"] = ((link as! Link)).id
                                     
                                     dict["upvoted"] = ((link as! Link).likes) == VoteDirection.up
                                     dict["downvoted"] = ((link as! Link).likes) == VoteDirection.down
                                     if ((link as! Link).likes) == VoteDirection.down {
-                                        ActionStates.downVotedFullnames.append((link as! Link).getId())
+                                        ActionStates.downVotedFullnames.append((link as! Link).id)
                                     } else if ((link as! Link).likes) == VoteDirection.up {
-                                        ActionStates.upVotedFullnames.append((link as! Link).getId())
+                                        ActionStates.upVotedFullnames.append((link as! Link).id)
                                     }
                                     dict["readLater"] = ReadLater.isReadLater(id: ((link as! Link).id))
                                     dict["bigimage"] = nil

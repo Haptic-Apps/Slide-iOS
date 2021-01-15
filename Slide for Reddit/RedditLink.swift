@@ -34,10 +34,13 @@ class RedditLink {
         }
         if url.isEmpty() {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-                let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+                let safariVC = SFHideSafariViewController(url: oldUrl, configuration: config)
+
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                    safariVC.preferredBarTintColor = UIColor.backgroundColor
+                    safariVC.preferredControlTintColor = UIColor.fontColor
                 } else {
                     // Fallback on earlier versions
                 }
@@ -147,10 +150,12 @@ class RedditLink {
             break
         }
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-            let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+            let safariVC = SFHideSafariViewController(url: oldUrl, configuration: config)
             if #available(iOS 10.0, *) {
-                safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
-                safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                safariVC.preferredBarTintColor = UIColor.backgroundColor
+                safariVC.preferredControlTintColor = UIColor.fontColor
             } else {
                 // Fallback on earlier versions
             }

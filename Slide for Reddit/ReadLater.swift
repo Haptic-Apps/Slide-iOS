@@ -36,19 +36,19 @@ class ReadLater {
         return toReturn
     }
 
-    public static func isReadLater(link: RSubmission) -> Bool {
-        return isReadLater(id: link.getId(), subreddit: link.subreddit)
+    public static func isReadLater(link: SubmissionObject) -> Bool {
+        return isReadLater(id: link.id, subreddit: link.subreddit)
     }
 
     public static func isReadLater(id: String, subreddit: String) -> Bool {
         return ReadLater.getReadLaterIDs(sub: subreddit).contains(where: { (link) -> Bool in
-            return link.getId() == id
+            return link.id == id
         })
     }
 
     @discardableResult
-    public static func toggleReadLater(link: RSubmission) -> Bool {
-        let isMarkedReadLater = isReadLater(id: link.getId())
+    public static func toggleReadLater(link: SubmissionObject) -> Bool {
+        let isMarkedReadLater = isReadLater(id: link.id)
         if isMarkedReadLater {
             ReadLater.removeReadLater(link: link)
             return false
@@ -58,8 +58,8 @@ class ReadLater {
         }
     }
 
-    public static func addReadLater(link: RSubmission) {
-        addReadLater(id: link.getId(), subreddit: link.subreddit)
+    public static func addReadLater(link: SubmissionObject) {
+        addReadLater(id: link.id, subreddit: link.subreddit)
     }
     
     public static func isReadLater(id: String) -> Bool {
@@ -72,8 +72,8 @@ class ReadLater {
         delegate?.didUpdate()
     }
 
-    public static func removeReadLater(link: RSubmission) {
-        removeReadLater(id: link.getId())
+    public static func removeReadLater(link: SubmissionObject) {
+        removeReadLater(id: link.id)
         delegate?.didUpdate()
     }
     

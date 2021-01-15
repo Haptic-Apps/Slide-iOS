@@ -28,7 +28,6 @@ public class CommentsRowController: NSObject {
    
     func setData(dictionary: NSDictionary) {
         self.dictionary = dictionary
-        let titleFont = UIFont.systemFont(ofSize: 14)
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
         //let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
         id = dictionary["context"] as? String ?? ""
@@ -70,17 +69,17 @@ public class CommentsRowController: NSObject {
         titleLabel.setAttributedText(infoString)
         if let html = (dictionary["body"] as! String).replacingOccurrences(of: "<div class=\"md\">", with: "").replacingOccurrences(of: "</p>\n</div>", with: "</p>").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: "</br>").data(using: String.Encoding.unicode) {
             do {
-                var attributedText = try NSMutableAttributedString(data: html, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+                let attributedText = try NSMutableAttributedString(data: html, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
                 attributedText.addAttributes([NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11), NSAttributedString.Key.foregroundColor: UIColor.white], range: NSRange(location: 0, length: attributedText.length))
                 self.attributedBody = attributedText
                 bodyLabel.setAttributedText(attributedText)
-            } catch let e as NSError {
+            } catch {
                 //todo populate attributed string
-                bodyLabel.setText(dictionary["body"] as! String)
+                bodyLabel.setText(dictionary["body"] as? String)
             }
         } else {
             //todo populate attributed string
-            bodyLabel.setText(dictionary["body"] as! String)
+            bodyLabel.setText(dictionary["body"] as? String)
         }
     }
 }
