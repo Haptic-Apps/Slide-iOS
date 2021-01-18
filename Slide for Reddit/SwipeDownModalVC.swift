@@ -18,7 +18,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
     var currentPositionTouched: CGPoint?
     var viewToMove: UIView?
     
-    var didStartPan : (_ panStart: Bool) -> Void = { result in }
+    var didStartPan : (_ panStart: Bool) -> Void = { _ in }
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
     
     override func viewWillDisappear(_ animated: Bool) {

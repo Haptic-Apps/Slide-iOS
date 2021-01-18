@@ -6,7 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import RealmSwift
+import CoreData
+
 import reddift
 import UIKit
 
@@ -63,14 +64,14 @@ class PostFilter {
         return false
     }
 
-    public static func matches(_ link: RSubmission, baseSubreddit: String, gallery: Bool) -> Bool {
+    public static func matches(_ link: SubmissionObject, baseSubreddit: String, gallery: Bool) -> Bool {
         let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
             PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
             PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
             contains(PostFilter.flairs, value: link.flair) ||
-            containedIn(PostFilter.selftext, value: link.htmlBody) ||
+            containedIn(PostFilter.selftext, value: link.htmlBody ?? "") ||
             containedIn(PostFilter.titles, value: link.title) ||
-            (link.nsfw && !SettingValues.nsfwEnabled) || (link.nsfw && gallery && !(SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSubreddit))) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
+            (link.isNSFW && !SettingValues.nsfwEnabled) || (link.isNSFW && gallery && !(SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSubreddit))) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
         
         if mainMatch {
             //No need to check further
@@ -78,7 +79,7 @@ class PostFilter {
         }
 
         var contentMatch = false
-        if link.nsfw {
+        if link.isNSFW {
             // Hide NSFW if the user is not logged in, nsfw is not enabled (can only be done while authenticated),
             // or the subreddit-specific nsfw filter is turned on
             contentMatch = !AccountController.isLoggedIn || !SettingValues.nsfwEnabled || isNsfw(baseSubreddit)
@@ -120,7 +121,7 @@ class PostFilter {
         return mainMatch || contentMatch
     }
 
-    public static func openExternally(_ link: RSubmission) -> Bool {
+    public static func openExternally(_ link: SubmissionObject) -> Bool {
         return (PostFilter.openExternally.contains(where: {
             $0.containedIn(base: link.domain)
         }))
@@ -136,25 +137,25 @@ class PostFilter {
         return [isImage(sub), isAlbum(sub), isGif(sub), isVideo(sub), isUrl(sub), isSelftext(sub), isNsfw(sub)]
     }
 
-    public static func filter(_ input: [Object], previous: [String]?, baseSubreddit: String, gallery: Bool = false) -> [Object] {
+    public static func filter(_ input: [RedditObject], previous: [String]?, baseSubreddit: String, gallery: Bool = false) -> [RedditObject] {
         let ids = previous ?? []
-        var toReturn: [Object] = []
+        var toReturn: [RedditObject] = []
 
         for link in input {
-            if link is RSubmission {
-                if !matches(link as! RSubmission, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains((link as! RSubmission).getId()) {
+            if link is SubmissionObject {
+                if !matches(link as! SubmissionObject, baseSubreddit: baseSubreddit, gallery: gallery) && !ids.contains(link.getId()) {
                     toReturn.append(link)
                 }
-            } else if link is RComment {
-                let comment = link as! RComment
+            } else if link is CommentObject {
+                let comment = link as! CommentObject
                 let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(comment.author) == .orderedSame }) ||
                     PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(comment.subreddit) == .orderedSame }) ||
                     contains(PostFilter.flairs, value: comment.flair)
                 if !mainMatch {
                     toReturn.append(link)
                 }
-            } else if link is RMessage {
-                let message = link as! RMessage
+            } else if link is MessageObject {
+                let message = link as! MessageObject
                 let mainMatch = PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(message.author) == .orderedSame })
                 if !mainMatch {
                     toReturn.append(link)
@@ -229,4 +230,3 @@ extension Thread {
         }
     }
 }
-

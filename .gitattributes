@@ -1,3 +1,4 @@
 *.pbxproj merge=union
 *.pbxproj filter=filter-credentials
 "Slide for Reddit/Info.plist" filter=filter-credentials
+*.ipa filter=lfs diff=lfs merge=lfs -text

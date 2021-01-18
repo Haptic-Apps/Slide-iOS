@@ -11,7 +11,6 @@ target 'Slide for Reddit' do
   pod 'LicensesViewController', '~> 0.7.0'
   pod 'OpalImagePicker'
   pod 'MaterialComponents/ActivityIndicator'
-  pod 'MaterialComponents/Tabs'
   pod 'MaterialComponents/ProgressView'
   pod 'SwiftEntryKit', :git => 'https://github.com/ccrama/SwiftEntryKit'
   pod 'SubtleVolume'
@@ -20,7 +19,6 @@ target 'Slide for Reddit' do
   pod 'SwiftLinkPreview', '~> 3.0.1'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
-  pod 'YYText'
   pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON', :git => 'https://github.com/ccrama/SwiftyJSON.git', :branch => 'hotfix-xcode12'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
@@ -39,7 +37,7 @@ target 'Slide for Reddit' do
   post_install do |installer|
     installer.pods_project.targets.each do |target|
     	target.build_configurations.each do |config|
-     	 config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '9.2'
+     	 config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11'
     	end
         if [
           'HTMLSpecialCharacters',

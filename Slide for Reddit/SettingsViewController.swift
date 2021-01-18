@@ -10,7 +10,7 @@ import Anchorage
 import BiometricAuthentication
 import LicensesViewController
 import MessageUI
-import RealmSwift
+
 import RLBAlertsPickers
 import SDWebImage
 import UIKit
@@ -59,7 +59,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -180,7 +180,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
 
     func doCells(_ reset: Bool = true) {
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Settings"
         self.tableView.separatorStyle = .none
@@ -190,11 +190,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.general.textLabel?.text = "General"
         self.general.accessoryType = .disclosureIndicator
-        self.general.backgroundColor = ColorUtil.theme.foregroundColor
-        self.general.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.general.backgroundColor = UIColor.foregroundColor
+        self.general.textLabel?.textColor = UIColor.fontColor
         self.general.imageView?.image = UIImage(sfString: SFSymbol.gear, overrideString: "settings")?.toolbarIcon()
-        self.general.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.general.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.general.imageView?.tintColor = UIColor.fontColor
+        self.general.detailTextLabel?.textColor = UIColor.fontColor
         self.general.detailTextLabel?.text = "Display settings, haptic feedback and default sorting"
         
         self.general.detailTextLabel?.numberOfLines = 0
@@ -202,71 +202,71 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.manageSubs.textLabel?.text = "Subscriptions"
         self.manageSubs.accessoryType = .disclosureIndicator
-        self.manageSubs.backgroundColor = ColorUtil.theme.foregroundColor
-        self.manageSubs.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.manageSubs.backgroundColor = UIColor.foregroundColor
+        self.manageSubs.textLabel?.textColor = UIColor.fontColor
         self.manageSubs.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
-        self.manageSubs.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.manageSubs.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.manageSubs.imageView?.tintColor = UIColor.fontColor
+        self.manageSubs.detailTextLabel?.textColor = UIColor.fontColor
         self.manageSubs.detailTextLabel?.text = "Manage your subscriptions and rearrange the sidebar"
         self.manageSubs.detailTextLabel?.numberOfLines = 0
 
         self.postActionCell.textLabel?.text = "Reorder post actions"
         self.postActionCell.accessoryType = .disclosureIndicator
-        self.postActionCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.postActionCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.postActionCell.backgroundColor = UIColor.foregroundColor
+        self.postActionCell.textLabel?.textColor = UIColor.fontColor
         self.postActionCell.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircleFill, overrideString: "compact")?.toolbarIcon()
-        self.postActionCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.postActionCell.imageView?.tintColor = UIColor.fontColor
 
         self.shortcutCell.textLabel?.text = "Reorder homepage shortcuts"
         self.shortcutCell.accessoryType = .disclosureIndicator
-        self.shortcutCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.shortcutCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.shortcutCell.backgroundColor = UIColor.foregroundColor
+        self.shortcutCell.textLabel?.textColor = UIColor.fontColor
         self.shortcutCell.imageView?.image = UIImage(sfString: SFSymbol.boltFill, overrideString: "compact")?.toolbarIcon()
-        self.shortcutCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.shortcutCell.imageView?.tintColor = UIColor.fontColor
 
         self.mainTheme.textLabel?.text = "App theme"
         self.mainTheme.accessoryType = .disclosureIndicator
-        self.mainTheme.backgroundColor = ColorUtil.theme.foregroundColor
-        self.mainTheme.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.mainTheme.backgroundColor = UIColor.foregroundColor
+        self.mainTheme.textLabel?.textColor = UIColor.fontColor
         self.mainTheme.imageView?.image = UIImage(named: "palette")?.toolbarIcon()
-        self.mainTheme.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.mainTheme.imageView?.tintColor = UIColor.fontColor
 
         self.icon.textLabel?.text = "App icon"
         self.icon.accessoryType = .disclosureIndicator
-        self.icon.backgroundColor = ColorUtil.theme.foregroundColor
-        self.icon.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.icon.backgroundColor = UIColor.foregroundColor
+        self.icon.textLabel?.textColor = UIColor.fontColor
         self.icon.imageView?.image = Bundle.main.icon?.getCopy(withSize: CGSize(width: 25, height: 25))
         self.icon.imageView?.layer.cornerRadius = 5
         self.icon.imageView?.clipsToBounds = true
 
         self.tagsCell.textLabel?.text = "User Tags Management"
         self.tagsCell.accessoryType = .disclosureIndicator
-        self.tagsCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.tagsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.tagsCell.backgroundColor = UIColor.foregroundColor
+        self.tagsCell.textLabel?.textColor = UIColor.fontColor
         self.tagsCell.imageView?.image = UIImage(sfString: SFSymbol.tagFill, overrideString: "user")?.toolbarIcon()
-        self.tagsCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.tagsCell.imageView?.tintColor = UIColor.fontColor
 
         self.goPro.textLabel?.text = "Support Slide, go Pro!"
         self.goPro.accessoryType = .disclosureIndicator
-        self.goPro.backgroundColor = ColorUtil.theme.foregroundColor
-        self.goPro.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.goPro.backgroundColor = UIColor.foregroundColor
+        self.goPro.textLabel?.textColor = UIColor.fontColor
         self.goPro.imageView?.image = UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color())
-        self.goPro.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.goPro.imageView?.tintColor = UIColor.fontColor
 
         self.coffeeCell.textLabel?.text = "Tip Jar"
         self.coffeeCell.accessoryType = .disclosureIndicator
-        self.coffeeCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.coffeeCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.coffeeCell.backgroundColor = UIColor.foregroundColor
+        self.coffeeCell.textLabel?.textColor = UIColor.fontColor
         self.coffeeCell.imageView?.image = UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.lightGreen500Color())
-        self.coffeeCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.coffeeCell.imageView?.tintColor = UIColor.fontColor
 
         self.clearCell.textLabel?.text = "Clear cache"
         self.clearCell.accessoryType = .none
-        self.clearCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.clearCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.clearCell.backgroundColor = UIColor.foregroundColor
+        self.clearCell.textLabel?.textColor = UIColor.fontColor
         self.clearCell.imageView?.image = UIImage(sfString: SFSymbol.trashFill, overrideString: "multis")?.toolbarIcon()
-        self.clearCell.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.clearCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.clearCell.imageView?.tintColor = UIColor.fontColor
+        self.clearCell.detailTextLabel?.textColor = UIColor.fontColor
         let countBytes = ByteCountFormatter()
         countBytes.allowedUnits = [.useMB]
         countBytes.countStyle = .file
@@ -277,159 +277,159 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         self.backupCell.textLabel?.text = "Backup and Restore"
         self.backupCell.accessoryType = .disclosureIndicator
-        self.backupCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.backupCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.backupCell.backgroundColor = UIColor.foregroundColor
+        self.backupCell.textLabel?.textColor = UIColor.fontColor
         self.backupCell.imageView?.image = UIImage(sfString: SFSymbol.arrowCounterclockwise, overrideString: "restore")?.toolbarIcon()
-        self.backupCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.backupCell.imageView?.tintColor = UIColor.fontColor
 
         self.gestureCell.textLabel?.text = "Gestures"
         self.gestureCell.accessoryType = .disclosureIndicator
-        self.gestureCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.gestureCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.gestureCell.backgroundColor = UIColor.foregroundColor
+        self.gestureCell.textLabel?.textColor = UIColor.fontColor
         self.gestureCell.imageView?.image = UIImage(sfString: .scribble, overrideString: "gestures")?.toolbarIcon()
-        self.gestureCell.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.gestureCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.gestureCell.imageView?.tintColor = UIColor.fontColor
+        self.gestureCell.detailTextLabel?.textColor = UIColor.fontColor
         self.gestureCell.detailTextLabel?.text = "Swipe and tap gestures for submissions and comments"
         self.gestureCell.detailTextLabel?.numberOfLines = 0
 
         self.widgetsCell.textLabel?.text = "Widgets"
         self.widgetsCell.accessoryType = .disclosureIndicator
-        self.widgetsCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.widgetsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.backgroundColor = UIColor.foregroundColor
+        self.widgetsCell.textLabel?.textColor = UIColor.fontColor
         self.widgetsCell.imageView?.image = UIImage(sfString: .squareGrid2x2, overrideString: "gestures")?.toolbarIcon()
-        self.widgetsCell.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.widgetsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.widgetsCell.imageView?.tintColor = UIColor.fontColor
+        self.widgetsCell.detailTextLabel?.textColor = UIColor.fontColor
         self.widgetsCell.detailTextLabel?.text = "Create subreddit lists for Slide widgets"
         self.widgetsCell.detailTextLabel?.numberOfLines = 0
 
         self.cacheCell.textLabel?.text = "Offline caching"
         self.cacheCell.accessoryType = .disclosureIndicator
-        self.cacheCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.cacheCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.cacheCell.backgroundColor = UIColor.foregroundColor
+        self.cacheCell.textLabel?.textColor = UIColor.fontColor
         self.cacheCell.imageView?.image = UIImage(sfString: SFSymbol.arrow2Circlepath, overrideString: "save-1")?.toolbarIcon()
-        self.cacheCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.cacheCell.imageView?.tintColor = UIColor.fontColor
 
         self.postLayout.textLabel?.text = "Card layout"
         self.postLayout.accessoryType = .disclosureIndicator
-        self.postLayout.backgroundColor = ColorUtil.theme.foregroundColor
-        self.postLayout.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.postLayout.backgroundColor = UIColor.foregroundColor
+        self.postLayout.textLabel?.textColor = UIColor.fontColor
         self.postLayout.imageView?.image = UIImage(sfString: SFSymbol.squareStack3dUpFill, overrideString: "layout")?.toolbarIcon()
-        self.postLayout.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.postLayout.imageView?.tintColor = UIColor.fontColor
 
         self.subThemes.textLabel?.text = "Subreddit themes"
         self.subThemes.accessoryType = .disclosureIndicator
-        self.subThemes.backgroundColor = ColorUtil.theme.foregroundColor
-        self.subThemes.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.subThemes.backgroundColor = UIColor.foregroundColor
+        self.subThemes.textLabel?.textColor = UIColor.fontColor
         self.subThemes.imageView?.image = UIImage(sfString: .eyedropperHalffull, overrideString: "subs")?.toolbarIcon()
-        self.subThemes.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.subThemes.imageView?.tintColor = UIColor.fontColor
 
         self.font.textLabel?.text = "Font and Links"
         self.font.accessoryType = .disclosureIndicator
-        self.font.backgroundColor = ColorUtil.theme.foregroundColor
-        self.font.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.font.backgroundColor = UIColor.foregroundColor
+        self.font.textLabel?.textColor = UIColor.fontColor
         self.font.imageView?.image = UIImage(sfString: SFSymbol.textformat, overrideString: "size")?.toolbarIcon()
-        self.font.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.font.imageView?.tintColor = UIColor.fontColor
 
         self.comments.textLabel?.text = "Comments"
         self.comments.accessoryType = .disclosureIndicator
-        self.comments.backgroundColor = ColorUtil.theme.foregroundColor
-        self.comments.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.comments.backgroundColor = UIColor.foregroundColor
+        self.comments.textLabel?.textColor = UIColor.fontColor
         self.comments.imageView?.image = UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")?.toolbarIcon()
-        self.comments.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.comments.imageView?.tintColor = UIColor.fontColor
 
         self.linkHandling.textLabel?.text = "Link handling"
         self.linkHandling.accessoryType = .disclosureIndicator
-        self.linkHandling.backgroundColor = ColorUtil.theme.foregroundColor
-        self.linkHandling.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.linkHandling.backgroundColor = UIColor.foregroundColor
+        self.linkHandling.textLabel?.textColor = UIColor.fontColor
         self.linkHandling.imageView?.image = UIImage(sfString: SFSymbol.link, overrideString: "link")?.toolbarIcon()
-        self.linkHandling.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.linkHandling.imageView?.tintColor = UIColor.fontColor
 
         self.history.textLabel?.text = "History"
         self.history.accessoryType = .disclosureIndicator
-        self.history.backgroundColor = ColorUtil.theme.foregroundColor
-        self.history.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.history.backgroundColor = UIColor.foregroundColor
+        self.history.textLabel?.textColor = UIColor.fontColor
         self.history.imageView?.image = UIImage(sfString: SFSymbol.clockFill, overrideString: "history")?.toolbarIcon()
-        self.history.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.history.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.history.imageView?.tintColor = UIColor.fontColor
+        self.history.detailTextLabel?.textColor = UIColor.fontColor
         self.history.detailTextLabel?.text = "\(History.seenTimes.allKeys.count) visited posts"
         self.history.detailTextLabel?.numberOfLines = 0
 
         self.dataSaving.textLabel?.text = "Data saving"
         self.dataSaving.accessoryType = .disclosureIndicator
-        self.dataSaving.backgroundColor = ColorUtil.theme.foregroundColor
-        self.dataSaving.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.dataSaving.backgroundColor = UIColor.foregroundColor
+        self.dataSaving.textLabel?.textColor = UIColor.fontColor
         self.dataSaving.imageView?.image = UIImage(sfString: SFSymbol.wifiExclamationmark, overrideString: "data")?.toolbarIcon()
-        self.dataSaving.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.dataSaving.imageView?.tintColor = UIColor.fontColor
 
         self.content.textLabel?.text = "NSFW Content"
         self.content.accessoryType = .disclosureIndicator
-        self.content.backgroundColor = ColorUtil.theme.foregroundColor
-        self.content.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.content.backgroundColor = UIColor.foregroundColor
+        self.content.textLabel?.textColor = UIColor.fontColor
         self.content.imageView?.image = UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "image")?.toolbarIcon()
-        self.content.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.content.imageView?.tintColor = UIColor.fontColor
 
         self.subCell.textLabel?.text = "Visit the Slide subreddit!"
         self.subCell.accessoryType = .disclosureIndicator
-        self.subCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.subCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.subCell.backgroundColor = UIColor.foregroundColor
+        self.subCell.textLabel?.textColor = UIColor.fontColor
         self.subCell.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
-        self.subCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.subCell.imageView?.tintColor = UIColor.fontColor
 
         self.filters.textLabel?.text = "Filters"
         self.filters.accessoryType = .disclosureIndicator
-        self.filters.backgroundColor = ColorUtil.theme.foregroundColor
-        self.filters.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.filters.backgroundColor = UIColor.foregroundColor
+        self.filters.textLabel?.textColor = UIColor.fontColor
         self.filters.imageView?.image = UIImage(named: "filter")?.toolbarIcon()
-        self.filters.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.filters.imageView?.tintColor = UIColor.fontColor
 
         self.aboutCell.textLabel?.text = "Version: \(getVersion())"
         self.aboutCell.accessoryType = .disclosureIndicator
-        self.aboutCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.aboutCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.aboutCell.backgroundColor = UIColor.foregroundColor
+        self.aboutCell.textLabel?.textColor = UIColor.fontColor
         self.aboutCell.imageView?.image = UIImage(sfString: SFSymbol.infoCircleFill, overrideString: "info")?.toolbarIcon()
             
-        self.aboutCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.aboutCell.imageView?.tintColor = UIColor.fontColor
 
         self.githubCell.textLabel?.text = "Github"
         self.githubCell.accessoryType = .disclosureIndicator
-        self.githubCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.githubCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.githubCell.backgroundColor = UIColor.foregroundColor
+        self.githubCell.textLabel?.textColor = UIColor.fontColor
         self.githubCell.imageView?.image = UIImage(named: "github")?.toolbarIcon()
-        self.githubCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.githubCell.imageView?.tintColor = UIColor.fontColor
 
         self.licenseCell.textLabel?.text = "Open source licenses"
         self.licenseCell.accessoryType = .disclosureIndicator
-        self.licenseCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.licenseCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.licenseCell.backgroundColor = UIColor.foregroundColor
+        self.licenseCell.textLabel?.textColor = UIColor.fontColor
         self.licenseCell.imageView?.image = UIImage(sfString: SFSymbol.chevronLeftSlashChevronRight, overrideString: "code")?.toolbarIcon()
-        self.licenseCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.licenseCell.imageView?.tintColor = UIColor.fontColor
 
         self.contributorsCell.textLabel?.text = "Slide project contributors"
         self.contributorsCell.accessoryType = .disclosureIndicator
-        self.contributorsCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.contributorsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.contributorsCell.backgroundColor = UIColor.foregroundColor
+        self.contributorsCell.textLabel?.textColor = UIColor.fontColor
         self.contributorsCell.imageView?.image = UIImage(sfString: SFSymbol.smileyFill, overrideString: "happy")?.toolbarIcon()
-        self.contributorsCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.contributorsCell.imageView?.tintColor = UIColor.fontColor
 
         self.autoPlayCell.textLabel?.text = "Autoplay videos and gifs"
         self.autoPlayCell.accessoryType = .none
-        self.autoPlayCell.backgroundColor = ColorUtil.theme.foregroundColor
-        self.autoPlayCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.autoPlayCell.backgroundColor = UIColor.foregroundColor
+        self.autoPlayCell.textLabel?.textColor = UIColor.fontColor
         self.autoPlayCell.imageView?.image = UIImage(sfString: SFSymbol.playFill, overrideString: "play")?.toolbarIcon()
-        self.autoPlayCell.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.autoPlayCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.autoPlayCell.imageView?.tintColor = UIColor.fontColor
+        self.autoPlayCell.detailTextLabel?.textColor = UIColor.fontColor
         self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoplaying videos can lead to more data use"
         self.autoPlayCell.detailTextLabel?.numberOfLines = 0
         self.autoPlayCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         viewModeCell.textLabel?.text = "Multi-Column and app behavior"
         viewModeCell.accessoryType = .disclosureIndicator
-        viewModeCell.backgroundColor = ColorUtil.theme.foregroundColor
-        viewModeCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        viewModeCell.backgroundColor = UIColor.foregroundColor
+        viewModeCell.textLabel?.textColor = UIColor.fontColor
         viewModeCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.viewModeCell.imageView?.image = UIImage(sfString: SFSymbol.sidebarLeft, overrideString: "multicolumn")?.toolbarIcon()
-        self.viewModeCell.imageView?.tintColor = ColorUtil.theme.fontColor
-        self.viewModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.viewModeCell.imageView?.tintColor = UIColor.fontColor
+        self.viewModeCell.detailTextLabel?.textColor = UIColor.fontColor
         self.viewModeCell.detailTextLabel?.text = "Multi-Column mode, Split UI, and subreddit bar settings"
         self.viewModeCell.detailTextLabel?.numberOfLines = 0
 
@@ -441,11 +441,11 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         lock.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         lockCell.textLabel?.text = "Biometric app lock"
         lockCell.accessoryView = lock
-        lockCell.backgroundColor = ColorUtil.theme.foregroundColor
-        lockCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        lockCell.backgroundColor = UIColor.foregroundColor
+        lockCell.textLabel?.textColor = UIColor.fontColor
         lockCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.lockCell.imageView?.image = UIImage(sfString: SFSymbol.lockFill, overrideString: "lockapp")?.toolbarIcon()
-        self.lockCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.lockCell.imageView?.tintColor = UIColor.fontColor
 
         subIcons = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -454,8 +454,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         subIcons.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         subIconsCell.textLabel?.text = "Subreddit Icons on posts"
         subIconsCell.accessoryView = subIcons
-        subIconsCell.backgroundColor = ColorUtil.theme.foregroundColor
-        subIconsCell.textLabel?.textColor = ColorUtil.theme.fontColor
+        subIconsCell.backgroundColor = UIColor.foregroundColor
+        subIconsCell.textLabel?.textColor = UIColor.fontColor
         subIconsCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.subIconsCell.imageView?.image = UIImage(named: "icon")?.getCopy(withSize: CGSize(width: 25, height: 25))
         self.subIconsCell.imageView?.layer.cornerRadius = 12.5
@@ -463,10 +463,10 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
 
         audioSettings.textLabel?.text = "Audio"
         audioSettings.accessoryType = .disclosureIndicator
-        audioSettings.backgroundColor = ColorUtil.theme.foregroundColor
-        audioSettings.textLabel?.textColor = ColorUtil.theme.fontColor
+        audioSettings.backgroundColor = UIColor.foregroundColor
+        audioSettings.textLabel?.textColor = UIColor.fontColor
         audioSettings.imageView?.image = UIImage(sfString: SFSymbol.speaker3Fill, overrideString: "audio")?.toolbarIcon()
-        audioSettings.imageView?.tintColor = ColorUtil.theme.fontColor
+        audioSettings.imageView?.tintColor = UIColor.fontColor
 
         if reset {
             self.tableView.reloadData()
@@ -493,9 +493,9 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     }
     
     func checkRealmFileSize() -> Double {
-        if let realmPath = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
+        if let realmPath = SlideCoreData.getCoreDataDBPath() {
             do {
-                let attributes = try FileManager.default.attributesOfItem(atPath: realmPath)
+                let attributes = try FileManager.default.attributesOfItem(atPath: realmPath.absoluteString)
                 if let fileSize = attributes[FileAttributeKey.size] as? Double {
 
                     return fileSize
@@ -666,7 +666,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                 ch = SubredditReorderViewController()
             case 2:
                 if !SettingValues.isPro {
-                    VCPresenter.proDialogShown(feature: true, self)
+                    _ = VCPresenter.proDialogShown(feature: true, self)
                 } else {
                     ch = SettingsViewMode()
                 }
@@ -747,29 +747,10 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 5:
                 ch = CacheSettings()
             case 6:
-                do {
-                    let realm = try Realm()
-
-                    try! realm.write {
-                        realm.deleteAll()
-                    }
-                    if let path = Realm.Configuration.defaultConfiguration.fileURL?.relativePath {
-                        do {
-                            try FileManager().removeItem(atPath: path)
-                        } catch {
-                        }
-                    } else {
-                        print("Realm file not found")
-                    }
-                    
-                } catch let error as NSError {
-                    print("error - \(error.localizedDescription)")
-                }
-                
                 let activity = UIActivityIndicatorView()
-                activity.color = ColorUtil.theme.navIconColor
+                activity.color = UIColor.navIconColor
                 activity.hidesWhenStopped = true
-                activity.backgroundColor = ColorUtil.theme.foregroundColor
+                activity.backgroundColor = UIColor.foregroundColor
 
                 clearCell.addSubview(activity)
                 activity.startAnimating()
@@ -796,9 +777,21 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                         print(error)
                     }
                     
-                    let defaultURL = Realm.Configuration.defaultConfiguration.fileURL!
-                    let defaultParentURL = defaultURL.deletingLastPathComponent()
-                    let compactedURL = defaultParentURL.appendingPathComponent("default-compact.realm")
+                    do {
+                        let fileManager = FileManager.default
+
+                        let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                        let directoryContents = try fileManager.contentsOfDirectory(atPath: dirPath)
+
+                        for path in directoryContents {
+                            if path.contains("realm") {
+                                let writePath = URL(fileURLWithPath: dirPath).appendingPathComponent(path)
+                                try fileManager.removeItem(at: writePath)
+                            }
+                        }
+                    } catch {
+                        
+                    }
 
                     let countBytes = ByteCountFormatter()
                     countBytes.allowedUnits = [.useMB]
@@ -838,14 +831,14 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 2:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios/graphs/contributors")!
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
             case 3:
                 let url = URL.init(string: "https://github.com/ccrama/Slide-ios")!
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(url, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(url)
                 }
@@ -869,7 +862,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 14, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 24, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = UIColor.backgroundColor
         
         switch section {
         case 0: label.text = "General"
@@ -918,9 +911,4 @@ extension Bundle {
         }
         return nil
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

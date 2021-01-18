@@ -29,7 +29,7 @@ class ManageMultireddit: UITableViewController {
     var subs: [String] = []
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -45,7 +45,7 @@ class ManageMultireddit: UITableViewController {
         super.viewDidLoad()
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         
         subs.append(contentsOf: multi.subreddits)
         self.subs = self.subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending })
@@ -90,7 +90,7 @@ class ManageMultireddit: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
     }
     
     @objc func add(_ selector: AnyObject) {
@@ -123,7 +123,7 @@ class ManageMultireddit: UITableViewController {
         let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
         c.setSubreddit(subreddit: thing, nav: nil)
         cell = c
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
         
         return cell!
     }

@@ -21,8 +21,8 @@ public extension UITableViewCell {
         imageView?.tintColor = imageColor
         
         accessoryType = .none
-        backgroundColor = ColorUtil.theme.foregroundColor
-        textLabel?.textColor = ColorUtil.theme.fontColor
+        backgroundColor = UIColor.foregroundColor
+        textLabel?.textColor = UIColor.fontColor
         layer.cornerRadius = 5
         clipsToBounds = true
     }
@@ -31,8 +31,8 @@ public extension UITableViewCell {
         imageView?.image = image
         
         accessoryType = .none
-        backgroundColor = ColorUtil.theme.foregroundColor
-        textLabel?.textColor = ColorUtil.theme.fontColor
+        backgroundColor = UIColor.foregroundColor
+        textLabel?.textColor = UIColor.fontColor
         contentView.layer.cornerRadius = 5
         contentView.clipsToBounds = true
     }

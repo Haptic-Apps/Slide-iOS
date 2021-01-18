@@ -35,8 +35,8 @@ class SettingsCustomTheme: UITableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -71,7 +71,7 @@ class SettingsCustomTheme: UITableViewController {
                 navIconColor = UIColor(hexString: split[5])
                 statusbarEnabled = Bool(split[8])!
                 doToolbar(navIconColor)
-                isCurrentTheme = foregroundColor.hexString() == ColorUtil.theme.foregroundColor.hexString() && backgroundColor.hexString() == ColorUtil.theme.backgroundColor.hexString() && fontColor.hexString() == ColorUtil.theme.fontColor.hexString() && navIconColor.hexString() == ColorUtil.theme.navIconColor.hexString()
+                isCurrentTheme = foregroundColor.hexString() == UIColor.foregroundColor.hexString() && backgroundColor.hexString() == UIColor.backgroundColor.hexString() && fontColor.hexString() == UIColor.fontColor.hexString() && navIconColor.hexString() == UIColor.navIconColor.hexString()
                 self.title = split[1].removingPercentEncoding!.replacingOccurrences(of: "<H>", with: "#")
                 self.setupViews()
                 setupBaseBarColors()
@@ -105,10 +105,10 @@ class SettingsCustomTheme: UITableViewController {
             
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
-                textField.textColor = ColorUtil.theme.fontColor
-                textField.attributedPlaceholder = NSAttributedString(string: "Theme name...", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.foregroundColor
+                textField.textColor = UIColor.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Theme name...", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
+                textField.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = UIColor.foregroundColor
                 textField.layer.borderWidth = 1
                 textField.autocorrectionType = UITextAutocorrectionType.no
                 textField.keyboardAppearance = .default
@@ -124,7 +124,7 @@ class SettingsCustomTheme: UITableViewController {
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Save theme?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Save theme?", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
             alert.contentView.addSubview(textField)
             
@@ -357,16 +357,16 @@ class SettingsCustomTheme: UITableViewController {
             switch indexPath.row {
             case 0:
                 color = foregroundColor
-                alert.attributedMessage = NSAttributedString(string: "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedMessage = NSAttributedString(string: "Foreground color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             case 1:
                 color = backgroundColor
-                alert.attributedMessage = NSAttributedString(string: "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedMessage = NSAttributedString(string: "Background color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             case 2:
                 color = fontColor
-                alert.attributedMessage = NSAttributedString(string: "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedMessage = NSAttributedString(string: "Font color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             default:
                 color = navIconColor
-                alert.attributedMessage = NSAttributedString(string: "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedMessage = NSAttributedString(string: "Icons color", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             }
 
             let selection: ColorPickerViewController.Selection? = { color in
@@ -415,11 +415,11 @@ class SettingsCustomTheme: UITableViewController {
                 
                 let config: TextField.Config = { textField in
                     textField.becomeFirstResponder()
-                    textField.textColor = ColorUtil.theme.fontColor
-                    textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                    textField.left(image: UIImage(named: "pallete")?.menuIcon(), color: ColorUtil.theme.fontColor)
-                    textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                    textField.backgroundColor = ColorUtil.theme.foregroundColor
+                    textField.textColor = UIColor.fontColor
+                    textField.attributedPlaceholder = NSAttributedString(string: "HEX String", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
+                    textField.left(image: UIImage(named: "pallete")?.menuIcon(), color: UIColor.fontColor)
+                    textField.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
+                    textField.backgroundColor = UIColor.foregroundColor
                     textField.leftViewPadding = 12
                     textField.layer.borderWidth = 1
                     textField.layer.cornerRadius = 8
@@ -436,7 +436,7 @@ class SettingsCustomTheme: UITableViewController {
                 
                 alert.setupTheme()
                 
-                alert.attributedTitle = NSAttributedString(string: "Enter HEX color code", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedTitle = NSAttributedString(string: "Enter HEX color code", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
                 
                 alert.contentView.addSubview(textField)
                 
@@ -468,11 +468,11 @@ class SettingsCustomTheme: UITableViewController {
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
             vc.set(color: color) { new in
                 color = new
-                alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                alert.attributedTitle = NSAttributedString(string: color.hexString(), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             }
             
             alert.addCancelButton()

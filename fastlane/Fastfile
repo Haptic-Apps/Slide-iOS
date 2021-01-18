@@ -53,3 +53,9 @@ platform :ios do
     upload_to_testflight
   end
 end
+
+swiftlint(config_file: ".swiftlint.yml",
+    strict: true,
+    quiet: true,
+    ignore_exit_status: true)
+

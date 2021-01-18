@@ -16,8 +16,8 @@ if [ -e "Gemfile" ]; then
   # install bundler gem for ruby dependency management
   gem uninstall bundler
   gem install bundler:1.17.3 --no-document || echo "failed to install bundle"; #1.17.3 is needed for other deps
-  
-  bundle config set deployment 'true';
+
+bundle config set deployment 'true';
   bundle config path vendor/bundle;
   bundle install || echo "failed to install bundle";
 fi

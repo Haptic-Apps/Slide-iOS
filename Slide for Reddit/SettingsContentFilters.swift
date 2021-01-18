@@ -6,8 +6,8 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-import UIKit
 import reddift
+import UIKit
 
 class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDelegate {
     
@@ -22,7 +22,7 @@ class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDeleg
     var redditBlocked = [String]()
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -125,12 +125,12 @@ class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDeleg
         searchBar.placeholder = title
         searchBar.delegate = self
         searchBar.returnKeyType = .done
-        searchBar.textColor = ColorUtil.theme.fontColor
+        searchBar.textColor = UIColor.fontColor
         searchBar.setImage(UIImage(), for: .search, state: .normal)
         searchBar.autocapitalizationType = .none
         searchBar.isTranslucent = false
-        searchBar.backgroundColor = ColorUtil.theme.foregroundColor
-        if !ColorUtil.theme.isLight {
+        searchBar.backgroundColor = UIColor.foregroundColor
+        if !UIColor.isLightTheme {
             searchBar.keyboardAppearance = .dark
         }
     }
@@ -138,7 +138,7 @@ class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDeleg
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Filters"
         self.headers = ["Submission domain filters", "Submission body text filters", "Submission title filters", "Submission author filters", "Subreddit filters", "Submission flair filters"]
@@ -206,11 +206,11 @@ class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDeleg
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = UITableViewCell()
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.accessoryType = .disclosureIndicator
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.tintColor = ColorUtil.theme.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.tintColor = UIColor.fontColor
         switch indexPath.section {
         case 0:
             cell.textLabel?.text = PostFilter.domains[indexPath.row] as String
@@ -223,12 +223,12 @@ class SettingsContentFilters: BubbleSettingTableViewController, UISearchBarDeleg
                 cell.textLabel?.text = PostFilter.profiles[indexPath.row] as String
             } else {
                 cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-                cell.backgroundColor = ColorUtil.theme.foregroundColor
+                cell.backgroundColor = UIColor.foregroundColor
                 cell.accessoryType = .detailButton
-                cell.backgroundColor = ColorUtil.theme.foregroundColor
-                cell.textLabel?.textColor = ColorUtil.theme.fontColor
-                cell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-                cell.tintColor = ColorUtil.theme.fontColor
+                cell.backgroundColor = UIColor.foregroundColor
+                cell.textLabel?.textColor = UIColor.fontColor
+                cell.detailTextLabel?.textColor = UIColor.fontColor
+                cell.tintColor = UIColor.fontColor
                 cell.detailTextLabel?.numberOfLines = 0
                 cell.detailTextLabel?.text = "User is blocked on your Reddit account, and can be unblocked at Reddit.com"
                 cell.textLabel?.text = redditBlocked[indexPath.row - PostFilter.profiles.count]

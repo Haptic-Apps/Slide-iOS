@@ -8,11 +8,10 @@
 
 import Foundation
 import reddift
-import YYText
 
 class Sidebar: NSObject {
     
-    var parent: (UIViewController & MediaVCDelegate)?
+    weak var parent: (UIViewController & MediaVCDelegate)?
     var subname = ""
     
     init(parent: UIViewController & MediaVCDelegate, subname: String) {
@@ -82,9 +81,4 @@ class Sidebar: NSObject {
         }
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

@@ -157,8 +157,8 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
             self.setDepthColors(colorArray)
         }
 
-        alertController.addAction(title: "Invisible", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: ColorUtil.theme.backgroundColor)) {
-            let baseColor = ColorUtil.theme.backgroundColor
+        alertController.addAction(title: "Invisible", icon: UIImage(named: "circle")!.menuIcon().getCopy(withColor: UIColor.backgroundColor)) {
+            let baseColor = UIColor.backgroundColor
             var colorArray = [UIColor]()
             colorArray.append(baseColor)
             colorArray.append(baseColor)
@@ -262,8 +262,8 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -276,7 +276,7 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
 
     override func loadView() {
         super.loadView()
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Comments settings"
         self.headers = ["Comments page", "Comment display", "Comment interaction"]
@@ -290,7 +290,7 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         createCell(wideIndicatorCell, wideIndicator, isOn: SettingValues.wideIndicators, text: "Make comment depth indicator wider")
         createCell(hideAutomodCell, hideAutomod, isOn: SettingValues.hideAutomod, text: "Hide pinned AutoModerator comments")
         createCell(floatingJumpCell, nil, isOn: false, text: "Floating jump button")
-        floatingJumpCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        floatingJumpCell.detailTextLabel?.textColor = UIColor.fontColor
         floatingJumpCell.detailTextLabel?.numberOfLines = 0
         floatingJumpCell.detailTextLabel?.text = SettingValues.commentJumpButton.getTitle()
 
@@ -302,8 +302,8 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     public func updateThemeCell() {
         authorThemeCell.textLabel?.text = "Author username color"
-        authorThemeCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        authorThemeCell.backgroundColor = ColorUtil.theme.foregroundColor
+        authorThemeCell.textLabel?.textColor = UIColor.fontColor
+        authorThemeCell.backgroundColor = UIColor.foregroundColor
         authorThemeCell.textLabel?.numberOfLines = 0
         authorThemeCell.textLabel?.lineBreakMode = .byWordWrapping
         authorThemeCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -315,8 +315,8 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     public func updateDepthsCell() {
         themeColorCell.textLabel?.text = "Depths colors"
-        themeColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        themeColorCell.backgroundColor = ColorUtil.theme.foregroundColor
+        themeColorCell.textLabel?.textColor = UIColor.fontColor
+        themeColorCell.backgroundColor = UIColor.foregroundColor
         themeColorCell.textLabel?.numberOfLines = 0
         themeColorCell.textLabel?.lineBreakMode = .byWordWrapping
         themeColorCell.selectionStyle = UITableViewCell.SelectionStyle.none

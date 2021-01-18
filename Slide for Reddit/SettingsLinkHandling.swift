@@ -192,8 +192,8 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -207,7 +207,7 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
     override func loadView() {
         super.loadView()
 
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Link Handling"
         headers = ["Web browser", "Internal link handling", "Domains to open externally"]
@@ -217,7 +217,7 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         createCell(internalImageCell, internalImage, isOn: SettingValues.internalImageView, text: "Image viewer (Imgur, direct image links)")
         createCell(internalYouTubeCell, internalYouTube, isOn: SettingValues.internalYouTube, text: "YouTube viewer")
         createCell(gfycatAPICell, gfycatAPI, isOn: SettingValues.gfycatAPI, text: "Load Gfycats through the Gfycat API")
-        gfycatAPICell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        gfycatAPICell.detailTextLabel?.textColor = UIColor.fontColor
         gfycatAPICell.detailTextLabel?.numberOfLines = 0
         gfycatAPICell.detailTextLabel?.text = "Using the Gfycat API will allow Gfycat videos with sound, but may take longer to download"
 
@@ -227,8 +227,8 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         domainEnter.placeholder = "Enter domain to open externally"
         domainEnter.delegate = self
         domainEnter.returnKeyType = .done
-        domainEnter.textColor = ColorUtil.theme.fontColor
-        if !ColorUtil.theme.isLight {
+        domainEnter.textColor = UIColor.fontColor
+        if !UIColor.isLightTheme {
             domainEnter.keyboardAppearance = .dark
         }
         domainEnter.setImage(UIImage(), for: .search, state: .normal)
@@ -251,9 +251,9 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         switch indexPath.section {
         case 0:
             let cell = InsetCell()
-            cell.backgroundColor = ColorUtil.theme.foregroundColor
-            cell.backgroundColor = ColorUtil.theme.foregroundColor
-            cell.textLabel?.textColor = ColorUtil.theme.fontColor
+            cell.backgroundColor = UIColor.foregroundColor
+            cell.backgroundColor = UIColor.foregroundColor
+            cell.textLabel?.textColor = UIColor.fontColor
             
             let text = browsers[indexPath.row]
             if text == SettingValues.BROWSER_SAFARI {
@@ -311,8 +311,8 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
             }
         case 2:
             let cell = InsetCell()
-            cell.backgroundColor = ColorUtil.theme.foregroundColor
-            cell.textLabel?.textColor = ColorUtil.theme.fontColor
+            cell.backgroundColor = UIColor.foregroundColor
+            cell.textLabel?.textColor = UIColor.fontColor
             cell.textLabel?.text = PostFilter.openExternally[indexPath.row] as String
             return cell
 
@@ -344,15 +344,4 @@ class SettingsLinkHandling: BubbleSettingTableViewController, UISearchBarDelegat
         default: fatalError("Unknown number of sections")
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

@@ -554,7 +554,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var lastTracks = false
     
-    func getQualityURL(urlToLoad: String, qualityList: [String],  callback: @escaping (_ realURL: String) -> Void) {
+    func getQualityURL(urlToLoad: String, qualityList: [String], callback: @escaping (_ realURL: String) -> Void) {
         if qualityList.isEmpty {
             BannerUtil.makeBanner(text: "Error finding video URL", color: GMColor.red500Color(), seconds: 5, context: self.parent ?? nil, top: false, callback: nil)
         } else {
@@ -631,7 +631,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                     }
                 }
             } else {
-                print(response.error)
                 self.parent?.dismiss(animated: true, completion: {
                     self.failureCallback?(URL.init(string: toLoad)!)
                 })
@@ -733,7 +732,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
-        print("Wanting to play " +  getKeyFromURL())
         if let videoUrl = SettingValues.streamVideos ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
             let playerItem = AVPlayerItem(url: videoUrl)
             videoView.player = AVPlayer(playerItem: playerItem)
@@ -976,7 +974,7 @@ extension VideoMediaViewController {
         } else {
             let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
             let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
-            self.videoView.player?.seek(to: newCMTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { _ in
+            self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
                 self.videoView.player?.play()
             }
         }
@@ -1259,9 +1257,9 @@ extension VideoMediaViewController {
         let alert = AlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
         
         alert.setupTheme()
-        alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
-        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
         
         alert.addCloseButton()
         alert.addBlurView()
@@ -1283,7 +1281,7 @@ extension VideoMediaViewController {
         
         alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(baseURL)
             }
@@ -1344,7 +1342,7 @@ extension VideoMediaViewController {
     
     @objc func openInYoutube(_ sender: AnyObject) {
         if let url = youtubeURL {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
 }
@@ -1360,7 +1358,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
             let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
-            self.videoView.player?.seek(to: targetTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
+            self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
 
@@ -1486,14 +1484,4 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             }
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

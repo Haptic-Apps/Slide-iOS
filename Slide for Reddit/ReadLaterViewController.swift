@@ -51,7 +51,7 @@ class ReadLaterViewController: ContentListingViewController {
         let alert = UIAlertController(title: "Really mark all as read?", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
             for item in self.baseData.content {
-                ReadLater.removeReadLater(id: item.getIdentifier())
+                ReadLater.removeReadLater(id: item.getId())
             }
             self.navigationController?.popViewController(animated: true)
         }))
@@ -73,14 +73,14 @@ public extension UIViewController {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = UIFont.boldSystemFont(ofSize: 17)
-        titleLabel.textColor = ColorUtil.theme.fontColor
+        titleLabel.textColor = UIColor.fontColor
         titleLabel.textAlignment = .center
         titleLabel.sizeToFit()
 
         let subTitleLabel = UILabel()
         subTitleLabel.text = subtitle
         subTitleLabel.font = UIFont.systemFont(ofSize: 11)
-        subTitleLabel.textColor = ColorUtil.theme.fontColor
+        subTitleLabel.textColor = UIColor.fontColor
         subTitleLabel.textAlignment = .center
         subTitleLabel.lineBreakMode = .byTruncatingTail
         subTitleLabel.sizeToFit()

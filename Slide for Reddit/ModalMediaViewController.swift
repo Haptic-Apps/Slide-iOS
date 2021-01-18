@@ -11,7 +11,6 @@ import AVKit
 import SDCAlertView
 import Then
 import UIKit
-import YYText
 
 class ModalMediaViewController: UIViewController {
 
@@ -35,9 +34,9 @@ class ModalMediaViewController: UIViewController {
     var originalPosition: CGPoint?
     var currentPositionTouched: CGPoint?
     var spinnerIndicator = UIActivityIndicatorView()
-    var titleView = YYLabel()
+    var titleView: TitleUITextView!
     
-    var didStartPan : (_ panStart: Bool) -> Void = { result in }
+    var didStartPan : (_ panStart: Bool) -> Void = { _ in }
 
     private var savedColor: UIColor?
     var commentCallback: (() -> Void)?
@@ -46,7 +45,19 @@ class ModalMediaViewController: UIViewController {
     var isUpvoted = false
     var gradientView = GradientView(gradientStartColor: UIColor.black, gradientEndColor: UIColor.clear)
 
-    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: RSubmission?) {
+    init(url: URL, lq: URL?, _ commentCallback: (() -> Void)? = nil, upvoteCallback: (() -> Void)? = nil, isUpvoted: Bool = false, _ failureCallback: ((_ url: URL) -> Void)? = nil, link: SubmissionObject?) {
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        titleView = TitleUITextView(delegate: nil, textContainer: container).then {
+            $0.doSetup()
+        }
+        
         super.init(nibName: nil, bundle: nil)
 
         self.failureCallback = failureCallback
@@ -62,7 +73,7 @@ class ModalMediaViewController: UIViewController {
             finalTitle.append(title.mainTitle!)
             
             titleView.attributedText = finalTitle
-            titleView.numberOfLines = 0
+            titleView.layoutTitleImageViews()
             
             if commentCallback != nil {
                 titleView.addTapGestureRecognizer { [weak self] (_) in
@@ -238,6 +249,18 @@ class ModalMediaViewController: UIViewController {
 
     init(model: EmbeddableMediaDataModel) {
         super.init(nibName: nil, bundle: nil)
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
+
+        titleView = TitleUITextView(delegate: nil, textContainer: container).then {
+            $0.doSetup()
+        }
+        
         setModel(model: model)
     }
     
@@ -287,7 +310,6 @@ class ModalMediaViewController: UIViewController {
         UIApplication.shared.statusBarUIView?.backgroundColor = .clear
         super.viewWillAppear(animated)
         
-        titleView.lineBreakMode = .byWordWrapping
         titleView.sizeToFit()
         titleView.layoutIfNeeded()
 
@@ -312,7 +334,7 @@ class ModalMediaViewController: UIViewController {
             UIApplication.shared.statusBarUIView?.backgroundColor = savedColor
         }
 
-        if SettingValues.reduceColor && ColorUtil.theme.isLight {
+        if SettingValues.reduceColor && UIColor.isLightTheme {
             desiredStatusBarStyle = .default
         } else {
             desiredStatusBarStyle = .lightContent
@@ -395,12 +417,11 @@ class ModalMediaViewController: UIViewController {
         titleView.bottomAnchor /==/ gradientView.bottomAnchor - 8
             
         gradientView.layoutIfNeeded()
-        titleView.preferredMaxLayoutWidth = self.titleView.frame.size.width
         titleView.sizeToFit()
     }
 
     func connectGestures() {
-        didStartPan = { [weak self] result in
+        didStartPan = { [weak self] _ in
             if let strongSelf = self {
                 strongSelf.unFullscreen(strongSelf.embeddedVC.view)
             }
@@ -545,7 +566,7 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
 }
 extension UINavigationController {
     open override var preferredStatusBarStyle: UIStatusBarStyle {
-        return (presentedViewController is AlertController) ? .lightContent : (presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && ColorUtil.theme.isLight ? .default : .lightContent))
+        return (presentedViewController is AlertController) ? .lightContent : (presentedViewController?.preferredStatusBarStyle ?? topViewController?.preferredStatusBarStyle ?? (SettingValues.reduceColor && UIColor.isLightTheme ? .default : .lightContent))
     }
 }
 

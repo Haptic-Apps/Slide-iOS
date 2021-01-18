@@ -7,7 +7,7 @@
 //
 
 extension UIResponder {
-    private weak static var _currentFirstResponder: UIResponder? = nil
+    private weak static var _currentFirstResponder: UIResponder?
 
     public static var isFirstResponderTextField: Bool {
         var isTextField = false

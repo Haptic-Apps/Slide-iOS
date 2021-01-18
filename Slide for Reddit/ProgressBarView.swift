@@ -82,7 +82,7 @@ class ProgressBarView: UIView {
         color = type.getColor()
         
         if type == .NONE {
-            color = ColorUtil.theme.foregroundColor
+            color = UIColor.foregroundColor
         }
 
         if flip {
@@ -110,7 +110,7 @@ class ProgressBarView: UIView {
         color = type.getColor()
         
         if type == .NONE {
-            color = ColorUtil.theme.foregroundColor
+            color = UIColor.foregroundColor
         }
         
         if flip {
