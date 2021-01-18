@@ -1009,8 +1009,8 @@ class CommentViewController: MediaViewController {
                     if !self.comments.isEmpty {
                         var time = timeval(tv_sec: 0, tv_usec: 0)
                         gettimeofday(&time, nil)
-                    })
-                }
+                    }
+                })
             } catch {
                 BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
         }
