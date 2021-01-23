@@ -662,7 +662,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     func doAnimatedMenu() {
         let oldLocation = parent!.tableView.contentOffset
-        self.showCommentMenu(false)
+        if comment != nil {
+            self.showCommentMenu(false)
+        }
         self.parent!.reloadHeightsNone()
         if oldLocation != CGPoint.zero {
             UIView.performWithoutAnimation {

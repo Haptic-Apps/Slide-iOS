@@ -3422,7 +3422,10 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 header.horizontalAnchors /==/ self.contentView.horizontalAnchors
                 header.topAnchor /==/ self.contentView.topAnchor + 4
                 scroll.topAnchor /==/ self.header.bottomAnchor + 4
-                imageView.sd_setImage(with: del!.headerImage!)
+                if let headerImage = del?.headerImage {
+                    imageView.sd_setImage(with: headerImage, placeholderImage: UIImage(), options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: [:], progress: nil)
+                }
+
                 header.heightAnchor /==/ 140
                 
             } else {
