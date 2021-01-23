@@ -3423,7 +3423,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 header.topAnchor /==/ self.contentView.topAnchor + 4
                 scroll.topAnchor /==/ self.header.bottomAnchor + 4
                 if let headerImage = del?.headerImage {
-                    imageView.sd_setImage(with: headerImage, placeholderImage: UIImage(), options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: [:], progress: nil)
+                    imageView.sd_setImage(with: headerImage, placeholderImage: nil, options: [.decodeFirstFrameOnly, .allowInvalidSSLCertificates, .scaleDownLargeImages], context: [:], progress: nil)
                 }
 
                 header.heightAnchor /==/ 140

@@ -41,7 +41,7 @@ class TitleUITextView: UITextView {
                     if let first = rects.first {
                         let imageView = UIImageView(frame: first)
                         self.addSubview(imageView)
-                        imageView.sd_setImage(with: url, placeholderImage: nil, options: [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)])
+                        imageView.sd_setImage(with: url, placeholderImage: nil, options: url.absoluteString.contains("b.thumbs.redditmedia.com") ? [.decodeFirstFrameOnly, .scaleDownLargeImages] : [.scaleDownLargeImages], context: [.imageThumbnailPixelSize: CGSize(width: imageView.frame.size.width * UIScreen.main.scale, height: imageView.frame.size.height * UIScreen.main.scale)]) //Decode first frame for subreddit icons
                                                 
                         if attachment.rounded {
                             imageView.backgroundColor = attachment.backgroundColor

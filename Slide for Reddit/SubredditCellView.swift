@@ -155,7 +155,7 @@ class SubredditCellView: UITableViewCell {
         if let icon = Subscriptions.icon(for: subreddit) {
             self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()
-            self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+            self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), placeholderImage: nil, options: [.decodeFirstFrameOnly, .scaleDownLargeImages], completed: nil)
         } else {
             self.icon.contentMode = .center
             if subreddit.contains("m/") {

@@ -115,7 +115,7 @@ class BottomActionCell: UITableViewCell {
             icon.image = action.icon
         } else if let action = action as? AlertMenuView {
             icon.contentMode = .scaleAspectFit
-            icon.sd_setImage(with: URL(string: action.icon_url), placeholderImage: UIImage(), completed: nil)
+            icon.sd_setImage(with: URL(string: action.icon_url), placeholderImage: nil, completed: nil)
         }
         
         if !action.enabled {
