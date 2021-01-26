@@ -107,7 +107,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
                            })
     }
     
-    //From https://stackoverflow.com/a/25167681/3697225
+    // From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width {
             scrollView.contentOffset = CGPoint(x: scrollView.bounds.size.width, y: 0)
@@ -116,7 +116,7 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
         }
     }
     
-    //From https://stackoverflow.com/a/25167681/3697225
+    // From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)

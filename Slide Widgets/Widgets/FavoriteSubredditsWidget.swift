@@ -144,7 +144,7 @@ struct Favorite_Subreddits_Previews: PreviewProvider {
 
 // MARK: - Widget Views
 
-//Unused
+// Unused
 private struct SmallWidgetViewCentered: View {
     var imageData: Data
     var title: String
@@ -153,7 +153,7 @@ private struct SmallWidgetViewCentered: View {
 
     @ViewBuilder
     var body: some View {
-        //Full size small widget
+        // Full size small widget
         HStack(alignment: .center, spacing: 0) {
             VStack(alignment: .center, spacing: 0) {
                 Image(uiImage: UIImage(data: imageData) ?? UIImage())
@@ -245,7 +245,7 @@ private struct SubredditView: View {
 
     @ViewBuilder
     var body: some View {
-        //Grid widget
+        // Grid widget
         Link(destination: URL(string: "slide://www.reddit.com/r/\(title)")!) {
             GeometryReader { geometry in
                 VStack(alignment: .leading, spacing: 0) {

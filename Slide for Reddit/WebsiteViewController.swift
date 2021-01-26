@@ -25,7 +25,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     var csrfToken = ""
     var progressObservation: NSKeyValueObservation?
 
-    var savedChallengeURL: String? //Used for login with Apple
+    var savedChallengeURL: String? // Used for login with Apple
     public var reloadCallback: (() -> Void)?
     
     init(url: URL, subreddit: String) {
@@ -241,7 +241,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             self.myProgressView.progress = Float(webView.estimatedProgress)
             if webView.estimatedProgress > 0.98 {
                 self.myProgressView.isHidden = true
-                if self.needsReload { //Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
+                if self.needsReload { // Show a loader and wait for NSURLSession cache to sync Cookies. 3 seconds worked for me, but there is no event handler for this
                     self.needsReload = false
                     webView.alpha = 0
                     webView.superview?.backgroundColor = UIColor.backgroundColor
@@ -363,24 +363,24 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
             }
         }
 
-        if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8), bodyString.contains("id_token"), let base = savedChallengeURL { //Response from Apple login
+        if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8), bodyString.contains("id_token"), let base = savedChallengeURL { // Response from Apple login
             var params = queryDictionaryForQueryString(query: bodyString)
-            params["csrf_token"] = csrfToken //Used stored csrfToken
+            params["csrf_token"] = csrfToken // Used stored csrfToken
             params["check_existing_user"] = true
             params["create_user"] = true
 
             do {
                 if #available(iOS 13.0, *) {
-                    //Let Reddit create new reddit_session Cookie from data returned from Apple Login
+                    // Let Reddit create new reddit_session Cookie from data returned from Apple Login
                     let jsonData = try JSONSerialization.data(withJSONObject: params, options: .withoutEscapingSlashes)
                     Alamofire.request("https://www.reddit.com/account/identity_provider_login", method: .post, parameters: [:], encoding: String(data: jsonData, encoding: .utf8)!, headers: nil).responseJSON { (response) in
                         switch response.result {
                         case .success(let JSON):
                             let token = (JSON as? [String: Any])?["token"] as? String ?? ""
-                            //New token generated, new reddit_session Cookie should exist now
+                            // New token generated, new reddit_session Cookie should exist now
                             print("TOKEN IS \(token)")
                             
-                            //Force reload page
+                            // Force reload page
                             self.webView.load(URLRequest(url: URL(string: base)!))
                             self.needsReload = true
                         case .failure(let error):
@@ -414,7 +414,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         
     }
     
-    //Force save Cookies
+    // Force save Cookies
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         guard
             let response = navigationResponse.response as? HTTPURLResponse,
@@ -448,12 +448,12 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         return dictionary
     }
     
-    //Get user csrf token for Alamofire, which will be used to authorize next
+    // Get user csrf token for Alamofire, which will be used to authorize next
     @objc func loginWithApple() {
         Alamofire.request("https://www.reddit.com/account/login/?mobile_ui=on&experiment_mweb_sso_login_link=enabled&experiment_mweb_google_onetap=onetap_auto&experiment_mweb_am_refactoring=enabled", method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).response { (response) in
             
             if let data = response.data, let stringBody = String(data: data, encoding: .utf8) {
-                //Get token out of body HTML
+                // Get token out of body HTML
                 let split = stringBody.substring((stringBody.indexOf("csrf_token\" value=\"") ?? 0) + 19, length: 50)
                 let secondSplit = split.substring(0, length: split.indexOf("\"") ?? 0)
                 self.csrfToken = secondSplit
@@ -463,7 +463,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         }
     }
 
-    //Prompts Sign in with Apple screen using Reddit's auth parameters
+    // Prompts Sign in with Apple screen using Reddit's auth parameters
     @objc func promptLoginScreen() {
         let queryItems = [
             URLQueryItem(name: "client_id", value: "com.reddit.RedditAppleSSO"),
@@ -527,7 +527,7 @@ extension WKWebView {
         return resultString
     }
 
-    //From https://stackoverflow.com/a/54573361/3697225
+    // From https://stackoverflow.com/a/54573361/3697225
     func cleanAllCookies() {
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
 

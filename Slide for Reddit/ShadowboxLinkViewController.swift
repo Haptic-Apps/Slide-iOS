@@ -314,7 +314,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
     }
     
     func doBackground() {
-        if SettingValues.blackShadowbox || true { //Disable this setting completely
+        if SettingValues.blackShadowbox || true { // Disable this setting completely
             self.backgroundColor = .black
         } else {
             if content is SubmissionObject {
@@ -377,7 +377,7 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                     embed!.view.topAnchor /==/ topBody.safeTopAnchor
                     embed!.view.bottomAnchor /==/ topBody.bottomAnchor
                 } else {
-                    //Shouldn't be here
+                    // Shouldn't be here
                 }
             } else {
                 populated = false
@@ -455,9 +455,9 @@ class ShadowboxLinkViewController: MediaViewController, UIScrollViewDelegate, UI
                 }
             }
         } else if type == .ALBUM {
-            //We captured it above. Possible implementation in the future?
+            // We captured it above. Possible implementation in the future?
         } else {
-            //Nothing
+            // Nothing
         }
     }
     

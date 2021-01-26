@@ -340,7 +340,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         case 1:
             switch indexPath.row {
             case 0: return self.commentGesturesCell
-            //case 1: return self.commentCell
+            // case 1: return self.commentCell
             case 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "commentgesturepreview", for: indexPath) as! GesturePreviewCell
                 cell.setup(comment: true, parent: self)

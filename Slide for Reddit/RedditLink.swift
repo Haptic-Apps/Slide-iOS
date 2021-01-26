@@ -209,7 +209,7 @@ class RedditLink {
         }
         
         url = url.removingPercentEncoding ?? url
-        url = url.removingPercentEncoding ?? url //For some reason, some links are doubly encoded
+        url = url.removingPercentEncoding ?? url // For some reason, some links are doubly encoded
         
         url = url.replacingOccurrences(of: "&amp;", with: "&")
 
@@ -259,7 +259,7 @@ class RedditLink {
             // User. Format: reddit.com/u [or user]/$username/$page [optional]
             return RedditLinkType.USER
         } else {
-            //Open all links that we can't open in another app
+            // Open all links that we can't open in another app
             return RedditLinkType.OTHER
         }
     }

@@ -309,7 +309,7 @@ class SettingValues {
         case CROPPED_IMAGE = "cropped"
         case SHORT_IMAGE = "short"
         case THUMBNAIL = "thumbnail"
-        //for future implementation case NONE = "none"
+        // for future implementation case NONE = "none"
     }
 
     enum ActionBarMode: String {
@@ -533,7 +533,7 @@ class SettingValues {
         }
 
         SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
-        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) //Only enable this on Mac or iPad
+        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) // Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
@@ -583,7 +583,7 @@ class SettingValues {
         }
         
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
-        SettingValues.disable13Popup = false //REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
+        SettingValues.disable13Popup = false // REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
         SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
@@ -638,7 +638,7 @@ class SettingValues {
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
-        SettingValues.lqLow = false //deprecate this settings.bool(forKey: SettingValues.pref_lqLow)
+        SettingValues.lqLow = false // deprecate this settings.bool(forKey: SettingValues.pref_lqLow)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.readLaterButton = settings.object(forKey: SettingValues.pref_readLaterButton) == nil ? true : settings.bool(forKey: SettingValues.pref_readLaterButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
@@ -652,8 +652,8 @@ class SettingValues {
         }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
-        SettingValues.subredditBar = true //Enable this forever now settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
-        //SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
+        SettingValues.subredditBar = true // Enable this forever now settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
+        // SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
         SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
@@ -1164,7 +1164,7 @@ class SettingValues {
             }
         }
         
-        //TODO pre ios 13 icons
+        // TODO pre ios 13 icons
         public func getImage(_ link: SubmissionObject? = nil) -> UIImage {
             switch self {
             case .HOME:

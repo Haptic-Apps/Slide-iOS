@@ -194,7 +194,7 @@ class AnyModalViewController: UIViewController {
             }
             
             DispatchQueue.global(qos: .background).async {
-                //Prevent video from stopping system background audio
+                // Prevent video from stopping system background audio
                 do {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                     try AVAudioSession.sharedInstance().setActive(true)
@@ -296,7 +296,7 @@ class AnyModalViewController: UIViewController {
 
         player.isMuted = false
 
-        //SettingValues.autoplayAudioMode.activate()
+        // SettingValues.autoplayAudioMode.activate()
 
         if SettingValues.modalVideosRespectHardwareMuteSwitch && !overrideMuteSwitch {
             try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])

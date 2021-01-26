@@ -34,7 +34,7 @@ class InterfaceController: Votable {
     var isNew = false
     
     override func willActivate() {
-        //setTitle("WILL ACTIVATE")
+        // setTitle("WILL ACTIVATE")
 
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
@@ -71,7 +71,7 @@ class InterfaceController: Votable {
                 self.table.setNumberOfRows(0, withRowType: "SubmissionRowController")
             }
         }
-        //self.setTitle("getting submissions")
+        // self.setTitle("getting submissions")
 
         WCSession.default.sendMessage(["links": subreddit, "reset": reset, "new": isNew], replyHandler: { (message) in
             self.loadingImage.setHidden(true)
@@ -85,7 +85,7 @@ class InterfaceController: Votable {
     }
     
     override func didDeactivate() {
-        //setTitle("DEACTIVATE")
+        // setTitle("DEACTIVATE")
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
     }
@@ -123,7 +123,7 @@ class InterfaceController: Votable {
     var tries = 0
     var letThrough = false
     func loadData(_ session: WCSession) {
-        //setTitle("HB \(tries)")
+        // setTitle("HB \(tries)")
         tries += 1
         if session.isReachable {
             if !letThrough {
@@ -142,10 +142,10 @@ class InterfaceController: Votable {
         } else {
             return
         }
-        //setTitle("LOADING")
+        // setTitle("LOADING")
         letThrough = true
         session.sendMessage(["sublist": true], replyHandler: { (message) in
-            //self.setTitle("got subs")
+            // self.setTitle("got subs")
             self.subs = message["subs"] as? [String: String] ?? [String: String]()
             self.subsOrdered = message["orderedsubs"] as? [String] ?? [String]()
             self.isPro = message["pro"] as? Bool ?? false
@@ -171,7 +171,7 @@ extension InterfaceController: WCSessionDelegate {
     }
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
-        //setTitle("DID ACTIVATE")
+        // setTitle("DID ACTIVATE")
         if subs.isEmpty {
             loadingImage.setHidden(false)
             loadingImage.setImageNamed("Activity")

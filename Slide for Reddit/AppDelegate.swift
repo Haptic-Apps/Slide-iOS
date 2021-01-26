@@ -220,7 +220,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SettingValues.initialize()
         
-        SDImageCache.shared.config.maxDiskAge = 1209600 //2 weeks
+        SDImageCache.shared.config.maxDiskAge = 1209600 // 2 weeks
         SDImageCache.shared.config.maxDiskSize = 250 * 1024 * 1024
         SDImageCache.shared.config.diskCacheReadingOptions = .mappedIfSafe // Use mmap for disk cache query
        /* SDWebImageManager.shared.optionsProcessor = SDWebImageOptionsProcessor() { url, options, context in
@@ -238,7 +238,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let currentVersionInt: Int = Int(build) ?? 0
         
         if lastVersionInt < currentVersionInt {
-            //Clean up Realm
+            // Clean up Realm
             do {
                 let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
                 let directoryContents = try fileManager.contentsOfDirectory(atPath: dirPath)
@@ -253,7 +253,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
             }
 
-            //Clean up broken videos
+            // Clean up broken videos
             do {
                 var dirPath = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
                 var directoryContents: NSArray = try FileManager.default.contentsOfDirectory(atPath: dirPath) as NSArray
@@ -293,7 +293,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
 
-            //Migration block for build 115
+            // Migration block for build 115
             if currentVersionInt == 115 {
                 if UserDefaults.standard.string(forKey: "theme") == "custom" {
                     var colorString = "slide://colors"
@@ -353,7 +353,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.isIdleTimerDisabled = true
         #endif
         
-        //Stop first video from muting audio
+        // Stop first video from muting audio
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.ambient, options: [])
         } catch {
@@ -1188,7 +1188,7 @@ extension AppDelegate: UIWindowSceneDelegate {
         }
     }
     
-    //Siri shortcuts and deep links
+    // Siri shortcuts and deep links
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
         if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
             VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)

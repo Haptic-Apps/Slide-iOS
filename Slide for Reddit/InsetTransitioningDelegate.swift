@@ -182,9 +182,9 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
     
     weak var scrollView: UIScrollView? {
         didSet {
-            //self.scrollView?.bounces = false
-            //self.scrollView?.delegate = self
-            //self.scrollView?.contentOffset = CGPoint.zero
+            // self.scrollView?.bounces = false
+            // self.scrollView?.delegate = self
+            // self.scrollView?.contentOffset = CGPoint.zero
             self.gestureRecognizer.delegate = self
         }
     }

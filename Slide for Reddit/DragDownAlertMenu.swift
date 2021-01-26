@@ -62,7 +62,7 @@ extension UITextField {
         self.backgroundColor = UIColor.foregroundColor
         self.attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
         self.left(image: image, color: UIColor.fontColor)
-        //self.leftViewPadding = 12
+        // self.leftViewPadding = 12
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
         self.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
@@ -400,7 +400,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         stylize()
         self.tableView.reloadData()
         interactionController = DragDownDismissInteraction(viewController: self)
-        //self.tableView.roundCorners(UIRectCorner.allCorners, radius: 10)
+        // self.tableView.roundCorners(UIRectCorner.allCorners, radius: 10)
 
         // Focus the title for accessibility users
         UIAccessibility.post(notification: UIAccessibility.Notification.layoutChanged, argument: descriptor)
@@ -451,7 +451,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        //Remove old search constraints
+        // Remove old search constraints
         NSLayoutConstraint.deactivate(textFields.flatMap({ $0.constraints }))
         textFields.forEach({ $0.removeFromSuperview() })
         
@@ -668,7 +668,7 @@ extension DragDownAlertMenu {
     }
 }
 
-//Based off of https://stackoverflow.com/a/45525284/3697225
+// Based off of https://stackoverflow.com/a/45525284/3697225
 extension DragDownAlertMenu: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController,
                                 presenting: UIViewController?,

@@ -45,7 +45,7 @@ class TableDisplayView: UIScrollView {
         makeViews()
     }
 
-    //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
+    // Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
     func parseHtml(_ text: String) {
         let tableStart = "<table>"
         let tableEnd = "</table>"
@@ -74,7 +74,7 @@ class TableDisplayView: UIScrollView {
             if current == "<" {
                 continue
             }
-            //print(current)
+            // print(current)
             if current == tableStart {
             } else if current == tableHeadStart {
             } else if current == tableRowStart {
@@ -232,7 +232,7 @@ class TableDisplayView: UIScrollView {
             if current == "<" {
                 continue
             }
-            //print(current)
+            // print(current)
             if current == tableStart {
             } else if current == tableHeadStart {
             } else if current == tableRowStart {

@@ -559,7 +559,7 @@ class OnboardingHardcodedChangelogPageViewController: UIViewController {
         self.subButton.bottomAnchor /==/ self.view.bottomAnchor - 8
         self.subButton.horizontalAnchors /==/ self.view.horizontalAnchors + 8
         
-        self.subButton.alpha = 0 //Hide for now
+        self.subButton.alpha = 0 // Hide for now
         self.subButton.heightAnchor /==/ 0
     }
 }

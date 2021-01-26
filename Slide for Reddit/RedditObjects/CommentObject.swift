@@ -141,7 +141,7 @@ class CommentObject: RedditObject {
                     awardArray.append(award["description"] as? String ?? "")
                     awardArray.append("\(award["coin_price"] as? Int ?? 0)")
                     
-                    //HD icon
+                    // HD icon
                     if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
                         awardArray.append(url.unescapeHTML)
                     } else {

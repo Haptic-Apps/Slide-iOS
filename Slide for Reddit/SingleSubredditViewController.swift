@@ -74,7 +74,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     public var inHeadView: UIView?
     var lastTopItem: Int = 0
     
-    var oldCount: Int = 0 //Tells us if we need to reload the dataset when going back to the view, if new posts have been added
+    var oldCount: Int = 0 // Tells us if we need to reload the dataset when going back to the view, if new posts have been added
     
     let margin: CGFloat = 10
     let cellsPerRow = 3
@@ -130,7 +130,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     var lastY: CGFloat = CGFloat(0)
     var lastYUsed = CGFloat(0)
 
-    var listingId: String = "" //a random id for use in Realm
+    var listingId: String = "" // a random id for use in Realm
 
     var fab: UIButton?
     var fabHelper: UIView?
@@ -177,7 +177,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
     
     @objc func showDrawer(_ sender: AnyObject) {
-        //menuNav?.expand()
+        // menuNav?.expand()
     }
     
     @objc func showMenu(_ sender: AnyObject) {
@@ -213,9 +213,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         isModal = navigationController?.presentingViewController != nil || self.modalPresentationStyle == .fullScreen
 
         if single && !isModal && navigationController != nil {
-            //panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
+            // panGesture.require(toFail: navigationController!.interactivePopGestureRecognizer!)
         } else if isModal {
-            //navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+            // navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         }
         
         if single && !(parent is SplitMainViewController) {
@@ -256,7 +256,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: isGallery)
         CachedTitle.titles.removeAll()
         LinkCellImageCache.initialize()
-        //self.showMenuNav(true)
+        // self.showMenuNav(true)
         self.tableView.reloadData()
         self.setupFab(self.view.bounds.size)
         self.doToolbar()
@@ -358,7 +358,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        //menuNav?.configureToolbarSwipe()
+        // menuNav?.configureToolbarSwipe()
         fullWidthBackGestureRecognizer?.isEnabled = true
         cellGestureRecognizer?.isEnabled = true
         refreshControl.setValue(100, forKey: "_snappingHeight")
@@ -369,7 +369,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
 
         if toolbarEnabled && !MainViewController.isOffline {
-            //showMenuNav()
+            // showMenuNav()
             self.navigationController?.setToolbarHidden(false, animated: false)
             self.isToolbarHidden = false
             if fab == nil {
@@ -593,8 +593,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 self.navigationController?.setToolbarHidden(true, animated: true)
             }
 
-            //hideMenuNav()
-        //} else {
+            // hideMenuNav()
+        // } else {
             /*if let topView = self.menuNav?.topView {
                 self.menu.deactivateImmediateConstraints()
                 self.menu.topAnchor /==/ topView.topAnchor - 10
@@ -671,11 +671,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if fab != nil && (fab!.isHidden || fab!.superview == nil) {
             if animated && SettingValues.hideBottomBar {
                 if fab!.superview == nil {
-                    //if single {
+                    // if single {
                         self.navigationController?.toolbar.addSubview(fab!)
-                    //} else {
+                    // } else {
                     //    toolbar?.addSubview(fab!)
-                    //}
+                    // }
                 }
                 self.fab!.isHidden = false
                 self.fab?.transform = CGAffineTransform.identity.scaledBy(x: 0.001, y: 0.001)
@@ -1073,7 +1073,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         case .success(let r):
                             self.subInfo = r
                             DispatchQueue.main.async {
-                                //TODO: Hook into Shortcuts
+                                // TODO: Hook into Shortcuts
                                 if self.subInfo != nil {
                                     if !self.subInfo!.over18 {
 
@@ -1089,7 +1089,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                         }
                                     } else {
                                         if self.sub != ("all") && self.sub != ("frontpage") && !self.sub.hasPrefix("/m/") {
-                                            //self.menuNav?.setSubredditObject(subreddit: r)
+                                            // self.menuNav?.setSubredditObject(subreddit: r)
 
                                             if SettingValues.saveHistory {
                                                 if SettingValues.saveNSFWHistory && self.subInfo!.over18 {
@@ -1118,7 +1118,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
         } else if offline && single && !self.dataSource.loading && !self.dataSource.loaded {
             title = sub
-            //hideMenuNav()
+            // hideMenuNav()
             dataSource.getData(reload: true, force: true)
         } else if !dataSource.loaded {
             self.loadBubbles()
@@ -1161,7 +1161,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     @objc func subscribeSingle(_ selector: AnyObject) {
         if subChanged && !Subscriptions.isSubscriber(sub) || Subscriptions.isSubscriber(sub) {
-            //was not subscriber, changed, and unsubscribing again
+            // was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub, session: session!)
             subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
@@ -1592,7 +1592,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     static func sizeWith(_ submission: SubmissionObject, _ width: CGFloat, _ isCollection: Bool, _ isGallery: Bool) -> CGSize {
         var itemWidth = width
         
-        if itemWidth < 10 { //Not a valid width
+        if itemWidth < 10 { // Not a valid width
             itemWidth = UIScreen.main.bounds.width
         }
         var thumb = submission.hasThumbnail
@@ -1654,7 +1654,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             big = true
         }
         
-        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { // If a submission has a link but no images, still show the web thumbnail
             thumb = true
         }
         
@@ -1703,61 +1703,61 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             paddingRight = 5
         }
         
-        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 30) //5px is subtracted from the bottom
+        let actionbar = CGFloat(!SettingValues.actionBarMode.isFull() ? 0 : 30) // 5px is subtracted from the bottom
         
         let thumbheight = (SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (SettingValues.postViewMode == .COMPACT ? 15 : 0)
         let textHeight = CGFloat(submission.isSelf ? 5 : 0)
         
         if thumb {
-            innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between top and thumbnail
-            innerPadding -= 5 //ThumbLinkCellView L#65
+            innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // between top and thumbnail
+            innerPadding -= 5 // ThumbLinkCellView L#65
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between label and bottom box
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
-                innerPadding -= 5 //LinkCellView L#1191
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between box and end
+                innerPadding -= 5 // LinkCellView L#1191
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between thumbnail and bottom
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // between thumbnail and bottom
             }
         } else if big {
             if SettingValues.postViewMode == .CENTER {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 16) //between label
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 16) // between label
                 if SettingValues.actionBarMode.isFull() {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between banner and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // between banner and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between buttons and bottom
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // between buttons and bottom
                 }
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between banner and label
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between banner and label
                 if SettingValues.actionBarMode.isFull() {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between label and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // between label and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between label and bottom
+                    innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between label and bottom
                 }
             }
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
-                innerPadding -= 5 //LinkCellView L#1191
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between box and end
+                innerPadding -= 5 // LinkCellView L#1191
             }
         } else {
-            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and title
+            innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) // between top and title
             if SettingValues.actionBarMode.isFull() {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between box and end
-                innerPadding -= 5 //LinkCellView L#1191
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between box and end
+                innerPadding -= 5 // LinkCellView L#1191
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //between title and bottom
+                innerPadding += (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // between title and bottom
             }
         }
         
         var estimatedUsableWidth = itemWidth - paddingLeft - paddingRight
         if thumb {
-            estimatedUsableWidth -= thumbheight //is the same as the width
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //between edge and thumb
+            estimatedUsableWidth -= thumbheight // is the same as the width
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // between edge and thumb
             if !SettingValues.actionBarMode.isSide() {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) //title label padding left
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) //title label padding right
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 8 : 12) // title label padding left
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 4 : 8) // title label padding right
             }
-        } else if !SettingValues.actionBarMode.isSide() { //Not side
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 16 : 24) //title label padding
+        } else if !SettingValues.actionBarMode.isSide() { // Not side
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT || isGallery ? 16 : 24) // title label padding
         }
 
         if big && SettingValues.postImageMode == .CROPPED_IMAGE && !(SettingValues.shouldAutoPlay() && (ContentType.displayVideo(t: type) && type != .VIDEO)) {
@@ -1783,18 +1783,18 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         
         if SettingValues.actionBarMode.isSide() {
             estimatedUsableWidth -= 40
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons left margin
-            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //buttons right margin with title
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) // buttons left margin
+            estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) // buttons right margin with title
             if thumb {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) //title side padding
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 4 : 8) // title side padding
             } else {
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) //title side padding
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT ? 8 : 12) // title side padding
             }
         }
                 
         let height = CachedTitle.getTitleAttributedString(submission, force: false, gallery: isGallery, full: false, loadImages: false).height(containerWidth: estimatedUsableWidth)
         
-        if height < 100000 { //Make sure it's a valid height
+        if height < 100000 { // Make sure it's a valid height
             var totalHeight = paddingTop + paddingBottom
             if thumb {
                 totalHeight += max(SettingValues.actionBarMode.isSide() ? 62 : 0, ceil(height), imageHeight)
@@ -1808,7 +1808,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }
             
             return CGSize(width: itemWidth, height: totalHeight)
-        } else { //If layout is nil, just return a size that won't crash the app...
+        } else { // If layout is nil, just return a size that won't crash the app...
             let textSize = CGSize(width: 100, height: 100)
 
             let totalHeight = paddingTop + paddingBottom + (thumb ? max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height), imageHeight) : max(SettingValues.actionBarMode.isSide() ? 72 : 0, ceil(textSize.height)) + imageHeight) + innerPadding + actionbar + textHeight + CGFloat(5) + CGFloat(SettingValues.postViewMode == .CARD && !isGallery ? -5 : 0) + CGFloat(submission.awardsDictionary.keys.count > 0 ? 23 : 0)
@@ -1880,7 +1880,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             thumb = false
         }
 
-        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { // If a submission has a link but no images, still show the web thumbnail
             thumb = true
         }
 
@@ -1981,7 +1981,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
     
     func showIndicator() {
         if indicator == nil {
-            //TODO implement something like this and get rid of Google https://medium.com/better-programming/lets-build-a-circular-loading-indicator-in-swift-5-b06fcdf1260d
+            // TODO implement something like this and get rid of Google https://medium.com/better-programming/lets-build-a-circular-loading-indicator-in-swift-5-b06fcdf1260d
             indicator = MDCActivityIndicator.init(frame: CGRect.init(x: CGFloat(0), y: CGFloat(0), width: CGFloat(80), height: CGFloat(80)))
             indicator?.strokeWidth = 5
             indicator?.radius = 15
@@ -2615,8 +2615,8 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         cell.layer.shouldRasterize = true
         cell.layer.rasterizationScale = UIScreen.main.scale
         
-        //cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
-        //ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
+        // cell.panGestureRecognizer?.require(toFail: self.tableView.panGestureRecognizer)
+        // ecell.panGestureRecognizer2?.require(toFail: self.tableView.panGestureRecognizer)
 
         if row > dataSource.content.count - 4 {
             if !dataSource.loading && !dataSource.nomore {
@@ -2628,11 +2628,11 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
 }
 
 // MARK: - Collection View Prefetching Data Source
-//extension SingleSubredditViewController: UICollectionViewDataSourcePrefetching {
+// extension SingleSubredditViewController: UICollectionViewDataSourcePrefetching {
 //    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
 //        // TODO: - Implement
 //    }
-//}
+// }
 
 // MARK: - Link Cell View Delegate
 extension SingleSubredditViewController: LinkCellViewDelegate {
@@ -3000,7 +3000,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         }
         swipeBackAdded = true
         fullWidthBackGestureRecognizer.delegate = self
-        //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+        // parent.requireFailureOf(fullWidthBackGestureRecognizer)
         tableView.addGestureRecognizer(fullWidthBackGestureRecognizer)
     }
 

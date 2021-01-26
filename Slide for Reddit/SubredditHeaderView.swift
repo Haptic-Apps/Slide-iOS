@@ -246,7 +246,7 @@ class SubredditHeaderView: UIView {
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentController)
-                        //TODO update flair view on sidebar
+                        // TODO update flair view on sidebar
                     }
                 }}
         } catch {
@@ -447,7 +447,7 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
     }
     
     func previewProfile(profile: String) {
-        //unused
+        // unused
     }
 }
 

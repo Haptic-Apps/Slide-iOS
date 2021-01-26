@@ -111,7 +111,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func showFilterMenu(_ cell: LinkCellView) {
-        //Not implemented
+        // Not implemented
     }
     public var inHeadView = UIView()
     
@@ -302,7 +302,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             
             cell = c
         } else if thing is CommentObject {
-            //Show comment cell
+            // Show comment cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
             c.delegate = self
             c.textDelegate = self
@@ -310,14 +310,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.setComment(comment: (thing as! CommentObject), width: self.view.frame.size.width)
             cell = c
         } else if thing is FriendObject {
-            //Show friend cell
+            // Show friend cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
             c.delegate = self
 
             c.setFriend(friend: (thing as! FriendObject))
             cell = c
         } else if thing is MessageObject {
-            //Show message cell
+            // Show message cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.delegate = self
             c.textDelegate = self
@@ -325,7 +325,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c.setMessage(message: (thing as! MessageObject), width: self.view.frame.size.width)
             cell = c
         } else {
-            //Show modlog cell
+            // Show modlog cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
             c.delegate = self
             c.textDelegate = self
@@ -562,7 +562,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     top += 22
                 }
                 
-                //New xcode is complaining about computation times...
+                // New xcode is complaining about computation times...
                 let headerOffset = CGFloat((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is CollectionsContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0)
                 let totalOffset = (-1 * (headerOffset + (self.navigationController?.navigationBar.frame.size.height ?? 64)))
                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + totalOffset - top)
@@ -588,7 +588,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
     
     func deleteSelf(_ cell: LinkCellView) {
-        //Dont implememt
+        // Dont implememt
     }
     
     func more(_ cell: LinkCellView) {

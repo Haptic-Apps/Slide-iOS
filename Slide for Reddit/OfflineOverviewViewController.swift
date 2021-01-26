@@ -21,7 +21,7 @@ class OfflineOverviewViewController: UITableViewController {
         self.subComments = [:]
         self.subTime = [:]
         super.init(style: .plain)
-        //TODO load all offline subs here
+        // TODO load all offline subs here
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -82,7 +82,7 @@ class OfflineOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return self.subs.count //+ 1
+        case 0: return self.subs.count // + 1
         default: fatalError("Unknown number of sections")
         }
     }

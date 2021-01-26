@@ -57,7 +57,7 @@ class Sidebar: NSObject {
 
     func subscribe(_ sub: Subreddit) {
         if parent!.subChanged && !sub.userIsSubscriber || sub.userIsSubscriber {
-            //was not subscriber, changed, and unsubscribing again
+            // was not subscriber, changed, and unsubscribing again
             Subscriptions.unsubscribe(sub.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             parent!.subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", seconds: 5, context: self.parent, top: true)

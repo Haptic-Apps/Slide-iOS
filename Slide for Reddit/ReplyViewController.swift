@@ -67,7 +67,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var scrollView = UIScrollView()
     var username: String?
 
-    //Callbacks
+    // Callbacks
     var messageCallback: (Any?, Error?) -> Void = { (_, _) in
     }
 
@@ -77,7 +77,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var commentReplyCallback: (Comment?, Error?) -> Void = { (_, _) in
     }
 
-    //New message no reply
+    // New message no reply
     init(completion: @escaping(String?) -> Void) {
         type = .NEW_MESSAGE
         super.init(nibName: nil, bundle: nil)
@@ -101,14 +101,14 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
     }
 
-    //New message with sub colors
+    // New message with sub colors
     convenience init(name: String, completion: @escaping(String?) -> Void) {
         self.init(completion: completion)
         self.username = name
         setBarColors(color: ColorUtil.getColorForUser(name: name))
     }
     
-    //New message with sub colors
+    // New message with sub colors
     convenience init(name: String, subject: String, message: String, completion: @escaping(String?) -> Void) {
         self.init(completion: completion)
         self.subject = subject.isEmpty ? nil : subject
@@ -117,7 +117,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         setBarColors(color: ColorUtil.getColorForUser(name: name))
     }
 
-    //New message reply
+    // New message reply
     init(message: MessageObject?, completion: @escaping (String?) -> Void) {
         type = .REPLY_MESSAGE
         toReplyTo = message
@@ -153,7 +153,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     
     var errorText = ""
 
-    //Edit selftext
+    // Edit selftext
     init(submission: SubmissionObject, sub: String, completion: @escaping (Link?) -> Void) {
         type = .EDIT_SELFTEXT
         toReplyTo = submission
@@ -186,7 +186,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
     }
     
-    //Crosspost
+    // Crosspost
     init(submission: SubmissionObject, completion: @escaping (Link?) -> Void) {
         type = .CROSSPOST
         toReplyTo = submission
@@ -219,7 +219,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         }
     }
 
-    //Reply to submission
+    // Reply to submission
     init(submission: SubmissionObject, sub: String, delegate: ReplyDelegate) {
         subreddit = sub
         type = .REPLY_SUBMISSION
@@ -375,12 +375,12 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             height += CGFloat(46)
         }
         
-        height += 40 //Toolbar height
+        height += 40 // Toolbar height
         
         scrollView.contentSize = CGSize.init(width: scrollView.frame.size.width, height: height)
     }
 
-    //Create a new post
+    // Create a new post
     convenience init(subreddit: String, type: ReplyType, completion: @escaping (Link?) -> Void) {
         self.init(type: type, completion: completion)
         self.subreddit = subreddit
@@ -710,7 +710,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         
         if type.isMessage() {
             if type == .REPLY_MESSAGE {
-                //two
+                // two
                 let layout = BadgeLayoutManager()
                 let storage = NSTextStorage()
                 storage.addLayoutManager(layout)
@@ -766,7 +766,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             } else {
-                //three
+                // three
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.textColor = UIColor.fontColor
@@ -850,7 +850,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             }
         } else if type.isSubmission() {
-            //three
+            // three
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.textColor = UIColor.fontColor
@@ -1013,7 +1013,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         } else if type.isComment() {
             if (toReplyTo as! SubmissionObject).type == .SELF && !((toReplyTo as! SubmissionObject).htmlBody ?? "").trimmed().isEmpty {
-                //two
+                // two
                 let layout = BadgeLayoutManager()
                 let storage = NSTextStorage()
                 storage.addLayoutManager(layout)
@@ -1080,7 +1080,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text = [text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self)
             } else {
-                //one
+                // one
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                     $0.isEditable = true
                     $0.placeholder = "Body"
@@ -1115,7 +1115,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
     
         } else if type.isEdit() {
-            //two
+            // two
             let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
                 $0.isEditable = true
                 $0.textColor = UIColor.fontColor
@@ -1753,7 +1753,7 @@ extension ReplyViewController: TextDisplayStackViewDelegate {
     }
     
     func linkLongTapped(url: URL) {
-        //TODO this
+        // TODO this
     }
     
     func previewProfile(profile: String) {

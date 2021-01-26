@@ -103,7 +103,7 @@ public class AsyncTextAttachment: NSTextAttachment {
         if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, nil) {
             self.fileType = uti.takeRetainedValue() as String
         }
-        if let image = image { //2 was causing weird clipping
+        if let image = image { // 2 was causing weird clipping
             let imageSize = image.size
                            
             self.originalImageSize = imageSize

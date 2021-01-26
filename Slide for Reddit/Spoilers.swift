@@ -11,7 +11,7 @@ import UIKit
 public class WrapSpoilers: NSObject {
     
     public static func addSpoilers(_ text: String) -> String {
-        //Appears to currently not work, instead TextStackEstimator is used. Need to fix this
+        // Appears to currently not work, instead TextStackEstimator is used. Need to fix this
         var base = text
         for match in base.capturedGroups(withRegex: "<a[^>]*title=\"([^\"]*)\"[^>]*>([^<]*)</a>") {
             let tag = match[0]
@@ -23,14 +23,14 @@ public class WrapSpoilers: NSObject {
             }
         }
         
-        //match unconventional spoiler tags
+        // match unconventional spoiler tags
         for match in base.capturedGroups(withRegex: "<a href=\"([#/](?:spoiler|sp|s))\">([^<]*)</a>") {
             let newPiece = match[0]
             let inner = "<a href=\"/spoiler\">spoiler [[s[ \(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]</a> "
             base = base.replacingOccurrences(of: match[0], with: inner)
         }
         
-        //match native Reddit spoilers
+        // match native Reddit spoilers
         for match in base.capturedGroups(withRegex: "<span class=\"[^\"]*md-spoiler-text+[^\"]*\">([^<]*)</span>") {
             let tag = match[0]
             let spoilerText = match[1]

@@ -36,7 +36,7 @@ public class BannerUtil {
         popup.numberOfLines = 0
         popup.heightAnchor /==/ 50
         popup.backgroundColor = color
-        //popup.roundCorners(UIRectCorner.allCorners, radius: 25)
+        // popup.roundCorners(UIRectCorner.allCorners, radius: 25)
         popup.clipsToBounds = true
         popup.layer.cornerRadius = 25
         popup.layer.mask?.cornerRadius = 25
@@ -60,7 +60,7 @@ public class BannerUtil {
         attributes.entryBackground = EKAttributes.BackgroundStyle.color(color: EKColor(light: UIColor.clear, dark: UIColor.clear))
         attributes.precedence = .enqueue(priority: .normal)
         attributes.statusBar = .inferred
-        //attributes.hapticFeedbackType = color.hexString() == GMColor.red500Color().hexString() ? .warning : .success
+        // attributes.hapticFeedbackType = color.hexString() == GMColor.red500Color().hexString() ? .warning : .success
         
         if let callback = callback {
             attributes.entryInteraction.customTapActions.append {

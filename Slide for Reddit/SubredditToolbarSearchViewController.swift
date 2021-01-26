@@ -86,7 +86,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         $0.accessibilityHint = "Search subreddits, posts, or profiles"
     }
 
-    //let horizontalSubGroup = HorizontalSubredditGroup()
+    // let horizontalSubGroup = HorizontalSubredditGroup()
     
     init(controller: SingleSubredditViewController) {
         self.parentController = controller
@@ -332,7 +332,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         searchBar.isUserInteractionEnabled = false
         (searchBar.value(forKey: "searchField") as? UITextField)?.isEnabled = false
  
-        //Break out of the navigation view controller
+        // Break out of the navigation view controller
         parentController?.view.addSubview(self.view)
 
         let y = UIScreen.main.bounds.height - bottomOffset

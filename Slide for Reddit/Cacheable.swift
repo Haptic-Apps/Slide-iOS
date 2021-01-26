@@ -9,7 +9,7 @@
 import CoreData
 import Foundation
 
-//An object that has a CoreData representable, can save its own state
+// An object that has a CoreData representable, can save its own state
 protocol Cacheable {
     func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject?
 }

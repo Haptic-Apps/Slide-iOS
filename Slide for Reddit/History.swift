@@ -15,7 +15,7 @@ class History {
     
     public static var currentVisits = [String]()
     
-    //mark SubmissionsÏ
+    // mark SubmissionsÏ
     public static func getSeen(s: SubmissionObject) -> Bool {
         if !SettingValues.saveHistory {
             return false
@@ -44,7 +44,7 @@ class History {
     
     public static func publishSeen() {
         if SettingValues.saveHistory && false {
-            //Possibly do this, although it's only available as an API endpoint if the user has Reddit gold
+            // Possibly do this, although it's only available as an API endpoint if the user has Reddit gold
         }
     }
     
@@ -82,7 +82,7 @@ class History {
         }
     }
     
-    //mark Comments
+    // mark Comments
     public static func commentsSince(s: SubmissionObject) -> Int {
         if let comments = commentCounts.object(forKey: s.id) {
             return Int(s.commentCount) - (comments as! Int)

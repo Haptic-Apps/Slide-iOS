@@ -17,13 +17,13 @@ protocol VideoScrubberViewDelegate: class {
     func togglePlaying()
 }
 
-//extension UISlider {
+// extension UISlider {
 //    var thumbCenterX: CGFloat {
 //        let trackRect = self.trackRect(forBounds: frame)
 //        let thumbRect = self.thumbRect(forBounds: bounds, trackRect: trackRect, value: value)
 //        return thumbRect.midX
 //    }
-//}
+// }
 
 extension UIImage {
     class func image(with color: UIColor) -> UIImage {
@@ -89,12 +89,12 @@ class VideoScrubberView: UIView {
         slider.bottomAnchor /==/ self.bottomAnchor - 4
         slider.leftAnchor /==/ timeTotalLabel.rightAnchor + 8
         
-        //timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
-        //timeElapsedLabel.textAlignment = .center
-        //timeElapsedLabel.textColor = UIColor.white
-        //self.addSubview(timeElapsedLabel)
-        //timeElapsedLabel.centerYAnchor /==/ slider.centerYAnchor
-        //timeElapsedLabel.leftAnchor />=/ slider.leftAnchor ~ .high
+        // timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
+        // timeElapsedLabel.textAlignment = .center
+        // timeElapsedLabel.textColor = UIColor.white
+        // self.addSubview(timeElapsedLabel)
+        // timeElapsedLabel.centerYAnchor /==/ slider.centerYAnchor
+        // timeElapsedLabel.leftAnchor />=/ slider.leftAnchor ~ .high
 //        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor /==/ CGFloat(slider.thumbCenterX - 16) ~ .low
 //        slider
 
@@ -126,7 +126,7 @@ class VideoScrubberView: UIView {
         blurView.effect = blurEffect
         blurView.clipsToBounds = true
         blurView.layer.cornerRadius = 30
-        //self.insertSubview(blurView, at: 0)
+        // self.insertSubview(blurView, at: 0)
        // blurView.edgeAnchors /==/ playButton.edgeAnchors
        // self.bringSubview(toFront: playButton)
     }

@@ -261,7 +261,7 @@ class ContentType {
      */
     public static func getContentType(submission: SubmissionObject?) -> CType {
         if submission == nil {
-            return CType.SELF; //hopefully shouldn't be null, but catch it in case
+            return CType.SELF; // hopefully shouldn't be null, but catch it in case
         }
         
         let url = submission?.url

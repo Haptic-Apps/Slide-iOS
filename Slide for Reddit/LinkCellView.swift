@@ -229,7 +229,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             if #available(iOS 11.0, *) {
                 $0.accessibilityIgnoresInvertColors = true
             }
-            $0.isHidden = true //Disable this view, might do it with a view instead of in the AttributedString later
+            $0.isHidden = true // Disable this view, might do it with a view instead of in the AttributedString later
             $0.contentMode = .scaleAspectFill
             $0.clipsToBounds = true
         }
@@ -487,7 +487,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 $0.alpha = 0.6
                 $0.layer.cornerRadius = 5
                 $0.clipsToBounds = true
-                //$0.textContainerInset = UIEdgeInsetsMake(2, 2, 2, 2)
+                // $0.textContainerInset = UIEdgeInsetsMake(2, 2, 2, 2)
                 $0.backgroundColor = UIColor.black.withAlphaComponent(0.5)
             }
             
@@ -837,7 +837,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     diff = self.innerView.frame.width - originalLocation
                     NSLayoutConstraint.deactivate(tiConstraints)
                     
-                    //TODO: Bug here, this is triggering on first left-to-right swipe for some reason, doesn't affect comments
+                    // TODO: Bug here, this is triggering on first left-to-right swipe for some reason, doesn't affect comments
                     tiConstraints = batch {
                         typeImage.rightAnchor /==/ self.rightAnchor - 4
                     }
@@ -1167,7 +1167,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     box.heightAnchor /==/ CGFloat(24)
                     buttons.heightAnchor /==/ CGFloat(35)
                     buttons.leftAnchor /==/ innerView.leftAnchor + ctwelve
-                    buttons.bottomAnchor /==/ innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    buttons.bottomAnchor /==/ innerView.bottomAnchor - ceight + 5 // New buttons size, but we should make the button baseline the same as when they were 24px tall
                     box.centerYAnchor /==/ buttons.centerYAnchor + 3
                 } else {
                     box.leftAnchor /==/ innerView.leftAnchor + ctwelve
@@ -1175,7 +1175,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                     box.heightAnchor /==/ CGFloat(24)
                     buttons.heightAnchor /==/ CGFloat(35)
                     buttons.rightAnchor /==/ innerView.rightAnchor - ctwelve
-                    buttons.bottomAnchor /==/ innerView.bottomAnchor - ceight + 5 //New buttons size, but we should make the button baseline the same as when they were 24px tall
+                    buttons.bottomAnchor /==/ innerView.bottomAnchor - ceight + 5 // New buttons size, but we should make the button baseline the same as when they were 24px tall
                     box.centerYAnchor /==/ buttons.centerYAnchor + 3
                 }
                 for view in buttons.subviews {
@@ -1669,12 +1669,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         }
         
         for view in self.bannerImage.superview?.subviews ?? [] {
-            if view.tag == 2000 { //TODO - tags are bad
+            if view.tag == 2000 { // TODO - tags are bad
                 view.removeFromSuperview()
             }
         }
 
-        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { // If a submission has a link but no images, still show the web thumbnail
             thumb = true
             thumbText.isHidden = true
             if submission.isNSFW {
@@ -1854,14 +1854,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                                         self.bannerImage.image = image
                                         
                                         if SettingValues.postImageMode == .SHORT_IMAGE && self.bannerImage.superview != nil {
-                                            if ((self.bannerImage.image?.size.height ?? 0) / (self.bannerImage.image?.size.width ?? 0)) > ( self.bannerImage.frame.size.height / self.bannerImage.frame.size.width) && ((self.bannerImage.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
+                                            if ((self.bannerImage.image?.size.height ?? 0) / (self.bannerImage.image?.size.width ?? 0)) > ( self.bannerImage.frame.size.height / self.bannerImage.frame.size.width) && ((self.bannerImage.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { // Aspect ratio of current image is less than
                                                 self.bannerImage.contentMode = .scaleAspectFit
                                                 
                                                 let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor)
                                                 backView.image = self.bannerImage.image?.sd_blurredImage(withRadius: 15)
                                                 backView.contentMode = .scaleAspectFill
                                                 backView.backgroundColor = UIColor.backgroundColor
-                                                backView.tag = 2000 //Need to find a solution to this, tags are bad
+                                                backView.tag = 2000 // Need to find a solution to this, tags are bad
                                                 self.bannerImage.superview?.addSubview(backView)
                                                 backView.edgeAnchors /==/ self.bannerImage.edgeAnchors
                                                 self.bannerImage.backgroundColor = .clear
@@ -1874,7 +1874,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                                                 
                                                 self.bannerImage.superview?.bringSubviewToFront(self.bannerImage)
                                             } else {
-                                                self.bannerImage.contentMode = .scaleAspectFill //Otherwise, fill view
+                                                self.bannerImage.contentMode = .scaleAspectFill // Otherwise, fill view
                                             }
                                         }
 
@@ -2056,7 +2056,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     }
 
     private func refreshAccessibility(submission: SubmissionObject) {
-        //let postTimeAgo = (submission.created as Date).timeAgoString Was causing lag
+        // let postTimeAgo = (submission.created as Date).timeAgoString Was causing lag
         accessibilityView.accessibilityValue = """
             \(submission.title).
             Post type is \(submission.type.rawValue).
@@ -2240,7 +2240,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             strongSelf.videoView?.player = AVPlayer(playerItem: AVPlayerItem(url: strongSelf.videoURL!))
             strongSelf.videoView?.player?.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none
-            //strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
+            // strongSelf.videoView?.player?.currentItem?.preferredForwardBufferDuration = 1
     //                Is currently causing issues with not resuming after buffering
     //                if #available(iOS 10.0, *) {
     //                    strongSelf.videoView?.player?.automaticallyWaitsToMinimizeStalling = false
@@ -2794,7 +2794,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         if let url = link?.url, let controller = parentViewController?.getControllerForUrl(baseUrl: url, link: link!) {
                 return controller
             }
-        //}
+        // }
         return nil
     }
     
@@ -2812,7 +2812,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 paddingRight = 5
             }
             
-            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 30) //5px is subtracted from the bottom
+            let actionbar = CGFloat(!full && !SettingValues.actionBarMode.isFull() ? 0 : 30) // 5px is subtracted from the bottom
 
             var imageHeight = big && !thumb ? CGFloat(submissionHeight) : CGFloat(0)
             let thumbheight = (full || SettingValues.largerThumbnail ? CGFloat(75) : CGFloat(50)) - (!full && SettingValues.postViewMode == .COMPACT ? 15 : 0)
@@ -2821,21 +2821,21 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             if thumb {
                 imageHeight = thumbheight
-                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) //between top and thumbnail
-                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) //between label and bottom box
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) // between top and thumbnail
+                innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) // between label and bottom box
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between box and end
             } else if big {
                 if SettingValues.postViewMode == .CENTER || full {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) // between label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between banner and box
                 } else {
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between banner and label
-                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between label and box
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between banner and label
+                    innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) // between label and box
                 }
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between box and end
             } else {
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) //between body and box
-                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between box and end
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) // between body and box
+                innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between box and end
             }
             
             var estimatedUsableWidth = aspectWidth - paddingLeft - paddingRight
@@ -2843,14 +2843,14 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             if !full {
                 if thumb {
-                    estimatedUsableWidth -= thumbheight //is the same as the width
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //between edge and thumb
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) //between thumb and label
+                    estimatedUsableWidth -= thumbheight // is the same as the width
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) // between edge and thumb
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between thumb and label
                 } else if SettingValues.actionBarMode.isFull() || SettingValues.actionBarMode == .NONE {
-                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) //12 padding on either side
+                    estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) // 12 padding on either side
                 }
             } else {
-                estimatedUsableWidth -= (24) //12 padding on either side
+                estimatedUsableWidth -= (24) // 12 padding on either side
                 if thumb {
                     fullHeightExtras += 45 + 12
                 } else {
@@ -2875,11 +2875,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             if SettingValues.actionBarMode.isSide() && !full {
                 estimatedUsableWidth -= 40
-                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) //buttons horizontal margins
+                estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 8 : 16) // buttons horizontal margins
             }
             
-            //Temporary fix to iOS 14 crash
-            //TODO fix
+            // Temporary fix to iOS 14 crash
+            // TODO fix
             if estimatedUsableWidth < 0 {
                 estimatedUsableWidth = 100
             }
@@ -3024,7 +3024,7 @@ extension UILabel {
     }
     
     func textAttachment(fontSize: CGFloat, imageName: String) -> NSTextAttachment {
-        let font = FontGenerator.fontOfSize(size: fontSize, submission: true) //set accordingly to your font, you might pass it in the function
+        let font = FontGenerator.fontOfSize(size: fontSize, submission: true) // set accordingly to your font, you might pass it in the function
         let textAttachment = NSTextAttachment()
         let image = LinkCellView.imageDictionary.object(forKey: imageName)
         if image != nil {
@@ -3095,14 +3095,14 @@ public extension UIImageView {
                 self.backgroundColor = oldBackgroundColor
                 
                 if SettingValues.postImageMode == .SHORT_IMAGE && isBannerView && self.superview != nil {
-                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) && ((self.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { //Aspect ratio of current image is less than
+                    if ((self.image?.size.height ?? 0) / (self.image?.size.width ?? 0)) > ( self.frame.size.height / self.frame.size.width) && ((self.image?.size.height ?? 0) > UIScreen.main.bounds.size.width / 2) { // Aspect ratio of current image is less than
                         self.contentMode = .scaleAspectFit
                         
                         let backView = RoundedImageView(radius: SettingValues.flatMode ? 0 : 15, cornerColor: UIColor.foregroundColor)
                         backView.image = self.image?.sd_blurredImage(withRadius: 15)
                         backView.contentMode = .scaleAspectFill
                         backView.backgroundColor = UIColor.backgroundColor
-                        backView.tag = 2000 //Need to find a solution to this, tags are bad
+                        backView.tag = 2000 // Need to find a solution to this, tags are bad
                         self.superview?.addSubview(backView)
                         backView.edgeAnchors /==/ self.edgeAnchors
                         self.backgroundColor = .clear
@@ -3115,7 +3115,7 @@ public extension UIImageView {
                         
                         self.superview?.bringSubviewToFront(self)
                     } else {
-                        self.contentMode = .scaleAspectFill //Otherwise, fill view
+                        self.contentMode = .scaleAspectFill // Otherwise, fill view
                     }
                 }
                 
@@ -3193,7 +3193,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
         animator.addCompletion {
             if let vc = self.previewedVC {
                 if self.previewedVideo && vc is AnyModalViewController {
-                    //TODO check for memory leaks here
+                    // TODO check for memory leaks here
                     let postContentTransitioningDelegate = PostContentPresentationManager()
                     postContentTransitioningDelegate.sourceImageView = self.videoView
                     vc.transitioningDelegate = postContentTransitioningDelegate

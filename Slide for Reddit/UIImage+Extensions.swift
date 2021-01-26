@@ -62,12 +62,12 @@ extension UIImage {
         var maxX: Int = 0
         var maxY: Int = 0
         
-        //Filter through data and look for non-transparent pixels.
+        // Filter through data and look for non-transparent pixels.
         for y in 0..<height {
             for x in 0..<width {
                 let pixelIndex = (width * y + x) * 4 /* 4 for A, R, G, B */
                 
-                if data[Int(pixelIndex)] != 0 { //Alpha value is not zero pixel is not transparent.
+                if data[Int(pixelIndex)] != 0 { // Alpha value is not zero pixel is not transparent.
                     if x < minX {
                         minX = x
                     }

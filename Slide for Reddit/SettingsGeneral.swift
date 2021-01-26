@@ -149,7 +149,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
                 self.fullyHideNavbar.isUserInteractionEnabled = true
             }
         } else if changed == matchSilenceSwitch {
-            //SettingValues.matchSilence = changed.isOn
+            // SettingValues.matchSilence = changed.isOn
            // UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_matchSilence)
         } else if changed == scrubUsernameSwitch {
             if !VCPresenter.proDialogShown(feature: false, self) {
@@ -407,7 +407,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
             switch indexPath.row {
             case 0: cell = self.hapticFeedback
             case 1: cell = self.scrollSidebar
-            //case 1: return self.matchSilence
+            // case 1: return self.matchSilence
             default: fatalError("Unknown row in section 0")
             }
         case 3:

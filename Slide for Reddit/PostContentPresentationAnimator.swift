@@ -129,7 +129,7 @@ extension PostContentPresentationAnimator: UIViewControllerAnimatedTransitioning
         }*/
         
         let initialAlpha: CGFloat = isPresentation ? 0.0 : 1.0
-        //Assume 1, now that photos and videos have black backgrounds
+        // Assume 1, now that photos and videos have black backgrounds
         let finalAlpha: CGFloat = isPresentation ? 1.0 : 0.0
         
         // Use a special animation chain for certain types of presenting VCs

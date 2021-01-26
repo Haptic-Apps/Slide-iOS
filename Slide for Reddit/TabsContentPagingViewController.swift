@@ -175,7 +175,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
         }
     }
 
-    //From https://stackoverflow.com/a/25167681/3697225
+    // From https://stackoverflow.com/a/25167681/3697225
     override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         if currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width {
             targetContentOffset.pointee = CGPoint(x: scrollView.bounds.size.width, y: 0)
@@ -271,7 +271,7 @@ extension TabsContentPagingViewController: PagingTitleDelegate {
         self.tabBar.collectionView.contentOffset = currentBackgroundOffset
 
         stickyBelow.frame = CGRect(x: offsetX + (tabBar.collectionView.frame.size.width - currentWidth) / 2, y: tabBar.frame.size.height - 5, width: currentWidth, height: 5)
-        //self.tabBar.collectionView.layoutIfNeeded()
+        // self.tabBar.collectionView.layoutIfNeeded()
     }
 
     func didSetWidth() {

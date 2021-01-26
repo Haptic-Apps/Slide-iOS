@@ -150,7 +150,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
     }
     
-    //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
+    // from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
     func requestReviewIfAppropriate() {
         if #available(iOS 10.3, *) {
             let lastReviewedVersion = UserDefaults.standard.string(forKey: "lastReviewed")
@@ -186,7 +186,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let currentAccount = AccountController.currentName
         if let session = (UIApplication.shared.delegate as! AppDelegate).session {
             Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
-                if AccountController.isLoggedIn && currentAccount == AccountController.currentName { //Ensure the user did not switch accounts before applying subs
+                if AccountController.isLoggedIn && currentAccount == AccountController.currentName { // Ensure the user did not switch accounts before applying subs
                     var allSubs = [String]()
                     allSubs.append(contentsOf: newSubs.map { $0.displayName })
                     allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName.replacingOccurrences(of: " ", with: "_") })
@@ -207,7 +207,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func checkForMail() {
         DispatchQueue.main.async {
-            //TODO reenable this
+            // TODO reenable this
             if !self.checkedClipboardOnce && false {
                 var clipUrl: URL?
                 if let url = UIPasteboard.general.url {
@@ -403,7 +403,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
         let currentWidth = layout.widthAt(currentIndex)
         
-        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) // Collectionview left offset for profile icon
 
         let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
             (currentWidth / 2) - // Width of current cell
@@ -413,7 +413,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         currentBackgroundOffset.x = offsetX
         self.tabBar.collectionView.contentOffset = currentBackgroundOffset
-        //self.tabBar.collectionView.layoutIfNeeded()
+        // self.tabBar.collectionView.layoutIfNeeded()
     }
     
     func goToSubreddit(index: Int) {
@@ -563,7 +563,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func screenEdgeSwiped() {
         switch SettingValues.sideGesture {
         case .SUBS:()
-            //TODO show sidebar
+            // TODO show sidebar
         case .INBOX:
             self.showCurrentAccountMenu(nil)
         case .POST:
@@ -666,7 +666,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
                     switch result {
                     case .failure:
-                        //Ignore this
+                        // Ignore this
                         break
                     case .success(let listing):
                         let settings = UserDefaults.standard
@@ -727,7 +727,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     @objc func showCurrentAccountMenu(_ sender: UIButton?) {
-        //TODO check for view controller count
+        // TODO check for view controller count
         if let parent = self.parent {
             parent.navigationController?.popViewController(animated: true)
         } else {

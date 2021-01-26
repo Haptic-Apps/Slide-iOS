@@ -8,7 +8,7 @@
 
 import UIKit
 
-//Abstracts logic for playing AutoplayBannerLinkCellView videos
+// Abstracts logic for playing AutoplayBannerLinkCellView videos
 /* To enable on any vc, include this line
      func scrollViewDidScroll(_ scrollView: UIScrollView) {
          scrollDelegate.scrollViewDidScroll(scrollView)
@@ -64,7 +64,7 @@ class AutoplayScrollViewHandler {
             for currentIndex in delegate.currentPlayingIndex {
                 if let currentCell = delegate.getTableView().cellForItem(at: currentIndex) as? LinkCellView, currentCell is AutoplayBannerLinkCellView || currentCell is GalleryLinkCellView {
                     let videoViewCenter = currentCell.videoView.convert(currentCell.videoView.bounds, to: nil)
-                    //print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
+                    // print("Diff for scroll down is \(abs(videoViewCenter.y - center.y)) and \(scrollView.frame.size.height / 4 )")
                     if abs(videoViewCenter.midY - center.y) > scrollView.frame.size.height / 2 && currentCell.videoView.player != nil {
                         currentCell.endVideos()
                     }

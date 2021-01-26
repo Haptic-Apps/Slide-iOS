@@ -111,7 +111,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var depthColors = [UIColor]()
     var force: ForceTouchGestureRecognizer?
 
-    //Buttons for comment menu
+    // Buttons for comment menu
     var upvoteButton: UIButton!
     var downvoteButton: UIButton!
     var replyButton: UIButton!
@@ -124,7 +124,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var archived = false
     var modShown = false
     
-    //Buttons for reply
+    // Buttons for reply
     var body: UITextView?
     var sendB: UIButton!
     var usernameB: UIButton?
@@ -139,7 +139,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     
     var content: RedditObject?
     
-    //Can't have parameters that target an iOS version :/
+    // Can't have parameters that target an iOS version :/
     private var _savedPreview: Any?
     @available(iOS 13.0, *)
     fileprivate var savedPreview: UITargetedPreview? {
@@ -193,7 +193,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             $0.alpha = 0.5
             $0.isHidden = true
             $0.image = UIImage(sfString: SFSymbol.circleFill, overrideString: "circle")?.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.fontColor).addImagePadding(x: 15, y: 15)
-            //$0.addTarget(self, action: #selector(self.specialAction(_:)), for: UIControl.Event.touchUpInside)
+            // $0.addTarget(self, action: #selector(self.specialAction(_:)), for: UIControl.Event.touchUpInside)
         })
 
         let padding = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
@@ -364,11 +364,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     }
     
     func getFirstAction(left: Bool) -> SettingValues.CommentAction {
-        return !left ? (SettingValues.commentActionLeftLeft != .NONE ? SettingValues.commentActionLeftLeft : SettingValues.commentActionLeftRight) : (SettingValues.commentActionRightRight != .NONE ? SettingValues.commentActionRightRight : SettingValues.commentActionRightLeft) //Setting is for right swipe, left here is right side. So needs to be flipped (!left)
+        return !left ? (SettingValues.commentActionLeftLeft != .NONE ? SettingValues.commentActionLeftLeft : SettingValues.commentActionLeftRight) : (SettingValues.commentActionRightRight != .NONE ? SettingValues.commentActionRightRight : SettingValues.commentActionRightLeft) // Setting is for right swipe, left here is right side. So needs to be flipped (!left)
     }
     
     func getSecondAction(left: Bool) -> SettingValues.CommentAction {
-        return !left ? (SettingValues.commentActionLeftRight != .NONE ? SettingValues.commentActionLeftRight : SettingValues.commentActionLeftLeft) : (SettingValues.commentActionRightLeft != .NONE ? SettingValues.commentActionRightLeft : SettingValues.commentActionRightRight) //Setting is for right swipe, left here is right side. So needs to be flipped (!left)
+        return !left ? (SettingValues.commentActionLeftRight != .NONE ? SettingValues.commentActionLeftRight : SettingValues.commentActionLeftLeft) : (SettingValues.commentActionRightLeft != .NONE ? SettingValues.commentActionRightLeft : SettingValues.commentActionRightRight) // Setting is for right swipe, left here is right side. So needs to be flipped (!left)
     }
     
     var originalPos = CGFloat.zero
@@ -790,8 +790,8 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             self.contentView.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: subreddit), 0.25)
         }
         menuBack.backgroundColor = UIColor.clear
-        //menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
-        //menuBack.roundCorners([UIRectCorner.bottomLeft, UIRectCorner.bottomRight], radius: 5)
+        // menuBack.backgroundColor = ColorUtil.getColorForSub(sub: comment!.subreddit)
+        // menuBack.roundCorners([UIRectCorner.bottomLeft, UIRectCorner.bottomRight], radius: 5)
     }
     
     func hideCommentMenu(_ doBody: Bool = true) {
@@ -1912,7 +1912,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(pinned)
         }
         
-        //TODO flairs and awards
+        // TODO flairs and awards
         /*if comment.isCakeday {
             infoString.append(spacer)
             let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "cakeday")!, fontSize: boldFont.pointSize)!
@@ -1934,7 +1934,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         paragraphStyle.lineSpacing = 1.5
-        //infoString.setAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: infoString.length))
+        // infoString.setAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: infoString.length))
 
         commentBody.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
@@ -2157,9 +2157,9 @@ extension UIColor {
     }
 }
 
-//from https://stackoverflow.com/a/48847585/3697225
+// from https://stackoverflow.com/a/48847585/3697225
 class UIShortTapGestureRecognizer: UITapGestureRecognizer {
-    let tapMaxDelay: Double = 0.3 //anything below 0.3 may cause doubleTap to be inaccessible by many users
+    let tapMaxDelay: Double = 0.3 // anything below 0.3 may cause doubleTap to be inaccessible by many users
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
         super.touchesBegan(touches, with: event)

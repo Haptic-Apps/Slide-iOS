@@ -596,7 +596,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             case 0: cell = self.aboutCell
             case 1: cell = self.subCell
             case 2: cell = self.contributorsCell
-            //case 4: return self.coffeeCell
+            // case 4: return self.coffeeCell
             case 3: cell = self.githubCell
             case 4: cell = self.licenseCell
             default: fatalError("Unknown row in section 3")

@@ -77,7 +77,7 @@ extension BottomSheetPresentationManager {
 
     @objc func handlePan(_ sender: UIPanGestureRecognizerWithInitialTouch) {
         // Ignore the gesture if it didn't originate in the draggable area of the view
-        //guard let draggingView = draggingView,
+        // guard let draggingView = draggingView,
        //     draggingView.frame.contains(sender.initialTouchLocation) else {
        //         return
        // }

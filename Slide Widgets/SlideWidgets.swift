@@ -358,7 +358,7 @@ struct SubredditLoader {
 
         if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit.lowercased() == "frontpage" {
             let filteredSubs = subs.map({ $0.lowercased() }).filter { (sub) -> Bool in
-                //XCode was complaining that this would take too long to type check on one line :/
+                // XCode was complaining that this would take too long to type check on one line :/
                 if !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated" {
                     return true
                 }
@@ -367,7 +367,7 @@ struct SubredditLoader {
             
             var subsString = ""
             for item in filteredSubs {
-                if subsString.count > 2500 { //Max header length on Reddit is around 2500 chars
+                if subsString.count > 2500 { // Max header length on Reddit is around 2500 chars
                     break
                 }
                 if subsString != "" {

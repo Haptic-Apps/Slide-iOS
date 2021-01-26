@@ -129,7 +129,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             self.spinnerIndicator.isHidden = true
         }
         if(NSString(data: data, encoding: String.Encoding.utf8.rawValue)?.contains("[]"))! {
-            //single album image
+            // single album image
             DispatchQueue.main.async {
                 let urlStringkey = "https://imgur.com/\(self.albumHash).png"
                 self.urlStringKeys.append(urlStringkey)
@@ -413,7 +413,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
     @objc func overview(_ sender: UIBarButtonItem) {
         let alert = AlertController(title: nil, message: nil, preferredStyle: .alert)
 
-        //alert.setupTheme()
+        // alert.setupTheme()
         alert.addAsyncImagePicker(
             flow: .vertical,
             paging: false,

@@ -132,7 +132,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
     var alertController: UIAlertController?
     var count = 0
 
-    @objc func sync(_ selector: AnyObject) { //TODO - Is this really needed anymore? We do it by default now
+    @objc func sync(_ selector: AnyObject) { // TODO - Is this really needed anymore? We do it by default now
         let defaults = UserDefaults.standard
         alertController = UIAlertController(title: "Syncing colors...\n\n\n", message: nil, preferredStyle: .alert)
 

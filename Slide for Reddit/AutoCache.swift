@@ -19,7 +19,7 @@ extension Notification.Name {
     static let autoCacheProgress = Notification.Name("AutoCacheProgress")
 }
 
-//TODO on cancel
+// TODO on cancel
 protocol AutoCacheDelegate: class {
     func autoCacheStarted(_ notification: Notification)
     func autoCacheFinished(_ notification: Notification)
@@ -57,7 +57,7 @@ public class AutoCache: NSObject {
     
     @objc func cancelAutoCache() {
         cancel = true
-        //Todo show subs that weren't cached?
+        // Todo show subs that weren't cached?
         NotificationCenter.default.post(name: .autoCacheFinished, object: nil, userInfo: ["total": 0, "failed": 0])
         AutoCache.current = nil
     }

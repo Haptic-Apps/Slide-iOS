@@ -48,7 +48,7 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
         }
-        NotificationCenter.default.post(name: .onThemeChanged, object: nil) //TODO better solution, but this will force the shortcuts view to be reset
+        NotificationCenter.default.post(name: .onThemeChanged, object: nil) // TODO better solution, but this will force the shortcuts view to be reset
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {

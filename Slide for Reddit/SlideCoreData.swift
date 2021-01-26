@@ -52,8 +52,8 @@ class SlideCoreData: NSObject {
          ██████╔╝██║  ██║██║ ╚████║╚██████╔╝███████╗██║  ██║    ███████╗╚██████╔╝██║ ╚████║███████╗
          ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝    ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
          */
-        //Un comment to wipe database, useful for debugging and easy to forget :D. If you disable this, know that the client will crash if you were solving for a crash
-        //try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
+        // Un comment to wipe database, useful for debugging and easy to forget :D. If you disable this, know that the client will crash if you were solving for a crash
+        // try! container.persistentStoreCoordinator.destroyPersistentStore(at: SlideCoreData.url, ofType: "sqlite", options: nil)
 
         container.loadPersistentStores(completionHandler: { (_, error) in
 
@@ -70,7 +70,7 @@ class SlideCoreData: NSObject {
                  Check the error message to determine what the actual problem was.
                  */
                 
-                //TODO check this and resolve if possible
+                // TODO check this and resolve if possible
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             } else {
                 container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy

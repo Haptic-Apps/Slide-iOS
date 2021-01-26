@@ -13,7 +13,7 @@ import UIKit
 class OnboardingViewController: UIViewController {
 
      let models: [OnboardingPageViewModel] = [
-        //TODO this for 6.1
+        // TODO this for 6.1
         .splash(text: "Welcome to\nSlide v7", subText: "Swipe to see what's new", image: UIImage(named: "slide_glow")!),
         .testflight(enabled: true),
         .hardcodedChangelog(order: [

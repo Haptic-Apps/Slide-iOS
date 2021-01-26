@@ -20,9 +20,9 @@ class SettingsData: BubbleSettingTableViewController {
     var disableOnWifi = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    //load hq always
-    //LOwer quality mode
-    //Dont show images
+    // load hq always
+    // LOwer quality mode
+    // Dont show images
     var loadHQViewerCell: UITableViewCell = InsetCell()
     var loadHQViewer = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent

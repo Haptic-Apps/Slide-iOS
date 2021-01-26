@@ -317,7 +317,7 @@ extension SubmissionsDataSource: Cacheable {
                 postsRequest.predicate = postPredicate
                 let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionModel]
 
-                var linksDict = [String: SubmissionObject]() //Use dictionary to sort values below
+                var linksDict = [String: SubmissionObject]() // Use dictionary to sort values below
                 for model in links {
                     let object = SubmissionObject.fromModel(model)
                     linksDict[object.getId()] = object

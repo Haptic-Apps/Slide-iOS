@@ -61,7 +61,7 @@ class ModerationOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return self.subs.count //+ 1
+        case 0: return self.subs.count // + 1
         default: fatalError("Unknown number of sections")
         }
     }

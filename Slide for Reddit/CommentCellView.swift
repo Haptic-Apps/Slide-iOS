@@ -42,7 +42,7 @@ class CommentCellView: UICollectionViewCell, UIGestureRecognizerDelegate {
             guard let self = self, let comment = self.comment else { return }
             self.delegate?.openComment(comment)
         }
-        //TODO add long press menu
+        // TODO add long press menu
     }
     
     func configureViews() {

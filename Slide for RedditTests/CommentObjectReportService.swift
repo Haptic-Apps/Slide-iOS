@@ -63,11 +63,11 @@ class CommentObjectReportService: XCTestCase {
 
         let context = coreDataStack.storeContainer.newBackgroundContext()
         context.performAndWait {
-            //Create and insert into CoreData
+            // Create and insert into CoreData
             let coreDataItem = commentObject.insertSelf(into: context, andSave: true) as? CommentModel
             XCTAssertNotNil(coreDataItem, "Failed saving CommentObject into CoreData")
 
-            //Create new SubmissionObject from previously converted model
+            // Create new SubmissionObject from previously converted model
             let newCommentObject = CommentObject(model: coreDataItem!)
             
             let mirroredOriginal = Mirror(reflecting: commentObject!)

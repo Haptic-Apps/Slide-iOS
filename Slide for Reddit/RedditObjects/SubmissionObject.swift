@@ -220,12 +220,12 @@ class SubmissionObject: RedditObject {
         var hs: Int = 0
         var previewSmaller: String?
         
-        var thumb = false //is thumbnail present
-        var big = false //is big image present
-        var lowq = false //is lq image present
-        var burl: String = "" //banner url
-        var turl: String = "" //thumbnail url
-        var lqUrl: String = "" //lq banner url
+        var thumb = false // is thumbnail present
+        var big = false // is big image present
+        var lowq = false // is lq image present
+        var burl: String = "" // banner url
+        var turl: String = "" // thumbnail url
+        var lqUrl: String = "" // lq banner url
         
         let previews = ((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["resolutions"] as? [Any])
         var preview = (((((json?["preview"] as? [String: Any])?["images"] as? [Any])?.first as? [String: Any])?["source"] as? [String: Any])?["url"] as? String)
@@ -276,7 +276,7 @@ class SubmissionObject: RedditObject {
         }
         
         let type = ContentType.getContentType(baseUrl: submission.url)
-        if big { //check for low quality image
+        if big { // check for low quality image
             if previews != nil && !(previews?.isEmpty)! {
                 if submission.url != nil && type == .IMGUR {
                     lqUrl = (submission.url?.absoluteString)!
@@ -411,7 +411,7 @@ class SubmissionObject: RedditObject {
                     awardArray.append(award["description"] as? String ?? "")
                     awardArray.append("\(award["coin_price"] as? Int ?? 0)")
                     
-                    //HD icon
+                    // HD icon
                     if let awards = award["resized_icons"] as? [AnyObject], awards.count > 1, let url = awards[awards.count - 1]["url"] as? String {
                         awardArray.append(url.unescapeHTML)
                     } else {
@@ -544,7 +544,7 @@ class SubmissionObject: RedditObject {
             thumb = false
         }
 
-        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { //If a submission has a link but no images, still show the web thumbnail
+        if !big && !thumb && submission.type != .SELF && submission.type != .NONE { // If a submission has a link but no images, still show the web thumbnail
             thumb = true
         }
 

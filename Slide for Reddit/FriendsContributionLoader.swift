@@ -49,8 +49,8 @@ class FriendsContributionLoader: ContributionLoader {
                         for user in listing {
                             self.content.append(FriendObject.userToFriendObject(user: user))
                         }
-                        //self.paginator = listing.paginator
-                        //self.canGetMore = listing.paginator.hasMore()
+                        // self.paginator = listing.paginator
+                        // self.canGetMore = listing.paginator.hasMore()
                         DispatchQueue.main.async {
                             self.delegate?.doneLoading(before: before, filter: false)
                         }

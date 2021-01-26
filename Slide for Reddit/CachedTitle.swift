@@ -388,7 +388,7 @@ class CachedTitle {
             let text = submission.htmlBody?.substring(0, length: length).trimmed() ?? ""
 
             if !text.isEmpty() {
-                extraLine.append(NSAttributedString.init(string: "\n")) //Extra space for body
+                extraLine.append(NSAttributedString.init(string: "\n")) // Extra space for body
                 extraLine.append(TextDisplayStackView.createAttributedChunk(baseHTML: text.replacingOccurrences(of: "<!-- SC_OFF -->", with: "").replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: ""), fontSize: 14, submission: false, accentColor: ColorUtil.accentColorForSub(sub: submission.subreddit), fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil).trimWhiteSpace())
             }
         }
@@ -605,10 +605,10 @@ class CachedTitle {
                     awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.fontColor, .baselineOffset: -2]))
                 }
                 
-                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 2, length: awardLine.length - 2)) //We will catch this URL later on, start it after the newline
+                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 2, length: awardLine.length - 2)) // We will catch this URL later on, start it after the newline
 
                 finalTitle.append(awardLine)
-                finalTitle.append(NSAttributedString(string: "\u{00A0}")) //Stop tap from going to the end of the view width
+                finalTitle.append(NSAttributedString(string: "\u{00A0}")) // Stop tap from going to the end of the view width
             }
         }
         return finalTitle

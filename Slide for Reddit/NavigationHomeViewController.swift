@@ -82,7 +82,7 @@ class NavigationHomeViewController: UIViewController {
     
     var accountHeader: CurrentAccountHeaderView?
 
-    //let horizontalSubGroup = HorizontalSubredditGroup()
+    // let horizontalSubGroup = HorizontalSubredditGroup()
     
     init(controller: SplitMainViewController) {
         self.parentController = controller
@@ -169,10 +169,10 @@ class NavigationHomeViewController: UIViewController {
                 return
             }
             if text.contains(" ") {
-                //do search
+                // do search
                 VCPresenter.showVC(viewController: SearchViewController(subreddit: MainViewController.current, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
             } else {
-                //go to sub
+                // go to sub
                 parentController?.goToSubreddit(subreddit: text)
             }
         }
@@ -203,10 +203,10 @@ class NavigationHomeViewController: UIViewController {
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
         self.inHeadView.backgroundColor = UIColor.foregroundColor
-        //let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
-        //if !landscape {
+        // let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        // if !landscape {
             self.view.addSubview(inHeadView)
-        //}
+        // }
 
         // Update any things that can change due to user settings here
         tableView.backgroundColor = UIColor.foregroundColor
@@ -227,7 +227,7 @@ class NavigationHomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if SettingValues.autoKeyboard {
-            //TODO enable this? searchBar.becomeFirstResponder()
+            // TODO enable this? searchBar.becomeFirstResponder()
         }
         splitViewController?.navigationItem.hidesBackButton = true
         navigationController?.navigationItem.hidesBackButton = true
@@ -247,9 +247,9 @@ class NavigationHomeViewController: UIViewController {
 
     func configureViews() {
 
-        //horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
-        //horizontalSubGroup.delegate = self
-        //view.addSubview(horizontalSubGroup)
+        // horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
+        // horizontalSubGroup.delegate = self
+        // view.addSubview(horizontalSubGroup)
 
         accountHeader?.removeFromSuperview()
         accountHeader = CurrentAccountHeaderView()
@@ -293,9 +293,9 @@ class NavigationHomeViewController: UIViewController {
 
     func configureLayout() {
     
-        //horizontalSubGroup.topAnchor /==/ view.topAnchor
-        //horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
-        //horizontalSubGroup.heightAnchor /==/ 90
+        // horizontalSubGroup.topAnchor /==/ view.topAnchor
+        // horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
+        // horizontalSubGroup.heightAnchor /==/ 90
         accountHeader!.topAnchor /==/ headerView.topAnchor
         accountHeader!.horizontalAnchors /==/ headerView.horizontalAnchors
         accountHeader!.heightAnchor /==/ accountHeader!.estimateHeight()
@@ -321,8 +321,8 @@ class NavigationHomeViewController: UIViewController {
 
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
-            //self.horizontalSubGroup.setColors()
-            //self.horizontalSubGroup.backgroundColor = UIColor.foregroundColor
+            // self.horizontalSubGroup.setColors()
+            // self.horizontalSubGroup.backgroundColor = UIColor.foregroundColor
             self.headerView.backgroundColor = UIColor.foregroundColor
             self.searchBar.tintColor = UIColor.fontColor
             self.searchBar.textColor = UIColor.fontColor
@@ -404,7 +404,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return false && !isSearching //Disable pinning for now
+        return false && !isSearching // Disable pinning for now
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
@@ -772,8 +772,8 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
         // User-initiated scrolling
 
         // Hide the keyboard if it's out
-        //TODO this?
-        //self.tableView.endEditing(true)
+        // TODO this?
+        // self.tableView.endEditing(true)
         searchBar.resignFirstResponder()
     }
 }
@@ -786,16 +786,16 @@ extension NavigationHomeViewController: HorizontalSubredditGroupDelegate {
 
 extension NavigationHomeViewController {
     @objc func keyboardWillBeShown(notification: NSNotification) {
-        //get the end position keyboard frame
+        // get the end position keyboard frame
         let keyInfo: Dictionary = notification.userInfo!
         var keyboardFrame: CGRect = keyInfo[UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
-        //convert it to the same view coords as the tableView it might be occluding
+        // convert it to the same view coords as the tableView it might be occluding
         keyboardFrame = self.tableView.convert(keyboardFrame, to: self.tableView)
-        //calculate if the rects intersect
+        // calculate if the rects intersect
         let intersect: CGRect = keyboardFrame.intersection(self.tableView.bounds)
         if !intersect.isNull {
-            //yes they do - adjust the insets on tableview to handle it
-            //first get the duration of the keyboard appearance animation
+            // yes they do - adjust the insets on tableview to handle it
+            // first get the duration of the keyboard appearance animation
             let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
             // Change the table insets to match - animated to the same duration of the keyboard appearance
             UIView.animate(withDuration: duration, animations: {
@@ -827,7 +827,7 @@ extension NavigationHomeViewController {
     }
 
     @objc func accessibilityCloseButtonActivated(_ sender: UIButton) {
-        //todo go back home
+        // todo go back home
     }
 }
 
@@ -875,7 +875,7 @@ class CurrentAccountHeaderView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return 12 + 70 + shortcutsView.estimateHeight() //TODO estimate account label height
+        return 12 + 70 + shortcutsView.estimateHeight() // TODO estimate account label height
     }
     
     var spinner = UIActivityIndicatorView().then {
@@ -1306,7 +1306,7 @@ extension CurrentAccountHeaderView {
     
     override func accessibilityPerformEscape() -> Bool {
         super.accessibilityPerformEscape()
-        //TODO go back home
+        // TODO go back home
         return true
     }
     
@@ -1331,7 +1331,7 @@ class AccountShortcutsView: UIView {
         super.init(frame: frame)
         
         addSubviews(cellStack)
-        //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
+        // infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
         for action in actions {
             if !action.needsAccount() || AccountController.isLoggedIn {
                 cellStack.addArrangedSubview(UITableViewCell().then {
@@ -1387,8 +1387,8 @@ class AccountShortcutsView: UIView {
     }
         
     func setupAnchors() {
-        //infoStack.topAnchor /==/ topAnchor
-        //infoStack.horizontalAnchors /==/ horizontalAnchors
+        // infoStack.topAnchor /==/ topAnchor
+        // infoStack.horizontalAnchors /==/ horizontalAnchors
         
         cellStack.topAnchor /==/ topAnchor
         cellStack.horizontalAnchors /==/ horizontalAnchors

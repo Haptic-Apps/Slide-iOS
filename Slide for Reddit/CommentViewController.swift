@@ -180,7 +180,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func showFilterMenu(_ cell: LinkCellView) {
-        //Not implemented
+        // Not implemented
     }
     
     func setLive() {
@@ -340,7 +340,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                         self.liveView!.text = "\(self.liveNewCount) NEW COMMENT\((self.liveNewCount > 1) ? "S" : "")"
                                         self.liveView!.setNeedsLayout()
                                     }
-                                    //self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
+                                    // self.tableView.contentOffset = CGPoint(x: 0, y: self.tableView.contentSize.height - bottomOffset)
                                     CATransaction.commit()
                                 })
                             } else {
@@ -493,7 +493,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func openComments(id: String, subreddit: String?) {
-        //don't do anything
+        // don't do anything
     }
     
     func editSent(cr: Comment?, cell: CommentDepthCell) {
@@ -607,7 +607,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var searchBar = UISearchBar()
     
     func reloadHeights() {
-        //UIView.performWithoutAnimation {
+        // UIView.performWithoutAnimation {
         tableView.beginUpdates()
         tableView.endUpdates()
         // }
@@ -802,7 +802,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 commentsRequest.predicate = commentsPredicate
                 let comments = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(commentsRequest) as! [CommentModel]
                 
-                var commentsDict = [String: CommentObject]() //Use dictionary to sort values below
+                var commentsDict = [String: CommentObject]() // Use dictionary to sort values below
                 for model in comments {
                     let object = CommentObject(model: model)
                     commentsDict[object.getId()] = object
@@ -913,7 +913,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: SettingValues.commentLimit, completion: { (result) -> Void in
                         switch result {
                         case .failure:
-                            //TODO show error code?
+                            // TODO show error code?
                             self.loadOffline()
                         case .success(let tuple):
                             let startDepth = 1
@@ -1330,7 +1330,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.registerForPreviewing(with: self, sourceView: self.tableView)
         
         self.tableView.allowsSelection = false
-        //self.tableView.layer.speed = 1.5
+        // self.tableView.layer.speed = 1.5
         self.view.backgroundColor = UIColor.backgroundColor
         self.tableView.backgroundColor = UIColor.backgroundColor
         self.navigationController?.view.backgroundColor = UIColor.foregroundColor
@@ -2335,7 +2335,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.tableView.beginUpdates()
                     
                     var indexPaths: [IndexPath] = []
-                    for row in i...counter { //TODO ...<
+                    for row in i...counter { // TODO ...<
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     strongSelf.tableView.deleteRows(at: indexPaths, with: .fade)
@@ -2576,7 +2576,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         
-        if UIDevice.current.userInterfaceIdiom == .phone { //On rotation, this will either be at the top or in the nav stack above MainVC. Either way, this gesture should be disabled
+        if UIDevice.current.userInterfaceIdiom == .phone { // On rotation, this will either be at the top or in the nav stack above MainVC. Either way, this gesture should be disabled
             self.splitViewController?.presentsWithGesture = false
         }
         
@@ -2585,7 +2585,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 if self.tableView.tableHeaderView != nil {
                     var newWidth = size.width
                     
-                    //There is a bug on iOS 14 that sends the view to the split first, which is 1/3 the full width. Detect this by checking if width * inverse (0.33) == physical screen height, with small margin of error for rounding errors
+                    // There is a bug on iOS 14 that sends the view to the split first, which is 1/3 the full width. Detect this by checking if width * inverse (0.33) == physical screen height, with small margin of error for rounding errors
                     if abs((size.width * (1 / 0.33)) - UIScreen.main.bounds.height) < 10 && UIDevice.current.userInterfaceIdiom == .phone {
                         newWidth = UIScreen.main.bounds.height
                     } else if abs((size.width * (1 / 0.33)) - UIScreen.main.bounds.width) < 10 && UIDevice.current.userInterfaceIdiom == .phone {
@@ -2626,8 +2626,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         var currentY = scrollView.contentOffset.y
         
-        //Sometimes the ScrollView will jump one time in the wrong direction. Unsure why this is happening, but this
-        //will check for that case and ignore it
+        // Sometimes the ScrollView will jump one time in the wrong direction. Unsure why this is happening, but this
+        // will check for that case and ignore it
         if currentY > lastY && lastY < olderY {
             currentY = lastY
         }
@@ -2652,7 +2652,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func hideUI(inHeader: Bool) {
         isHiding = true
-        //self.tableView.endEditing(true)
+        // self.tableView.endEditing(true)
         if inHeadView.superview == nil {
             doHeadView(self.view.frame.size)
         }
@@ -2838,7 +2838,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         var contents = content[dataArray[topCell]]
         var id = ""
         if contents is CommentObject && (contents as! CommentObject).depth == 1 {
-            //collapse self
+            // collapse self
             id = baseCell.comment!.getId()
         } else {
             while (contents is MoreObject || (contents as! CommentObject).depth > 1) && 0 <= topCell {
@@ -3322,7 +3322,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         
         fullWidthBackGestureRecognizer.setValue(targets, forKey: "targets")
         fullWidthBackGestureRecognizer.delegate = self
-        //parent.requireFailureOf(fullWidthBackGestureRecognizer)
+        // parent.requireFailureOf(fullWidthBackGestureRecognizer)
         view?.addGestureRecognizer(fullWidthBackGestureRecognizer)
         if #available(iOS 13.4, *) {
             fullWidthBackGestureRecognizer.allowedScrollTypesMask = .continuous
@@ -3514,7 +3514,7 @@ extension CommentViewController: UIViewControllerPreviewingDelegate {
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
             popover.backgroundColor = UIColor.foregroundColor
             popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            //detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
+            // detailViewController.frame = CGRect(x: (self.view.frame.bounds.width / 2 - (UIScreen.main.bounds.size.width * 0.85)), y: (self.view.frame.bounds.height / 2 - (cell2.title.estimatedHeight + 12)), width: UIScreen.main.bounds.size.width * 0.85, height: cell2.title.estimatedHeight + 12)
             popover.delegate = self
             viewControllerToCommit.preferredContentSize = (viewControllerToCommit as! ParentCommentViewController).estimatedSize
         }
@@ -3565,7 +3565,7 @@ extension CommentViewController: Cacheable {
                 var ids = [String]()
                 var validIDs = [String]()
                 for comment in content.values {
-                    if let comment = comment as? CommentObject { //ignore more objects for offline
+                    if let comment = comment as? CommentObject { // ignore more objects for offline
                         _ = comment.insertSelf(into: context, andSave: false)
                         validIDs.append(comment.getId())
                     }

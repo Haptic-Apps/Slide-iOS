@@ -93,7 +93,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
             let layout = (strongMatch.collectionViewLayout as! WrappingHeaderFlowLayout)
             let padding: CGFloat = 12
                         
-            //Translate percentage of current view translation to the parent scroll view, add in original offset
+            // Translate percentage of current view translation to the parent scroll view, add in original offset
             let currentWidth = layout.widthAt(currentIndex)
             let nextWidthIndex = currentIndex + (percentCompleteDirectional >= 0 ? 1 : -1)
             let lerped: CGFloat
@@ -107,7 +107,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
                                                                                max: (currentWidth / 2) + (nextWidth / 2)))
             }
             
-            let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+            let insetX = (strongMatch.superview!.frame.origin.x / 2) - ((strongMatch.superview!.frame.maxX - strongMatch.superview!.frame.size.width) / 2) // Collectionview left offset for profile icon
 
             let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
                 (currentWidth / 2) - // Width of current cell
@@ -127,7 +127,7 @@ public class ColorMuxPagingViewController: UIPageViewController, UIScrollViewDel
         }
     }
         
-    //From https://stackoverflow.com/a/25167681/3697225
+    // From https://stackoverflow.com/a/25167681/3697225
     public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         var totalCount = titles.count
         if let page = self as? OnboardingPageViewController {

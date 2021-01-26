@@ -147,7 +147,7 @@ public class TextDisplayStackView: UIStackView {
     var addedConstraints = [NSLayoutConstraint]()
     
     func clearOverflow() {
-        //Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
+        // Clear out old UIStackView from https://gist.github.com/Deub27/5eadbf1b77ce28abd9b630eadb95c1e2
         let removedSubviews = overflow.arrangedSubviews.reduce([]) { (allSubviews, subview) -> [UIView] in
             overflow.removeArrangedSubview(subview)
             return allSubviews + [subview]
@@ -346,7 +346,7 @@ public class TextDisplayStackView: UIStackView {
         estimatedHeight = 0
         clearOverflow()
         
-        //Start HTML parse
+        // Start HTML parse
         var blocks = TextDisplayStackView.getBlocks(htmlString)
         
         var startIndex = 0
@@ -422,9 +422,9 @@ public class TextDisplayStackView: UIStackView {
                 body.scrollView?.panGestureRecognizer.cancelsTouchesInView = true
                 overflow.addArrangedSubview(body)
                 body.horizontalAnchors /==/ overflow.horizontalAnchors
-                //if !ignoreHeight {
+                // if !ignoreHeight {
                     body.heightAnchor /==/ body.globalHeight
-                //}
+                // }
                 body.backgroundColor = UIColor.backgroundColor.withAlphaComponent(0.5)
                 body.clipsToBounds = true
                 body.verticalCompressionResistancePriority = .required
@@ -766,14 +766,14 @@ public class TextDisplayStackView: UIStackView {
             }
         }
         
-        //match unconventional spoiler tags
+        // match unconventional spoiler tags
         for match in base.capturedGroups(withRegex: "<a href=\"([#/](?:spoiler|sp|s))\">([^<]*)</a>") {
             let newPiece = match[0]
             let inner = "Spoiler [[s[\(newPiece.subsequence(newPiece.indexOf(">")! + 1, endIndex: newPiece.lastIndexOf("<")!))]s]]"
             base = base.replacingOccurrences(of: match[0], with: inner)
         }
         
-        //match native Reddit spoilers
+        // match native Reddit spoilers
         for match in base.capturedGroups(withRegex: "<span class=\"[^\"]*md-spoiler-text+[^\"]*\">([^<]*)</span>") {
             let tag = match[0]
             let spoilerText = match[1]

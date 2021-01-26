@@ -456,7 +456,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
             case 1: return self.shadowbox
             case 2: return self.backup
             case 3: return self.icons
-            //case 3: return self.night
+            // case 3: return self.night
             case 4: return self.biometric
             case 5: return self.themes
             //            case 7: return self.gallery

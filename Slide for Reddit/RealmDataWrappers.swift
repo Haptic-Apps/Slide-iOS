@@ -48,7 +48,7 @@ extension String {
     }
 }
 
-//From https://stackoverflow.com/a/43665681/3697225
+// From https://stackoverflow.com/a/43665681/3697225
 extension String {
     func dictionaryValue() -> [String: AnyObject] {
         if let data = self.data(using: String.Encoding.utf8) {

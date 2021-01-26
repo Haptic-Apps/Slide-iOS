@@ -77,7 +77,7 @@ class PostActionMenuController: Votable {
     
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-        let myModel = context as! SubmissionRowController //make the model
+        let myModel = context as! SubmissionRowController // make the model
         self.modelContext = myModel
         titleLabel.setAttributedText(myModel.titleText)
         if myModel.thumbnail == nil && myModel.largeimage != nil {

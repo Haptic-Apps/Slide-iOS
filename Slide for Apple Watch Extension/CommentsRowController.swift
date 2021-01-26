@@ -29,7 +29,7 @@ public class CommentsRowController: NSObject {
     func setData(dictionary: NSDictionary) {
         self.dictionary = dictionary
         let subtitleFont = UIFont.boldSystemFont(ofSize: 10)
-        //let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
+        // let attributedTitle = NSMutableAttributedString(string: dictionary["title"] as! String, attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.white])
         id = dictionary["context"] as? String ?? ""
         fullname = dictionary["id"] as? String ?? ""
         submissionId = dictionary["submission"] as? String ?? ""
@@ -74,11 +74,11 @@ public class CommentsRowController: NSObject {
                 self.attributedBody = attributedText
                 bodyLabel.setAttributedText(attributedText)
             } catch {
-                //todo populate attributed string
+                // todo populate attributed string
                 bodyLabel.setText(dictionary["body"] as? String)
             }
         } else {
-            //todo populate attributed string
+            // todo populate attributed string
             bodyLabel.setText(dictionary["body"] as? String)
         }
     }

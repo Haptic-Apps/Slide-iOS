@@ -85,17 +85,17 @@ class SubmissionObjectReportService: XCTestCase {
 
         let context = coreDataStack.storeContainer.newBackgroundContext()
         context.performAndWait {
-            //Create and insert into CoreData
+            // Create and insert into CoreData
             let coreDataItem = submissionObject.insertSelf(into: context, andSave: true) as? SubmissionModel
             XCTAssertNotNil(coreDataItem, "Failed saving SubmissionObject into CoreData")
 
-            //Create new SubmissionObject from previously converted model
+            // Create new SubmissionObject from previously converted model
             let newSubmissionObject = SubmissionObject(model: coreDataItem!)
             
             let mirroredOriginal = Mirror(reflecting: submissionObject!)
             let mirroredNew = Mirror(reflecting: newSubmissionObject)
 
-            //Test from SubmissionObject -> SubmissionObject, using reflection. Will catch changes to SubmissionObject that aren't reflected in CD Model
+            // Test from SubmissionObject -> SubmissionObject, using reflection. Will catch changes to SubmissionObject that aren't reflected in CD Model
             for attr in mirroredOriginal.children {
                 if let property_name = attr.label, (attr.value is String || attr.value is Int || attr.value is Date || attr.value is Double) {
                     let firstValue = attr.value

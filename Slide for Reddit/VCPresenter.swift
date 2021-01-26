@@ -20,7 +20,7 @@ public class VCPresenter {
         }
         
         if viewController is InboxViewController {
-            //Siri Shortcuts integration
+            // Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = InboxViewController.openInboxActivity()
                 viewController.userActivity = activity
@@ -68,7 +68,7 @@ public class VCPresenter {
 
             let barButton = UIBarButtonItem.init(customView: button)
 
-            //Let's figure out how to present it
+            // Let's figure out how to present it
             let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
             if small || override13 || respectedOverride13 {
@@ -149,7 +149,7 @@ public class VCPresenter {
                 popover.delegate = (parentViewController as! MediaTableViewController)
             }
         }
-        //TODO deallocate that delegate....
+        // TODO deallocate that delegate....
         
         viewController.navigationItem.rightBarButtonItems = [barButton]
         parentViewController.present(newParent, animated: true, completion: nil)
@@ -246,7 +246,7 @@ public class VCPresenter {
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
         let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: link)!)
         if vc is SingleSubredditViewController {
-            //Siri Shortcuts integration
+            // Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: (vc as! SingleSubredditViewController).sub)
                 vc.userActivity = activity

@@ -159,7 +159,7 @@ public class ColorPickerViewController: UIViewController {
     static var defaultThumbSize: CGFloat = 28.0
     
     // MARK: Properties
-    @IBInspectable var hasRainbow: Bool = false { didSet { updateTrackColors() } }//Uses saturation & lightness from minColor
+    @IBInspectable var hasRainbow: Bool = false { didSet { updateTrackColors() } }// Uses saturation & lightness from minColor
     @IBInspectable var minColor: UIColor = UIColor.blue { didSet { updateTrackColors() } }
     @IBInspectable var maxColor: UIColor = UIColor.orange { didSet { updateTrackColors() } }
     
@@ -412,7 +412,7 @@ public class ColorPickerViewController: UIViewController {
         _thumbLayer.addSublayer(_thumbIconLayer)
         
         // instead of method - layoutSublayersOfLayer
-        //needsDisplayOnBoundsChange = true
+        // needsDisplayOnBoundsChange = true
     }
     
     // MARK: - Layout
@@ -512,7 +512,7 @@ public class ColorPickerViewController: UIViewController {
         let left = _trackLayer.position.x - trackWidth / 2.0
         
         if !animated {
-            CATransaction.begin() //Move the thumb position without animations
+            CATransaction.begin() // Move the thumb position without animations
             CATransaction.setValue(true, forKey: kCATransactionDisableActions)
             _thumbLayer.position = CGPoint(x: left + (trackWidth * perc), y: halfHeight)
             CATransaction.commit()
@@ -553,7 +553,7 @@ public class ColorPickerViewController: UIViewController {
             _trackLayer.locations = [0.0, 1.0]
             return
         }
-        //Otherwise make a rainbow with the saturation & lightness of the min color
+        // Otherwise make a rainbow with the saturation & lightness of the min color
         var h: CGFloat = 0.0
         var s: CGFloat = 0.0
         var l: CGFloat = 0.0

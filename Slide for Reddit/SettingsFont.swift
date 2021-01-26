@@ -129,7 +129,7 @@ class SettingsFont: BubbleSettingTableViewController {
         sliderSub.minimumValue = -8
         sliderSub.tickCount = 16
         sliderSub.tickSize = CGSize(width: 3, height: 10)
-        sliderSub.tickStyle = 2 //rounded
+        sliderSub.tickStyle = 2 // rounded
         sliderSub.value = CGFloat(SettingValues.postFontOffset)
         sliderSub.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
         sliderSub.minimumTrackTintColor = ColorUtil.baseAccent
@@ -168,7 +168,7 @@ class SettingsFont: BubbleSettingTableViewController {
         slider.minimumValue = -8
         slider.tickCount = 16
         slider.tickSize = CGSize(width: 3, height: 10)
-        slider.tickStyle = 2 //rounded
+        slider.tickStyle = 2 // rounded
         slider.value = CGFloat(SettingValues.commentFontOffset)
         slider.addTarget(self, action: #selector(valueChanged(_:event:)), for: .valueChanged)
         slider.minimumTrackTintColor = ColorUtil.baseAccent

@@ -15,7 +15,7 @@ public protocol PagingTitleDelegate: class {
 }
 public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegate {
     
-    //Overwrite this when implementing
+    // Overwrite this when implementing
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         return UICollectionViewCell()
     }
@@ -24,7 +24,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         
     }
 
-    //Shared vars
+    // Shared vars
     public var collectionView: UICollectionView!
     private var collectionViewLayout: FadingCollectionViewLayout!
     private weak var delegate: PagingTitleDelegate?
@@ -110,7 +110,7 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
         collectionView.mask = coverView
     }
         
-    //From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
+    // From https://github.com/hershalle/CollectionViewWithPaging-Finish/blob/master/CollectionViewWithPaging/ViewController.swift
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return dataSource.count
     }
@@ -349,14 +349,14 @@ extension PagingTitleCollectionView: WrappingHeaderFlowLayoutDelegate {
             width += 4 // icon leading padding
             
             if collectionView.frame.size.width > 400 {
-                width += 24 //title padding
+                width += 24 // title padding
             } else {
                 width += 12
             }
             width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
             return CGSize(width: width, height: 40)
         } else {
-            var width = CGFloat(0) //icon size
+            var width = CGFloat(0) // icon size
             width += 8 // title padding
             width += dataSource[indexPath.row].size(with: UIFont.boldSystemFont(ofSize: 18)).width
             return CGSize(width: width, height: 40)
@@ -370,7 +370,7 @@ class GradientMaskView: UIView {
     }
 }
 
-//Based on https://stackoverflow.com/a/42705208/3697225
+// Based on https://stackoverflow.com/a/42705208/3697225
 class FadingCollectionViewLayout: WrappingHeaderFlowLayout {
 
     private var fadeFactor: CGFloat = 0.6

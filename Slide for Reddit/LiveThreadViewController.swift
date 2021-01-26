@@ -236,15 +236,15 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     var socket: WebSocket?
     func setupWatcher(websocketUrl: String) {
         socket = WebSocket(url: URL(string: websocketUrl)!)
-        //websocketDidConnect
+        // websocketDidConnect
         socket!.onConnect = {
             print("websocket is connected")
         }
-        //websocketDidDisconnect
+        // websocketDidDisconnect
         socket!.onDisconnect = { (error: Error?) in
             print("websocket is disconnected: \(error?.localizedDescription ?? "")")
         }
-        //websocketDidReceiveMessage
+        // websocketDidReceiveMessage
         socket!.onText = { (text: String) in
             print("got some text: \(text)")
             do {
@@ -276,11 +276,11 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 
             }
         }
-        //websocketDidReceiveData
+        // websocketDidReceiveData
         socket!.onData = { (data: Data) in
             print("got some data: \(data.count)")
         }
-        //you could do onPong as well.
+        // you could do onPong as well.
         socket!.connect()
     }
 

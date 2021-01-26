@@ -10,9 +10,9 @@ import CoreData
 import reddift
 import UIKit
 
-//CoreData representation of SubmissionObject
+// CoreData representation of SubmissionObject
 public extension SubmissionModel {
-    //Takes a Link from reddift and turns it into a Realm model
+    // Takes a Link from reddift and turns it into a Realm model
     
     /*func submissionObjectToCD(submission: SubmissionObject) -> NSManagedObject {
         let managedContext = SlideCoreData.sharedInstance.backgroundContext

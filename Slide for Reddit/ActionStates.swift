@@ -106,7 +106,7 @@ class ActionStates {
         }
     }
     
-    //Realm
+    // Realm
     static func getVoteDirection(s: SubmissionObject) -> VoteDirection {
         if upVotedFullnames.contains(s.id) {
             return .up
@@ -175,7 +175,7 @@ class ActionStates {
         }
     }
     
-    //Realm comments
+    // Realm comments
     static func getVoteDirection(s: CommentObject) -> VoteDirection {
         if upVotedFullnames.contains(s.id) {
             return .up

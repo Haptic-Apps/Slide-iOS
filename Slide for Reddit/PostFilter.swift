@@ -74,7 +74,7 @@ class PostFilter {
             (link.isNSFW && !SettingValues.nsfwEnabled) || (link.isNSFW && gallery && !(SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSubreddit))) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen
         
         if mainMatch {
-            //No need to check further
+            // No need to check further
             return mainMatch
         }
 
@@ -114,7 +114,7 @@ class PostFilter {
             break
         }
         
-        if ContentType.hostContains(host: link.domain, bases: ["v.redd.it"]) && isVideo(baseSubreddit) { //Handle Reddit videos
+        if ContentType.hostContains(host: link.domain, bases: ["v.redd.it"]) && isVideo(baseSubreddit) { // Handle Reddit videos
             contentMatch = true
         }
 

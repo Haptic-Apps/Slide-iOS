@@ -65,7 +65,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
         return true
     }
 
-    public func setLink(link: SubmissionObject, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { //lq is should load lq and did load lq
+    public func setLink(link: SubmissionObject, shownURL: URL?, lq: Bool, saveHistory: Bool, heroView: UIView?, finalSize: CGSize?, heroVC: UIViewController?, upvoteCallbackIn: (() -> Void)? = nil ) { // lq is should load lq and did load lq
         if saveHistory {
             History.addSeen(s: link, skipDuplicates: true)
         }
@@ -129,7 +129,7 @@ class MediaViewController: UIViewController, MediaVCDelegate, UIPopoverPresentat
                 UIApplication.shared.openURL(link.url!)
             }
         } else {
-            if type == .VIDEO { //YouTube videos can't play at the same time as another AV Session video
+            if type == .VIDEO { // YouTube videos can't play at the same time as another AV Session video
                 if let subVC = self as? SingleSubredditViewController {
                     for index in subVC.tableView.indexPathsForVisibleItems {
                         if let cell = subVC.tableView.cellForItem(at: index) as? LinkCellView {

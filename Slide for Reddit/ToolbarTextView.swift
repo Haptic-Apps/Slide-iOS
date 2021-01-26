@@ -373,7 +373,7 @@ public class ToolbarTextView: NSObject {
                 let mime = UTTypeCopyPreferredTagWithClass(uti! as CFString, kUTTagClassMIMEType)?.takeRetainedValue()
                 
                 if mime as String? ?? "" == "image/heic" || mime as String? ?? "" == "image/heif" {
-                    //Convert heic to jpg
+                    // Convert heic to jpg
                     if let dataStrong = data_in, let ciImage = CIImage(data: dataStrong) {
                         if #available(iOS 10.0, *) {
                             data = CIContext().jpegRepresentation(of: ciImage, colorSpace: CGColorSpaceCreateDeviceRGB())!

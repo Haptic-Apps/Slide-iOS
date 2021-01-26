@@ -315,7 +315,7 @@ class SplitMainViewController: MainViewController {
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
-        } else if SettingValues.submissionGestureMode == .HALF_FULL { //Always allow swipe back with paging disabled and not full
+        } else if SettingValues.submissionGestureMode == .HALF_FULL { // Always allow swipe back with paging disabled and not full
             vc.setupSwipeGesture()
         } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
@@ -379,7 +379,7 @@ class SplitMainViewController: MainViewController {
         self.edgesForExtendedLayout = .all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.presentsWithGesture = true
-        //self.navigationController?.setNavigationBarHidden(true, animated: false)
+        // self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.hidesBarsWhenVerticallyCompact = false
         self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
@@ -467,7 +467,7 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        if soft && false { //in case we need to not destroy the stack, disable for now
+        if soft && false { // in case we need to not destroy the stack, disable for now
         } else {
             (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
@@ -548,7 +548,7 @@ class SplitMainViewController: MainViewController {
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
-            //Siri Shortcuts integration
+            // Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: self.finalSubs[index!])
                 firstViewController.userActivity = activity
@@ -1058,7 +1058,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
             }
         case .POPOVER_AFTER_NAVIGATION:
             if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
-                nav.delegate = nav //Fixes strange case where the nav delegate is either overwritten or not equal to self, which is needed for the toExecute() stuff
+                nav.delegate = nav // Fixes strange case where the nav delegate is either overwritten or not equal to self, which is needed for the toExecute() stuff
                 nav.pushNextViewControllerFromRight() {
                     if let present = toPresent {
                         VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)

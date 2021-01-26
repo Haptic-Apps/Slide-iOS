@@ -389,7 +389,7 @@ extension ProfileInfoViewController: ProfileHeaderViewDelegate {
         }
     }
     
-    //TODO make tags and colors work without a viewcontroller context
+    // TODO make tags and colors work without a viewcontroller context
     func didRequestSetColor() {
         if let profile = profile as? ProfileViewController {
             self.dismiss(animated: true) {
@@ -498,9 +498,9 @@ class ProfileHeaderView: UIView {
         $0.configure(text: "Set user color", imageName: "add", sfSymbolName: .eyedropperFull, imageColor: GMColor.yellow500Color())
     }
 
-    //let tag = ColorUtil.getTagForUser(name: user.name)
+    // let tag = ColorUtil.getTagForUser(name: user.name)
     var tagCell = UITableViewCell().then {
-        //\((tag != nil) ? " (currently \(tag!))" : "")"
+        // \((tag != nil) ? " (currently \(tag!))" : "")"
         $0.configure(text: "Tag user", imageName: "flag", sfSymbolName: .tagFill, imageColor: GMColor.orange500Color())
     }
     

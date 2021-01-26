@@ -132,7 +132,7 @@ class VideoMediaDownloader {
         
         if let strongURL = URL(string: self.baseURL), var components = URLComponents(string: strongURL.absoluteString) {
             components.query = nil
-            key = components.url?.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") ?? strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") //Get rid of params, and all non-filename characters
+            key = components.url?.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") ?? strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") // Get rid of params, and all non-filename characters
         } else if let strongURL = URL(string: self.baseURL) {
             key = strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
         } else {
@@ -162,15 +162,15 @@ class VideoMediaDownloader {
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
         
         Alamofire.request(toLoadAudio).responseString { (response) in
-            if response.response?.statusCode == 200 { //Audio exists, let's get it
+            if response.response?.statusCode == 200 { // Audio exists, let's get it
                 if let url = URL(string: toLoadAudio) {
                     self.requestWithProgress(url: url, localUrlAudio: localUrlAudio) { (response) in
-                        if (response.error as NSError?)?.code == NSURLErrorCancelled { //Cancelled, exit
+                        if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
                             return
                         }
-                        if response.response?.statusCode ?? 0 != 200 { //Shouldn't be here
+                        if response.response?.statusCode ?? 0 != 200 { // Shouldn't be here
                             self.doCopy(localUrlV, to: finalUrl)
-                        } else { //no errors, merge audio and video
+                        } else { // no errors, merge audio and video
                             self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                                 DispatchQueue.main.async {
                                     self.alertView?.dismiss(animated: true, completion: {
@@ -183,17 +183,17 @@ class VideoMediaDownloader {
                 } else {
                     self.doCopy(localUrlV, to: finalUrl)
                 }
-            } else if response.response?.statusCode ?? 0 > 400 { //Might exist elsewhere
+            } else if response.response?.statusCode ?? 0 > 400 { // Might exist elsewhere
                 Alamofire.request("\(toLoadAudioBase)/audio").responseString { (response) in
-                    if response.response?.statusCode == 200 { //Audio exists, let's get it
+                    if response.response?.statusCode == 200 { // Audio exists, let's get it
                         if let url = URL(string: "\(toLoadAudioBase)/audio") {
                             self.requestWithProgress(url: url, localUrlAudio: localUrlAudio) { (response) in
-                                if (response.error as NSError?)?.code == NSURLErrorCancelled { //Cancelled, exit
+                                if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
                                     return
                                 }
-                                if response.response?.statusCode ?? 0 != 200 { //Shouldn't be here
+                                if response.response?.statusCode ?? 0 != 200 { // Shouldn't be here
                                     self.doCopy(localUrlV, to: finalUrl)
-                                } else { //no errors, merge audio and video
+                                } else { // no errors, merge audio and video
                                     self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                                         DispatchQueue.main.async {
                                             self.alertView?.dismiss(animated: true, completion: {
@@ -331,14 +331,14 @@ class VideoMediaDownloader {
         
     }
     
-    //From https://stackoverflow.com/a/39100999/3697225
+    // From https://stackoverflow.com/a/39100999/3697225
     func mergeFilesWithUrl(videoUrl: URL, audioUrl: URL, savePathUrl: URL, completion: @escaping () -> Void) {
         let mixComposition: AVMutableComposition = AVMutableComposition()
         var mutableCompositionVideoTrack: [AVMutableCompositionTrack] = []
         var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
         let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
         
-        //start merge
+        // start merge
         let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
         let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
         
@@ -351,11 +351,11 @@ class VideoMediaDownloader {
         do {
             try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: CMTime.zero)
             
-            //In my case my audio file is longer then video file so i took videoAsset duration
-            //instead of audioAsset duration
+            // In my case my audio file is longer then video file so i took videoAsset duration
+            // instead of audioAsset duration
             try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: CMTime.zero)
             
-            //Use this instead above line if your audiofile and video file's playing durations are same
+            // Use this instead above line if your audiofile and video file's playing durations are same
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
         } catch {
             print(error.localizedDescription)
@@ -379,7 +379,7 @@ class VideoMediaDownloader {
             print(error.localizedDescription)
         }
         
-        //find your video on this URl
+        // find your video on this URl
         let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
         assetExport.outputFileType = AVFileType.mp4
         assetExport.outputURL = savePathUrl
