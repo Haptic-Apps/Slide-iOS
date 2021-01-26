@@ -39,6 +39,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     var lastLength = 0
     var loader: UIActivityIndicatorView?
     weak var profilePresentationManager: ProfileInfoPresentationManager?
+    var chosenAccount: String?
 
     @objc func textViewDidChange(_ textView: UITextView) {
         replyDelegate?.textChanged(textView.text)
@@ -126,6 +127,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
     //Buttons for reply
     var body: UITextView?
     var sendB: UIButton!
+    var usernameB: UIButton?
     var discardB: UIButton!
     var edit = false
     var toolbar: ToolbarTextView?
@@ -237,21 +239,28 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         sendB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
+        usernameB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         discardB = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 200, height: 60))
         
         sendB.setTitleColor(UIColor.fontColor, for: .normal)
+        usernameB?.setTitleColor(UIColor.fontColor, for: .normal)
         discardB.setTitleColor(UIColor.fontColor, for: .normal)
 
         self.sendB.setTitle("Send", for: .normal)
+        self.usernameB?.setTitle("Replying as u/\(AccountController.currentName)", for: .normal)
         self.discardB.setTitle("Cancel", for: .normal)
         
+        self.usernameB?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+        
         sendB.addTarget(self, action: #selector(self.send(_:)), for: UIControl.Event.touchUpInside)
+        usernameB?.addTarget(self, action: #selector(self.changeUser(_:)), for: UIControl.Event.touchUpInside)
         discardB.addTarget(self, action: #selector(self.discard(_:)), for: UIControl.Event.touchUpInside)
         
         sendB.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
+        usernameB?.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         discardB.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
         
-        reply.addSubviews(sendB, discardB)
+        reply.addSubviews(sendB, discardB, usernameB!)
         
         contentView.addSubview(reply)
         setNeedsLayout()
@@ -915,8 +924,27 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             return
         }
         
-        let session = (UIApplication.shared.delegate as! AppDelegate).session
-        alertController = UIAlertController(title: "Sending reply...\n\n\n", message: nil, preferredStyle: .alert)
+        var session = (UIApplication.shared.delegate as! AppDelegate).session
+        
+        if let name = self.chosenAccount {
+            let token: OAuth2Token
+            do {
+                if AccountController.isMigrated(name) {
+                    token = try LocalKeystore.token(of: name)
+                } else {
+                    token = try OAuth2TokenRepository.token(of: name)
+                }
+                session = Session(token: token)
+            } catch {
+                let alert = UIAlertController(title: "Something went wrong", message: "There was an error loading this account. Please try again later.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { (_) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+                parent?.present(alert, animated: true, completion: nil)
+                return
+            }
+        }
+        alertController = UIAlertController(title: "Sending reply\(chosenAccount != nil ? " as u/" + chosenAccount! : "")...\n\n\n", message: nil, preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
@@ -924,7 +952,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         spinnerIndicator.startAnimating()
         
         alertController?.view.addSubview(spinnerIndicator)
-        parent!.present(alertController!, animated: true, completion: nil)
+        parent?.present(alertController!, animated: true, completion: nil)
         
         do {
             let name = comment!.id
@@ -935,17 +963,17 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                     DispatchQueue.main.async {
                         self.toolbar?.saveDraft(self)
                         self.alertController?.dismiss(animated: false, completion: {
-                            let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again.\n\nError: \(error.localizedDescription)", preferredStyle: .alert)
+                            let alert = UIAlertController(title: "Something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again.\n\nError: \(error.localizedDescription)", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-                            self.parent!.present(alert, animated: true, completion: nil)
+                            self.parent?.present(alert, animated: true, completion: nil)
                         })
-                        self.replyDelegate!.replySent(comment: nil, cell: self)
+                        self.replyDelegate?.replySent(comment: nil, cell: self)
                     }
                 case .success(let postedComment):
                     DispatchQueue.main.async {
                         self.alertController?.dismiss(animated: false, completion: {
                         })
-                        self.replyDelegate!.replySent(comment: postedComment, cell: self)
+                        self.replyDelegate?.replySent(comment: postedComment, cell: self)
                         self.parent?.isReply = false
                         self.replyDelegate!.discard()
                     }
@@ -955,11 +983,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             DispatchQueue.main.async {
                 self.toolbar?.saveDraft(self)
                 self.alertController?.dismiss(animated: false, completion: {
-                    let alert = UIAlertController(title: "Uh oh, something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Something went wrong", message: "Your comment has not been sent (but has been saved as a draft), please try again", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
-                    self.parent!.present(alert, animated: true, completion: nil)
+                    self.parent?.present(alert, animated: true, completion: nil)
                 })
-                self.replyDelegate!.replySent(comment: nil, cell: self)
+                self.replyDelegate?.replySent(comment: nil, cell: self)
             }
         }
     }
@@ -1030,8 +1058,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             reply.topAnchor /==/ commentBody.bottomAnchor + CGFloat(8)
             reply.bottomAnchor /==/ contentView.bottomAnchor
             reply.horizontalAnchors /==/ contentView.horizontalAnchors
+            usernameB!.leftAnchor /==/ reply.leftAnchor + CGFloat(8)
+            usernameB!.topAnchor /==/ reply.topAnchor + CGFloat(8)
             body!.horizontalAnchors /==/ reply.horizontalAnchors + CGFloat(8)
-            body!.topAnchor /==/ reply.topAnchor + CGFloat(8)
+            body!.topAnchor /==/ usernameB!.bottomAnchor + CGFloat(4)
             discardB.leftAnchor /==/ reply.leftAnchor + CGFloat(8)
             sendB.rightAnchor /==/ reply.rightAnchor - CGFloat(8)
             discardB.topAnchor /==/ body!.bottomAnchor + CGFloat(8)
@@ -1085,6 +1115,24 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         doMenu()
     }
     
+    @objc func changeUser(_ s: AnyObject) {
+        let optionMenu = DragDownAlertMenu(title: "Accounts", subtitle: "Choose an account to reply with", icon: nil)
+
+        for accountName in AccountController.names.unique().sorted() {
+            if accountName != self.chosenAccount {
+                optionMenu.addAction(title: accountName, icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) { [weak self] in
+                    self?.chosenAccount = accountName
+                    self?.usernameB?.setTitle("Replying as u/\(accountName)", for: .normal)
+                }
+            } else {
+                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
+                }
+            }
+        }
+        
+        optionMenu.show(self.parent)
+    }
+
     @objc func downvote(_ s: AnyObject) {
         parent!.vote(comment: comment!, dir: .down)
         self.refresh(comment: comment!, submissionAuthor: (parent!.submission?.author)!, text: self.cellContent!)
