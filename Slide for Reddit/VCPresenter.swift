@@ -43,14 +43,25 @@ public class VCPresenter {
             override13 = false
         }
         
+        
+        // Yes, this logic is a mess. I need to redo it sometime...
         let respectedOverride13 = override13
+        var shouldPopup = popupIfPossible
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if viewController is SingleSubredditViewController && SettingValues.disableSubredditPopupIpad {
+                shouldPopup = false
+            } else if (viewController is CommentViewController || viewController is PagingCommentViewController) && SettingValues.disablePopupIpad {
+                shouldPopup = false
+            }
+        }
 
         override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
         
         if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && popupIfPossible) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && override13) || parentNavigationController == nil {
+        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true
@@ -69,7 +80,7 @@ public class VCPresenter {
             let barButton = UIBarButtonItem.init(customView: button)
 
             // Let's figure out how to present it
-            let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
+            let small: Bool = shouldPopup && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
             if small || override13 || respectedOverride13 {
                 newParent.modalPresentationStyle = .pageSheet
