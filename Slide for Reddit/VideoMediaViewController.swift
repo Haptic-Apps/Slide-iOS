@@ -936,6 +936,9 @@ extension VideoMediaViewController {
                 strongSelf.ytButton.isHidden = false
             }
             
+            //Notify other videos to end
+            NotificationCenter.default.post(name: .onYouTubeWillStart, object: nil)
+            
             if !playlist.isEmpty {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
             } else {
@@ -1484,4 +1487,8 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             }
         }
     }
+}
+
+extension Notification.Name {
+    static let onYouTubeWillStart = Notification.Name("on-youtube-will-start")
 }

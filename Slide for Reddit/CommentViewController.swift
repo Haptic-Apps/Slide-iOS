@@ -1311,6 +1311,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     var indicator: MDCActivityIndicator = MDCActivityIndicator()
     
+    @objc func youTubePlaying() {
+        if let cell = self.headerCell as? LinkCellView {
+            cell.endVideos()
+        }
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -1369,6 +1375,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             self,
             selector: #selector(keyboardWillShow(_:)),
             name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(youTubePlaying),
+            name: .onYouTubeWillStart,
             object: nil
         )
         NotificationCenter.default.addObserver(

@@ -183,6 +183,21 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     @objc func showMenu(_ sender: AnyObject) {
         showMore(sender)
     }
+    
+    @objc func youTubePlaying() {
+        for index in tableView.indexPathsForVisibleItems {
+            if let cell = tableView.cellForItem(at: index) as? LinkCellView {
+                cell.endVideos()
+                self.currentPlayingIndex = self.currentPlayingIndex.filter({ (included) -> Bool in
+                    return included.row != index.row
+                })
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -192,6 +207,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
+        NotificationCenter.default.addObserver(self, selector: #selector(youTubePlaying), name: .onYouTubeWillStart, object: nil)
+
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         self.view = UIView.init(frame: CGRect.zero)
