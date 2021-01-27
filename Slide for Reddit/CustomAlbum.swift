@@ -74,54 +74,26 @@ class CustomAlbum: NSObject {
     }
 
     func save(image: UIImage, parent: UIViewController?) {
-        self.checkAuthorizationWithHandler { (success) in
-            if success, self.assetCollection != nil {
-                PHPhotoLibrary.shared().performChanges({
-                    let assetChangeRequest = PHAssetChangeRequest.creationRequestForAsset(from: image)
-                    let assetPlaceHolder = assetChangeRequest.placeholderForCreatedAsset
-                    if let albumChangeRequest = PHAssetCollectionChangeRequest(for: self.assetCollection) {
-                        let enumeration: NSArray = [assetPlaceHolder!]
-                        albumChangeRequest.addAssets(enumeration)
-                    }
-
-                }, completionHandler: { (success, _) in
-                    DispatchQueue.main.async {
-                        if success {
-                            BannerUtil.makeBanner(text: "Image saved to gallery!", color: .black, seconds: 3, context: parent)
-                        } else {
-                            BannerUtil.makeBanner(text: "Error saving image!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: parent)
-                        }
-                    }
-                })
-
-            }
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    @objc func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
+        if error != nil {
+            BannerUtil.makeBanner(text: "Error saving image!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: nil)
+        } else {
+            BannerUtil.makeBanner(text: "Image saved to Camera Roll", color: .black, seconds: 3, context: nil)
+        }
+    }
+    
+    @objc func video(_ video: String, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
+        if error != nil {
+            BannerUtil.makeBanner(text: "Error saving video!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: nil)
+        } else {
+            BannerUtil.makeBanner(text: "Video saved to Camera Roll", color: .black, seconds: 3, context: nil)
         }
     }
 
     func saveMovieToLibrary(movieURL: URL, parent: UIViewController?) {
-        self.checkAuthorizationWithHandler { (success) in
-            if success, self.assetCollection != nil {
-                PHPhotoLibrary.shared().performChanges({
-                    if let assetChangeRequest = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: movieURL) {
-                        let assetPlaceHolder = assetChangeRequest.placeholderForCreatedAsset
-                        if let albumChangeRequest = PHAssetCollectionChangeRequest(for: self.assetCollection) {
-                            let enumeration: NSArray = [assetPlaceHolder!]
-                            albumChangeRequest.addAssets(enumeration)
-                        }
-                    }
-                }, completionHandler: { (success, error) in
-                    DispatchQueue.main.async {
-                        if success {
-                            BannerUtil.makeBanner(text: "Video saved to gallery!", color: .black, seconds: 3, context: parent)
-                        } else {
-                            print("Error writing to movie library: \(error!.localizedDescription)")
-                            BannerUtil.makeBanner(text: "Error saving video!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: parent)
-                        }
-                    }
-                })
-
-            }
-        }
-
+        UISaveVideoAtPathToSavedPhotosAlbum(movieURL.absoluteString, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
     }
 }

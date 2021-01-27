@@ -8,6 +8,7 @@ import Anchorage
 import MobileCoreServices
 import OpalImagePicker
 import Photos
+import PhotosUI
 import RLBAlertsPickers
 import SDCAlertView
 import SwiftyJSON
@@ -16,7 +17,8 @@ import UIKit
 public class ToolbarTextView: NSObject {
 
     var text: UITextView?
-    var parent: UIViewController
+    weak var parent: UIViewController?
+    var picker: NSObject?
 
     init(textView: UITextView, parent: UIViewController) {
         self.text = textView
@@ -96,7 +98,7 @@ public class ToolbarTextView: NSObject {
 
     @objc func openDrafts(_ sender: AnyObject) {
         print("Opening drafts")
-        parent.view.endEditing(true)
+        parent?.view.endEditing(true)
         let alert = AlertController(title: "Drafts", message: "", preferredStyle: .alert)
         
         alert.setupTheme()
@@ -139,7 +141,7 @@ public class ToolbarTextView: NSObject {
 
         alert.addBlurView()
         
-        parent.present(alert, animated: true, completion: nil)
+        parent?.present(alert, animated: true, completion: nil)
         /*
         if Drafts.drafts.isEmpty {
             parent.view.makeToast("No drafts found", duration: 4, position: .top)
@@ -173,24 +175,38 @@ public class ToolbarTextView: NSObject {
     }
     
     @objc func uploadImage(_ sender: UIButton!) {
-        let imagePicker = OpalImagePickerController()
-        imagePicker.allowedMediaTypes = [PHAssetMediaType.image]
-        self.parent.presentOpalImagePickerController(imagePicker, animated: true,
-                                         select: { (assets) in
-                                            imagePicker.dismiss(animated: true, completion: {
-                                                if !assets.isEmpty {
-                                                    let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(assets.count) image\(assets.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
-                                                    alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
-                                                    alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
-                                                        self.uploadAsync(assets)
-                                                    })
-                                                    self.parent.present(alert, animated: true, completion: nil)
-                                                }
+        if #available(iOS 14.0, *) {
+            
+            var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
 
-                                            })
-        }, cancel: {
-            imagePicker.dismiss(animated: true)
-        })
+            config.filter = .images
+            config.selectionLimit = 0
+            
+            let localPicker = PHPickerViewController(configuration: config)
+            localPicker.delegate = self
+            self.picker = localPicker
+            
+            parent?.present(localPicker, animated: true)
+        } else {
+            let imagePicker = OpalImagePickerController()
+            imagePicker.allowedMediaTypes = [PHAssetMediaType.image]
+            self.parent?.presentOpalImagePickerController(imagePicker, animated: true,
+                                             select: { (assets) in
+                                                imagePicker.dismiss(animated: true, completion: {
+                                                    if !assets.isEmpty {
+                                                        let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(assets.count) image\(assets.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+                                                        alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+                                                        alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
+                                                            self.uploadAsync(assets)
+                                                        })
+                                                        self.parent?.present(alert, animated: true, completion: nil)
+                                                    }
+
+                                                })
+            }, cancel: {
+                imagePicker.dismiss(animated: true)
+            })
+        }
     }
 
     var progressBar = UIProgressView()
@@ -202,7 +218,7 @@ public class ToolbarTextView: NSObject {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
         alertView!.addCancelButton()
 
-        parent.present(alertView!, animated: true, completion: {
+        parent?.present(alertView!, animated: true, completion: {
             //  Add your progressbar after alert is shown (and measured)
             let margin: CGFloat = 8.0
             let rect = CGRect.init(x: margin, y: 72.0, width: (self.alertView?.view.frame.width)! - margin * 2.0, height: 2.0)
@@ -280,12 +296,12 @@ public class ToolbarTextView: NSObject {
                                                 alert.addCancelButton()
                                                 alert.addBlurView()
 
-                                                self.parent.present(alert, animated: true, completion: nil)
+                                                self.parent?.present(alert, animated: true, completion: nil)
                                             }
                                         } else {
                                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
-                                            self.parent.present(alert, animated: true, completion: nil)
+                                            self.parent?.present(alert, animated: true, completion: nil)
                                         }
                                     })
                                 }
@@ -345,12 +361,12 @@ public class ToolbarTextView: NSObject {
                                 alert.addCancelButton()
                                 alert.addBlurView()
 
-                                self.parent.present(alert, animated: true, completion: nil)
+                                self.parent?.present(alert, animated: true, completion: nil)
                             }
                         } else {
                             let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
                             alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
-                            self.parent.present(alert, animated: true, completion: nil)
+                            self.parent?.present(alert, animated: true, completion: nil)
                         }
 
                     })
@@ -486,7 +502,7 @@ public class ToolbarTextView: NSObject {
         alert.addCancelButton()
         alert.addBlurView()
         
-        self.parent.present(alert, animated: true, completion: nil)
+        self.parent?.present(alert, animated: true, completion: nil)
 
     }
 
@@ -518,5 +534,27 @@ public class ToolbarTextView: NSObject {
 class TouchUIScrollView: UIScrollView {
     override func touchesShouldCancel(in view: UIView) -> Bool {
         return true
+    }
+}
+
+@available(iOS 14, *)
+extension ToolbarTextView: PHPickerViewControllerDelegate {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        let identifiers = results.compactMap(\.assetIdentifier)
+        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: identifiers, options: nil)
+        
+        (self.picker as? PHPickerViewController)?.dismiss(animated: true, completion: {
+            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(fetchResult.count) image\(fetchResult.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
+            alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
+                var assets = [PHAsset]()
+                fetchResult.enumerateObjects { (asset, _, _) in
+                    assets.append(asset)
+                }
+                self.uploadAsync(assets)
+            })
+            self.parent?.present(alert, animated: true, completion: nil)
+
+        })
     }
 }

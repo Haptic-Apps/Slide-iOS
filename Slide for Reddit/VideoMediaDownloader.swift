@@ -226,6 +226,7 @@ class VideoMediaDownloader {
                 countBytes.countStyle = .file
                 let fileSize = countBytes.string(fromByteCount: Int64(progress.totalUnitCount))
                 self.alertView?.title = "Downloading audio... (\(fileSize))"
+                
                 self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
             }
         }
