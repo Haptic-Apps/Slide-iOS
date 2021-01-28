@@ -1231,9 +1231,31 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     }
 
     @objc func hideReadPosts() {
+        var topIndex = tableView.indexPathsForVisibleItems.first?.row ?? 0
+        let originalIndex = topIndex
+        
         dataSource.hideReadPosts { [weak self] (indexPaths: [IndexPath]) in
             guard let self = self else { return }
+            
+            
+            func containsTopIndex() -> Bool {
+                if topIndex == 0 {
+                    return false
+                }
 
+                for indexPath in indexPaths {
+                    if indexPath.row == topIndex {
+                        return true
+                    }
+                }
+                return false
+            }
+            
+            while containsTopIndex() {
+                topIndex -= 1
+            }
+            
+            
             DispatchQueue.main.async {
                 if !indexPaths.isEmpty {
                     self.tableView.performBatchUpdates({
@@ -1241,6 +1263,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     }, completion: { (_) in
                         self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                         self.tableView.reloadData()
+                        if topIndex != originalIndex {
+                            self.tableView.scrollToItem(at: IndexPath(row: topIndex, section: 0), at: .bottom, animated: false)
+                        }
                     })
                 }
             }

@@ -11,6 +11,10 @@ import RLBAlertsPickers
 import SDCAlertView
 import UIKit
 
+protocol SettingsCustomThemeDelegate: class {
+    func themeSaved()
+}
+
 class SettingsCustomTheme: UITableViewController {
     
     var foreground: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "foreground")
@@ -26,6 +30,7 @@ class SettingsCustomTheme: UITableViewController {
     var fontColor = UIColor.black.withAlphaComponent(0.85)
     var navIconColor = UIColor.black.withAlphaComponent(0.85)
     var statusbarEnabled = true
+    weak var delegate: SettingsCustomThemeDelegate?
     
     var selectedRow = -1
 
@@ -149,6 +154,7 @@ class SettingsCustomTheme: UITableViewController {
             }))
             
             alert.addAction(AlertAction(title: "Discard", style: .destructive, handler: { (_) in
+                self.delegate?.themeSaved()
                 self.dismiss(animated: true, completion: nil)
             }))
             
@@ -169,6 +175,7 @@ class SettingsCustomTheme: UITableViewController {
             }
             ColorUtil.initializeThemes()
             SettingsTheme.needsRestart = true
+            self.delegate?.themeSaved()
             self.dismiss(animated: true, completion: nil)
         }
     }

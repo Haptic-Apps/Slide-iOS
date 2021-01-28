@@ -562,6 +562,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 }))
                 alert.addAction(UIAlertAction(title: "Edit Theme", style: .default, handler: { (_) in
                     let theme = SettingsCustomTheme()
+                    theme.delegate = self
                     theme.inputTheme = self.customThemes[indexPath.row - 1].title
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
                 }))
@@ -764,7 +765,23 @@ final public class PickerViewViewControllerColored: UIViewController {
                 }
             }
         }
-        
+    }
+}
+
+extension SettingsTheme: SettingsCustomThemeDelegate {
+    func themeSaved() {
+        SettingsTheme.needsRestart = false
+        _ = ColorUtil.doInit()
+        SingleSubredditViewController.cellVersion += 1
+        self.tableView.reloadData()
+        MainViewController.needsReTheme = true
+        self.setupViews()
+        self.tochange!.doCells()
+        self.tochange!.tableView.reloadData()
+        self.tableView.reloadData()
+        self.setupBaseBarColors()
+
+        self.redoThemes()
     }
 }
 
