@@ -80,7 +80,7 @@ class TabsContentPagingViewController: ColorMuxPagingViewController, UIPageViewC
 
         tabBar?.removeFromSuperview()
         tabBar = TabsPagingTitleCollectionView(withTabs: titles, delegate: self)
-        tabBar.backgroundColor = UIColor.foregroundColor
+        tabBar.backgroundColor = SettingValues.reduceColor ? UIColor.foregroundColor : ColorUtil.baseColor
         
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: tabBar.collectionView.panGestureRecognizer)

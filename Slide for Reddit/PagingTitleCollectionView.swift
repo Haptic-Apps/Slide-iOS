@@ -102,11 +102,11 @@ public class PagingTitleCollectionView: UIView, UICollectionViewDataSource, UICo
     
     public func addGradientMask() {
         let coverView = GradientMaskView(frame: self.collectionView.bounds)
-         let coverLayer = coverView.layer as! CAGradientLayer
-         coverLayer.colors = [UIColor.foregroundColor.withAlphaComponent(0).cgColor, UIColor.foregroundColor.cgColor, UIColor.foregroundColor.cgColor, UIColor.foregroundColor.withAlphaComponent(0).cgColor]
+        let coverLayer = coverView.layer as! CAGradientLayer
+        coverLayer.colors = [UIColor.foregroundColor.withAlphaComponent(0).cgColor, UIColor.foregroundColor.cgColor, UIColor.foregroundColor.cgColor, UIColor.foregroundColor.withAlphaComponent(0).cgColor]
         coverLayer.locations = [0.0, 0.15, 0.85, 1.0]
-         coverLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
-         coverLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        coverLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        coverLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
         collectionView.mask = coverView
     }
         
