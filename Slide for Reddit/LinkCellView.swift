@@ -1288,7 +1288,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             self.timeView.isHidden = true
             if wasPlayingAudio {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                     if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 {
+                    if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 && !VideoMediaViewController.soundLocked {
                          do {
                             try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                              try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
@@ -1506,10 +1506,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
     private func setLink(submission: SubmissionObject, parent: UIViewController & MediaVCDelegate, nav: UIViewController?, baseSub: String, test: Bool = false, embedded: Bool = false, parentWidth: CGFloat = 0, np: Bool) {
         if self is AutoplayBannerLinkCellView || self is GalleryLinkCellView {
             self.endVideos()
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-            } catch {
-                NSLog(error.localizedDescription)
+            if !VideoMediaViewController.soundLocked {
+                do {
+                    try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+                } catch {
+                    NSLog(error.localizedDescription)
+                }
             }
         }
             
@@ -2336,7 +2338,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             }
         }
 
-        if !setOnce {
+        if !setOnce && !VideoMediaViewController.soundLocked {
             setOnce = true
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -2506,7 +2508,9 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 self.sound.setImage(UIImage(sfString: SFSymbol.speaker2Fill, overrideString: "audio")?.navIcon(), for: UIControl.State.normal)
             }, completion: nil)
         } else {
-            try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            if !VideoMediaViewController.soundLocked {
+                try? AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
+            }
             self.videoView?.player?.isMuted = true
             
             UIView.animate(withDuration: 0.5, animations: {

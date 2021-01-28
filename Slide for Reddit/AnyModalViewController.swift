@@ -302,6 +302,7 @@ class AnyModalViewController: UIViewController {
             try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
         } else {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            VideoMediaViewController.soundLocked = true
         }
 
         setMuteButtonImage(muted: false)
@@ -458,6 +459,8 @@ class AnyModalViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        VideoMediaViewController.soundLocked = false
+
         super.viewWillDisappear(animated)
         timer?.invalidate()
         
@@ -507,6 +510,7 @@ class AnyModalViewController: UIViewController {
     deinit {
         stopDisplayLink()
         AnyModalViewController.linkID = ""
+        VideoMediaViewController.soundLocked = false
     }
     
     //    override func didReceiveMemoryWarning() {

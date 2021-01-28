@@ -17,6 +17,8 @@ import UIKit
 
 class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecognizerDelegate, SubtleVolumeDelegate {
 
+    public static var soundLocked = false
+    
     var isYoutubeView: Bool {
         return contentType == ContentType.CType.VIDEO
     }
@@ -147,6 +149,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             loadContent()
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        VideoMediaViewController.soundLocked = false
+    }
 
     override func viewDidDisappear(_ animated: Bool) {
         timer?.invalidate()
@@ -165,6 +172,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.endVideos()
         self.videoView.player?.replaceCurrentItem(with: nil)
         self.videoView.player = nil
+        VideoMediaViewController.soundLocked = false
     }
     
     func endVideos() {
@@ -201,7 +209,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds) // CALayer position contains NaN: [nan nan]
     }
-    
+        
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         resetFrame(withSize: size)
@@ -325,6 +333,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                         strongSelf.videoView.player?.isMuted = false
                         
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                        VideoMediaViewController.soundLocked = true
                     }
                 }
             } else {
@@ -343,6 +352,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 self.videoView.player?.isMuted = false
                 
                 try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                VideoMediaViewController.soundLocked = true
             } else {
                 self.youtubeMute = true
                 self.videoView.player?.isMuted = true
@@ -1081,6 +1091,7 @@ extension VideoMediaViewController {
                         try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
                     } else {
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                        VideoMediaViewController.soundLocked = true
                     }
                 } else {
                     youtubeMute = true
@@ -1131,6 +1142,7 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
                         try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
                     } else {
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                        VideoMediaViewController.soundLocked = true
                     }
                 }
 
