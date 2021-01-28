@@ -2289,16 +2289,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         cellGestureRecognizer?.isEnabled = false
         
         self.didDisappearCompletely = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.isHiding = true
         self.liveTimer.invalidate()
         self.removeJumpButton()
         if !offline {
             _ = self.insertSelf(into: SlideCoreData.sharedInstance.backgroundContext, andSave: true)
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.isHiding = true
     }
     
     func collapseAll() {

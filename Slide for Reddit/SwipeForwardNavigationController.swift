@@ -170,7 +170,16 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
                 let rad = atan(velocity.y / velocity.x)
                 let deg = rad * 180 / CGFloat.pi
 
-                if abs(deg) > 20 { // Only accept if the angle of the gesture is above 20 degrees (horizontal)
+                if abs(deg) > 45 && velocity.x > 0 { // Only accept if the angle of the gesture is below 45 degrees (horizontal)
+                    shouldBegin = false
+                }
+            } else if gestureRecognizer == interactivePushGestureRecognizer {
+                let velocity = fullWidthBackGestureRecognizer.velocity(in: view)
+
+                let rad = atan(velocity.y / velocity.x)
+                let deg = rad * 180 / CGFloat.pi
+
+                if abs(deg) > 45 && velocity.x < 0 { // Only accept if the angle of the gesture is below 45 degrees and in the  (horizontal)
                     shouldBegin = false
                 }
             }
