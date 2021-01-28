@@ -2853,7 +2853,8 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: isGallery)
                 tableView.reloadData()
             }
-            BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, top: false, callback: {
+            /* Don't need this
+                BannerUtil.makeBanner(text: "Hidden forever!\nTap to undo", color: GMColor.red500Color(), seconds: 4, context: self, top: false, callback: {
                 self.dataSource.content.insert(item, at: location)
                 self.tableView.insertItems(at: [IndexPath.init(item: location + self.headerOffset(), section: 0)])
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
@@ -2862,7 +2863,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
                     try self.session?.setHide(false, name: cell.link!.id, completion: { (_) in })
                 } catch {
                 }
-            })
+            })*/
         } catch {
 
         }

@@ -3175,7 +3175,7 @@ class PostActionsManager {
     }
 
     var isReplyPossible: Bool {
-        return networkActionsArePossible && !submission.isArchived
+        return networkActionsArePossible && !submission.isArchived && (!submission.isLocked || submission.isMod)
     }
 
     var isModPossible: Bool {

@@ -756,6 +756,11 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             downvoteButton.isHidden = true
             replyButton.isHidden = true
         }
+        
+        if parent?.submission?.isLocked ?? false && !(comment?.isMod ?? false) {
+            replyButton.isHidden = true
+        }
+
         if !comment!.isMod || (parent?.offline ?? false) {
             modButton.isHidden = true
         }

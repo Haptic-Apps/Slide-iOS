@@ -876,7 +876,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
 
         self.navigationItem.rightBarButtonItems = [offlineB]
         if error {
-            BannerUtil.makeBanner(text: "No cached comments found!", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 3, context: self)
+            BannerUtil.makeBanner(text: "No cached comments found", color: ColorUtil.accentColorForSub(sub: self.subreddit), seconds: 5, context: self, top: false, callback: nil)
         }
     }
     
@@ -912,7 +912,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 } else {
                     try session?.getArticles(name, sort: sort == .suggested ? nil : sort, comments: (context.isEmpty ? nil : [context]), context: 3, limit: SettingValues.commentLimit, completion: { (result) -> Void in
                         switch result {
-                        case .failure:
+                        case .failure(let error):
+                            print(error)
                             // TODO show error code?
                             self.loadOffline()
                         case .success(let tuple):
