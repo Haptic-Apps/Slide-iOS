@@ -581,11 +581,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
-        Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
+        AF.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
             if response.response?.statusCode == 200 {
                 completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
             } else {
-                Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
+                AF.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
                     completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"))
                 }
             }
@@ -620,7 +620,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         
         print("Downloading " + toLoad)
         let fileURLPath = self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()
-        request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+        request = AF.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.Options) in
             return (URL(fileURLWithPath: fileURLPath), [.createIntermediateDirectories])
         }).downloadProgress() { progress in
         DispatchQueue.main.async {
@@ -658,7 +658,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         let localUrlV = URL.init(fileURLWithPath: videoLocation)
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
-        Alamofire.request(toLoadAudio).responseString { (response) in
+        AF.request(toLoadAudio).responseString { (response) in
             if response.response?.statusCode == 200 { // Audio exists, let's get it
                 self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
                     if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
@@ -676,7 +676,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
                 }
             } else if response.response?.statusCode ?? 0 > 400 { // Might exist elsewhere
-                Alamofire.request("\(toLoadAudioBase)/audio").responseString { (response) in
+                AF.request("\(toLoadAudioBase)/audio").responseString { (response) in
                     if response.response?.statusCode == 200 { // Audio exists, let's get it
                         self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
                             if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
@@ -715,8 +715,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
     }
     
-    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (DownloadResponse<Data>) -> Void) {
-        self.request = Alamofire.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (DownloadResponse<Data, AFError>) -> Void) {
+        self.request = AF.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.Options) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {

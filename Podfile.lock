@@ -1,5 +1,4 @@
 PODS:
-  - Alamofire (4.9.1)
   - DTCoreText (1.6.26):
     - DTCoreText/Core (= 1.6.26)
     - DTFoundation/Core (~> 1.7.5)
@@ -55,7 +54,6 @@ PODS:
   - YoutubePlayer-in-WKWebView (0.3.5)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.3)
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
   - LicensesViewController (~> 0.7.0)
   - MaterialComponents/ActivityIndicator
@@ -76,7 +74,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Alamofire
     - DTFoundation
     - HTMLSpecialCharacters
     - LicensesViewController
@@ -135,7 +132,6 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ccrama/SwiftyJSON.git
 
 SPEC CHECKSUMS:
-  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   DTCoreText: ec749e013f2e1f76de5e7c7634642e600a7467ce
   DTFoundation: e7781d9fd2f202bfd451fbbf8cab71ce83b46498
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
@@ -160,6 +156,6 @@ SPEC CHECKSUMS:
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   YoutubePlayer-in-WKWebView: cfbf46da51d7370662a695a8f351e5fa1d3e1008
 
-PODFILE CHECKSUM: 921cd225b4120efa1cb2e0c32101c3932f6ceb0c
+PODFILE CHECKSUM: 11d5327e7fce051cd3b3ec699136a01fb7ad5b71
 
 COCOAPODS: 1.10.0

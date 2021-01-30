@@ -901,7 +901,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
 
     func random(_ vc: NavigationHomeViewController) {
-        Alamofire.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
+        AF.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
             do {
                 guard let data = response.data else {
                     BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)

@@ -19,7 +19,6 @@ target 'Slide for Reddit' do
   pod 'SwiftLinkPreview', '~> 3.0.1'
   pod 'DTCoreText', :git => 'https://github.com/Cocoanetics/DTCoreText'
   pod 'RLBAlertsPickers', :git => 'https://github.com/ccrama/Alerts-Pickers'
-  pod 'Alamofire', '~> 4.3'
   pod 'SwiftyJSON', :git => 'https://github.com/ccrama/SwiftyJSON.git', :branch => 'hotfix-xcode12'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
   pod 'TGPControls'
@@ -35,6 +34,15 @@ target 'Slide for Reddit' do
   end
 
   post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        # Fix bundle targets' 'Signing Certificate' to 'Sign to Run Locally'
+        if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
+            target.build_configurations.each do |config|
+                config.build_settings['CODE_SIGN_IDENTITY[sdk=macosx*]'] = '-'
+            end
+        end
+    end
+
     installer.pods_project.targets.each do |target|
     	target.build_configurations.each do |config|
      	 config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11'
