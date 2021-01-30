@@ -498,7 +498,10 @@ class SettingValues {
         SettingValues.reduceColor = settings.object(forKey: SettingValues.pref_reduceColor) == nil ? true : settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
-        let columns = 2 // TODO - Maybe calculate per device?
+        var columns = 2 // TODO - Maybe calculate per device?
+        if UIApplication.shared.isMac() {
+            columns = 3
+        }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
         SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
         SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)

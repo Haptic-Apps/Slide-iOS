@@ -169,7 +169,7 @@
 		BE20852521588F3B00D8F33C /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20852421588F3B00D8F33C /* ExtensionDelegate.swift */; };
 		BE20852721588F3B00D8F33C /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20852621588F3B00D8F33C /* NotificationController.swift */; };
 		BE20852921588F3B00D8F33C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE20852821588F3B00D8F33C /* Assets.xcassets */; };
-		BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */; };
+		BE20852E21588F3B00D8F33C /* Slide for Apple Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BE20851121588F3900D8F33C /* Slide for Apple Watch.app */; platformFilter = ios; };
 		BE20853A21589FD600D8F33C /* SubmissionRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE20853921589FD600D8F33C /* SubmissionRowController.swift */; };
 		BE232695222DE429005CA83A /* ic_ghost@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE232693222DE428005CA83A /* ic_ghost@2x.png */; };
 		BE232696222DE429005CA83A /* ic_ghost@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE232694222DE428005CA83A /* ic_ghost@3x.png */; };
@@ -314,6 +314,7 @@
 		BE8AE94321F9225000E1C0D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE8AE94221F9225000E1C0D1 /* Main.storyboard */; };
 		BE8AE94721F922F400E1C0D1 /* ColorPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */; };
 		BE8C29211EDE8001004D7514 /* MarginedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */; };
+		BE8CDDCD25C261D1002BBFF4 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = BE8CDDCC25C261D1002BBFF4 /* Alamofire */; };
 		BE8EA67325A80F4B0094718E /* SubredditToolbarSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8EA67225A80F4B0094718E /* SubredditToolbarSearchViewController.swift */; };
 		BE8FCA081E0C46090063B8EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA071E0C46090063B8EF /* AppDelegate.swift */; };
 		BE8FCA0A1E0C46090063B8EF /* SingleSubredditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8FCA091E0C46090063B8EF /* SingleSubredditViewController.swift */; };
@@ -831,6 +832,7 @@
 		BE8AE94221F9225000E1C0D1 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		BE8AE94621F922F400E1C0D1 /* ColorPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
 		BE8C29201EDE8001004D7514 /* MarginedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarginedTableViewCell.swift; sourceTree = "<group>"; };
+		BE8CDBB325C259EF002BBFF4 /* Open in Slide.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Open in Slide.entitlements"; sourceTree = "<group>"; };
 		BE8EA67225A80F4B0094718E /* SubredditToolbarSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubredditToolbarSearchViewController.swift; sourceTree = "<group>"; };
 		BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Slide for Reddit.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE8FCA071E0C46090063B8EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -973,6 +975,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4F333F52512742E0032BB64 /* BiometricAuthentication in Frameworks */,
+				BE8CDDCD25C261D1002BBFF4 /* Alamofire in Frameworks */,
 				BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */,
 				B4F3355625127BD20032BB64 /* Then in Frameworks */,
 				B4F333E1251273AF0032BB64 /* SDWebImage in Frameworks */,
@@ -1230,6 +1233,7 @@
 		BE257A6C21F64AA30082A47E /* Open in Slide */ = {
 			isa = PBXGroup;
 			children = (
+				BE8CDBB325C259EF002BBFF4 /* Open in Slide.entitlements */,
 				BE257A6D21F64AA30082A47E /* Media.xcassets */,
 				BE257A6F21F64AA30082A47E /* ActionViewController.swift */,
 				BE257A7121F64AA30082A47E /* MainInterface.storyboard */,
@@ -1849,6 +1853,7 @@
 				B4F3354B25127BAB0032BB64 /* Anchorage */,
 				B4F3355525127BD20032BB64 /* Then */,
 				BE31454525674E03004A908C /* Proton */,
+				BE8CDDCC25C261D1002BBFF4 /* Alamofire */,
 			);
 			productName = "Slide for Reddit";
 			productReference = BE8FCA041E0C46090063B8EF /* Slide for Reddit.app */;
@@ -2020,6 +2025,7 @@
 				B4F3354A25127BAB0032BB64 /* XCRemoteSwiftPackageReference "Anchorage" */,
 				B4F3355425127BD20032BB64 /* XCRemoteSwiftPackageReference "Then" */,
 				BE31454425674E03004A908C /* XCRemoteSwiftPackageReference "proton" */,
+				BE8CDDCB25C261D1002BBFF4 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = BE8FCA051E0C46090063B8EF /* Products */;
 			projectDirPath = "";
@@ -2289,7 +2295,6 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Slide for Reddit/Pods-Slide for Reddit-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/DTCoreText/DTCoreText.framework",
 				"${BUILT_PRODUCTS_DIR}/DTFoundation/DTFoundation.framework",
 				"${BUILT_PRODUCTS_DIR}/HTMLSpecialCharacters/HTMLSpecialCharacters.framework",
@@ -2315,7 +2320,6 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTCoreText.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DTFoundation.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/HTMLSpecialCharacters.framework",
@@ -2731,6 +2735,7 @@
 		};
 		BE20852D21588F3B00D8F33C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = BE20851021588F3900D8F33C /* Slide for Apple Watch */;
 			targetProxy = BE20852C21588F3B00D8F33C /* PBXContainerItemProxy */;
 		};
@@ -2802,6 +2807,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
@@ -2817,6 +2823,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).WidgetConfigIntent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2835,6 +2842,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = WidgetConfigIntent/Info.plist;
@@ -2850,6 +2858,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgetconfigintent";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2870,6 +2879,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
@@ -2911,6 +2921,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = Slide_for_Apple_Watch_Extension;
@@ -2945,6 +2956,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
@@ -2978,6 +2990,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide for Apple Watch Extension/Info.plist";
@@ -3008,10 +3021,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Open in Slide/Open in Slide.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -3027,6 +3042,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3040,10 +3056,12 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Open in Slide/Open in Slide.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Open in Slide/Info.plist";
@@ -3059,6 +3077,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledOpen-in-Slide";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3199,10 +3218,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3217,11 +3238,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ENABLE_BATCH_MODE = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				"SWIFT_OPTIMIZATION_LEVEL[arch=*]" = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -3237,11 +3261,13 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				INFOPLIST_FILE = "Slide for Reddit/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3256,9 +3282,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ENABLE_BATCH_MODE = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Slide for Reddit/Slide for Reddit-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
 		};
@@ -3414,6 +3443,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3429,6 +3459,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).widgets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3449,6 +3480,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 225;
+				CURRENT_PROJECT_VERSION = 220;
 				DEVELOPMENT_TEAM = FTT89576VQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = "Slide Widgets/Info.plist";
@@ -3464,6 +3496,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgets 1599951103";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3629,6 +3662,14 @@
 				minimumVersion = 0.5.0;
 			};
 		};
+		BE8CDDCB25C261D1002BBFF4 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.4.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3671,6 +3712,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BE31454425674E03004A908C /* XCRemoteSwiftPackageReference "proton" */;
 			productName = Proton;
+		};
+		BE8CDDCC25C261D1002BBFF4 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE8CDDCB25C261D1002BBFF4 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 

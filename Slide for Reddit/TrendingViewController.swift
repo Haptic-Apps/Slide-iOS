@@ -31,7 +31,7 @@ class TrendingViewController: UITableViewController {
 
         do {
             let requestString = "https://www.reddit.com/api/trending_searches_v1.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&obey_over18=1&raw_json=1&sr_detail=1"
-            taskSearches = Alamofire.request(requestString, method: .get).responseString { response in
+            taskSearches = AF.request(requestString, method: .get).responseString { response in
                 do {
                     guard let data = response.data else {
                         return
@@ -66,7 +66,7 @@ class TrendingViewController: UITableViewController {
         }
         do {
             let requestString = "https://www.reddit.com/api/trending_subreddits.json"
-            taskSubs = Alamofire.request(requestString, method: .get).responseString { response in
+            taskSubs = AF.request(requestString, method: .get).responseString { response in
                 do {
                     guard let data = response.data else {
                         return

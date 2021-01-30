@@ -165,7 +165,7 @@ class SubredditHeaderView: UIView {
     @objc func flair(_ selector: UITableViewCell) {
         if let subName = subreddit?.displayName, let token = (UIApplication.shared.delegate as? AppDelegate)?.session?.token {
             let requestString = "https://www.reddit.com/r/\(subName)/api/user_flair_v2.json"
-            Alamofire.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
+            AF.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
                 guard let self = self else { return }
                 do {
                     guard let data = response.data else {

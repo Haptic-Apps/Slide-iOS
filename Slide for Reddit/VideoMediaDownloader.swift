@@ -51,11 +51,11 @@ class VideoMediaDownloader {
     }
     
     func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
-        Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
+        AF.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
             if response.response?.statusCode == 200 {
                 completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
             } else {
-                Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
+                AF.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
                     completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"))
                 }
             }
@@ -93,7 +93,7 @@ class VideoMediaDownloader {
                 self.completion(URL(fileURLWithPath: self.getKeyFromURL()))
             })
         } else {
-            request = Alamofire.download(URL(string: baseURL)!, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+            request = AF.download(URL(string: baseURL)!, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.Options) in
                 return (URL(fileURLWithPath: self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()), [.createIntermediateDirectories])
             }).downloadProgress() { progress in
                 DispatchQueue.main.async {
@@ -161,7 +161,7 @@ class VideoMediaDownloader {
         let localUrlV = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "video.mp4"))
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
         
-        Alamofire.request(toLoadAudio).responseString { (response) in
+        AF.request(toLoadAudio).responseString { (response) in
             if response.response?.statusCode == 200 { // Audio exists, let's get it
                 if let url = URL(string: toLoadAudio) {
                     self.requestWithProgress(url: url, localUrlAudio: localUrlAudio) { (response) in
@@ -184,7 +184,7 @@ class VideoMediaDownloader {
                     self.doCopy(localUrlV, to: finalUrl)
                 }
             } else if response.response?.statusCode ?? 0 > 400 { // Might exist elsewhere
-                Alamofire.request("\(toLoadAudioBase)/audio").responseString { (response) in
+                AF.request("\(toLoadAudioBase)/audio").responseString { (response) in
                     if response.response?.statusCode == 200 { // Audio exists, let's get it
                         if let url = URL(string: "\(toLoadAudioBase)/audio") {
                             self.requestWithProgress(url: url, localUrlAudio: localUrlAudio) { (response) in
@@ -216,8 +216,8 @@ class VideoMediaDownloader {
         }
     }
     
-    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (DownloadResponse<Data>) -> Void) {
-        self.request = Alamofire.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (AFDownloadResponse<Data>) -> Void) {
+        self.request = AF.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.Options) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {
