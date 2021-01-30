@@ -115,7 +115,7 @@ class SplitMainViewController: MainViewController {
         
         splitViewController?.navigationItem.hidesBackButton = true
         if #available(iOS 14.0, *) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIApplication.shared.respectIpadLayout() {
                 splitViewController?.showsSecondaryOnlyButton = false
                 splitViewController?.navigationItem.hidesBackButton = true
                 splitViewController?.navigationItem.backBarButtonItem = UIBarButtonItem()
@@ -199,7 +199,7 @@ class SplitMainViewController: MainViewController {
         if self.navigationController?.viewControllers[0] is NavigationHomeViewController {
             self.navigationController?.popViewController(animated: true)
         } else if #available(iOS 14, *) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIApplication.shared.respectIpadLayout() {
                 self.splitViewController?.show(UISplitViewController.Column.primary)
             } else {
                 self.navigationController?.popViewController(animated: true)
@@ -317,7 +317,7 @@ class SplitMainViewController: MainViewController {
             vc.setupSwipeGesture()
         } else if SettingValues.submissionGestureMode == .HALF_FULL { // Always allow swipe back with paging disabled and not full
             vc.setupSwipeGesture()
-        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
+        } else if UIApplication.shared.respectIpadLayout() && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }
 
@@ -532,7 +532,7 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
-                if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
+                if UIApplication.shared.respectIpadLayout() && SettingValues.disableSubredditPopupIpad {
                     if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
                         self.navigationController?.popToRootViewController(animated: false)
                     }
@@ -578,7 +578,7 @@ class SplitMainViewController: MainViewController {
                 self.navigationController?.popToRootViewController(animated: false)
             }
 
-            if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
+            if UIApplication.shared.respectIpadLayout() && SettingValues.disableSubredditPopupIpad {
                 VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             } else {
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -1068,7 +1068,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIApplication.shared.respectIpadLayout() {
                     is14Column = true
                 }
 
@@ -1081,7 +1081,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     }
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIApplication.shared.respectIpadLayout() {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in
@@ -1108,7 +1108,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIApplication.shared.respectIpadLayout() {
                     is14Column = true
                 }
 
@@ -1116,7 +1116,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.desktopMode {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIApplication.shared.respectIpadLayout() && !SettingValues.desktopMode {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in

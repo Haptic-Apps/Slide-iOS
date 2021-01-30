@@ -23,7 +23,7 @@ class TapBehindModalViewController: SwipeForwardNavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if self.tapOutsideRecognizer == nil && ((modalPresentationStyle == .pageSheet || modalPresentationStyle == .popover) || UIDevice.current.userInterfaceIdiom == .pad) {
+        if self.tapOutsideRecognizer == nil && ((modalPresentationStyle == .pageSheet || modalPresentationStyle == .popover) || UIApplication.shared.respectIpadLayout()) {
             self.tapOutsideRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapBehind))
             self.tapOutsideRecognizer.numberOfTapsRequired = 1
             self.tapOutsideRecognizer.cancelsTouchesInView = false

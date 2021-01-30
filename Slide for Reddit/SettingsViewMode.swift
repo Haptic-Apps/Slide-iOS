@@ -188,7 +188,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             multicolumnPortraitCount.contentView.alpha = 0.8
         }
 
-        if UIDevice.current.userInterfaceIdiom != .pad {
+        if !UIApplication.shared.respectIpadLayout() {
             self.splitMode.isUserInteractionEnabled = false
             self.splitMode.textLabel!.isEnabled = false
             self.splitMode.detailTextLabel!.isEnabled = false
@@ -393,7 +393,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var ipadOffset = 0
         var isIpad = false
-        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+        if UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac() {
             isIpad = true
             ipadOffset = 3
         }

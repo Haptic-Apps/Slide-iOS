@@ -92,7 +92,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     var didDisappearCompletely = false
     var live = false
     var liveTimer = Timer()
-    var refreshControl: UIRefreshControl!
+    var refreshControl: UIRefreshControl?
     var tableView: UITableView!
     
     var sortButton = UIButton()
@@ -881,7 +881,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     @objc func refresh(_ sender: AnyObject) {
-        self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl!.frame.size.height)), animated: true)
+        self.tableView.setContentOffset(CGPoint(x: 0, y: self.tableView.contentOffset.y - (self.refreshControl?.frame.size.height ?? 0)), animated: true)
         session = (UIApplication.shared.delegate as! AppDelegate).session
         approved.removeAll()
         removed.removeAll()
@@ -1341,17 +1341,19 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.view.backgroundColor = UIColor.backgroundColor
         self.tableView.backgroundColor = UIColor.backgroundColor
         self.navigationController?.view.backgroundColor = UIColor.foregroundColor
-        refreshControl = UIRefreshControl()
-        refreshControl?.tintColor = UIColor.fontColor
-        refreshControl?.attributedTitle = NSAttributedString(string: "")
-        refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
+        if !UIApplication.shared.isMac() {
+            refreshControl = UIRefreshControl()
+            refreshControl?.tintColor = UIColor.fontColor
+            refreshControl?.attributedTitle = NSAttributedString(string: "")
+            refreshControl?.addTarget(self, action: #selector(CommentViewController.refresh(_:)), for: UIControl.Event.valueChanged)
+        }
         var top = CGFloat(64)
         let bottom = CGFloat(45)
         if #available(iOS 11.0, *) {
             top = 0
         }
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        tableView.addSubview(refreshControl!)
+        //tableView.addSubview(refreshControl!)
         
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
         
@@ -1691,7 +1693,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         fullWidthBackGestureRecognizer?.isEnabled = true
         cellGestureRecognizer?.isEnabled = true
         
-        refreshControl.setValue(100, forKey: "_snappingHeight")
+        refreshControl?.setValue(100, forKey: "_snappingHeight")
         
         if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
@@ -3257,7 +3259,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer.delegate = self
         cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        if UIDevice.current.userInterfaceIdiom != .pad {
+        if !UIApplication.shared.respectIpadLayout() {
             // cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         }
         if let parent = parent as? ColorMuxPagingViewController {
@@ -3278,7 +3280,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             return
         }
         
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode != .SINGLE {
+        if UIApplication.shared.respectIpadLayout() && SettingValues.appMode != .SINGLE {
             if #available(iOS 14, *) {
                 return
             }

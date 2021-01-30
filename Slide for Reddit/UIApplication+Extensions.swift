@@ -24,6 +24,10 @@ extension UIApplication {
         }
     }
     
+    public func respectIpadLayout() -> Bool {
+        return UIDevice.current.userInterfaceIdiom == .pad || isMac()
+    }
+
 }
 extension UIApplication {
     public var isSplitOrSlideOver: Bool {

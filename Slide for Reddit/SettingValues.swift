@@ -492,7 +492,7 @@ class SettingValues {
     }
 
     public static func initialize() {
-        let pad = UIDevice.current.userInterfaceIdiom == .pad
+        let pad = UIApplication.shared.respectIpadLayout()
         let settings = UserDefaults.standard
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.reduceColor = settings.object(forKey: SettingValues.pref_reduceColor) == nil ? true : settings.bool(forKey: SettingValues.pref_reduceColor)
@@ -503,7 +503,7 @@ class SettingValues {
             columns = 3
         }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
-        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
+        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIApplication.shared.respectIpadLayout() ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
         SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
@@ -536,7 +536,7 @@ class SettingValues {
         }
 
         SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
-        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) // Only enable this on Mac or iPad
+        SettingValues.desktopMode = SettingValues.desktopMode && (UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac()) // Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
