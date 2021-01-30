@@ -423,8 +423,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
+        if UIApplication.shared.isMac() {
             switch SettingValues.appMode {
             case .SINGLE, .MULTI_COLUMN:
                 splitViewController.setViewController(
@@ -454,10 +453,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     PlaceholderViewController(),
                     for: .secondary)
             }
-        default:
-            splitViewController = NoHomebarSplitViewController()
-            let navHome = NavigationHomeViewController(controller: main)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
+        } else {
+            switch UIDevice.current.userInterfaceIdiom {
+            case .pad:
+                switch SettingValues.appMode {
+                case .SINGLE, .MULTI_COLUMN:
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                        for: .primary)
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: main),
+                        for: .secondary)
+                    
+                    let main2: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                    let compact = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main2))
+                    
+                    compact.pushViewController(main2, animated: false)
+                    splitViewController.setViewController(compact, for: .compact)
+
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: main),
+                        for: .secondary)
+                case .SPLIT:
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                        for: .primary)
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: main),
+                        for: .supplementary)
+                    splitViewController.setViewController(
+                        PlaceholderViewController(),
+                        for: .secondary)
+                }
+            default:
+                splitViewController = NoHomebarSplitViewController()
+                let navHome = NavigationHomeViewController(controller: main)
+                splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
+            }
         }
 
         window.rootViewController = splitViewController

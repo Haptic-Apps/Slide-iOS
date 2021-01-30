@@ -118,7 +118,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIApplication.shared.respectIpadLayout() {
                 alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
             }
 
@@ -215,7 +215,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
             alertController.modalPresentationStyle = .popover
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIApplication.shared.respectIpadLayout() {
                 alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
             }
             if let presenter = alertController.popoverPresentationController {

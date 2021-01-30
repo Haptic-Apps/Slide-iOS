@@ -136,6 +136,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     var searchText: String?
 
+    
     var refreshControl: UIRefreshControl!
 
     var hasHeader = false
@@ -199,7 +200,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIApplication.shared.respectIpadLayout() && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
@@ -908,7 +909,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         if self.dataSource.loaded && !self.dataSource.loading {
                             self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                             self.tableView.reloadData()
-                            if UIDevice.current.userInterfaceIdiom != .pad {
+                            if !UIApplication.shared.respectIpadLayout() {
                                 var newOffset = self.tableView.contentOffset
                                 newOffset.y -= self.headerHeight(false)
                                 self.tableView.setContentOffset(newOffset, animated: false)
@@ -975,7 +976,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
 
-        tableView.addSubview(refreshControl) // not required when using UITableViewController
+       // tableView.addSubview(refreshControl) // not required when using UITableViewController
         tableView.alwaysBounceVertical = true
 
         self.automaticallyAdjustsScrollViewInsets = false
@@ -2099,7 +2100,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
-            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
+            let headerHeight = (UIApplication.shared.respectIpadLayout() && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
             let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
             setOffset = paddingOffset + navOffset + topOffset + headerHeight
@@ -2717,7 +2718,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad || UIDevice.current.userInterfaceIdiom != .pad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIApplication.shared.respectIpadLayout() && SettingValues.disablePopupIpad || !UIApplication.shared.respectIpadLayout()) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 
@@ -3028,7 +3029,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             full.view?.removeGestureRecognizer(full)
         }
         
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if UIApplication.shared.respectIpadLayout() {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
             swipe.direction = .right
@@ -3078,7 +3079,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIApplication.shared.respectIpadLayout()) {
                         return true
                     }
                 } else if !SettingValues.submissionGestureMode.shouldPage() && abs(translation.x) > abs(translation.y) {
@@ -3472,7 +3473,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 header.addSubview(imageView)
                 imageView.clipsToBounds = true
                 
-                if UIDevice.current.userInterfaceIdiom == .pad {
+                if UIApplication.shared.respectIpadLayout() {
                     imageView.verticalAnchors /==/ header.verticalAnchors
                     imageView.horizontalAnchors /==/ header.horizontalAnchors + 4
                     imageView.layer.cornerRadius = 15
@@ -3511,7 +3512,7 @@ public class SubLinkItem {
 
 extension SingleSubredditViewController: TapBehindModalViewControllerDelegate {
     func shouldDismiss() -> Bool {
-        return UIDevice.current.userInterfaceIdiom == .pad
+        return UIApplication.shared.respectIpadLayout()
     }
 }
 

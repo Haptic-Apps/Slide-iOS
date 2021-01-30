@@ -39,7 +39,7 @@ public class VCPresenter {
                 }
             }
         }
-        if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
+        if (!UIApplication.shared.respectIpadLayout() && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
             override13 = false
         }
         
@@ -48,7 +48,7 @@ public class VCPresenter {
         let respectedOverride13 = override13
         var shouldPopup = popupIfPossible
         
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac() {
             if viewController is SingleSubredditViewController && SettingValues.disableSubredditPopupIpad {
                 shouldPopup = false
             } else if (viewController is CommentViewController || viewController is PagingCommentViewController) && SettingValues.disablePopupIpad {
@@ -56,12 +56,12 @@ public class VCPresenter {
             }
         }
 
-        override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
+        override13 = override13 && (UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac() || (viewController is UIPageViewController || viewController is SettingsViewController))
         
-        if (viewController is PagingCommentViewController || viewController is CommentViewController || viewController is WebsiteViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController || viewController is WebsiteViewController) && (parentViewController?.splitViewController != nil && (UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac()) && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
+        } else if ((!SettingValues.disablePopupIpad) && UIApplication.shared.respectIpadLayout() && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true

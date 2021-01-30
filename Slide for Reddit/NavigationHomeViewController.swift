@@ -895,7 +895,7 @@ class CurrentAccountHeaderView: UIView {
     }
     
     var forwardButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: UIDevice.current.userInterfaceIdiom == .pad ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: UIColor.fontColor), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: UIApplication.shared.respectIpadLayout() ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: UIColor.fontColor), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Go home"
     }
@@ -1227,7 +1227,7 @@ extension CurrentAccountHeaderView {
             nav.pushNextViewControllerFromRight(nil)
         } else {
             var is14Column = false
-            if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+            if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIApplication.shared.respectIpadLayout() {
                 is14Column = true
             }
             if #available(iOS 14, *), self.parent?.splitViewController?.style == .doubleColumn {
@@ -1242,7 +1242,7 @@ extension CurrentAccountHeaderView {
                 UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
-                    if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                    if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIApplication.shared.respectIpadLayout() {
                         UIView.animate(withDuration: 0.5, animations: { () -> Void in
                             self.parent?.splitViewController?.preferredDisplayMode = .primaryHidden
                         }, completion: { (_) in

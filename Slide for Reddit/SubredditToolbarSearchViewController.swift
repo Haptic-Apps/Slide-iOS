@@ -104,7 +104,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
         }
         if controller.navigationController?.viewControllers.count ?? 0 == 1 && controller.navigationController?.modalPresentationStyle ?? controller.modalPresentationStyle == .pageSheet {
             bottomOffset += 64
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIApplication.shared.respectIpadLayout() {
                 bottomOffset += 24
             }
         }
