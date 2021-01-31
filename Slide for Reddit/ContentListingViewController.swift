@@ -156,8 +156,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.navigationController?.delegate = self
         
         if !loaded && !loading {
-            self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
-            refreshControl.beginRefreshing()
+            self.tableView.contentOffset = CGPoint(x: 0, y: -(self.refreshControl?.frame.size.height ?? 0))
+            refreshControl?.beginRefreshing()
         } else {
             self.tableView.reloadData()
         }
@@ -195,12 +195,14 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         
         if !UIApplication.shared.isMac() {
             refreshControl = UIRefreshControl()
-            refreshControl.tintColor = UIColor.fontColor
+            refreshControl?.tintColor = UIColor.fontColor
             
-            refreshControl.attributedTitle = NSAttributedString(string: "")
-            refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-            tableView.addSubview(refreshControl)
-            refreshControl.centerAnchors /==/ tableView.centerAnchors
+            refreshControl?.attributedTitle = NSAttributedString(string: "")
+            refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+            if let control = self.refreshControl {
+                self.tableView.addSubview(control)
+                control.centerAnchors /==/ self.tableView.centerAnchors
+            }
         }
         
         tableView.alwaysBounceVertical = true
@@ -495,13 +497,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
     }
     
-    var refreshControl: UIRefreshControl!
+    var refreshControl: UIRefreshControl?
     
     func refresh() {
         loading = true
         emptyStateView.isHidden = true
         baseData.reset()
-        refreshControl.beginRefreshing()
+        refreshControl?.beginRefreshing()
         flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: false)
         flowLayout.invalidateLayout()
         tableView.reloadData()
@@ -534,14 +536,16 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func endAndResetRefresh() {
         if !UIApplication.shared.isMac() {
-            self.refreshControl.endRefreshing()
-            self.refreshControl.removeFromSuperview()
+            self.refreshControl?.endRefreshing()
+            self.refreshControl?.removeFromSuperview()
             self.refreshControl = UIRefreshControl()
-            self.refreshControl.tintColor = UIColor.fontColor
+            self.refreshControl?.tintColor = UIColor.fontColor
             
-            self.refreshControl.attributedTitle = NSAttributedString(string: "")
-            self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-            self.tableView.addSubview(self.refreshControl)
+            self.refreshControl?.attributedTitle = NSAttributedString(string: "")
+            self.refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+            if let control = self.refreshControl {
+                self.tableView.addSubview(control)
+            }
         }
     }
     
