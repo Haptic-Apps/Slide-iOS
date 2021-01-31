@@ -490,9 +490,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.15
                 splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.15
                 
-                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.60
-                splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.60
-                splitViewController.preferredSupplementaryColumnWidthFraction = 0.60
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.25
+                splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.25
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.25
             } else {
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.33
                 splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
@@ -1184,7 +1184,25 @@ extension AppDelegate: UIWindowSceneDelegate {
         willResignActive()
         SlideCoreData.sharedInstance.saveContext()
     }
-        
+    
+    func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace, interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection) {
+        if UIApplication.shared.isMac() {
+            let size = windowScene.coordinateSpace.bounds.size
+            
+            for window in windowScene.windows {
+                if let split = window.rootViewController as? UISplitViewController, split.style == .tripleColumn {
+                    split.minimumPrimaryColumnWidth = size.width * 0.15
+                    split.preferredPrimaryColumnWidthFraction = 0.15
+                    split.maximumPrimaryColumnWidth = size.width * 0.15
+                    
+                    split.minimumSupplementaryColumnWidth = size.width * 0.25
+                    split.maximumSupplementaryColumnWidth = size.width * 0.25
+                    split.preferredSupplementaryColumnWidthFraction = 0.25
+                }
+            }
+        }
+    }
+            
     func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
@@ -1258,14 +1276,49 @@ extension AppDelegate: UIWindowSceneDelegate {
         }
         
         if let userActivity = connectionOptions.userActivities.first {
-            if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
+            if connectionOptions.userActivities.first?.activityType == "settings" {
+                window?.rootViewController = SwipeForwardNavigationController(rootViewController: SettingsViewController())
+            } else if connectionOptions.userActivities.first?.activityType == "website", let url = userActivity.userInfo?["url"] as? URL {
+                window?.rootViewController = SwipeForwardNavigationController(rootViewController: WebsiteViewController(url: url, subreddit: ""))
+            } else if connectionOptions.userActivities.first?.activityType == "subreddit", let subreddit = userActivity.userInfo?["subreddit"] as? String {
+                let subVC = SingleSubredditViewController(subName: subreddit, single: true)
+                let split = UISplitViewController(style: .doubleColumn)
+                split.setViewController(subVC, for: .primary)
+                split.setViewController(PlaceholderViewController(), for: .secondary)
+                let size = window?.frame.size ?? CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+
+                split.preferredContentSize = size
+                split.minimumPrimaryColumnWidth = split.preferredContentSize.width * 0.60
+                split.preferredPrimaryColumnWidthFraction = 0.60
+                split.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                
+                split.preferredDisplayMode = .oneBesideSecondary
+                split.preferredSplitBehavior = .tile
+                
+                window?.rootViewController = split
+            } else if connectionOptions.userActivities.first?.activityType == "profile", let profile = userActivity.userInfo?["profile"] as? String {
+                let subVC = SwipeForwardNavigationController(rootViewController: ProfileViewController(name: profile))
+                let split = UISplitViewController(style: .doubleColumn)
+                split.setViewController(subVC, for: .primary)
+                split.setViewController(PlaceholderViewController(), for: .secondary)
+                let size = window?.frame.size ?? CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+
+                split.preferredContentSize = size
+                split.minimumPrimaryColumnWidth = split.preferredContentSize.width * 0.60
+                split.preferredPrimaryColumnWidthFraction = 0.60
+                split.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                
+                split.preferredDisplayMode = .oneBesideSecondary
+                split.preferredSplitBehavior = .tile
+                
+                window?.rootViewController = split
+            } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
                 VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
             } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
                 VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
             } else if let url = userActivity.webpageURL {
                 _ = handleURL(url)
             }
-
         }
         
         #if targetEnvironment(macCatalyst)

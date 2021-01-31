@@ -500,7 +500,7 @@ class SettingValues {
         
         var columns = 2 // TODO - Maybe calculate per device?
         if UIApplication.shared.isMac() {
-            columns = 3
+            columns = 1
         }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
         SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIApplication.shared.respectIpadLayout() ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
