@@ -69,17 +69,16 @@ class VideoScrubberView: UIView {
         super.init(frame: frame)
 
         slider.tintColor = ColorUtil.accentColorForSub(sub: "")
-//        slider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: .square(size: 72), withColor: slider.tintColor), for: .normal)
         slider.minimumValue = 0
         slider.maximumValue = 1
         slider.isContinuous = true
-//        slider.setThumbImage(UIImage(), for: .normal)
-//        slider.setMinimumTrackImage(UIImage.image(with: slider.tintColor).getCopy(withSize: .square(size: 72)), for: .normal)
-//        slider.setMaximumTrackImage(UIImage.image(with: slider.tintColor.withAlphaComponent(0.4)).getCopy(withSize: .square(size: 72)), for: .normal)
-//        slider.thumbTintColor = ColorUtil.accentColorForSub(sub: "")
-        slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
-        slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
-        slider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
+
+        if !UIApplication.shared.isMac() {
+            slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
+            slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
+
+            slider.setThumbImage(UIImage(named: "circle")?.getCopy(withSize: CGSize.square(size: 20), withColor: .white), for: .normal)
+        }
         self.addSubview(slider)
         
         self.addSubview(playButton)
@@ -88,15 +87,6 @@ class VideoScrubberView: UIView {
         slider.heightAnchor /==/ 24
         slider.bottomAnchor /==/ self.bottomAnchor - 4
         slider.leftAnchor /==/ timeTotalLabel.rightAnchor + 8
-        
-        // timeElapsedLabel.font = UIFont.boldSystemFont(ofSize: 12)
-        // timeElapsedLabel.textAlignment = .center
-        // timeElapsedLabel.textColor = UIColor.white
-        // self.addSubview(timeElapsedLabel)
-        // timeElapsedLabel.centerYAnchor /==/ slider.centerYAnchor
-        // timeElapsedLabel.leftAnchor />=/ slider.leftAnchor ~ .high
-//        timeElapsedRightConstraint = timeElapsedLabel.rightAnchor /==/ CGFloat(slider.thumbCenterX - 16) ~ .low
-//        slider
 
         timeTotalLabel.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: UIFont.Weight(rawValue: 10))
         timeTotalLabel.textAlignment = .center

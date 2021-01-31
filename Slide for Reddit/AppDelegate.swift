@@ -490,9 +490,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.15
                 splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.15
                 
-                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.40
-                splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.40
-                splitViewController.preferredSupplementaryColumnWidthFraction = 0.40
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.60
             } else {
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.33
                 splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
@@ -1270,6 +1270,15 @@ extension AppDelegate: UIWindowSceneDelegate {
             }
 
         }
+        
+        #if targetEnvironment(macCatalyst)
+            guard let windowScene = scene as? UIWindowScene else { return }
+            
+            if let titlebar = windowScene.titlebar {
+                titlebar.titleVisibility = .hidden
+                titlebar.toolbar = nil
+            }
+        #endif
     }
 }
 
@@ -1321,3 +1330,38 @@ class NoHomebarSplitViewController: UISplitViewController {
         return SettingValues.hideStatusBar
     }
 }
+
+#if targetEnvironment(macCatalyst)
+extension AppDelegate: NSToolbarDelegate {
+    
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        let identifiers: [NSToolbarItem.Identifier] = [
+            
+        ]
+        return identifiers
+    }
+    
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return toolbarDefaultItemIdentifiers(toolbar)
+    }
+    
+    func toolbar(_ toolbar: NSToolbar,
+                 itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
+                 willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+        
+        var toolbarItem: NSToolbarItem?
+        
+        switch itemIdentifier {
+        case .toggleSidebar:
+            toolbarItem = NSToolbarItem(itemIdentifier: itemIdentifier)
+            
+        default:
+            toolbarItem = nil
+        }
+        
+        return toolbarItem
+    }
+
+}
+#endif
+
