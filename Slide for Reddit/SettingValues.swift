@@ -589,6 +589,9 @@ class SettingValues {
         SettingValues.disable13Popup = false // REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
+        if UIApplication.shared.isMac() {
+            SettingValues.fullWidthHeaderCells = true
+        }
         SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
         SettingValues.imageFlairs = settings.object(forKey: SettingValues.pref_imageFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_imageFlairs)
         SettingValues.coloredFlairs = settings.object(forKey: SettingValues.pref_coloredFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_coloredFlairs)
@@ -662,6 +665,9 @@ class SettingValues {
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
         SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "multi" : "single")) ?? (pad ? .SPLIT : .SINGLE)
+        if UIApplication.shared.isMac() {
+            SettingValues.appMode = .SPLIT
+        }
         SettingValues.hideSeen = settings.bool(forKey: SettingValues.pref_hideSeen)
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD

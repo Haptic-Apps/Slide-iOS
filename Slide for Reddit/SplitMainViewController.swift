@@ -274,7 +274,7 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(autoCacheFinished(_:)), name: .autoCacheFinished, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(autoCacheProgress(_:)), name: .autoCacheProgress, object: nil)
 
-        if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
+        if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
     }

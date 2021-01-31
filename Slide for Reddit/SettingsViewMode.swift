@@ -173,7 +173,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         self.galleryCount.textLabel!.isEnabled = true
         self.galleryCount.detailTextLabel!.isEnabled = true
 
-        if !SettingValues.isPro {
+        if !SettingValues.isPro && !UIApplication.shared.isMac() {
             multicolumnCount.isUserInteractionEnabled = false
             multicolumnCount.textLabel!.isEnabled = false
             multicolumnCount.detailTextLabel!.isEnabled = false
@@ -194,7 +194,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             self.splitMode.detailTextLabel!.isEnabled = false
         }
         
-        if SettingValues.appMode != .MULTI_COLUMN || !SettingValues.isPro {
+        if (SettingValues.appMode != .MULTI_COLUMN || !SettingValues.isPro) && !UIApplication.shared.respectIpadLayout(){
             self.multicolumnCount.isUserInteractionEnabled = false
             self.multicolumnCount.textLabel!.isEnabled = false
             self.multicolumnCount.detailTextLabel!.isEnabled = false
@@ -292,36 +292,52 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
     
     func showMultiColumn() {
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
-        let actionSheetController = AlertController(title: "Column count", message: nil, preferredStyle: .alert)
+        if UIApplication.shared.isMac() {
+            let popup = DragDownAlertMenu(title: "Column Count", subtitle: "", icon: nil)
+            
+            for value in 1...5 {
+                popup.addAction(title: "\(value)", icon: nil) {
+                    SettingValues.multiColumnCount = value
+                    UserDefaults.standard.set(value, forKey: SettingValues.pref_multiColumnCount)
+                    UserDefaults.standard.synchronize()
+                    SubredditReorderViewController.changed = true
+                    self.setSelected()
+                }
+            }
+            
+            popup.show(self)
+        } else {
+            let pad = UIApplication.shared.respectIpadLayout()
+            let actionSheetController = AlertController(title: "Column count", message: nil, preferredStyle: .alert)
 
-        actionSheetController.addCloseButton()
+            actionSheetController.addCloseButton()
 
-        let values = pad ? [["1", "2", "3", "4", "5"]] : [["1", "2", "3"]]
-        let pickerView = PickerViewViewControllerColored(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)], action: { (_, _, chosen, _) in
-            SettingValues.multiColumnCount = chosen.row + 1
-            UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
-            UserDefaults.standard.synchronize()
-            SubredditReorderViewController.changed = true
-            self.setSelected()
-        })
+            let values = pad ? [["1", "2", "3", "4", "5"]] : [["1", "2", "3"]]
+            let pickerView = PickerViewViewControllerColored(values: values, initialSelection: [(0, SettingValues.multiColumnCount - 1)], action: { (_, _, chosen, _) in
+                SettingValues.multiColumnCount = chosen.row + 1
+                UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
+                UserDefaults.standard.synchronize()
+                SubredditReorderViewController.changed = true
+                self.setSelected()
+            })
 
-        actionSheetController.setupTheme()
-        
-        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
-        
-        actionSheetController.addChild(pickerView)
-        
-        let pv = pickerView.view!
-        actionSheetController.contentView.addSubview(pv)
-        
-        pv.edgeAnchors /==/ actionSheetController.contentView.edgeAnchors - 14
-        pv.heightAnchor /==/ CGFloat(216)
-        pickerView.didMove(toParent: actionSheetController)
-        
-        actionSheetController.addBlurView()
+            actionSheetController.setupTheme()
+            
+            actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+            
+            actionSheetController.addChild(pickerView)
+            
+            let pv = pickerView.view!
+            actionSheetController.contentView.addSubview(pv)
+            
+            pv.edgeAnchors /==/ actionSheetController.contentView.edgeAnchors - 14
+            pv.heightAnchor /==/ CGFloat(216)
+            pickerView.didMove(toParent: actionSheetController)
+            
+            actionSheetController.addBlurView()
 
-        self.present(actionSheetController, animated: true, completion: nil)
+            self.present(actionSheetController, animated: true, completion: nil)
+        }
     }
 
     func showPortraitMultiColumn() {

@@ -48,9 +48,9 @@ class WrappingFlowLayout: UICollectionViewLayout {
         cache = []
         contentHeight = 0
         var portraitCount = SettingValues.portraitMultiColumnCount
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad || UIApplication.shared.isMac()
+        let pad = UIApplication.shared.respectIpadLayout()
         
-        if SettingValues.appMode == .MULTI_COLUMN {
+        if SettingValues.appMode == .MULTI_COLUMN || UIApplication.shared.isMac() {
             if (UIApplication.shared.statusBarOrientation.isPortrait && !UIApplication.shared.isMac()) || (vc.presentingViewController != nil && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
                 if !pad {
                     numberOfColumns = SettingValues.portraitMultiColumnCount

@@ -172,7 +172,9 @@ extension VideoScrubberView {
 
     @objc func sliderDidBeginDragging(_ sender: ThickSlider) {
         delegate?.sliderDidBeginDragging()
-        slider.setThumbImage(largeThumbImage, for: .normal)
+        if !UIApplication.shared.isMac() {
+            slider.setThumbImage(largeThumbImage, for: .normal)
+        }
         UIView.animate(withDuration: 0.3) {
             self.playButton.isHidden = true
         }
@@ -180,7 +182,9 @@ extension VideoScrubberView {
 
     @objc func sliderDidEndDragging(_ sender: ThickSlider) {
         delegate?.sliderDidEndDragging()
-        slider.setThumbImage(smallThumbImage, for: .normal)
+        if !UIApplication.shared.isMac() {
+            slider.setThumbImage(smallThumbImage, for: .normal)
+        }
         UIView.animate(withDuration: 0.3) {
             self.playButton.isHidden = false
         }
