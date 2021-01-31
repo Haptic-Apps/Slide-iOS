@@ -13,7 +13,7 @@ import Then
 import UIKit
 
 class AnyModalViewController: UIViewController {
-    let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
+    var volume: SubtleVolume?
     let volumeHeight: CGFloat = 3
     static var linkID = ""
 
@@ -171,9 +171,6 @@ class AnyModalViewController: UIViewController {
         connectActions()
         
         handleHideUI()
-        volume.barTintColor = .white
-        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
-        volume.animation = .slideDown
         
         var is13 = false
         if #available(iOS 13, *) {
@@ -181,8 +178,14 @@ class AnyModalViewController: UIViewController {
         }
 
         if !is13 {
-            view.addSubview(volume)
-            NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            volume = SubtleVolume(style: .rounded)
+            
+            volume!.barTintColor = .white
+            volume!.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+            volume!.animation = .slideDown
+
+            view.addSubview(volume!)
+            NotificationCenter.default.addObserver(volume!, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
         
         if urlToLoad != nil && self.embeddedPlayer == nil {
@@ -255,8 +258,10 @@ class AnyModalViewController: UIViewController {
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        volume.superview?.bringSubviewToFront(volume)
-        volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        if let volume = volume {
+            volume.superview?.bringSubviewToFront(volume)
+            volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        }
     }
 
     func stopDisplayLink() {

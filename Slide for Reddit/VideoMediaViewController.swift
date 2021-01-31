@@ -32,7 +32,9 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             }, completion: nil)
         }
     }
-    let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
+    
+    
+    var volume: SubtleVolume?
     let volumeHeight: CGFloat = 3
     var setOnce = false
 
@@ -106,30 +108,35 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             strongSelf.handleHideUI(hideTitle: true)
         })
         
-        volume.barTintColor = .white
-        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
-        volume.animation = .slideDown
-        
-        var is13 = false
         if #available(iOS 13, *) {
-            is13 = true
-        }
-        if !((parent?.parent) is ShadowboxLinkViewController) && !is13 {
-            view.addSubview(volume)
-            volume.delegate = self
-            NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            
+        } else {
+            if !((parent?.parent) is ShadowboxLinkViewController) {
+                volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
+                volume!.barTintColor = .white
+                volume!.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+                volume!.animation = .slideDown
+                view.addSubview(volume!)
+                volume!.delegate = self
+                NotificationCenter.default.addObserver(volume!, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            }
         }
     }
     
     override func viewDidLayoutSubviews() {
-        layoutVolume()
+        if #available(iOS 13, *) {
+        } else {
+            layoutVolume()
+        }
     }
     
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        volume.superview?.bringSubviewToFront(volume)
-        volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        if let volume = volume {
+            volume.superview?.bringSubviewToFront(volume)
+            volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        }
     }
 
     func stopDisplayLink() {
