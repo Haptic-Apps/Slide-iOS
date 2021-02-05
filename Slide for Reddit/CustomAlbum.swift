@@ -94,6 +94,6 @@ class CustomAlbum: NSObject {
     }
 
     func saveMovieToLibrary(movieURL: URL, parent: UIViewController?) {
-        UISaveVideoAtPathToSavedPhotosAlbum(movieURL.absoluteString, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        UISaveVideoAtPathToSavedPhotosAlbum(movieURL.absoluteString, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
     }
 }

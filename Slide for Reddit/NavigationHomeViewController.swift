@@ -670,6 +670,8 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                         DispatchQueue.main.async {
                             self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                             self.tableView.reloadData()
+                            self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: false)
+                            self.searchBar.becomeFirstResponder()
                         }
                     }
                 } catch {
@@ -694,6 +696,8 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                     DispatchQueue.main.async {
                         self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                         self.tableView.reloadData()
+                        self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: false)
+                        self.searchBar.becomeFirstResponder()
                     }
                 case .failure(let error):
                     print(error)
