@@ -80,6 +80,13 @@ public class VCPresenter {
                    userActivity: activity,
                    options: nil,
                    errorHandler: nil)
+                
+            } else if UIApplication.shared.isMac() && viewController is InboxViewController {
+                let activity = NSUserActivity(activityType: "inbox")
+                UIApplication.shared.requestSceneSessionActivation(nil,
+                   userActivity: activity,
+                   options: nil,
+                   errorHandler: nil)
 
             } else if UIApplication.shared.isMac() && viewController is ProfileViewController {
                 let activity = NSUserActivity(activityType: "profile")

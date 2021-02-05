@@ -1296,6 +1296,22 @@ extension AppDelegate: UIWindowSceneDelegate {
                 split.preferredSplitBehavior = .tile
                 
                 window?.rootViewController = split
+            } else if connectionOptions.userActivities.first?.activityType == "inbox" {
+                let subVC = InboxViewController()
+                let split = UISplitViewController(style: .doubleColumn)
+                split.setViewController(subVC, for: .primary)
+                split.setViewController(PlaceholderViewController(), for: .secondary)
+                let size = window?.frame.size ?? CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+
+                split.preferredContentSize = size
+                split.minimumPrimaryColumnWidth = split.preferredContentSize.width * 0.60
+                split.preferredPrimaryColumnWidthFraction = 0.60
+                split.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                
+                split.preferredDisplayMode = .oneBesideSecondary
+                split.preferredSplitBehavior = .tile
+                
+                window?.rootViewController = split
             } else if connectionOptions.userActivities.first?.activityType == "profile", let profile = userActivity.userInfo?["profile"] as? String {
                 let subVC = SwipeForwardNavigationController(rootViewController: ProfileViewController(name: profile))
                 let split = UISplitViewController(style: .doubleColumn)
