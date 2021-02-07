@@ -764,7 +764,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text3]
-                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: (toReplyTo as! MessageObject).markdownBody)
             } else {
                 // three
                 let text1 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -847,7 +847,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text1, text2, text3]
-                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
             }
         } else if type.isSubmission() {
             // three
@@ -969,7 +969,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     stack.verticalAnchors /==/ scrollView.verticalAnchors
                     
                     text = [text1, text2]
-                    toolbar = ToolbarTextView.init(textView: text2, parent: self)
+                    toolbar = ToolbarTextView.init(textView: text2, parent: self, replyText: nil)
                 } else {
                     stack.addArrangedSubviews(text1, text2, replyButtons!, ruleLabel, text3)
                     replyButtons!.heightAnchor /==/ CGFloat(30)
@@ -990,7 +990,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     stack.verticalAnchors /==/ scrollView.verticalAnchors
                     
                     text = [text1, text2, text3]
-                    toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                    toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
                 }
             } else {
                 stack.addArrangedSubviews(text1, text2, text3)
@@ -1008,7 +1008,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text1, text2, text3]
-                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
             }
 
         } else if type.isComment() {
@@ -1078,7 +1078,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text3]
-                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: (toReplyTo as! SubmissionObject).markdownBody)
             } else {
                 // one
                 let text3 = UITextView.init(frame: CGRect.init(x: 0, y: 0, width: CGFloat.greatestFiniteMagnitude, height: 60)).then({
@@ -1111,7 +1111,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
                 text = [text3]
-                toolbar = ToolbarTextView.init(textView: text3, parent: self)
+                toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
             }
     
         } else if type.isEdit() {
@@ -1161,7 +1161,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             stack.verticalAnchors /==/ scrollView.verticalAnchors
 
             text = [text1, text3]
-            toolbar = ToolbarTextView.init(textView: text3, parent: self)
+            toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
         }
     }
     

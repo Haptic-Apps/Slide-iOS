@@ -19,10 +19,12 @@ public class ToolbarTextView: NSObject {
     var text: UITextView?
     weak var parent: UIViewController?
     var picker: NSObject?
+    var replyText: String?
 
-    init(textView: UITextView, parent: UIViewController) {
+    init(textView: UITextView, parent: UIViewController, replyText: String?) {
         self.text = textView
         self.parent = parent
+        self.replyText = replyText
         super.init()
         addToolbarToTextView()
     }
@@ -33,18 +35,23 @@ public class ToolbarTextView: NSObject {
         scrollView.autoresizingMask = .flexibleWidth
         scrollView.backgroundColor = UIColor.backgroundColor
         var i = 0
-        for button in ([
+        var buttons = [
             generateButtons(image: "save", sfString: SFSymbol.starFill, action: #selector(ToolbarTextView.saveDraft(_:))),
             generateButtons(image: "folder", sfString: SFSymbol.folderFill, action: #selector(ToolbarTextView.openDrafts(_:))),
             generateButtons(image: "image", sfString: SFSymbol.photoFill, action: #selector(ToolbarTextView.uploadImage(_:))),
-            generateButtons(image: "draw", sfString: SFSymbol.scribble, action: #selector(ToolbarTextView.draw(_:))),
             generateButtons(image: "link", sfString: SFSymbol.link, action: #selector(ToolbarTextView.link(_:))),
             generateButtons(image: "bold", sfString: SFSymbol.bold, action: #selector(ToolbarTextView.bold(_:))),
             generateButtons(image: "italic", sfString: SFSymbol.italic, action: #selector(ToolbarTextView.italics(_:))),
             generateButtons(image: "list", sfString: SFSymbol.listBullet, action: #selector(ToolbarTextView.list(_:))),
             generateButtons(image: "list_number", sfString: SFSymbol.listNumber, action: #selector(ToolbarTextView.numberedList(_:))),
             generateButtons(image: "size", sfString: SFSymbol.textformatSize, action: #selector(ToolbarTextView.size(_:))),
-            generateButtons(image: "strikethrough", sfString: SFSymbol.strikethrough, action: #selector(ToolbarTextView.strike(_:))), ]) {
+            generateButtons(image: "strikethrough", sfString: SFSymbol.strikethrough, action: #selector(ToolbarTextView.strike(_:))), ]
+        
+        if replyText != nil {
+            buttons.insert(generateButtons(image: "comments", sfString: SFSymbol.quoteBubbleFill, action: #selector(ToolbarTextView.quote(_:))), at: 3)
+        }
+        
+        for button in (buttons) {
             button.0.frame = CGRect.init(x: i * 50, y: 0, width: 50, height: 50)
             button.0.isUserInteractionEnabled = true
             button.0.addTarget(self, action: button.1, for: UIControl.Event.touchUpInside)
@@ -65,8 +72,8 @@ public class ToolbarTextView: NSObject {
 
     func generateButtons(image: String, sfString: SFSymbol?, action: Selector) -> (UIButton, Selector) {
         let more = UIButton.init(frame: CGRect.init(x: 0, y: 0, width: 50, height: 50))
-        if sfString != nil {
-            more.setImage(UIImage(sfString: sfString!, overrideString: image)?.menuIcon(), for: UIControl.State.normal)
+        if let strongSFString = sfString {
+            more.setImage(UIImage(sfString: strongSFString, overrideString: image)?.menuIcon(), for: UIControl.State.normal)
         } else {
             more.setImage(UIImage(named: image)?.menuIcon(), for: UIControl.State.normal)
         }
@@ -74,17 +81,23 @@ public class ToolbarTextView: NSObject {
     }
 
     func wrapIn(_ value: String) {
-        let wrapped = value + text!.text(in: text!.selectedTextRange!)! + value
-        text!.replace(text!.selectedTextRange!, withText: wrapped)
-        
-        if wrapped.length == value.length * 2 {
-            let newPosition = text!.position(from: text!.selectedTextRange!.end, offset: -(value.length)) ?? text!.selectedTextRange!.end
-            text!.selectedTextRange = text!.textRange(from: newPosition, to: newPosition)
+        if let selectedRange = text?.selectedTextRange, let textValue = text?.text(in: selectedRange) {
+            let wrapped = value + textValue + value
+            text?.replace(selectedRange, withText: wrapped)
+            
+            if wrapped.length == value.length * 2 {
+                if let newPosition = text?.position(from: selectedRange.end, offset: (value.length)) {
+                    text?.selectedTextRange = text?.textRange(from: newPosition, to: newPosition)
+                }
+            }
         }
+        
     }
 
     func replaceIn(_ value: String, with: String) {
-        text!.replace(text!.selectedTextRange!, withText: with + text!.text(in: text!.selectedTextRange!)!.replacingOccurrences(of: value, with: with))
+        if let selectedRange = text?.selectedTextRange, let textValue = text?.text(in: selectedRange) {
+            text?.replace(selectedRange, withText: with + textValue.replacingOccurrences(of: value, with: with))
+        }
     }
 
     @objc func saveDraft(_ sender: AnyObject?) {
@@ -219,7 +232,6 @@ public class ToolbarTextView: NSObject {
 
     var insertText: String?
 
-    
     // Legacy for iOS <= iOS 13
     func uploadAsync(_ assets: [PHAsset]) {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
@@ -669,8 +681,51 @@ public class ToolbarTextView: NSObject {
         }
     }
 
-    @objc func draw(_ sender: UIButton!) {
+    @objc func quote(_ sender: UIButton!) {
+        if let replyText = replyText {
+            text?.resignFirstResponder()
+            let alert = AlertController.init(title: "Quote text", message: nil, preferredStyle: .alert)
+            
+            alert.setupTheme()
+            
+            alert.attributedTitle = NSAttributedString(string: "Quote text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+            
+            let textView = UITextView().then {
+                $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
+                $0.textColor = UIColor.fontColor
+                $0.backgroundColor = .clear
+                $0.isEditable = false
+                $0.isSelectable = true
+                $0.text = replyText
+            }
+            
+            alert.contentView.addSubview(textView)
+            textView.edgeAnchors /==/ alert.contentView.edgeAnchors
+            
+            let height = textView.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
+            textView.heightAnchor /==/ height
+            
+            alert.addCloseButton()
+            alert.addAction(AlertAction(title: "Quote all", style: AlertAction.Style.normal, handler: { (_) in
+                self.replaceIn("\n", with: "\n> \(replyText)")
+                self.text?.becomeFirstResponder()
+            }))
+            alert.addAction(AlertAction(title: "Quote selected", style: AlertAction.Style.normal, handler: { (_) in
+                if let textRange = textView.selectedTextRange {
+                    let selectedText = textView.text(in: textRange)
+                    
+                    self.replaceIn("\n", with: "\n> \(selectedText ?? "")")
+                    if let textView = self.text {
+                        textView.becomeFirstResponder()
+                        textView.selectedTextRange = textView.textRange(from: textView.endOfDocument, to: textView.endOfDocument)
+                    }
+                }
+            }))
 
+            alert.addBlurView()
+            
+            parent?.present(alert, animated: true)
+        }
     }
 
     var insertLink: String?

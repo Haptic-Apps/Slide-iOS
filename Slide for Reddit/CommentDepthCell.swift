@@ -1090,7 +1090,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             body!.text = comment!.markdownBody.decodeHTML()
         }
 
-        toolbar = ToolbarTextView.init(textView: body!, parent: parent!)
+        toolbar = ToolbarTextView.init(textView: body!, parent: parent!, replyText: comment?.markdownBody)
         oldConstraints = batch {
             body!.heightAnchor />=/ 40
         }
