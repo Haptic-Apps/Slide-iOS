@@ -187,6 +187,11 @@ public class ToolbarTextView: NSObject {
             self.picker = localPicker
             
             parent?.present(localPicker, animated: true)
+             
+            /*let library = PHPhotoLibrary.shared() //Choose new photos to grant access to
+            if let parent = parent {
+                library.presentLimitedLibraryPicker(from: parent)
+            }*/
         } else {
             let imagePicker = OpalImagePickerController()
             imagePicker.allowedMediaTypes = [PHAssetMediaType.image]
@@ -214,6 +219,8 @@ public class ToolbarTextView: NSObject {
 
     var insertText: String?
 
+    
+    // Legacy for iOS <= iOS 13
     func uploadAsync(_ assets: [PHAsset]) {
         alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
         alertView!.addCancelButton()
@@ -430,7 +437,236 @@ public class ToolbarTextView: NSObject {
                 })
             })
         }
+    }
 
+    
+    // iOS 14 impelentation
+    @available(iOS 14, *)
+    func uploadAsync(_ results: [PHPickerResult]) {
+        alertView = UIAlertController(title: "Uploading...", message: "Your images are uploading to Imgur", preferredStyle: .alert)
+        alertView!.addCancelButton()
+
+        parent?.present(alertView!, animated: true, completion: {
+            //  Add your progressbar after alert is shown (and measured)
+            let margin: CGFloat = 8.0
+            let rect = CGRect.init(x: margin, y: 72.0, width: (self.alertView?.view.frame.width)! - margin * 2.0, height: 2.0)
+            self.progressBar = UIProgressView(frame: rect)
+            self.progressBar.progress = 0
+            self.progressBar.tintColor = ColorUtil.accentColorForSub(sub: "")
+            self.alertView?.view.addSubview(self.progressBar)
+        })
+
+        if results.count > 1 {
+            Alamofire.request("https://api.imgur.com/3/album", method: .post, parameters: nil, encoding: JSONEncoding.default, headers: ["Authorization": "Client-ID bef87913eb202e9"])
+                    .responseJSON { response in
+                        print(response)
+                        if let status = response.response?.statusCode {
+                            switch status {
+                            case 201:
+                                print("example success")
+                            default:
+                                print("error with response status: \(status)")
+                            }
+                        }
+
+                        if let result = response.value {
+                            let json = JSON(result)
+                            print(json)
+                            let album = json["data"]["deletehash"].stringValue
+                            let url = "https://imgur.com/a/" + json["data"]["id"].stringValue
+                            self.uploadImages(results, album: album, completion: { (last, success) in
+                                DispatchQueue.main.async {
+                                    self.alertView!.dismiss(animated: true, completion: {
+                                        if success {
+                                            if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
+                                                (self.parent as! ReplyViewController).text!.last!.text = url
+                                            } else {
+                                                let alert = AlertController(title: "Link text", message: url, preferredStyle: .alert)
+
+                                                let config: TextField.Config = { textField in
+                                                    textField.becomeFirstResponder()
+                                                    textField.textColor = UIColor.fontColor
+                                                    textField.attributedPlaceholder = NSAttributedString(string: "Caption (optional)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
+                                                    textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link")?.menuIcon(), color: UIColor.fontColor)
+                                                    textField.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
+                                                    textField.backgroundColor = UIColor.foregroundColor
+                                                    textField.leftViewPadding = 12
+                                                    textField.layer.borderWidth = 1
+                                                    textField.layer.cornerRadius = 8
+                                                    textField.keyboardAppearance = .default
+                                                    textField.keyboardType = .default
+                                                    textField.returnKeyType = .done
+                                                    textField.action { textField in
+                                                        self.insertText = textField.text
+                                                    }
+                                                }
+
+                                                let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+                                                
+                                                alert.setupTheme()
+                                                
+                                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+                                                
+                                                alert.contentView.addSubview(textField)
+                                                
+                                                textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+                                                textField.heightAnchor /==/ CGFloat(44 + 12)
+
+                                                alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
+                                                    let text = self.insertText ?? ""
+                                                    if text.isEmpty() {
+                                                        self.text!.insertText("\(url)")
+                                                    } else {
+                                                        self.text!.insertText("[\(text)](\(url))")
+                                                    }
+                                                }))
+
+                                                alert.addCancelButton()
+                                                alert.addBlurView()
+
+                                                self.parent?.present(alert, animated: true, completion: nil)
+                                            }
+                                        } else {
+                                            let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
+                                            alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
+                                            self.parent?.present(alert, animated: true, completion: nil)
+                                        }
+                                    })
+                                }
+                            })
+                        }
+
+                    }
+
+        } else {
+            uploadImages(results, album: "", completion: { (link, success) in
+                DispatchQueue.main.async {
+                    self.alertView!.dismiss(animated: true, completion: {
+                        if success {
+                            if self.parent is ReplyViewController && (self.parent as! ReplyViewController).type == .SUBMIT_IMAGE {
+                                (self.parent as! ReplyViewController).text!.last!.text = link
+                            } else {
+                                let alert = AlertController(title: "Link text", message: link, preferredStyle: .alert)
+
+                                let config: TextField.Config = { textField in
+                                    textField.becomeFirstResponder()
+                                    textField.textColor = UIColor.fontColor
+                                    textField.attributedPlaceholder = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
+                                    textField.left(image: UIImage(sfString: SFSymbol.link, overrideString: "link")?.menuIcon(), color: UIColor.fontColor)
+                                    textField.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
+                                    textField.backgroundColor = UIColor.foregroundColor
+                                    textField.leftViewPadding = 12
+                                    textField.layer.borderWidth = 1
+                                    textField.layer.cornerRadius = 8
+                                    textField.keyboardAppearance = .default
+                                    textField.keyboardType = .default
+                                    textField.returnKeyType = .done
+                                    textField.action { textField in
+                                        self.insertText = textField.text
+                                    }
+                                }
+
+                                let textField = OneTextFieldViewController(vInset: 12, configuration: config).view!
+                                
+                                alert.setupTheme()
+                                
+                                alert.attributedTitle = NSAttributedString(string: "Link Text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+                                
+                                alert.contentView.addSubview(textField)
+                                
+                                textField.edgeAnchors /==/ alert.contentView.edgeAnchors
+                                textField.heightAnchor /==/ CGFloat(44 + 12)
+                                
+                                alert.addAction(AlertAction(title: "Insert", style: .preferred, handler: { (_) in
+                                    let text = self.insertText ?? ""
+                                    if text.isEmpty() {
+                                        self.text!.insertText("\(link)")
+                                    } else {
+                                        self.text!.insertText("[\(text)](\(link))")
+                                    }
+                                }))
+
+                                alert.addCancelButton()
+                                alert.addBlurView()
+
+                                self.parent?.present(alert, animated: true, completion: nil)
+                            }
+                        } else {
+                            let alert = UIAlertController(title: "Uploading failed", message: "Uh oh, something went wrong while uploading to Imgur. Please try again in a few minutes", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction.init(title: "Ok", style: .cancel, handler: nil))
+                            self.parent?.present(alert, animated: true, completion: nil)
+                        }
+
+                    })
+                }
+            })
+        }
+    }
+
+    @available(iOS 14, *)
+    func uploadImages(_ results: [PHPickerResult], album: String, completion: @escaping (String, Bool) -> Void) {
+        var count = 0
+        for result in results {
+            
+            count += 1
+            
+            result.itemProvider.loadObject(ofClass: UIImage.self) { (object, error) in
+                if error != nil {
+                    completion("", false)
+                    return
+                }
+                guard let image = object as? UIImage else { return }
+                
+                func tryUploadWithSize(size: Float) {
+                    if size <= 0 {
+                        completion("", false)
+                    }
+                    guard let data = image.jpegData(compressionQuality: 1) else {
+                        tryUploadWithSize(size: size - 0.1)
+                        return
+                    }
+                    
+                    Alamofire.upload(multipartFormData: { (multipartFormData) in
+                        multipartFormData.append(data, withName: "image", fileName: UUID().uuidString + ".jpeg", mimeType: "image/jpg")
+                        if !album.isEmpty {
+                            multipartFormData.append(album.data(using: .utf8)!, withName: "album")
+                        }
+                    }, to: "https://api.imgur.com/3/image", method: .post, headers: ["Authorization": "Client-ID bef87913eb202e9"], encodingCompletion: { (encodingResult) in
+                        switch encodingResult {
+                        case .success(let upload, _, _):
+                            print("Success")
+                            upload.uploadProgress { progress in
+                                DispatchQueue.main.async {
+                                    print(progress.fractionCompleted)
+                                    self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
+                                }
+                            }
+                            upload.responseJSON { response in
+                                if let val = response.value {
+                                    let json = JSON(val)
+                                    debugPrint(response)
+                                    let link = json["data"]["link"].stringValue
+                                    if link.isEmpty {
+                                        if json["data"]["error"].stringValue != "" {
+                                            tryUploadWithSize(size: size - 0.1)
+                                            return
+                                        }
+                                    }
+                                    print("Link is \(link)")
+                                    if count == results.count {
+                                        completion(link, true)
+                                    }
+                                }
+                            }
+                        case .failure:
+                            completion("Failure", false)
+                        }
+                    })
+                }
+                
+                tryUploadWithSize(size: 1)
+            }
+        }
     }
 
     @objc func draw(_ sender: UIButton!) {
@@ -540,18 +776,13 @@ class TouchUIScrollView: UIScrollView {
 @available(iOS 14, *)
 extension ToolbarTextView: PHPickerViewControllerDelegate {
     public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        let identifiers = results.compactMap(\.assetIdentifier)
-        let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: identifiers, options: nil)
+        guard !results.isEmpty else { return }
         
         (self.picker as? PHPickerViewController)?.dismiss(animated: true, completion: {
-            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(fetchResult.count) image\(fetchResult.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
+            let alert = UIAlertController.init(title: "Confirm upload", message: "Would you like to upload \(results.count) image\(results.count > 1 ? "s" : "") anonymously to Imgur.com? This cannot be undone", preferredStyle: .alert)
             alert.addAction(UIAlertAction.init(title: "No", style: .destructive, handler: nil))
             alert.addAction(UIAlertAction.init(title: "Yes", style: .default) { _ in
-                var assets = [PHAsset]()
-                fetchResult.enumerateObjects { (asset, _, _) in
-                    assets.append(asset)
-                }
-                self.uploadAsync(assets)
+                self.uploadAsync(results)
             })
             self.parent?.present(alert, animated: true, completion: nil)
 
