@@ -621,7 +621,30 @@ class SettingsLayout: BubbleSettingTableViewController {
 
         }
         
-        if SettingValues.postImageMode == .THUMBNAIL || SettingValues.postImageMode == .NONE {
+        
+        if SettingValues.postImageMode == .NONE {
+            thumbLink.isEnabled = false
+            largerThumbnail.isEnabled = false
+            leftThumb.isEnabled = false
+            thumbInfo.isEnabled = false
+            
+            thumbLinkCell.alpha = 0.5
+            largerThumbnailCell.alpha = 0.5
+            leftThumbCell.alpha = 0.5
+            thumbInfoCell.alpha = 0.5
+        } else {
+            thumbLink.isEnabled = true
+            largerThumbnail.isEnabled = true
+            leftThumb.isEnabled = true
+            thumbInfo.isEnabled = true
+            
+            thumbLinkCell.alpha = 1
+            largerThumbnailCell.alpha = 1
+            leftThumbCell.alpha = 1
+            thumbInfoCell.alpha = 1
+        }
+        
+        if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
             
             thumbLinkCell.contentView.alpha = 0.5
@@ -630,7 +653,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             
             thumbLinkCell.contentView.alpha = 1
         }
-        
+
         if !SettingValues.showFlairs {
             coloredFlairs.isEnabled = false
             imageFlairs.isEnabled = false
