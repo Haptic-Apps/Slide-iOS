@@ -69,6 +69,7 @@ class SingleMessageContributionLoader {
                                 let json = (message as! Message).baseJson as JSONDictionary
                                 if let j = json["replies"] as? JSONDictionary, let data = j["data"] as? JSONDictionary, let things = data["children"] as? JSONArray {
                                     for thing in things {
+                                        let message = MessageObject.messageToMessageObject(message: Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary))
                                         contains = false
                                         for present in self.content {
                                             if present.name == message.name {
@@ -77,7 +78,7 @@ class SingleMessageContributionLoader {
                                         }
                                         
                                         if !contains {
-                                            self.content.append(MessageObject.messageToMessageObject(message: Message.init(json: (thing as! JSONDictionary)["data"] as! JSONDictionary)))
+                                            self.content.append(message)
                                         }
                                     }
                                 }

@@ -372,7 +372,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                 let message = thing as! MessageObject
                 if estimatedHeights[message.id] == nil {
                     let titleText = MessageCellView.getTitleText(message: message, state: (baseData as? InboxContributionLoader)?.messages == .messages ? .THREAD_PREVIEW : .IN_MESSAGES)
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: message.htmlBody)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: (baseData as? InboxContributionLoader)?.messages == .messages ? "" : message.htmlBody)
                     
                     estimatedHeights[message.id] = height + 16
                 }

@@ -107,6 +107,8 @@ class MessageCellView: UICollectionViewCell {
         
         if self.colorMessage {
             self.innerView.backgroundColor = UIColor.foregroundColorOverlaid(with: ColorUtil.getColorForSub(sub: ""), 0.15)
+        } else {
+            self.innerView.backgroundColor = UIColor.foregroundColor
         }
     }
     

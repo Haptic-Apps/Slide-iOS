@@ -92,7 +92,15 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         var items: [UIBarButtonItem] = []
         items.append(space)
-        let loadFullThreadButton = UIBarButtonItem.init(title: "Reply to u/\(self.baseData.content.first?.author ?? "")", style: .plain, target: self, action: #selector(sendReply))
+        
+        var replyTo = AccountController.currentName //Fallback if no replies have been sent by other user
+        if let last = self.baseData.content.last(where: { $0.author != AccountController.currentName }) {
+            replyTo = last.author
+        } else if let last = self.baseData.content.last {
+            replyTo = last.author
+        }
+        
+        let loadFullThreadButton = UIBarButtonItem.init(title: "Reply to u/\(replyTo)", style: .plain, target: self, action: #selector(sendReply))
         loadFullThreadButton.accessibilityLabel = "Reply"
         items.append(loadFullThreadButton)
         items.append(space)
@@ -106,7 +114,7 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
     }
     
     @objc func sendReply() {
-        if let message = self.baseData.content.last {
+        if let message = self.baseData.content.last(where: { $0.author != AccountController.currentName }) ?? self.baseData.content.last {
             VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
                 DispatchQueue.main.async(execute: { () -> Void in
                     self.baseData.getData(reload: false)
@@ -333,7 +341,7 @@ extension ThreadViewControler: SingleMessageContributionLoaderDelegate {
                 
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: false)
                 self.tableView.insertItems(at: paths)
-                self.tableView.scrollToItem(at: IndexPath(row: self.baseData.content.count - 1, section: 0), at: .bottom, animated: true)
+                self.tableView.scrollToItem(at: IndexPath(row: self.baseData.content.count - 1, section: 0), at: .centeredVertically, animated: true)
             }
 
             self.endAndResetRefresh()
