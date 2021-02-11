@@ -363,7 +363,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let titleText = CommentCellView.getTitle(comment)
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: comment.htmlBody)
                     
-                    estimatedHeights[comment.id] = height + 16
+                    estimatedHeights[comment.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is FriendObject {
@@ -374,7 +374,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let titleText = MessageCellView.getTitleText(message: message, state: (baseData as? InboxContributionLoader)?.messages == .messages ? .THREAD_PREVIEW : .IN_MESSAGES)
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: (baseData as? InboxContributionLoader)?.messages == .messages ? "" : message.htmlBody)
                     
-                    estimatedHeights[message.id] = height + 16
+                    estimatedHeights[message.id] = height
                 }
 
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
@@ -384,7 +384,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let titleText = ModlogCellView.getTitleText(item: logItem)
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: logItem.targetTitle)
                     
-                    estimatedHeights[logItem.id] = height + 16
+                    estimatedHeights[logItem.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[logItem.id]!)
             }

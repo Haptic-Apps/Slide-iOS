@@ -341,7 +341,10 @@ extension ThreadViewControler: SingleMessageContributionLoaderDelegate {
                 
                 self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: false)
                 self.tableView.insertItems(at: paths)
-                self.tableView.scrollToItem(at: IndexPath(row: self.baseData.content.count - 1, section: 0), at: .centeredVertically, animated: true)
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.tableView.scrollToItem(at: IndexPath(row: self.baseData.content.count - 1, section: 0), at: .bottom, animated: true)
             }
 
             self.endAndResetRefresh()
