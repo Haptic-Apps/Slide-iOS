@@ -43,7 +43,9 @@ jobs:
           sh ./bootstrap.sh
           pod install
       - name: Run code validation
-        run: bundle exec danger
+        uses: actions/checkout@v1
+        with:
+            args: --failOnErrors --no-publish-check
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
       - name: Run tests
