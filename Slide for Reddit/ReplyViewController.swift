@@ -60,6 +60,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var info: UIStateButton?
     var ruleLabel = UITextView()
     
+    var chosenAccount: String?
+
     var subject: String?
     var message: String?
 
@@ -449,8 +451,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         account = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
             $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
-            $0.setTitle("Posting as u/\(AccountController.currentName)", for: .selected)
-            $0.setTitle("Posting as u/\(AccountController.currentName)", for: .normal)
+            $0.setTitle("Posting as u/\(self.chosenAccount ?? AccountController.currentName)", for: .selected)
+            $0.setTitle("Posting as u/\(self.chosenAccount ?? AccountController.currentName)", for: .normal)
             $0.setTitleColor(GMColor.blue500Color(), for: .normal)
             $0.setTitleColor(.white, for: .selected)
             $0.titleLabel?.textAlignment = .center
@@ -459,7 +461,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         
         account!.color = GMColor.blue500Color()
         account!.isSelected = true
-        account!.addTarget(self, action: #selector(self.changeAccount), for: .touchUpInside)
+        account!.addTarget(self, action: #selector(self.chooseAccount), for: .touchUpInside)
         
         account!.heightAnchor /==/ CGFloat(30)
         let widthA = account!.currentTitle!.size(with: account!.titleLabel!.font).width + CGFloat(45)
@@ -646,10 +648,23 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             buttonBase.widthAnchor /==/ finalWidth
         }
     }
-    var chosenAccount: String?
 
-    @objc func changeAccount() {
+    @objc func chooseAccount() {
+        let optionMenu = DragDownAlertMenu(title: "Accounts", subtitle: "Choose an account to reply with", icon: nil)
+
+        for accountName in AccountController.names.unique().sorted() {
+            if accountName != self.chosenAccount {
+                optionMenu.addAction(title: accountName, icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) { [weak self] in
+                    self?.chosenAccount = accountName
+                    self?.doButtons()
+                }
+            } else {
+                optionMenu.addAction(title: "\(accountName) (current)", icon: UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon().getCopy(withColor: GMColor.green500Color())) {
+                }
+            }
+        }
         
+        optionMenu.show(self.parent)
     }
     
     @objc func flairs(_ sender: UIStateButton) {
@@ -1034,7 +1049,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
                 }
             } else {
-                stack.addArrangedSubviews(text1, text2, text3)
+                stack.addArrangedSubviews(text1, text3)
                 text3.text = (toReplyTo as! SubmissionObject).markdownBody
                 text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 text1.heightAnchor />=/ CGFloat(70)
@@ -1407,7 +1422,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 alertController = UIAlertController(title: "Posting submission...\n\n\n", message: nil, preferredStyle: .alert)
             }
 
-
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
             spinnerIndicator.color = UIColor.fontColor
@@ -1415,8 +1429,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
             alertController?.view.addSubview(spinnerIndicator)
             self.present(alertController!, animated: true, completion: nil)
-
-            session = (UIApplication.shared.delegate as! AppDelegate).session
 
             do {
                 if type == .SUBMIT_TEXT {
