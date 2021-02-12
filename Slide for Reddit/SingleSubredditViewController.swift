@@ -1564,7 +1564,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                     big = true
                 }
                 
-                    if SettingValues.postImageMode == .THUMBNAIL {
+                if SettingValues.postImageMode == .THUMBNAIL {
                     big = false
                     thumb = true
                 }
@@ -1601,6 +1601,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
                 if !big && !thumb && submission.type != .SELF && submission.type != .NONE {
                     thumb = true
+                }
+                    
+                if SettingValues.postImageMode == .NONE {
+                    big = false
+                    thumb = false
                 }
 
                 if thumb && !big {
@@ -1710,6 +1715,11 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             big = false
         }
         
+        if SettingValues.postImageMode == .NONE {
+            big = false
+            thumb = false
+        }
+
         if isGallery {
             big = true
             thumb = false
@@ -1934,6 +1944,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if (thumb || big) && submission.isSpoiler {
             thumb = true
             big = false
+        }
+        
+        if SettingValues.postImageMode == .NONE {
+            return .text
         }
 
         if thumb && !big {
@@ -2644,7 +2658,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             case .banner:
                 cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && submission.imageHeight > 0 {
+                if !SettingValues.hideImageSelftext && submission.imageHeight > 0 && SettingValues.postImageMode != .NONE {
                     cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
                 } else {
                     cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
@@ -2981,6 +2995,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            nav.interactivePushGestureRecognizer?.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }

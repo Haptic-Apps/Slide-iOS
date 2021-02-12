@@ -16,10 +16,10 @@ class CustomAlbum: NSObject {
     private override init() {
         super.init()
 
-        if let assetCollection = fetchAssetCollectionForAlbum() {
+        /*if let assetCollection = fetchAssetCollectionForAlbum() {
             self.assetCollection = assetCollection
             return
-        }
+        }*/
     }
 
     private func checkAuthorizationWithHandler(completion: @escaping ((_ success: Bool) -> Void)) {
@@ -94,6 +94,23 @@ class CustomAlbum: NSObject {
     }
 
     func saveMovieToLibrary(movieURL: URL, parent: UIViewController?) {
-        UISaveVideoAtPathToSavedPhotosAlbum(movieURL.absoluteString, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        let fileManager = FileManager.default
+        
+        let cachedFile = movieURL.absoluteString
+        
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        if let addPath = paths.first {
+            let dataPath = addPath + "/\(cachedFile.split("/").last ?? "")"
+            print(dataPath)
+
+            do {
+                try fileManager.moveItem(at: movieURL, to: URL(fileURLWithPath: dataPath))
+                UISaveVideoAtPathToSavedPhotosAlbum(dataPath, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
+            } catch {
+                BannerUtil.makeBanner(text: "Error saving video!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: nil)
+            }
+        } else {
+            BannerUtil.makeBanner(text: "Error saving video!\nDoes Slide have photo access?", color: GMColor.red500Color(), seconds: 3, context: nil)
+        }
     }
 }

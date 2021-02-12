@@ -45,7 +45,10 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
             subs.append(contentsOf: ["all", "friends", "frontpage", "popular", "random", "myrandom"])
         }
         
-        baseSubs.append(contentsOf: Subscriptions.pinned)
+        baseSubs.append(contentsOf: Subscriptions.pinned.filter({ (sub) -> Bool in
+            let contained = !includeCollections && sub != "all" && sub != "frontpage" && sub != "popular" && sub != "random" && sub != "randnsfw" && sub != "friends" && !sub.startsWith("/m/") && !sub.contains("+")
+            return contained || includeCollections
+        }))
         baseSubs.append(contentsOf: subs.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
     }
     

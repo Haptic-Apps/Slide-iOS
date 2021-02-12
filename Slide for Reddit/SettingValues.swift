@@ -309,7 +309,7 @@ class SettingValues {
         case CROPPED_IMAGE = "cropped"
         case SHORT_IMAGE = "short"
         case THUMBNAIL = "thumbnail"
-        // for future implementation case NONE = "none"
+        case NONE = "none"
     }
 
     enum ActionBarMode: String {

@@ -307,6 +307,11 @@ public class AutoCache: NSObject {
                 thumb = true
             }
 
+            if SettingValues.postImageMode == .NONE {
+                big = false
+                thumb = false
+            }
+
             if thumb && !big {
                 if submission.thumbnailUrl == "nsfw" {
                 } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty {

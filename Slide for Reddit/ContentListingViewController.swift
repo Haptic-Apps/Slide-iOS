@@ -284,7 +284,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && (thing as! SubmissionObject).imageHeight > 0 {
+                if !SettingValues.hideImageSelftext && (thing as? SubmissionObject)?.imageHeight ?? 0 > 0 && SettingValues.postImageMode != .NONE {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
                 } else {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
@@ -321,6 +321,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
             c.delegate = self
             c.textDelegate = self
+            
+            if let base = baseData as? InboxContributionLoader, base.messages == .messages {
+                c.state = .THREAD_PREVIEW
+            }
 
             c.setMessage(message: (thing as! MessageObject), width: self.view.frame.size.width)
             cell = c
@@ -359,7 +363,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let titleText = CommentCellView.getTitle(comment)
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: comment.htmlBody)
                     
-                    estimatedHeights[comment.id] = height + 16
+                    estimatedHeights[comment.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
             } else if thing is FriendObject {
@@ -367,10 +371,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             } else if thing is MessageObject {
                 let message = thing as! MessageObject
                 if estimatedHeights[message.id] == nil {
-                    let titleText = MessageCellView.getTitleText(message: message)
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: message.htmlBody)
+                    let titleText = MessageCellView.getTitleText(message: message, state: (baseData as? InboxContributionLoader)?.messages == .messages ? .THREAD_PREVIEW : .IN_MESSAGES)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: (baseData as? InboxContributionLoader)?.messages == .messages ? "" : message.htmlBody)
                     
-                    estimatedHeights[message.id] = height + 16
+                    estimatedHeights[message.id] = height
                 }
 
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
@@ -380,7 +384,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     let titleText = ModlogCellView.getTitleText(item: logItem)
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: logItem.targetTitle)
                     
-                    estimatedHeights[logItem.id] = height + 16
+                    estimatedHeights[logItem.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[logItem.id]!)
             }
@@ -808,6 +812,10 @@ extension ContentListingViewController: ModlogCellViewDelegate {
 }
 
 extension ContentListingViewController: MessageCellViewDelegate {
+    func showThread(id: String, title: String) {
+        VCPresenter.showVC(viewController: ThreadViewControler(threadID: id, title: title), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+
     func doReply(to message: MessageObject, cell: MessageCellView) {
         if !ActionStates.isRead(s: message) {
             let session = (UIApplication.shared.delegate as! AppDelegate).session
@@ -822,7 +830,7 @@ extension ContentListingViewController: MessageCellViewDelegate {
             } catch {
             }
             ActionStates.setRead(s: message, read: true)
-            let titleText = MessageCellView.getTitleText(message: message)
+            let titleText = MessageCellView.getTitleText(message: message, state: cell.state)
             cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
 
         } else {
@@ -865,7 +873,7 @@ extension ContentListingViewController: MessageCellViewDelegate {
                     
                 }
                 ActionStates.setRead(s: message, read: false)
-                let titleText = MessageCellView.getTitleText(message: message)
+                let titleText = MessageCellView.getTitleText(message: message, state: cell.state)
                 cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
                 
             } else {
@@ -880,7 +888,7 @@ extension ContentListingViewController: MessageCellViewDelegate {
                     
                 }
                 ActionStates.setRead(s: message, read: true)
-                let titleText = MessageCellView.getTitleText(message: message)
+                let titleText = MessageCellView.getTitleText(message: message, state: cell.state)
                 cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
             }
         }
