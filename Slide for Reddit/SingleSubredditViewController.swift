@@ -2658,7 +2658,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
             case .banner:
                 cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && submission.imageHeight > 0 {
+                if !SettingValues.hideImageSelftext && submission.imageHeight > 0 && SettingValues.postImageMode != .NONE {
                     cell = tableView.dequeueReusableCell(withReuseIdentifier: "banner\(SingleSubredditViewController.cellVersion)", for: indexPath) as! BannerLinkCellView
                 } else {
                     cell = tableView.dequeueReusableCell(withReuseIdentifier: "text\(SingleSubredditViewController.cellVersion)", for: indexPath) as! TextLinkCellView
@@ -2995,6 +2995,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
         }
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.require(toFail: cellGestureRecognizer)
+            nav.interactivePushGestureRecognizer?.require(toFail: cellGestureRecognizer)
             if let interactivePop = nav.interactivePopGestureRecognizer {
                 cellGestureRecognizer.require(toFail: interactivePop)
             }

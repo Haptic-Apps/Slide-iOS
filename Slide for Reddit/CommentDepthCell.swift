@@ -948,8 +948,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 parent?.present(alert, animated: true, completion: nil)
                 return
             }
+            alertController = UIAlertController(title: "Sending reply\(chosenAccount != nil ? " as u/" + chosenAccount! : "")...\n\n\n", message: nil, preferredStyle: .alert)
+        } else {
+            alertController = UIAlertController(title: "Sending reply...\n\n\n", message: nil, preferredStyle: .alert)
         }
-        alertController = UIAlertController(title: "Sending reply\(chosenAccount != nil ? " as u/" + chosenAccount! : "")...\n\n\n", message: nil, preferredStyle: .alert)
         
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
@@ -1422,7 +1424,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Comment by u/\(comment!.author)", icon: nil, themeColor: GMColor.lightGreen500Color())
         
         if let reportsDictionary = comment?.reportsDictionary {
-            alertController.addAction(title: "\(reportsDictionary.keys.count > 0) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
+            alertController.addAction(title: "\(reportsDictionary.keys.count > 0 ? "\(reportsDictionary.keys.count)" : "No") reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 var reports = ""
                 for reporter in reportsDictionary.keys {
                     reports += "\(reporter): \(reportsDictionary[reporter] as? String ?? "")\n"

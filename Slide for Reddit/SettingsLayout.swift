@@ -621,7 +621,6 @@ class SettingsLayout: BubbleSettingTableViewController {
 
         }
         
-        
         if SettingValues.postImageMode == .NONE {
             thumbLink.isEnabled = false
             largerThumbnail.isEnabled = false

@@ -54,6 +54,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var replyingView: UIView?
     var replyButtons: UIScrollView?
     var replies: UIStateButton?
+    var account: UIStateButton?
     var distinguish: UIStateButton?
     var sticky: UIStateButton?
     var info: UIStateButton?
@@ -445,6 +446,25 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         let width = replies!.currentTitle!.size(with: replies!.titleLabel!.font).width + CGFloat(45)
         replies!.widthAnchor /==/ width
         
+        account = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
+            $0.layer.cornerRadius = 15
+            $0.clipsToBounds = true
+            $0.setTitle("Posting as u/\(AccountController.currentName)", for: .selected)
+            $0.setTitle("Posting as u/\(AccountController.currentName)", for: .normal)
+            $0.setTitleColor(GMColor.blue500Color(), for: .normal)
+            $0.setTitleColor(.white, for: .selected)
+            $0.titleLabel?.textAlignment = .center
+            $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        }
+        
+        account!.color = GMColor.blue500Color()
+        account!.isSelected = true
+        account!.addTarget(self, action: #selector(self.changeAccount), for: .touchUpInside)
+        
+        account!.heightAnchor /==/ CGFloat(30)
+        let widthA = account!.currentTitle!.size(with: account!.titleLabel!.font).width + CGFloat(45)
+        account!.widthAnchor /==/ width
+
         info = UIStateButton.init(frame: CGRect.init(x: 0, y: 0, width: 100, height: 30)).then {
             $0.layer.cornerRadius = 15
             $0.clipsToBounds = true
@@ -489,7 +509,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             $0.spacing = 8
         }
 
-        buttonBase.addArrangedSubviews(info!, replies!, sticky!)
+        buttonBase.addArrangedSubviews(account!, info!, replies!, sticky!)
         
         var finalWidth = CGFloat(0)
         if type == .REPLY_SUBMISSION {
@@ -508,6 +528,8 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 finalWidth = CGFloat(8) + width + widthI
             }
         }
+        
+        finalWidth += CGFloat(widthA + CGFloat(8))
 
         replyButtons!.addSubview(buttonBase)
         buttonBase.heightAnchor /==/ CGFloat(30)
@@ -546,6 +568,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                                 self.ruleLabel.attributedText = ruleString
                                 self.ruleLabel.sizeToFit()
                                 self.redoHeights()
+                                self.ruleLabel.placeholder = "r/\(self.subreddit) rules"
                             }
                         }
                     })
@@ -557,15 +580,28 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                             guard let data = response.data else {
                                 return
                             }
+                            self.availableFlairs = []
+                            
                             let json = try JSON(data: data)
                             if let flairs = json.array {
                                 for item in flairs {
-                                    if let richtext = item["richtext"].array?[0] {
+                                    if let richtext = item["richtext"].array?.first {
                                         let flair = FlairObject()
                                         
                                         flair.image = richtext["u"].stringValue
                                         flair.text = richtext["t"].stringValue
                                         flair.iconText = richtext["a"].stringValue
+                                        flair.title = item["text"].stringValue
+                                        flair.id = item["id"].stringValue
+                                        flair.editable = item["text_editable"].boolValue
+                                        
+                                        self.availableFlairs.append(flair)
+                                    } else {
+                                        let flair = FlairObject()
+                                        
+                                        flair.image = ""
+                                        flair.text = item["text"].stringValue
+                                        flair.iconText = ""
                                         flair.title = item["text"].stringValue
                                         flair.id = item["id"].stringValue
                                         flair.editable = item["text_editable"].boolValue
@@ -609,6 +645,11 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         } else {
             buttonBase.widthAnchor /==/ finalWidth
         }
+    }
+    var chosenAccount: String?
+
+    @objc func changeAccount() {
+        
     }
     
     @objc func flairs(_ sender: UIStateButton) {
@@ -1344,7 +1385,30 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
 
         } else {
-            alertController = UIAlertController(title: "Posting submission...\n\n\n", message: nil, preferredStyle: .alert)
+            self.session = (UIApplication.shared.delegate as! AppDelegate).session
+            
+            if let name = self.chosenAccount {
+                let token: OAuth2Token
+                do {
+                    if AccountController.isMigrated(name) {
+                        token = try LocalKeystore.token(of: name)
+                    } else {
+                        token = try OAuth2TokenRepository.token(of: name)
+                    }
+                    session = Session(token: token)
+                } catch {
+                    let alert = UIAlertController(title: "Something went wrong", message: "There was an error loading this account. Please try again later.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { (_) in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
+                    parent?.present(alert, animated: true, completion: nil)
+                    return
+                }
+                alertController = UIAlertController(title: "Posting\(chosenAccount != nil ? " as u/" + chosenAccount! : "")...\n\n\n", message: nil, preferredStyle: .alert)
+            } else {
+                alertController = UIAlertController(title: "Posting submission...\n\n\n", message: nil, preferredStyle: .alert)
+            }
+
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
@@ -1524,7 +1588,31 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     func submitComment() {
         let body = text!.last!
 
-        alertController = UIAlertController(title: "Posting comment...\n\n\n", message: nil, preferredStyle: .alert)
+        self.session = (UIApplication.shared.delegate as! AppDelegate).session
+        
+        if let name = self.chosenAccount {
+            let token: OAuth2Token
+            do {
+                if AccountController.isMigrated(name) {
+                    token = try LocalKeystore.token(of: name)
+                } else {
+                    token = try OAuth2TokenRepository.token(of: name)
+                }
+                session = Session(token: token)
+            } catch {
+                let alert = UIAlertController(title: "Something went wrong", message: "There was an error loading this account. Please try again later.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: { (_) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+                parent?.present(alert, animated: true, completion: nil)
+                return
+            }
+            alertController = UIAlertController(title: "Commenting\(chosenAccount != nil ? " as u/" + chosenAccount! : "")...\n\n\n", message: nil, preferredStyle: .alert)
+        } else {
+            alertController = UIAlertController(title: "Sending comment...\n\n\n", message: nil, preferredStyle: .alert)
+        }
+
+
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
         spinnerIndicator.color = UIColor.fontColor
@@ -1532,8 +1620,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
 
         alertController?.view.addSubview(spinnerIndicator)
         self.present(alertController!, animated: true, completion: nil)
-
-        session = (UIApplication.shared.delegate as! AppDelegate).session
 
         do {
             let name = toReplyTo!.getId()

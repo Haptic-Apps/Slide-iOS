@@ -284,7 +284,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && (thing as! SubmissionObject).imageHeight > 0 {
+                if !SettingValues.hideImageSelftext && (thing as? SubmissionObject)?.imageHeight ?? 0 > 0 && SettingValues.postImageMode != .NONE {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
                 } else {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView

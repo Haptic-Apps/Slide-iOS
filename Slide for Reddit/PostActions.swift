@@ -178,7 +178,7 @@ class PostActions: NSObject {
        // TODO: - remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
         if let reportsDictionary = cell.link?.reportsDictionary {
-            alertController.addAction(title: "\(reportsDictionary.keys.count > 0) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
+            alertController.addAction(title: "\(reportsDictionary.keys.count > 0 ? "\(reportsDictionary.keys.count)" : "No") reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 var reports = ""
                 for reporter in reportsDictionary.keys {
                     reports += "\(reporter): \(reportsDictionary[reporter] as? String ?? "")\n"
