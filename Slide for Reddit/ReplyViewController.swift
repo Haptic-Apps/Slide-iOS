@@ -1038,8 +1038,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 text3.text = (toReplyTo as! SubmissionObject).markdownBody
                 text1.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 text1.heightAnchor />=/ CGFloat(70)
-                text2.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
-                text2.heightAnchor /==/ CGFloat(70)
                 text3.horizontalAnchors /==/ stack.horizontalAnchors + CGFloat(8)
                 
                 text3.heightAnchor />=/ CGFloat(70)
@@ -1048,7 +1046,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                 stack.widthAnchor /==/ scrollView.widthAnchor
                 stack.verticalAnchors /==/ scrollView.verticalAnchors
                 
-                text = [text1, text2, text3]
+                text = [text1, text3]
                 toolbar = ToolbarTextView.init(textView: text3, parent: self, replyText: nil)
             }
 
@@ -1611,7 +1609,6 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
         } else {
             alertController = UIAlertController(title: "Sending comment...\n\n\n", message: nil, preferredStyle: .alert)
         }
-
 
         let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
         spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
