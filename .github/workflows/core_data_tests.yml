@@ -18,6 +18,7 @@ jobs:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Install Fastlane
         run: |
+          bundle update
           gem install fastlane
       - name: Cache Pods
         uses: actions/cache@v2.1.3
