@@ -1195,9 +1195,9 @@ extension AppDelegate: UIWindowSceneDelegate {
                     split.preferredPrimaryColumnWidthFraction = 0.15
                     split.maximumPrimaryColumnWidth = size.width * 0.15
                     
-                    split.minimumSupplementaryColumnWidth = size.width * 0.25
-                    split.maximumSupplementaryColumnWidth = size.width * 0.25
-                    split.preferredSupplementaryColumnWidthFraction = 0.25
+                    split.minimumSupplementaryColumnWidth = size.width * 0.6
+                    split.maximumSupplementaryColumnWidth = size.width * 0.6
+                    split.preferredSupplementaryColumnWidthFraction = 0.6
                 }
             }
         }
