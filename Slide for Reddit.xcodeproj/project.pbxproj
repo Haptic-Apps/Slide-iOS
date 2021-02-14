@@ -303,6 +303,7 @@
 		BE8592C21E0EE72800836C1D /* reddift_config.json in Resources */ = {isa = PBXBuildFile; fileRef = BE8592C11E0EE72800836C1D /* reddift_config.json */; };
 		BE86300F1E2E6A54004F0E1F /* PostFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE86300E1E2E6A54004F0E1F /* PostFilter.swift */; };
 		BE8630111E2EDFB2004F0E1F /* SettingsContentFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8630101E2EDFB2004F0E1F /* SettingsContentFilters.swift */; };
+		BE8643FD25D8AF9F0089E5EB /* UISplitViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8643FC25D8AF9F0089E5EB /* UISplitViewController+Extensions.swift */; };
 		BE8833F1251FB66900131DEB /* ic_space@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833EE251FB66800131DEB /* ic_space@2x.png */; };
 		BE8833F2251FB66900131DEB /* ic_space@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */; };
 		BE8833F3251FB66900131DEB /* ic_space@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = BE8833F0251FB66900131DEB /* ic_space@3x.png */; };
@@ -816,6 +817,7 @@
 		BE8592C11E0EE72800836C1D /* reddift_config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = reddift_config.json; sourceTree = "<group>"; };
 		BE86300E1E2E6A54004F0E1F /* PostFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFilter.swift; sourceTree = "<group>"; };
 		BE8630101E2EDFB2004F0E1F /* SettingsContentFilters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsContentFilters.swift; sourceTree = "<group>"; };
+		BE8643FC25D8AF9F0089E5EB /* UISplitViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UISplitViewController+Extensions.swift"; sourceTree = "<group>"; };
 		BE8833EE251FB66800131DEB /* ic_space@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@2x.png"; sourceTree = "<group>"; };
 		BE8833EF251FB66900131DEB /* ic_space@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@2x~ipad.png"; sourceTree = "<group>"; };
 		BE8833F0251FB66900131DEB /* ic_space@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_space@3x.png"; sourceTree = "<group>"; };
@@ -1057,6 +1059,7 @@
 				BEC4A1A12322F74D00EE5114 /* SFSymbolsEnum.swift */,
 				BE2F3BE9253D37EF00FB21EC /* UIResponder+Extensions.swift */,
 				BEC9129F258B19AA00E65F34 /* UIBezierPath+Helpers.swift */,
+				BE8643FC25D8AF9F0089E5EB /* UISplitViewController+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -2513,6 +2516,7 @@
 				BE2B8A0B1E2602CD0053D493 /* SubredditReorderViewController.swift in Sources */,
 				098B5A4320EFC5B600FE201B /* UIButton+Extensions.swift in Sources */,
 				BEE206F61F1CF7D3008BB5F1 /* SettingsLinkHandling.swift in Sources */,
+				BE8643FD25D8AF9F0089E5EB /* UISplitViewController+Extensions.swift in Sources */,
 				323EFB2821434781005157FA /* ProgressBarView.swift in Sources */,
 				BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */,
 				BE8264E721934221002A540E /* VideoMediaDownloader.swift in Sources */,
