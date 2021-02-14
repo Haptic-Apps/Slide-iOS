@@ -14,8 +14,13 @@ class PagingCommentViewController: ColorMuxPagingViewController, UIPageViewContr
     var submissionDataSource: SubmissionsDataSource
     var startIndex: Int
 
-    override var prefersStatusBarHidden: Bool {
-        return SettingValues.hideStatusBar
+    override var childForStatusBarHidden: UIViewController? {
+        if self.submissionDataSource.content.count > currentIndex + startIndex {
+            return viewControllers?.first(where: {
+                ($0 as? CommentViewController)?.submission?.getId() == self.submissionDataSource.content[currentIndex + startIndex].getId()
+            })
+        }
+        return nil
     }
     
     var offline = false

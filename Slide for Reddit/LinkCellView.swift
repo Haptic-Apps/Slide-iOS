@@ -1578,7 +1578,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
             thumb = true
         }
-        
+
         let fullImage = ContentType.fullImage(t: type)
         let shouldAutoplay = SettingValues.shouldAutoPlay()
         let halfScreen = UIScreen.main.bounds.height / 2
@@ -1660,6 +1660,11 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             big = false
         }
         
+        if SettingValues.postImageMode == .NONE && !full {
+            big = false
+            thumb = false
+        }
+
         if full && big {
             let bannerPadding = CGFloat(5)
             submissionHeight = getHeightFromAspectRatio(imageHeight: submissionHeight == 200 ? CGFloat(200) : CGFloat(submission.imageHeight), imageWidth: CGFloat(submission.imageWidth), viewWidth: (parentWidth == 0 ? (innerView.frame.size.width == 0 ? CGFloat(submission.imageWidth) : innerView.frame.size.width) : parentWidth) - (bannerPadding * 2))
@@ -2823,12 +2828,12 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let textHeight = (!hasText || !full) ? CGFloat(0) : textView.estimatedHeight
             
-            if thumb {
+            if thumb && SettingValues.postImageMode != .NONE {
                 imageHeight = thumbheight
                 innerPadding += (SettingValues.postViewMode == .COMPACT ? 8 : 12) // between top and thumbnail
                 innerPadding += 18 - (SettingValues.postViewMode == .COMPACT && !full ? 4 : 0) // between label and bottom box
                 innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between box and end
-            } else if big {
+            } else if big  && SettingValues.postImageMode != .NONE {
                 if SettingValues.postViewMode == .CENTER || full {
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 8 : 12) // between label
                     innerPadding += (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between banner and box
@@ -2846,7 +2851,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             var fullHeightExtras = CGFloat(0)
             
             if !full {
-                if thumb {
+                if thumb && SettingValues.postImageMode != .NONE {
                     estimatedUsableWidth -= thumbheight // is the same as the width
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 16 : 24) // between edge and thumb
                     estimatedUsableWidth -= (SettingValues.postViewMode == .COMPACT && !full ? 4 : 8) // between thumb and label
@@ -2890,7 +2895,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let titleHeight = title.attributedText!.height(containerWidth: estimatedUsableWidth)
             
-            let totalHeight = paddingTop + paddingBottom + (full ? ceil(titleHeight) : (thumb && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5)
+            let totalHeight = paddingTop + paddingBottom + (full ? ceil(titleHeight) : (thumb && SettingValues.postImageMode != .NONE && !full ? max((!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)), imageHeight) : (!full && SettingValues.actionBarMode.isSide() ? max(ceil(titleHeight), 72) : ceil(titleHeight)) + imageHeight)) + innerPadding + actionbar + textHeight + fullHeightExtras + CGFloat(5)
             estimatedHeight = totalHeight
         }
         return estimatedHeight

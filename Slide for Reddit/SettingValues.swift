@@ -309,7 +309,7 @@ class SettingValues {
         case CROPPED_IMAGE = "cropped"
         case SHORT_IMAGE = "short"
         case THUMBNAIL = "thumbnail"
-        // for future implementation case NONE = "none"
+        case NONE = "none"
     }
 
     enum ActionBarMode: String {
@@ -704,7 +704,7 @@ class SettingValues {
 
     public static func done7() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: "7") != nil
+        return settings.object(forKey: "7.0.0") != nil
     }
     
     public static func doneVersion() -> Bool {

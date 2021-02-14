@@ -17,8 +17,6 @@ import UIKit
 
 class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
     
-    static var changed = false
-
     var restore: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "restore")
     var shadowbox: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "shadow")
     var gallery: UITableViewCell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "gallery")
@@ -326,8 +324,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     SettingValues.isPro = true
                     UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                     UserDefaults.standard.synchronize()
-                    (strongSelf.presentingViewController as? SettingsViewController)?.doPro()
-                    SettingsPro.changed = true
+                    NotificationCenter.default.post(name: .onProStatusChanged, object: nil)
                 }
             } else if type == .restored {
                 DispatchQueue.main.async {
@@ -341,8 +338,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     SettingValues.isPro = true
                     UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                     UserDefaults.standard.synchronize()
-                    (strongSelf.presentingViewController as? SettingsViewController)?.doPro()
-                    SettingsPro.changed = true
+                    NotificationCenter.default.post(name: .onProStatusChanged, object: nil)
                 }
             }
         }
@@ -398,7 +394,7 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
                     SettingValues.isPro = true
                     UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
                     UserDefaults.standard.synchronize()
-                    SettingsPro.changed = true
+                    NotificationCenter.default.post(name: .onProStatusChanged, object: nil)
                     let alertView = UIAlertController(title: "", message: "Slide has been successfully restored on your device! Thank you for supporting Slide 🍻", preferredStyle: .alert)
                     let action = UIAlertAction(title: "Close", style: .cancel, handler: { (_) in
                         self?.dismiss(animated: true, completion: nil)
@@ -504,4 +500,8 @@ class SettingsPro: UITableViewController, MFMailComposeViewControllerDelegate {
         }
     }
 
+}
+
+extension Notification.Name {
+    static let onProStatusChanged = Notification.Name("on-pro-status-changed")
 }

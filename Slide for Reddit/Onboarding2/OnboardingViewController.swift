@@ -15,19 +15,20 @@ class OnboardingViewController: UIViewController {
      let models: [OnboardingPageViewModel] = [
         // TODO this for 6.1
         .splash(text: "Welcome to\nSlide v7", subText: "Swipe to see what's new", image: UIImage(named: "slide_glow")!),
-        .testflight(enabled: true),
         .hardcodedChangelog(order: [
-                                "AutoCache 2.0",
+                                "Auto Cache 2.0",
                                 "Desktop Mode",
-                                "Theme Engine revamp",
-                                "Text Render revamp",
-                                "Inbox and Profile redesign",
+                                "Account switcher",
+                                "Threaded mail",
+                                "New link previews",
+                                "The details",
                             ], paragraphs: [
-                                "AutoCache 2.0": "AutoCache has been rewritten from the ground up, and Slide has a shiny new backend! Apart from improvements to Offline Mode, these changes will make Slide faster and less resource-hungry",
-                                "Desktop Mode": "iPad and M1-Mac users can try out Slide's new Desktop Mode, which keeps Slide's sidebar locked in view and adds right-click actions to posts and comments",
-                                "Theme Engine revamp": "Night-mode changes on iOS 13 and 14 will be faster and more seamless in v7",
-                                "Text Render revamp": "Slide now has a completely custom text rendering system that will improve performance and rendering of complex selftext posts and comments. Haptic Touch on links has been re-written from the ground up, and you can now Haptic Touch on usernames to see a preview of any user's profile!",
-                                "Inbox and Profile redesign": "Your Slide Inbox and profile views have been redesigned, with a greater emphasis on Subreddit styling and better use of space ",
+                                "Auto Cache 2.0": "AutoCache has been rewritten from the ground up, and Slide has a shiny new backend! Apart from improvements to Offline Mode, these changes will make Slide faster and more fluid",
+                                "Desktop Mode": "iPad and M1-Mac users can try out Slide's new Desktop Mode, which keeps Slide's sidebar locked in view and adds right-click support to posts and comments",
+                                "Account switcher": "Signed into your alt account but want to reply with your main? Swap into a different account for comment replies with the new account switcher",
+                                "Threaded mail": "Your Slide inbox has been cleaned up, and will now display your messages as threads",
+                                "New link previews": "Slide has a new text rendering engine, and Haptic (3D) Touch links have been re-written from the ground up! Try long-pressing on usernames to get a quick profile preview",
+                                "The details": "• New option to “Hide all Images” in Card Layout settings\n• New “Quote” button for comment and submission replies\n• Slide now uses the iOS 14 image picker and support has been added for “Add Only” image permissions\n• “Hide Read Posts” will now keep your place in the subreddit view\n• Support for searching posts in a Multireddit\n• Support for image flairs in Comments\n• Support for setting your user flair in subreddits\n• Support for setting flair when submitting a new post\n• Rules will now display when posting to a subreddit\n• Fixed videos muting after a rotation\n• Fixed YouTube videos freezing in some cases\n• Fixed freezing issues triggered by some gestures options",
                             ]),
     ]
 
@@ -74,6 +75,7 @@ class OnboardingViewController: UIViewController {
         setupConstraints()
         
         finishButton.addTapGestureRecognizer { (_) in
+            UserDefaults.standard.set(true, forKey: "7.0.0")
             self.dismiss(animated: true, completion: nil)
         }
         
@@ -107,6 +109,7 @@ class OnboardingViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        UserDefaults.standard.set(true, forKey: "7.0.0")
         UserDefaults.standard.set(true, forKey: Bundle.main.releaseVersionNumber!)
     }
     

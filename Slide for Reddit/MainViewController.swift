@@ -57,9 +57,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     var accountB = UIBarButtonItem()
     public static var first = true
+    public var hasAppeared = false
 
-    override var prefersStatusBarHidden: Bool {
-        return SettingValues.hideStatusBar
+    override var childForStatusBarHidden: UIViewController? {
+        if hasAppeared && finalSubs.count > currentIndex {
+            if navigationController?.topViewController != self {
+                return navigationController?.topViewController
+            } else {
+                return viewControllers?.first(where: {
+                    ($0 as? SingleSubredditViewController)?.sub == finalSubs[currentIndex]
+                })
+            }
+        }
+        return nil
     }
     
     var statusbarHeight: CGFloat {
@@ -759,6 +769,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func doRetheme() {
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        hasAppeared = true
     }
     
     public func viewWillAppearActions(override: Bool = false) {

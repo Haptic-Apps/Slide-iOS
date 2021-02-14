@@ -58,7 +58,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.hideStatusBar
+        return SettingValues.hideStatusBar && isToolbarHidden
     }
     
     func textChanged(_ string: String) {
@@ -108,7 +108,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func createJumpButton(_ forced: Bool = false) {
-        if SettingValues.commentJumpButton == .DISABLED {
+        if SettingValues.commentJumpButton == .DISABLED || !SettingValues.hideBottomBar {
             return
         }
         if self.navigationController?.view != nil {
@@ -2686,6 +2686,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             strongSelf.createJumpButton()
             strongSelf.isHiding = false
         }
+        
+        if SettingValues.hideStatusBar {
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
     }
     
     func showUI() {
@@ -2714,6 +2718,10 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         }
         self.isToolbarHidden = false
         self.removeJumpButton()
+        
+        if SettingValues.hideStatusBar {
+            setNeedsStatusBarAppearanceUpdate()
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

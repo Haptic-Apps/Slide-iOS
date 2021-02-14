@@ -271,7 +271,9 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.voteDirection = false
 
         link.innerView.removeFromSuperview()
-        if SettingValues.postImageMode == .THUMBNAIL {
+        if SettingValues.postImageMode == .NONE {
+            link = TextLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
+        } else if SettingValues.postImageMode == .THUMBNAIL {
             link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         } else {
             link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
@@ -301,6 +303,8 @@ class SettingsLayout: BubbleSettingTableViewController {
         switch SettingValues.postImageMode {
         case .CROPPED_IMAGE:
             imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
+        case .NONE:
+            imageCell.imageView?.image = UIImage(named: "hide")?.toolbarIcon()
         case .SHORT_IMAGE:
             imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
         case .FULL_IMAGE:
@@ -413,7 +417,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "No image (thumbnail only)", icon: UIImage(named: "thumb")!.menuIcon()) {
+            alertController.addAction(title: "Thumbnail only", icon: UIImage(named: "thumb")!.menuIcon()) {
                 UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .THUMBNAIL
                 UserDefaults.standard.synchronize()
@@ -424,6 +428,17 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
             
+            alertController.addAction(title: "No image", icon: UIImage(named: "hide")!.menuIcon()) {
+                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .NONE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                MainViewController.needsReTheme = true
+            }
+
             alertController.show(self)
         } else if indexPath.section == 1 && indexPath.row == 2 {
             let alertController = DragDownAlertMenu(title: "Button bar mode", subtitle: "Sets the layout for the submission buttons", icon: nil)
@@ -605,6 +620,29 @@ class SettingsLayout: BubbleSettingTableViewController {
             readLaterCell.contentView.alpha = 1
 
         }
+        
+        if SettingValues.postImageMode == .NONE {
+            thumbLink.isEnabled = false
+            largerThumbnail.isEnabled = false
+            leftThumb.isEnabled = false
+            thumbInfo.isEnabled = false
+            
+            thumbLinkCell.alpha = 0.5
+            largerThumbnailCell.alpha = 0.5
+            leftThumbCell.alpha = 0.5
+            thumbInfoCell.alpha = 0.5
+        } else {
+            thumbLink.isEnabled = true
+            largerThumbnail.isEnabled = true
+            leftThumb.isEnabled = true
+            thumbInfo.isEnabled = true
+            
+            thumbLinkCell.alpha = 1
+            largerThumbnailCell.alpha = 1
+            leftThumbCell.alpha = 1
+            thumbInfoCell.alpha = 1
+        }
+        
         if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
             
@@ -614,7 +652,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             
             thumbLinkCell.contentView.alpha = 1
         }
-        
+
         if !SettingValues.showFlairs {
             coloredFlairs.isEnabled = false
             imageFlairs.isEnabled = false

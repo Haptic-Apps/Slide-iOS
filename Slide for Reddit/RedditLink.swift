@@ -73,6 +73,8 @@ class RedditLink {
             return CommentViewController.init(submission: parts[1], subreddit: nil, np: np)
         case .MULTI:
             return SingleSubredditViewController.init(subName: "/u/\(parts[2])/m/\(parts[4])", single: true)
+        case .DIRECT_MESSAGE:
+            return ThreadViewControler(threadID: parts[2], title: "")
         case .LIVE:
             print(parts[1])
             return LiveThreadViewController.init(id: parts[2])
@@ -231,6 +233,8 @@ class RedditLink {
             return RedditLinkType.LIVE
         } else if url.matches(regex: "(?i)reddit\\.com/message/compose.*") {
             return RedditLinkType.MESSAGE
+        } else if url.matches(regex: "(?i)reddit\\.com/message/direct.*") {
+            return RedditLinkType.DIRECT_MESSAGE
         } else if url.matches(regex: "(?i)reddit\\.com(?:/r/[a-z0-9-_.]+)?/(?:wiki|help).*") {
             // Wiki link. Format: reddit.com/r/$subreddit/wiki/$page [optional]
             return RedditLinkType.WIKI
@@ -275,6 +279,7 @@ class RedditLink {
         case MULTI
         case SEARCH
         case MESSAGE
+        case DIRECT_MESSAGE
         case LIVE
         case OTHER
     }
