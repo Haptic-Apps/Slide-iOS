@@ -32,7 +32,7 @@ class SettingsIcon: BubbleSettingTableViewController {
             AlternateIcon(id: "space", title: "Space", contributor: "hilabius"),
             AlternateIcon(id: "stars", title: "Starry night", contributor: "TyShark"),
             AlternateIcon(id: "ghost", title: "Ghost"),
-            AlternateIcon(id: "matteblack", title: "Matte Black Everything"),
+            AlternateIcon(id: "matte", title: "Matte Black Everything"),
             AlternateIcon(id: "mint", title: "Mint", contributor: "Baselt95"),
             AlternateIcon(id: "garbage", title: "Garbage", contributor: "SandwichEconomist"),
         ]),

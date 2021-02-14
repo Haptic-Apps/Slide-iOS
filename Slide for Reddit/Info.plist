@@ -12,6 +12,15 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>matte</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_matte</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 			<key>black</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -207,7 +216,7 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
-			<key>matteblack</key>
+			<key>matte</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
