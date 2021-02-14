@@ -11,7 +11,9 @@ import Anchorage
 import AVFoundation
 import SDCAlertView
 import SDWebImage
-import SubtleVolume
+#if os(iOS)
+    import SubtleVolume
+#endif
 import Then
 import UIKit
 

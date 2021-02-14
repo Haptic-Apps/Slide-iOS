@@ -78,7 +78,7 @@
 		BE02B253240C9F5400C457BC /* CommentsRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B252240C9F5400C457BC /* CommentsRowController.swift */; };
 		BE02B255240CAC5D00C457BC /* CommentRepliesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE02B254240CAC5D00C457BC /* CommentRepliesController.swift */; };
 		BE0334AF25294B8400B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
-		BE0334B325294B8400B8C6B6 /* WidgetConfigIntent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BE0334B325294B8400B8C6B6 /* WidgetConfigIntent.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BE0334CF25294C0700B8C6B6 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
 		BE03351225294CEE00B8C6B6 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0334AE25294B8400B8C6B6 /* IntentHandler.swift */; };
 		BE03356725295AB500B8C6B6 /* SettingsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE03356625295AB500B8C6B6 /* SettingsWidget.swift */; };
@@ -178,7 +178,7 @@
 		BE257A6E21F64AA30082A47E /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE257A6D21F64AA30082A47E /* Media.xcassets */; };
 		BE257A7021F64AA30082A47E /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A6F21F64AA30082A47E /* ActionViewController.swift */; };
 		BE257A7321F64AA30082A47E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE257A7121F64AA30082A47E /* MainInterface.storyboard */; };
-		BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE257A6B21F64AA30082A47E /* Open in Slide.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE257A6B21F64AA30082A47E /* Open in Slide.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BE257A7D21F8D9710082A47E /* SettingsThemeChooser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE257A7C21F8D9710082A47E /* SettingsThemeChooser.swift */; };
 		BE25CAD424C3A28300736CA5 /* SwipeForwardNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD324C3A28300736CA5 /* SwipeForwardNavigationController.swift */; };
 		BE25CAD624C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE25CAD524C3A65400736CA5 /* SwipeForwardAnimatedTransitioning.swift */; };
@@ -365,7 +365,7 @@
 		BEBF45DB1E23383D00764BB8 /* seen.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DA1E23383D00764BB8 /* seen.plist */; };
 		BEBF45DD1E23384500764BB8 /* comments.plist in Resources */ = {isa = PBXBuildFile; fileRef = BEBF45DC1E23384500764BB8 /* comments.plist */; };
 		BEBF45E11E23EED800764BB8 /* SettingValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBF45E01E23EED800764BB8 /* SettingValues.swift */; };
-		BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED90FE0250BF71600090DF5 /* WidgetKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BEC2AB3A250D8D2C00AD5BEA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED90FE0250BF71600090DF5 /* WidgetKit.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
 		BEC2FE19235BA2B100374013 /* adaway.json in Resources */ = {isa = PBXBuildFile; fileRef = BEC2FE18235BA2B100374013 /* adaway.json */; };
 		BEC494281E307D57006618F3 /* GalleryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494271E307D57006618F3 /* GalleryTableViewController.swift */; };
 		BEC4942A1E307DDA006618F3 /* GalleryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC494291E307DDA006618F3 /* GalleryCellView.swift */; };
@@ -393,7 +393,7 @@
 		BED90FE3250BF71600090DF5 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED90FE2250BF71600090DF5 /* SwiftUI.framework */; };
 		BED90FE6250BF71600090DF5 /* SlideWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED90FE5250BF71600090DF5 /* SlideWidgets.swift */; };
 		BED90FE8250BF71800090DF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BED90FE7250BF71800090DF5 /* Assets.xcassets */; };
-		BED90FEC250BF71800090DF5 /* Slide Widgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BED90FDF250BF71600090DF5 /* Slide Widgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BED90FEC250BF71800090DF5 /* Slide Widgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BED90FDF250BF71600090DF5 /* Slide Widgets.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BED90FF5250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
 		BED90FF6250C1FB300090DF5 /* TimelineSubreddit.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = BED90FF4250C1FB300090DF5 /* TimelineSubreddit.intentdefinition */; };
 		BEDDA9911E19AB5D003CD6C3 /* WebsiteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDDA9901E19AB5D003CD6C3 /* WebsiteViewController.swift */; };
@@ -2725,6 +2725,7 @@
 /* Begin PBXTargetDependency section */
 		BE0334B225294B8400B8C6B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = BE0334AB25294B8400B8C6B6 /* WidgetConfigIntent */;
 			targetProxy = BE0334B125294B8400B8C6B6 /* PBXContainerItemProxy */;
 		};
@@ -2741,6 +2742,7 @@
 		};
 		BE257A7621F64AA30082A47E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = BE257A6A21F64AA30082A47E /* Open in Slide */;
 			targetProxy = BE257A7521F64AA30082A47E /* PBXContainerItemProxy */;
 		};
@@ -2761,6 +2763,7 @@
 		};
 		BED90FEB250BF71800090DF5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = BED90FDE250BF71600090DF5 /* Slide Widgets */;
 			targetProxy = BED90FEA250BF71800090DF5 /* PBXContainerItemProxy */;
 		};
@@ -2823,7 +2826,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).WidgetConfigIntent";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2858,7 +2861,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgetconfigintent";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3042,7 +3045,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Open-in-Slide";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3077,7 +3080,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledOpen-in-Slide";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3459,7 +3462,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).widgets";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3496,7 +3499,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match Development ccrama.me.redditslide.bundledwidgets 1599951103";
 				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
