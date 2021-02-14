@@ -8,7 +8,11 @@
 
 import Anchorage
 import AVKit
-import SubtleVolume
+
+#if os(iOS)
+    import SubtleVolume
+#endif
+
 import Then
 import UIKit
 

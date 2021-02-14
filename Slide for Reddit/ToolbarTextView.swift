@@ -470,7 +470,7 @@ public class ToolbarTextView: NSObject {
         })
 
         if results.count > 1 {
-            Alamofire.request("https://api.imgur.com/3/album", method: .post, parameters: nil, encoding: JSONEncoding.default, headers: ["Authorization": "Client-ID bef87913eb202e9"])
+            AF.request("https://api.imgur.com/3/album", method: .post, parameters: nil, encoding: JSONEncoding.default, headers: ["Authorization": "Client-ID bef87913eb202e9"])
                     .responseJSON { response in
                         print(response)
                         if let status = response.response?.statusCode {
@@ -639,42 +639,41 @@ public class ToolbarTextView: NSObject {
                         return
                     }
                     
-                    Alamofire.upload(multipartFormData: { (multipartFormData) in
+                    AF.upload(multipartFormData: { (multipartFormData) in
                         multipartFormData.append(data, withName: "image", fileName: UUID().uuidString + ".jpeg", mimeType: "image/jpg")
+
                         if !album.isEmpty {
                             multipartFormData.append(album.data(using: .utf8)!, withName: "album")
                         }
-                    }, to: "https://api.imgur.com/3/image", method: .post, headers: ["Authorization": "Client-ID bef87913eb202e9"], encodingCompletion: { (encodingResult) in
-                        switch encodingResult {
-                        case .success(let upload, _, _):
-                            print("Success")
-                            upload.uploadProgress { progress in
-                                DispatchQueue.main.async {
-                                    print(progress.fractionCompleted)
-                                    self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
+                    }, to: "https://api.imgur.com/3/image", method: .post, headers: ["Authorization": "Client-ID bef87913eb202e9"])
+                    .uploadProgress(closure: { (progress) in
+                        DispatchQueue.main.async {
+                            print(progress.fractionCompleted)
+                            self.progressBar.setProgress(Float(progress.fractionCompleted), animated: true)
+                        }
+                    })
+                    .responseJSON { (response) in
+                        switch response.result {
+                        case .success(let result):
+                            if let val = response.value {
+                                let json = JSON(val)
+                                debugPrint(response)
+                                let link = json["data"]["link"].stringValue
+                                if link.isEmpty {
+                                    if json["data"]["error"].stringValue != "" {
+                                        tryUploadWithSize(size: size - 0.1)
+                                        return
+                                    }
                                 }
-                            }
-                            upload.responseJSON { response in
-                                if let val = response.value {
-                                    let json = JSON(val)
-                                    debugPrint(response)
-                                    let link = json["data"]["link"].stringValue
-                                    if link.isEmpty {
-                                        if json["data"]["error"].stringValue != "" {
-                                            tryUploadWithSize(size: size - 0.1)
-                                            return
-                                        }
-                                    }
-                                    print("Link is \(link)")
-                                    if count == results.count {
-                                        completion(link, true)
-                                    }
+                                print("Link is \(link)")
+                                if count == results.count {
+                                    completion(link, true)
                                 }
                             }
                         case .failure:
                             completion("Failure", false)
                         }
-                    })
+                    }
                 }
                 
                 tryUploadWithSize(size: 1)
