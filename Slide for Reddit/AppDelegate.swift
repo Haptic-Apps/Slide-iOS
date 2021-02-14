@@ -347,7 +347,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if DEBUG
-        SettingValues.isPro = false
+        SettingValues.isPro = true
         UserDefaults.standard.set(true, forKey: SettingValues.pref_pro)
         UserDefaults.standard.synchronize()
         UIApplication.shared.isIdleTimerDisabled = true
@@ -1198,9 +1198,9 @@ extension AppDelegate: UIWindowSceneDelegate {
                     split.preferredPrimaryColumnWidthFraction = 0.15
                     split.maximumPrimaryColumnWidth = size.width * 0.15
                     
-                    split.minimumSupplementaryColumnWidth = size.width * 0.25
-                    split.maximumSupplementaryColumnWidth = size.width * 0.25
-                    split.preferredSupplementaryColumnWidthFraction = 0.25
+                    split.minimumSupplementaryColumnWidth = size.width * 0.6
+                    split.maximumSupplementaryColumnWidth = size.width * 0.6
+                    split.preferredSupplementaryColumnWidthFraction = 0.6
                 }
             }
         }
