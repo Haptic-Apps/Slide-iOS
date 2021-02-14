@@ -73,7 +73,7 @@ class SubredditCellView: UITableViewCell {
         }
 
         self.contentView.addSubviews(sideView, title, pin, icon)
-        self.backgroundColor = ColorUtil.theme.backgroundColor
+        self.backgroundColor = UIColor.backgroundColor
     }
 
     func configureLayout() {
@@ -130,8 +130,8 @@ class SubredditCellView: UITableViewCell {
     }
 
     func setSubreddit(subreddit: String, nav: UIViewController?, exists: Bool = true) {
-        title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        title.textColor = UIColor.fontColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
@@ -149,13 +149,13 @@ class SubredditCellView: UITableViewCell {
         self.profile = ""
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
+        selectedView.backgroundColor = UIColor.backgroundColor
         selectedBackgroundView = selectedView
         
         if let icon = Subscriptions.icon(for: subreddit) {
             self.icon.contentMode = .scaleAspectFill
             self.icon.image = UIImage()
-            self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+            self.icon.sd_setImage(with: URL(string: icon.unescapeHTML), placeholderImage: nil, options: [.decodeFirstFrameOnly, .scaleDownLargeImages], completed: nil)
         } else {
             self.icon.contentMode = .center
             if subreddit.contains("m/") {
@@ -173,8 +173,8 @@ class SubredditCellView: UITableViewCell {
     }
     
     func setProfile(profile: String, nav: UIViewController?) {
-        title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        title.textColor = UIColor.fontColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
         self.profile = profile
         self.subreddit = ""
         self.search = ""
@@ -185,13 +185,13 @@ class SubredditCellView: UITableViewCell {
         self.icon.image = UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
+        selectedView.backgroundColor = UIColor.backgroundColor
         selectedBackgroundView = selectedView
     }
 
     func setSearch(string: String, sub: String?, nav: UIViewController?) {
-        title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+        title.textColor = UIColor.fontColor
+        self.contentView.backgroundColor = UIColor.foregroundColor
         
         failedLabel?.removeFromSuperview()
         scroll?.removeFromSuperview()
@@ -208,13 +208,13 @@ class SubredditCellView: UITableViewCell {
         self.icon.image = UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
         let selectedView = UIView()
-        selectedView.backgroundColor = ColorUtil.theme.backgroundColor
+        selectedView.backgroundColor = UIColor.backgroundColor
         selectedBackgroundView = selectedView
     }
 
-    func setResults(subreddit: String, nav: UIViewController?, results: [RSubmission]?, complete: Bool) {
-        title.textColor = ColorUtil.theme.fontColor
-        self.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+    func setResults(subreddit: String, nav: UIViewController?, results: [SubmissionObject]?, complete: Bool) {
+        title.textColor = UIColor.fontColor
+        self.contentView.backgroundColor = UIColor.backgroundColor
         self.navController = nav
         self.subreddit = subreddit
         self.sideView.isHidden = false
@@ -241,7 +241,7 @@ class SubredditCellView: UITableViewCell {
             if loader == nil {
                 loader = UIActivityIndicatorView()
                 self.contentView.addSubview(loader!)
-                loader!.tintColor = ColorUtil.theme.fontColor
+                loader!.tintColor = UIColor.fontColor
                 loader!.sizeAnchors /==/ CGSize.square(size: 30)
                 loader!.centerAnchors /==/ self.contentView.centerAnchors
             }
@@ -253,7 +253,7 @@ class SubredditCellView: UITableViewCell {
             failedLabel = UILabel()
             failedLabel?.font = UIFont.boldSystemFont(ofSize: 10)
             failedLabel?.text = "No search results found..."
-            failedLabel?.textColor = ColorUtil.theme.fontColor
+            failedLabel?.textColor = UIColor.fontColor
             
             self.contentView.addSubview(failedLabel!)
             failedLabel?.sizeToFit()
@@ -272,12 +272,12 @@ class SubredditCellView: UITableViewCell {
                 shadowView.alpha = 0.4
                 
                 subName.font = UIFont.boldSystemFont(ofSize: 14)
-                subName.textColor = ColorUtil.theme.fontColor
+                subName.textColor = UIColor.fontColor
                 
                 subDot.sizeAnchors /==/ CGSize.square(size: 25)
                 subDot.layer.cornerRadius = (25 / 2)
                 subDot.clipsToBounds = true
-                textView.textColor = ColorUtil.theme.fontColor
+                textView.textColor = UIColor.fontColor
 
                 subDot.backgroundColor = ColorUtil.getColorForSub(sub: submission.subreddit)
                 
@@ -287,17 +287,16 @@ class SubredditCellView: UITableViewCell {
                 subName.text = "r/\(submission.subreddit)"
                 thumbView.contentMode = .scaleAspectFill
                 
-                if submission.banner {
-
-                    if submission.nsfw && !SettingValues.nsfwPreviews {
-                    } else if submission.thumbnailUrl == "web" || submission.thumbnailUrl.isEmpty || submission.spoiler {
+                if submission.hasBanner {
+                    if submission.isNSFW && !SettingValues.nsfwPreviews {
+                    } else if submission.thumbnailUrl == "web" || (submission.thumbnailUrl ?? "").isEmpty || submission.isSpoiler {
                     } else {
                         submissionView.addSubviews(thumbView, shadowView)
                         
                         thumbView.edgeAnchors /==/ submissionView.edgeAnchors
 
                         shadowView.edgeAnchors /==/ thumbView.edgeAnchors
-                        thumbView.loadImageWithPulsingAnimation(atUrl: URL(string: submission.smallPreview == "" ? submission.thumbnailUrl : submission.bannerUrl), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
+                        thumbView.loadImageWithPulsingAnimation(atUrl: URL(string: (submission.smallPreview ?? "") == "" ? submission.thumbnailUrl ?? "" : submission.bannerUrl ?? ""), withPlaceHolderImage: LinkCellImageCache.web, isBannerView: false)
                         thumbView.alpha = 0.7
                         textView.textColor = .white
                         subName.textColor = .white
@@ -322,7 +321,7 @@ class SubredditCellView: UITableViewCell {
                 textView.text = submission.title
                 textView.sizeToFit()
                 
-                submissionView.backgroundColor = ColorUtil.theme.foregroundColor
+                submissionView.backgroundColor = UIColor.foregroundColor
                 submissionView.clipsToBounds = true
                 submissionView.layer.cornerRadius = 5
                 submissionView.heightAnchor /==/ 150
@@ -344,10 +343,6 @@ class SubredditCellView: UITableViewCell {
             scroll!.horizontalAnchors /==/ self.contentView.horizontalAnchors + 8
             scroll!.verticalAnchors /==/ self.contentView.verticalAnchors + 4
             scroll!.heightAnchor /==/ 150
-            
-            if nav is SubredditToolbarSearchViewController {
-                (nav as! SubredditToolbarSearchViewController).gestureRecognizer.require(toFail: scroll!.panGestureRecognizer)
-            }
         }
     }
 

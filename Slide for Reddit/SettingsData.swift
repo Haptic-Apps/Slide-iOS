@@ -20,9 +20,9 @@ class SettingsData: BubbleSettingTableViewController {
     var disableOnWifi = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
-    //load hq always
-    //LOwer quality mode
-    //Dont show images
+    // load hq always
+    // LOwer quality mode
+    // Dont show images
     var loadHQViewerCell: UITableViewCell = InsetCell()
     var loadHQViewer = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
@@ -73,19 +73,19 @@ class SettingsData: BubbleSettingTableViewController {
         label.textColor = ColorUtil.baseAccent
         label.font = FontGenerator.boldFontOfSize(size: 20, submission: true)
         let toReturn = label.withPadding(padding: UIEdgeInsets.init(top: 0, left: 12, bottom: 0, right: 0))
-        toReturn.backgroundColor = ColorUtil.theme.backgroundColor
+        toReturn.backgroundColor = UIColor.backgroundColor
         
         switch section {
-        case 0: label.text  = ""
-        default: label.text  = ""
+        case 0: label.text = ""
+        default: label.text = ""
         }
         return toReturn
     }
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -99,21 +99,21 @@ class SettingsData: BubbleSettingTableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Data settings"
-        headers =  ["Data Saving"]
+        headers = ["Data Saving"]
 
         createCell(enableDataSavingCell, enableDataSaving, isOn: SettingValues.dataSavingEnabled, text: "Enable Data Saving mode")
         createCell(disableOnWifiCell, disableOnWifi, isOn: !SettingValues.dataSavingDisableWiFi, text: "Data Saving mode on WiFi")
         createCell(loadHQViewerCell, loadHQViewer, isOn: SettingValues.loadContentHQ, text: "Load full-size images when opened")
         createCell(lowerQualityModeCell, lowerQualityMode, isOn: SettingValues.lqLow, text: "Load lowest image quality")
         createCell(dontLoadImagePreviewsCell, dontLoadImagePreviews, isOn: SettingValues.noImages, text: "Don't load banner images")
-        self.dontLoadImagePreviewsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.dontLoadImagePreviewsCell.detailTextLabel?.textColor = UIColor.fontColor
         self.dontLoadImagePreviewsCell.detailTextLabel?.text = "While Data Saving mode is enabled"
         self.dontLoadImagePreviewsCell.detailTextLabel?.numberOfLines = 0
         createCell(streamVideosCell, streamVideos, isOn: SettingValues.streamVideos, text: "Stream videos")
-        self.streamVideosCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.streamVideosCell.detailTextLabel?.textColor = UIColor.fontColor
         self.streamVideosCell.detailTextLabel?.text = "Disabling streaming will download videos before displaying them"
         self.streamVideosCell.detailTextLabel?.numberOfLines = 0
 

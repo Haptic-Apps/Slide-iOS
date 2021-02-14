@@ -19,7 +19,7 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         headers = ["Active shortcuts", "Disabled shortcuts"]
         self.tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "sub")
         self.tableView.isEditing = true
-        self.tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        self.tableView.backgroundColor = UIColor.backgroundColor
         
         enabled.append(contentsOf: SettingValues.NavigationHeaderActions.getMenuNone())
         all.append(contentsOf: SettingValues.NavigationHeaderActions.cases.filter({ !enabled.contains($0) }))
@@ -48,12 +48,12 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
         }
-        NotificationCenter.default.post(name: .onThemeChanged, object: nil) //TODO better solution, but this will force the shortcuts view to be reset
+        NotificationCenter.default.post(name: .onThemeChanged, object: nil) // TODO better solution, but this will force the shortcuts view to be reset
     }
     
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        cell?.backgroundColor = ColorUtil.theme.foregroundColor
+        cell?.backgroundColor = UIColor.foregroundColor
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -69,8 +69,8 @@ class SettingsShortcutMenu: BubbleSettingTableViewController {
         
         let c = UITableViewCell(style: .default, reuseIdentifier: nil)
         c.textLabel?.text = thing.getTitle()
-        c.backgroundColor = ColorUtil.theme.foregroundColor
-        c.textLabel?.textColor = ColorUtil.theme.fontColor
+        c.backgroundColor = UIColor.foregroundColor
+        c.textLabel?.textColor = UIColor.fontColor
         c.imageView?.image = thing.getImage()
         c.showsReorderControl = true
         

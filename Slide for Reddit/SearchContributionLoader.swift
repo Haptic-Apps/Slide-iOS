@@ -6,8 +6,9 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
+
 import reddift
 
 class SearchContributionLoader: ContributionLoader {
@@ -31,8 +32,8 @@ class SearchContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var content: [Object]
-    var delegate: ContentListingViewController?
+    var content: [RedditObject]
+    weak var delegate: ContentListingViewController?
     var paging = false
     
     func getData(reload: Bool) {
@@ -41,7 +42,7 @@ class SearchContributionLoader: ContributionLoader {
                 if reload {
                     paginator = Paginator()
                 }
-                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), query: query, paginator: paginator, sort: sorting, time: time, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
+                try delegate?.session?.getSearch(Subreddit.init(subreddit: sub), accountName: AccountController.currentName, query: query, paginator: paginator, sort: sorting, time: time, nsfw: SettingValues.nsfwEnabled, completion: { (result) in
                     switch result {
                     case .failure:
                         print(result.error!)
@@ -53,9 +54,9 @@ class SearchContributionLoader: ContributionLoader {
                         let before = self.content.count
                         for item in listing.children.compactMap({ $0 }) {
                             if item is Comment {
-                                self.content.append(RealmDataWrapper.commentToRComment(comment: item as! Comment, depth: 0))
+                                self.content.append(CommentObject.commentToCommentObject(comment: item as! Comment, depth: 0))
                             } else {
-                                self.content.append(RealmDataWrapper.linkToRSubmission(submission: item as! Link))
+                                self.content.append(SubmissionObject.linkToSubmissionObject(submission: item as! Link))
                             }
                         }
                         self.paginator = listing.paginator

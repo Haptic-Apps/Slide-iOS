@@ -17,7 +17,6 @@ disabled_rules:
 - force_cast
 - type_name
 - force_try
-- weak_delegate
 
 opt_in_rules:
   - array_init
@@ -27,9 +26,15 @@ opt_in_rules:
   - operator_usage_whitespace
   - sorted_first_last
   - sorted_imports
+  
+excluded:
+  - CoreData_Models
+  - "*+CoreDataClass.swift"
+  - "*+CoreDataProperties.swift"
+  - Pods
 
 control_statement:
-  severity: error
+  severity: warning
 
 shorthand_operator:
   severity: warning
@@ -53,6 +58,11 @@ custom_rules:
     name: "Slow Anchorage == Syntax"
     regex: "(?:edge|horizontal|vertical|leading|trailing|top|bottom|left|right|height|width|centerX|centerY)Anchors?\\s*(==|<=|>=)"
     message: "Wrap Anchorage operators with //. For example, use /==/ instead of ==."
+    severity: warning
+  swift_migrator_functions:
+    name: "Swift Migrator Functions"
+    regex: "\\/\\/ Helper function inserted by Swift \\d(.\\d)* migrator."
+    message: "Function left over from automatic Swift version migrator. Refactor or eliminate."
     severity: warning
 
 

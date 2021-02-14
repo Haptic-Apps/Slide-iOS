@@ -10,7 +10,6 @@ import Anchorage
 import AVFoundation
 import Foundation
 import reddift
-import YYText
 
 class SettingValues {
 
@@ -148,6 +147,7 @@ class SettingValues {
     public static let pref_imageFlairs = "IMAGE_FLAIRS"
     public static let pref_coloredFlairs = "COLORED_FLAIRS"
     public static let pref_showFlairs = "SHOW_FLAIRS"
+    public static let pref_desktopMode = "DESKTOP_MODE"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -292,6 +292,7 @@ class SettingValues {
     public static var imageFlairs = false
     public static var coloredFlairs = false
     public static var showFlairs = true
+    public static var desktopMode = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -308,7 +309,7 @@ class SettingValues {
         case CROPPED_IMAGE = "cropped"
         case SHORT_IMAGE = "short"
         case THUMBNAIL = "thumbnail"
-        //for future implementation case NONE = "none"
+        case NONE = "none"
     }
 
     enum ActionBarMode: String {
@@ -530,6 +531,9 @@ class SettingValues {
                 break
             }
         }
+
+        SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
+        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) // Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
@@ -579,7 +583,7 @@ class SettingValues {
         }
         
         SettingValues.hideImageSelftext = settings.object(forKey: SettingValues.pref_hideImageSelftext) == nil ? true : settings.bool(forKey: SettingValues.pref_hideImageSelftext)
-        SettingValues.disable13Popup = false //REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
+        SettingValues.disable13Popup = false // REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
         SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
@@ -634,7 +638,7 @@ class SettingValues {
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
         SettingValues.loadContentHQ = settings.bool(forKey: SettingValues.pref_loadContentHQ)
         SettingValues.noImages = settings.bool(forKey: SettingValues.pref_noImg)
-        SettingValues.lqLow = false //deprecate this settings.bool(forKey: SettingValues.pref_lqLow)
+        SettingValues.lqLow = false // deprecate this settings.bool(forKey: SettingValues.pref_lqLow)
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.readLaterButton = settings.object(forKey: SettingValues.pref_readLaterButton) == nil ? true : settings.bool(forKey: SettingValues.pref_readLaterButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
@@ -648,8 +652,8 @@ class SettingValues {
         }
 
         SettingValues.largerThumbnail = settings.object(forKey: SettingValues.pref_largerThumbnail) == nil ? true : settings.bool(forKey: SettingValues.pref_largerThumbnail)
-        SettingValues.subredditBar = true //Enable this forever now settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
-        //SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
+        SettingValues.subredditBar = true // Enable this forever now settings.object(forKey: SettingValues.pref_subBar) == nil ? true : settings.bool(forKey: SettingValues.pref_subBar)
+        // SettingValues.matchSilence = settings.bool(forKey: SettingValues.pref_matchSilence)
         SettingValues.infoBelowTitle = settings.bool(forKey: SettingValues.pref_infoBelowTitle)
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
@@ -689,9 +693,9 @@ class SettingValues {
         SettingValues.internalYouTube = settings.object(forKey: SettingValues.pref_internalYouTube) == nil ? true : settings.bool(forKey: SettingValues.pref_internalYouTube)
     }
 
-    public static func done6() -> Bool {
+    public static func done7() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: "6") != nil || settings.object(forKey: "6.0") != nil || settings.object(forKey: "6.0.2") != nil || settings.object(forKey: Bundle.main.releaseVersionNumber ?? "0") != nil
+        return settings.object(forKey: "7") != nil
     }
     
     public static func doneVersion() -> Bool {
@@ -710,20 +714,30 @@ class SettingValues {
         settings.set(title, forKey: "vtitle")
         settings.set(submission.permalink, forKey: "vlink")
         settings.synchronize()
-        let finalTitle = title + "\nTap to view Changelog"
         
-        var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: CGFloat.greatestFiniteMagnitude)
-        let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
-        let layout = YYTextLayout(containerSize: size, text: chunk)!
-        let textSize = layout.textBoundingSize
+        let chunk = TextDisplayStackView.createAttributedChunk(baseHTML: submission.selftextHtml, fontSize: 12, submission: true, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
+        
+        let layout = BadgeLayoutManager()
+        let storage = NSTextStorage()
+        storage.addLayoutManager(layout)
+        let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        let container = NSTextContainer(size: initialSize)
+        container.widthTracksTextView = true
+        layout.addTextContainer(container)
 
-        size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: textSize.height)
-        let body = YYLabel()
-        body.numberOfLines = 0
+        let body = TitleUITextView(delegate: nil, textContainer: container).then {
+            $0.doSetup()
+        }
+
         body.attributedText = chunk
+        body.layoutTitleImageViews()
+        
+        let textHeight = body.attributedText!.height(containerWidth: UIScreen.main.bounds.size.width * 0.85 - 30)
+        var size = CGSize(width: UIScreen.main.bounds.size.width * 0.85 - 30, height: textHeight)
+
         let detailViewController = UpdateViewController(view: body, size: size)
         detailViewController.titleView.font = UIFont.boldSystemFont(ofSize: 20)
-        detailViewController.titleView.textColor = ColorUtil.theme.fontColor
+        detailViewController.titleView.textColor = UIColor.fontColor
         detailViewController.titleView.text = submission.title
         detailViewController.preferredContentSize = CGSize(width: UIScreen.main.bounds.size.width * 0.85, height: min(size.height, 300))
         detailViewController.comments.backgroundColor = ColorUtil.baseAccent
@@ -763,7 +777,7 @@ class SettingValues {
         case MODERATE = "moderate"
         case SUBSCRIBE = "subscribe"
         
-        public static func getMenu(_ link: RSubmission, mutableList: Bool) -> [PostOverflowAction] {
+        public static func getMenu(_ link: SubmissionObject, mutableList: Bool) -> [PostOverflowAction] {
             var toReturn = [PostOverflowAction]()
             for item in getMenuNone() {
                 if item == .CHROME {
@@ -798,7 +812,7 @@ class SettingValues {
             return toReturn
         }
 
-        public func getTitle(_ link: RSubmission? = nil) -> String {
+        public func getTitle(_ link: SubmissionObject? = nil) -> String {
             switch self {
             case .PROFILE:
                 if link == nil {
@@ -827,7 +841,7 @@ class SettingValues {
                 if link == nil {
                     return "Read Later"
                 }
-                return ReadLater.isReadLater(id: link!.getIdentifier()) ? "Remove from Read Later" : "Add to Read Later"
+                return ReadLater.isReadLater(id: link!.id) ? "Remove from Read Later" : "Add to Read Later"
             case .SHARE_CONTENT:
                 return "Share content link"
             case .SHARE_REDDIT:
@@ -851,7 +865,7 @@ class SettingValues {
             }
         }
         
-        public func getImage(_ link: RSubmission? = nil) -> UIImage {
+        public func getImage(_ link: SubmissionObject? = nil) -> UIImage {
             switch self {
             case .PROFILE:
                 return UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()
@@ -871,7 +885,7 @@ class SettingValues {
                 if link == nil {
                     return UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
                 }
-                return ReadLater.isReadLater(id: link!.getIdentifier()) ? UIImage(sfString: SFSymbol.trayAndArrowUpFill, overrideString: "restore")!.menuIcon() : UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
+                return ReadLater.isReadLater(id: link!.id) ? UIImage(sfString: SFSymbol.trayAndArrowUpFill, overrideString: "restore")!.menuIcon() : UIImage(sfString: SFSymbol.trayAndArrowDownFill, overrideString: "readLater")!.menuIcon()
             case .SHARE_CONTENT:
                 return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
@@ -1150,8 +1164,8 @@ class SettingValues {
             }
         }
         
-        //TODO pre ios 13 icons
-        public func getImage(_ link: RSubmission? = nil) -> UIImage {
+        // TODO pre ios 13 icons
+        public func getImage(_ link: SubmissionObject? = nil) -> UIImage {
             switch self {
             case .HOME:
                 return UIImage(sfString: SFSymbol.houseFill, overrideString: "world")!.menuIcon()
@@ -1379,7 +1393,7 @@ class UpdateViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView = UIScrollView().then {
-            $0.backgroundColor = ColorUtil.theme.foregroundColor
+            $0.backgroundColor = UIColor.foregroundColor
             $0.isUserInteractionEnabled = true
         }
         self.view.addSubviews(scrollView, titleView, comments)

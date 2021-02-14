@@ -27,8 +27,8 @@ class CacheSettings: BubbleSettingTableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -52,13 +52,13 @@ class CacheSettings: BubbleSettingTableViewController {
 
         createCell(autoCache, autoCacheSwitch, isOn: SettingValues.autoCache, text: "Cache subreddits automatically")
         self.autoCache.detailTextLabel?.text = "Will run the first time Slide opens each day"
-        self.autoCache.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.autoCache.detailTextLabel?.textColor = UIColor.fontColor
         self.autoCache.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.autoCache.detailTextLabel?.numberOfLines = 0
 
         createCell(cacheContent, cacheContentSwitch, isOn: false, text: "Cache subreddits automatically")
         self.cacheContent.detailTextLabel?.text = "Coming soon!"
-        self.cacheContent.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.cacheContent.detailTextLabel?.textColor = UIColor.fontColor
         self.cacheContent.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.cacheContent.detailTextLabel?.numberOfLines = 0
 
@@ -66,13 +66,13 @@ class CacheSettings: BubbleSettingTableViewController {
         
         createCell(depth, nil, isOn: false, text: "Depth of comments to cache")
         self.depth.detailTextLabel?.text = "\(SettingValues.commentDepth) levels"
-        self.depth.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.depth.detailTextLabel?.textColor = UIColor.fontColor
         self.depth.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.depth.detailTextLabel?.numberOfLines = 0
 
         createCell(posts, nil, isOn: false, text: "Number of posts to cache in each subreddit")
         self.posts.detailTextLabel?.text = "\(SettingValues.cachedPostsCount) posts"
-        self.posts.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.posts.detailTextLabel?.textColor = UIColor.fontColor
         self.posts.detailTextLabel?.lineBreakMode = .byWordWrapping
         self.posts.detailTextLabel?.numberOfLines = 0
     }
@@ -159,8 +159,8 @@ class CacheSettings: BubbleSettingTableViewController {
                 
                 actionSheetController.setupTheme()
                 
-                actionSheetController.attributedTitle = NSAttributedString(string: "Posts to cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                actionSheetController.attributedMessage = NSAttributedString(string: "How many posts will cache in each subreddit", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                actionSheetController.attributedTitle = NSAttributedString(string: "Posts to cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+                actionSheetController.attributedMessage = NSAttributedString(string: "How many posts will cache in each subreddit", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
 
                 actionSheetController.addChild(pickerView)
                 
@@ -189,8 +189,8 @@ class CacheSettings: BubbleSettingTableViewController {
                 
                 actionSheetController.setupTheme()
                 
-                actionSheetController.attributedTitle = NSAttributedString(string: "Comment cache depth", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
-                actionSheetController.attributedMessage = NSAttributedString(string: "How deep comment chains will load to", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                actionSheetController.attributedTitle = NSAttributedString(string: "Comment cache depth", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+                actionSheetController.attributedMessage = NSAttributedString(string: "How deep comment chains will load to", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
 
                 actionSheetController.addChild(pickerView)
                 
@@ -223,7 +223,7 @@ class CacheSettings: BubbleSettingTableViewController {
             let c = tableView.dequeueReusableCell(withIdentifier: "sub", for: indexPath) as! SubredditCellView
             c.setSubreddit(subreddit: thing, nav: nil)
             cell = c
-            cell?.backgroundColor = ColorUtil.theme.foregroundColor
+            cell?.backgroundColor = UIColor.foregroundColor
             let aSwitch = UISwitch().then {
                 $0.onTintColor = ColorUtil.accentColorForSub(sub: thing)
             }

@@ -40,7 +40,7 @@ class CommentRepliesController: Votable {
 
     override func awake(withContext context: Any?) {
         super.awake(withContext: context)
-        let myModel = context as! CommentsRowController //make the model
+        let myModel = context as! CommentsRowController // make the model
         self.modelContext = myModel
         self.originalTitle.setAttributedText(myModel.attributedTitle)
         self.originalBody.setAttributedText(myModel.attributedBody)

@@ -10,7 +10,7 @@ import CoreServices
 import CoreSpotlight
 import Foundation
 
-//Open a subreddit
+// Open a subreddit
 @available(iOS 12.0, *)
 extension SingleSubredditViewController {
     public static func openSubredditActivity(subreddit: String) -> NSUserActivity {
@@ -28,7 +28,7 @@ extension SingleSubredditViewController {
     }
 }
 
-//View inbox
+// View inbox
 @available(iOS 12.0, *)
 extension InboxViewController {
     public static func openInboxActivity() -> NSUserActivity {
@@ -48,14 +48,14 @@ extension InboxViewController {
 }
 
 extension AppDelegate {
-    //Siri Shortcuts integration
+    // Siri Shortcuts integration
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
             VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
         } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
             VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
         } else if let url = userActivity.webpageURL {
-            handleURL(url)
+            _ = handleURL(url)
         }
         return true
     }

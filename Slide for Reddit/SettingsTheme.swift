@@ -229,8 +229,8 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -268,7 +268,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "App Theme"
         self.headers = ["App colors", "Night mode", "Custom themes", "Standard themes"]
@@ -276,32 +276,32 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         
         self.primary.textLabel?.text = "Default subreddit color"
         self.primary.accessoryType = .none
-        self.primary.backgroundColor = ColorUtil.theme.foregroundColor
-        self.primary.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.primary.backgroundColor = UIColor.foregroundColor
+        self.primary.textLabel?.textColor = UIColor.fontColor
         self.primary.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseColor)
 
         self.accent.textLabel?.text = "Default accent color"
         self.accent.accessoryType = .none
-        self.accent.backgroundColor = ColorUtil.theme.foregroundColor
-        self.accent.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.accent.backgroundColor = UIColor.foregroundColor
+        self.accent.textLabel?.textColor = UIColor.fontColor
         self.accent.imageView?.image = UIImage(named: "circle")?.toolbarIcon().getCopy(withColor: ColorUtil.baseAccent)
-        self.accent.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.accent.detailTextLabel?.textColor = UIColor.fontColor
         self.accent.detailTextLabel?.numberOfLines = 0
         self.accent.detailTextLabel?.text = "Applies to links and buttons"
 
         self.custom.textLabel?.text = "New custom theme"
         self.custom.accessoryType = .disclosureIndicator
-        self.custom.backgroundColor = ColorUtil.theme.foregroundColor
-        self.custom.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.custom.backgroundColor = UIColor.foregroundColor
+        self.custom.textLabel?.textColor = UIColor.fontColor
         self.custom.imageView?.image = UIImage(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.custom.imageView?.tintColor = ColorUtil.theme.navIconColor
+        self.custom.imageView?.tintColor = UIColor.navIconColor
         
         self.base.textLabel?.text = "Base theme"
         self.base.accessoryType = .disclosureIndicator
-        self.base.backgroundColor = ColorUtil.theme.foregroundColor
-        self.base.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.base.backgroundColor = UIColor.foregroundColor
+        self.base.textLabel?.textColor = UIColor.fontColor
         self.base.imageView?.image = UIImage(named: "palette")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.base.imageView?.tintColor = ColorUtil.theme.navIconColor
+        self.base.imageView?.tintColor = UIColor.navIconColor
         
         nightEnabled = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -310,16 +310,16 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         nightEnabled.addTarget(self, action: #selector(SettingsViewController.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.night.textLabel?.text = "Night Mode"
         if #available(iOS 13, *) {
-            self.night.detailTextLabel?.text =  "Night mode follows iOS Dark Mode automatically"
+            self.night.detailTextLabel?.text = "Night mode follows iOS Dark Mode automatically"
         } else {
-            self.night.detailTextLabel?.text =  "Tap to change night hours"
+            self.night.detailTextLabel?.text = "Tap to change night hours"
         }
-        self.night.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.night.detailTextLabel?.textColor = UIColor.fontColor
         self.night.accessoryType = .none
-        self.night.backgroundColor = ColorUtil.theme.foregroundColor
-        self.night.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.night.backgroundColor = UIColor.foregroundColor
+        self.night.textLabel?.textColor = UIColor.fontColor
         self.night.imageView?.image = UIImage(sfString: SFSymbol.moonStarsFill, overrideString: "night")?.toolbarIcon().withRenderingMode(.alwaysTemplate)
-        self.night.imageView?.tintColor = ColorUtil.theme.navIconColor
+        self.night.imageView?.tintColor = UIColor.navIconColor
         night.accessoryView = nightEnabled
 
         tintOutsideSwitch = UISwitch().then {
@@ -330,15 +330,15 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         tintOutsideSwitch.addTarget(self, action: #selector(SettingsTheme.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
         self.tintOutside.textLabel?.text = "Only tint outside of subreddit"
         self.tintOutside.accessoryView = tintOutsideSwitch
-        self.tintOutside.backgroundColor = ColorUtil.theme.foregroundColor
-        self.tintOutside.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.tintOutside.backgroundColor = UIColor.foregroundColor
+        self.tintOutside.textLabel?.textColor = UIColor.fontColor
         tintOutside.selectionStyle = UITableViewCell.SelectionStyle.none
         
         self.tintingMode.textLabel?.text = "Subreddit tinting mode"
         self.tintingMode.detailTextLabel?.text = SettingValues.tintingMode
-        self.tintingMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.tintingMode.textLabel?.textColor = ColorUtil.theme.fontColor
-        self.tintingMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        self.tintingMode.backgroundColor = UIColor.foregroundColor
+        self.tintingMode.textLabel?.textColor = UIColor.fontColor
+        self.tintingMode.detailTextLabel?.textColor = UIColor.fontColor
         
         reduceColor = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
@@ -351,12 +351,12 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         reduceColorCell.detailTextLabel?.text = "Disables header colors for a simpler look"
         reduceColorCell.detailTextLabel?.numberOfLines = 0
         reduceColorCell.accessoryView = reduceColor
-        reduceColorCell.backgroundColor = ColorUtil.theme.foregroundColor
-        reduceColorCell.textLabel?.textColor = ColorUtil.theme.fontColor
-        reduceColorCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        reduceColorCell.backgroundColor = UIColor.foregroundColor
+        reduceColorCell.textLabel?.textColor = UIColor.fontColor
+        reduceColorCell.detailTextLabel?.textColor = UIColor.fontColor
         reduceColorCell.selectionStyle = UITableViewCell.SelectionStyle.none
         self.reduceColorCell.imageView?.image = UIImage(sfString: SFSymbol.circleLefthalfFill, overrideString: "nocolors")?.toolbarIcon()
-        self.reduceColorCell.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.reduceColorCell.imageView?.tintColor = UIColor.fontColor
                 
         createCell(reduceColorCell, reduceColor, isOn: SettingValues.reduceColor, text: "Minimal Mode")
         
@@ -416,7 +416,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             self.primary.textLabel?.isEnabled = false
             self.primary.detailTextLabel?.isEnabled = false
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+            self.primary.detailTextLabel?.textColor = UIColor.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = "Requires 'Reduce app colors' to be disabled"
         } else {
@@ -424,7 +424,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             self.primary.textLabel?.isEnabled = true
             self.primary.detailTextLabel?.isEnabled = true
             
-            self.primary.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+            self.primary.detailTextLabel?.textColor = UIColor.fontColor
             self.primary.detailTextLabel?.numberOfLines = 0
             self.primary.detailTextLabel?.text = ""
         }
@@ -454,16 +454,9 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             case 0: return self.night
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
-                var theme = ColorUtil.theme
-                for bTheme in ColorUtil.themes {
-                    if bTheme.title == SettingValues.nightTheme {
-                        theme = bTheme
-                        break
-                    }
-                }
                 cell.isUserInteractionEnabled = true
                 cell.contentView.alpha = 1
-                cell.setTheme(theme: theme)
+                cell.setTheme(theme: ColorUtil.getNightTheme())
                 return cell
             }
         case 2:
@@ -472,7 +465,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             default:
                 let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
                 cell.setTheme(theme: customThemes[indexPath.row - 1])
-                if ColorUtil.theme.title == customThemes[indexPath.row - 1].title {
+                if ColorUtil.getDayTheme() == customThemes[indexPath.row - 1] {
                     cell.accessoryType = .checkmark
                 } else {
                     cell.accessoryType = .none
@@ -489,7 +482,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "theme") as! ThemeCellView
             cell.setTheme(theme: themes[indexPath.row])
-            if ColorUtil.theme.title == themes[indexPath.row].title {
+            if ColorUtil.getDayTheme() == themes[indexPath.row] {
                 cell.accessoryType = .checkmark
             } else {
                 cell.accessoryType = .none
@@ -528,25 +521,6 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         VCPresenter.presentModally(viewController: chooseVC, self)
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        if #available(iOS 13.0, *) {
-            if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                if themeChanged {
-                    _ = ColorUtil.doInit()
-                    SingleSubredditViewController.cellVersion += 1
-                    MainViewController.needsReTheme = true
-                    self.setupViews()
-                    self.tableView.reloadData()
-                    self.tochange!.doCells()
-                    self.tochange!.tableView.reloadData()
-                    self.setupBaseBarColors()
-                }
-            }
-        }
-    }
-
     var selectedTableView = UIView()
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -588,6 +562,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 }))
                 alert.addAction(UIAlertAction(title: "Edit Theme", style: .default, handler: { (_) in
                     let theme = SettingsCustomTheme()
+                    theme.delegate = self
                     theme.inputTheme = self.customThemes[indexPath.row - 1].title
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
                 }))
@@ -682,7 +657,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         initialSelection.append((4, SettingValues.nightEndMin / 5))
         alert.setupTheme()
         
-        alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Select night hours", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         let pickerView = PickerViewViewControllerColored(values: values, initialSelection: initialSelection, action: { _, _, index, _ in
             switch index.column {
@@ -790,7 +765,23 @@ final public class PickerViewViewControllerColored: UIViewController {
                 }
             }
         }
-        
+    }
+}
+
+extension SettingsTheme: SettingsCustomThemeDelegate {
+    func themeSaved() {
+        SettingsTheme.needsRestart = false
+        _ = ColorUtil.doInit()
+        SingleSubredditViewController.cellVersion += 1
+        self.tableView.reloadData()
+        MainViewController.needsReTheme = true
+        self.setupViews()
+        self.tochange!.doCells()
+        self.tochange!.tableView.reloadData()
+        self.tableView.reloadData()
+        self.setupBaseBarColors()
+
+        self.redoThemes()
     }
 }
 
@@ -810,7 +801,7 @@ extension PickerViewViewControllerColored: UIPickerViewDataSource, UIPickerViewD
     // for the view versions, we cache any hidden and thus unused views and pass them back for reuse.
     // If you return back a different object, the old one will be released. the view will be centered in the row rect
     public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
+        return NSAttributedString(string: values[component][row], attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 8)])
     }
     /*
      public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {

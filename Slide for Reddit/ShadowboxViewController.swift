@@ -21,11 +21,11 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         color1 = (currentVc as! ShadowboxLinkViewController).backgroundColor
     }
     
-    func getURLToLoad(_ submission: RSubmission) -> URL? {
+    func getURLToLoad(_ submission: SubmissionObject) -> URL? {
         let url = submission.url
         if url != nil && ContentType.isGif(uri: url!) {
-            if !submission.videoPreview.isEmpty() && !ContentType.isGfycat(uri: url!) {
-                return URL.init(string: submission.videoPreview)!
+            if !(submission.videoPreview ?? "").isEmpty() && !ContentType.isGfycat(uri: url!) {
+                return URL.init(string: submission.videoPreview!)!
             } else {
                 return url!
             }
@@ -125,7 +125,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerBefore viewController: UIViewController) -> UIViewController? {
-        let id = (viewController as! ShadowboxLinkViewController).submission.getId()
+        let id = (viewController as! ShadowboxLinkViewController).submission.id
         var viewControllerIndex = -1
         
         for item in submissionDataSource.content {
@@ -165,7 +165,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
     
     func pageViewController(_ pageViewController: UIPageViewController,
                             viewControllerAfter viewController: UIViewController) -> UIViewController? {
-        let id = (viewController as! ShadowboxLinkViewController).submission.getId()
+        let id = (viewController as! ShadowboxLinkViewController).submission.id
         var viewControllerIndex = -1
         
         for item in submissionDataSource.content {
@@ -241,7 +241,7 @@ extension ShadowboxViewController: SubmissionDataSouceDelegate {
     func preLoadItems() {
     }
     
-    func doPreloadImages(values: [RSubmission]) {
+    func doPreloadImages(values: [SubmissionObject]) {
     }
     
     func loadOffline() {

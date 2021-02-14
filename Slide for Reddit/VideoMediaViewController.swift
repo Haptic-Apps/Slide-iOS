@@ -17,6 +17,8 @@ import UIKit
 
 class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecognizerDelegate, SubtleVolumeDelegate {
 
+    public static var soundLocked = false
+    
     var isYoutubeView: Bool {
         return contentType == ContentType.CType.VIDEO
     }
@@ -44,7 +46,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     func subtleVolume(_ subtleVolume: SubtleVolume, willChange value: Double) {
         if !self.muteButton.isHidden && !SettingValues.modalVideosRespectHardwareMuteSwitch {
-       //disable for now     self.unmute()
+       // disable for now     self.unmute()
         }
     }
     
@@ -147,6 +149,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             loadContent()
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        VideoMediaViewController.soundLocked = false
+    }
 
     override func viewDidDisappear(_ animated: Bool) {
         timer?.invalidate()
@@ -165,6 +172,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.endVideos()
         self.videoView.player?.replaceCurrentItem(with: nil)
         self.videoView.player = nil
+        VideoMediaViewController.soundLocked = false
     }
     
     func endVideos() {
@@ -201,7 +209,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
         self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds) // CALayer position contains NaN: [nan nan]
     }
-    
+        
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         resetFrame(withSize: size)
@@ -325,6 +333,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                         strongSelf.videoView.player?.isMuted = false
                         
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                        VideoMediaViewController.soundLocked = true
                     }
                 }
             } else {
@@ -343,6 +352,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                 self.videoView.player?.isMuted = false
                 
                 try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                VideoMediaViewController.soundLocked = true
             } else {
                 self.youtubeMute = true
                 self.videoView.player?.isMuted = true
@@ -554,7 +564,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     var lastTracks = false
     
-    func getQualityURL(urlToLoad: String, qualityList: [String],  callback: @escaping (_ realURL: String) -> Void) {
+    func getQualityURL(urlToLoad: String, qualityList: [String], callback: @escaping (_ realURL: String) -> Void) {
         if qualityList.isEmpty {
             BannerUtil.makeBanner(text: "Error finding video URL", color: GMColor.red500Color(), seconds: 5, context: self.parent ?? nil, top: false, callback: nil)
         } else {
@@ -631,7 +641,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                     }
                 }
             } else {
-                print(response.error)
                 self.parent?.dismiss(animated: true, completion: {
                     self.failureCallback?(URL.init(string: toLoad)!)
                 })
@@ -650,14 +659,14 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
         Alamofire.request(toLoadAudio).responseString { (response) in
-            if response.response?.statusCode == 200 { //Audio exists, let's get it
+            if response.response?.statusCode == 200 { // Audio exists, let's get it
                 self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
-                    if (response.error as NSError?)?.code == NSURLErrorCancelled { //Cancelled, exit
+                    if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
                         return
                     }
-                    if response.response!.statusCode != 200 { //Shouldn't be here
+                    if response.response!.statusCode != 200 { // Shouldn't be here
                         self.doCopyAndPlay(localUrlV, to: finalUrl)
-                    } else { //no errors, merge audio and video
+                    } else { // no errors, merge audio and video
                         self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                             DispatchQueue.main.async {
                                 self.playVideo()
@@ -666,16 +675,16 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
                     }
 
                 }
-            } else if response.response?.statusCode ?? 0 > 400 { //Might exist elsewhere
+            } else if response.response?.statusCode ?? 0 > 400 { // Might exist elsewhere
                 Alamofire.request("\(toLoadAudioBase)/audio").responseString { (response) in
-                    if response.response?.statusCode == 200 { //Audio exists, let's get it
+                    if response.response?.statusCode == 200 { // Audio exists, let's get it
                         self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
-                            if (response.error as NSError?)?.code == NSURLErrorCancelled { //Cancelled, exit
+                            if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
                                 return
                             }
-                            if response.response!.statusCode != 200 { //Shouldn't be here
+                            if response.response!.statusCode != 200 { // Shouldn't be here
                                 self.doCopyAndPlay(localUrlV, to: finalUrl)
-                            } else { //no errors, merge audio and video
+                            } else { // no errors, merge audio and video
                                 self.mergeFilesWithUrl(videoUrl: localUrlV, audioUrl: localUrlAudio, savePathUrl: finalUrl) {
                                     DispatchQueue.main.async {
                                         self.playVideo()
@@ -720,7 +729,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func playVideo(_ url: String = "") {
-        //Prevent video from stopping system background audio
+        // Prevent video from stopping system background audio
         DispatchQueue.global(qos: .background).async {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
@@ -733,7 +742,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         self.setProgressViewVisible(false)
         self.size.isHidden = true
 //        self.downloadButton.isHidden = true// TODO: - maybe download videos in the future?
-        print("Wanting to play " +  getKeyFromURL())
         if let videoUrl = SettingValues.streamVideos ? URL(string: url) : URL(fileURLWithPath: getKeyFromURL()) {
             let playerItem = AVPlayerItem(url: videoUrl)
             videoView.player = AVPlayer(playerItem: playerItem)
@@ -938,6 +946,9 @@ extension VideoMediaViewController {
                 strongSelf.ytButton.isHidden = false
             }
             
+            //Notify other videos to end
+            NotificationCenter.default.post(name: .onYouTubeWillStart, object: nil)
+            
             if !playlist.isEmpty {
                 strongSelf.youtubeView.load(withPlaylistId: playlist, playerVars: vars)
             } else {
@@ -976,7 +987,7 @@ extension VideoMediaViewController {
         } else {
             let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
             let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
-            self.videoView.player?.seek(to: newCMTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { _ in
+            self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
                 self.videoView.player?.play()
             }
         }
@@ -997,7 +1008,7 @@ extension VideoMediaViewController {
             })
         }
         
-        //fetching the data from the url
+        // fetching the data from the url
         URLSession.shared.dataTask(with: metaURL, completionHandler: { (data, _, error) -> Void in
             if error != nil {
                 failureBlock()
@@ -1027,7 +1038,7 @@ extension VideoMediaViewController {
         
         if let strongURL = self.data.baseURL, var components = URLComponents(string: strongURL.absoluteString) {
             components.query = nil
-            key = components.url?.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") ?? strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") //Get rid of params, and all non-filename characters
+            key = components.url?.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") ?? strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_") // Get rid of params, and all non-filename characters
         } else if let strongURL = self.data.baseURL {
             key = strongURL.absoluteString.components(separatedBy: disallowedChars).joined(separator: "_")
         } else {
@@ -1080,6 +1091,7 @@ extension VideoMediaViewController {
                         try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
                     } else {
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                        VideoMediaViewController.soundLocked = true
                     }
                 } else {
                     youtubeMute = true
@@ -1130,6 +1142,7 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
                         try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
                     } else {
                         try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+                        VideoMediaViewController.soundLocked = true
                     }
                 }
 
@@ -1259,9 +1272,9 @@ extension VideoMediaViewController {
         let alert = AlertController.init(title: "Caption", message: nil, preferredStyle: .alert)
         
         alert.setupTheme()
-        alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        alert.attributedTitle = NSAttributedString(string: "Caption", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
-        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+        alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: data.text!.trimmed(), fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
         
         alert.addCloseButton()
         alert.addBlurView()
@@ -1283,7 +1296,7 @@ extension VideoMediaViewController {
         
         alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(baseURL)
             }
@@ -1344,7 +1357,7 @@ extension VideoMediaViewController {
     
     @objc func openInYoutube(_ sender: AnyObject) {
         if let url = youtubeURL {
-            UIApplication.shared.openURL(url)
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
 }
@@ -1360,7 +1373,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             self.youtubeView.seek(toSeconds: toSeconds, allowSeekAhead: true) // Disable seekahead until the user lets go
         } else {
             let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
-            self.videoView.player?.seek(to: targetTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
+            self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
         }
     }
 
@@ -1419,14 +1432,14 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         }
     }
     
-    //From https://stackoverflow.com/a/39100999/3697225
+    // From https://stackoverflow.com/a/39100999/3697225
     func mergeFilesWithUrl(videoUrl: URL, audioUrl: URL, savePathUrl: URL, completion: @escaping () -> Void) {
         let mixComposition: AVMutableComposition = AVMutableComposition()
         var mutableCompositionVideoTrack: [AVMutableCompositionTrack] = []
         var mutableCompositionAudioTrack: [AVMutableCompositionTrack] = []
         let totalVideoCompositionInstruction: AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
         print("Loading from " + videoUrl.absoluteString)
-        //start merge
+        // start merge
         let aVideoAsset: AVAsset = AVAsset(url: videoUrl)
         let aAudioAsset: AVAsset = AVAsset(url: audioUrl)
         
@@ -1439,11 +1452,11 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
         do {
             try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: CMTime.zero)
             
-            //In my case my audio file is longer then video file so i took videoAsset duration
-            //instead of audioAsset duration
+            // In my case my audio file is longer then video file so i took videoAsset duration
+            // instead of audioAsset duration
             try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: CMTime.zero)
             
-            //Use this instead above line if your audiofile and video file's playing durations are same
+            // Use this instead above line if your audiofile and video file's playing durations are same
             //            try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), ofTrack: aAudioAssetTrack, atTime: kCMTimeZero)
         } catch {
             print(error.localizedDescription)
@@ -1467,7 +1480,7 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
             print(error.localizedDescription)
         }
         
-        //find your video on this URl
+        // find your video on this URl
         let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
         assetExport.outputFileType = AVFileType.mp4
         assetExport.outputURL = savePathUrl
@@ -1488,12 +1501,6 @@ extension VideoMediaViewController: VideoScrubberViewDelegate {
     }
 }
 
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
+extension Notification.Name {
+    static let onYouTubeWillStart = Notification.Name("on-youtube-will-start")
 }

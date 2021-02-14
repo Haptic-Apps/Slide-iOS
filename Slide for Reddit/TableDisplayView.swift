@@ -12,7 +12,6 @@ import reddift
 import SDWebImage
 import Then
 import UIKit
-import YYText
 
 class TableDisplayView: UIScrollView {
 
@@ -22,19 +21,17 @@ class TableDisplayView: UIScrollView {
     var scrollView: UIScrollView!
     var baseColor: UIColor
     var tColor: UIColor
-    var action: YYTextAction?
-    var longAction: YYTextAction?
     var linksCallback: ((URL) -> Void)?
     var indexCallback: (() -> Int)?
+    weak var textDelegate: TextDisplayStackViewDelegate?
     
-    init(baseHtml: String, color: UIColor, accentColor: UIColor, action: YYTextAction?, longAction: YYTextAction?, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) {
+    init(baseHtml: String, color: UIColor, accentColor: UIColor, delegate: TextDisplayStackViewDelegate?, linksCallback: ((URL) -> Void)?, indexCallback: (() -> Int)?) {
+        self.textDelegate = delegate
         self.linksCallback = linksCallback
         self.indexCallback = indexCallback
         let newData = baseHtml.replacingOccurrences(of: "http://view.table/", with: "")
         self.baseColor = color
         self.tColor = accentColor
-        self.action = action
-        self.longAction = longAction
         super.init(frame: CGRect.zero)
 
         parseHtml(newData.removingPercentEncoding ?? newData)
@@ -48,7 +45,7 @@ class TableDisplayView: UIScrollView {
         makeViews()
     }
 
-    //Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
+    // Algorighm from https://github.com/ccrama/Slide/blob/master/app/src/main/java/me/ccrama/redditslide/Views/CommentOverflow.java
     func parseHtml(_ text: String) {
         let tableStart = "<table>"
         let tableEnd = "</table>"
@@ -77,7 +74,7 @@ class TableDisplayView: UIScrollView {
             if current == "<" {
                 continue
             }
-            //print(current)
+            // print(current)
             if current == tableStart {
             } else if current == tableHeadStart {
             } else if current == tableRowStart {
@@ -173,19 +170,26 @@ class TableDisplayView: UIScrollView {
                 $0.distribution = .fill
             })
             for (x, text) in row.enumerated() {
-                let label = YYLabel()
-                label.numberOfLines = 0
-                label.textVerticalAlignment = .top
-                label.highlightLongPressAction = longAction
-                label.highlightTapAction = action
-                label.attributedText = text
-                label.textContainerInset = UIEdgeInsets(top: verticalPadding, left: horizontalPadding, bottom: -verticalPadding, right: -horizontalPadding)
-                label.lineBreakMode = .byTruncatingTail
+                let layout = BadgeLayoutManager()
+                let storage = NSTextStorage()
+                storage.addLayoutManager(layout)
+                let initialSize = CGSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+                let container = NSTextContainer(size: initialSize)
+                container.widthTracksTextView = true
+                layout.addTextContainer(container)
+
+                let label = TitleUITextView(delegate: textDelegate, textContainer: container)
+                label.doSetup()
                 if y % 2 != 0 {
-                    label.backgroundColor = ColorUtil.theme.foregroundColor
+                    label.backgroundColor = UIColor.foregroundColor
+                } else {
+                    label.backgroundColor = UIColor.backgroundColor
                 }
+                label.attributedText = text
+                label.sizeToFit()
                 label.widthAnchor /==/ columnWidths[x]// + 100
                 label.heightAnchor /==/ rowHeights[y]
+                label.verticalCompressionResistancePriority = .required
                 rowStack.addArrangedSubview(label)
             }
             baseStackView.addArrangedSubview(rowStack)
@@ -228,7 +232,7 @@ class TableDisplayView: UIScrollView {
             if current == "<" {
                 continue
             }
-            //print(current)
+            // print(current)
             if current == tableStart {
             } else if current == tableHeadStart {
             } else if current == tableRowStart {

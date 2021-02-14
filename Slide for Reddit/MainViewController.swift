@@ -9,8 +9,6 @@
 import Anchorage
 import AudioToolbox
 import BadgeSwift
-import MaterialComponents.MaterialTabs
-import RealmSwift
 import reddift
 import SDCAlertView
 import StoreKit
@@ -22,7 +20,7 @@ import WidgetKit
 
 class MainViewController: ColorMuxPagingViewController, UINavigationControllerDelegate, ReadLaterDelegate {
 
-    //MARK: - Variables
+    // MARK: - Variables
     /*
     Corresponds to USR_DOMAIN in info.plist, which derives its value
     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
@@ -37,7 +35,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     public static var needsRestart = false
     public static var needsReTheme = false
     public var toolbar: UIView?
-    var tabBar: PagingTitleCollectionView!
+    var tabBar: SubredditPagingTitleCollectionView!
     var subs: UIView?
     var selected = false
 
@@ -59,9 +57,19 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     var accountB = UIBarButtonItem()
     public static var first = true
+    public var hasAppeared = false
 
-    override var prefersStatusBarHidden: Bool {
-        return SettingValues.hideStatusBar
+    override var childForStatusBarHidden: UIViewController? {
+        if hasAppeared && finalSubs.count > currentIndex {
+            if navigationController?.topViewController != self {
+                return navigationController?.topViewController
+            } else {
+                return viewControllers?.first(where: {
+                    ($0 as? SingleSubredditViewController)?.sub == finalSubs[currentIndex]
+                })
+            }
+        }
+        return nil
     }
     
     var statusbarHeight: CGFloat {
@@ -75,9 +83,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             return 0
         }
     }
-    
-    var currentIndex = 0
-    
+        
     public static var isOffline = false
     var menuB = UIBarButtonItem()
     var drawerButton = UIImageView()
@@ -87,7 +93,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -112,7 +118,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
     var currentTitle = "Slide"
 
-    //MARK: - Shared functions
+    // MARK: - Shared functions
     func didUpdate() {
         let suite = UserDefaults(suiteName: "group.\(self.USR_DOMAIN()).redditslide.prefs")
         suite?.setValue(ReadLater.readLaterIDs.count, forKey: "readlater")
@@ -138,7 +144,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             readLaterBadge!.text = "\(count)"
             readLaterBadge!.insets = CGSize.zero
             readLaterBadge!.font = UIFont.boldSystemFont(ofSize: 10)
-            readLaterBadge!.textColor = SettingValues.reduceColor ? ColorUtil.theme.navIconColor : UIColor.white
+            readLaterBadge!.textColor = SettingValues.reduceColor ? UIColor.navIconColor : UIColor.white
             readLaterBadge!.badgeColor = .clear
             readLaterBadge!.shadowOpacityBadge = 0
             readLater.frame = CGRect.init(x: 0, y: 0, width: 30, height: 44)
@@ -154,7 +160,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
     }
     
-    //from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
+    // from https://github.com/CleverTap/ios-request-review/blob/master/Example/RatingExample/ViewController.swift
     func requestReviewIfAppropriate() {
         if #available(iOS 10.3, *) {
             let lastReviewedVersion = UserDefaults.standard.string(forKey: "lastReviewed")
@@ -190,7 +196,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         let currentAccount = AccountController.currentName
         if let session = (UIApplication.shared.delegate as! AppDelegate).session {
             Subscriptions.getSubscriptionsFully(session: session, completion: { (newSubs, newMultis) in
-                if AccountController.isLoggedIn && currentAccount == AccountController.currentName { //Ensure the user did not switch accounts before applying subs
+                if AccountController.isLoggedIn && currentAccount == AccountController.currentName { // Ensure the user did not switch accounts before applying subs
                     var allSubs = [String]()
                     allSubs.append(contentsOf: newSubs.map { $0.displayName })
                     allSubs.append(contentsOf: newMultis.map { "/m/" + $0.displayName.replacingOccurrences(of: " ", with: "_") })
@@ -211,7 +217,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     
     func checkForMail() {
         DispatchQueue.main.async {
-            //TODO reenable this
+            // TODO reenable this
             if !self.checkedClipboardOnce && false {
                 var clipUrl: URL?
                 if let url = UIPasteboard.general.url {
@@ -317,7 +323,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
             UserDefaults.standard.setValue(true, forKey: "done" + token.name)
             spinnerIndicator.center = CGPoint(x: 135.0, y: 65.5)
-            spinnerIndicator.color = ColorUtil.theme.fontColor
+            spinnerIndicator.color = UIColor.fontColor
             spinnerIndicator.startAnimating()
             
             alertController?.view.addSubview(spinnerIndicator)
@@ -375,8 +381,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         }
         let oldOffset = tabBar?.collectionView.contentOffset ?? CGPoint.zero
         tabBar?.removeFromSuperview()
-        tabBar = PagingTitleCollectionView(withSubreddits: subs, delegate: self)
-        //self.viewToMux = self.tabBar
+        tabBar = SubredditPagingTitleCollectionView(withSubreddits: subs, delegate: self)
         self.navigationItem.titleView = tabBar
         tabBar.sizeToFit()
         tabBar.collectionView.setNeedsLayout()
@@ -408,7 +413,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
 
         let currentWidth = layout.widthAt(currentIndex)
         
-        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) //Collectionview left offset for profile icon
+        let insetX = (tabBar.collectionView.superview!.frame.origin.x / 2) - ((tabBar.collectionView.superview!.frame.maxX - tabBar.collectionView.superview!.frame.size.width) / 2) // Collectionview left offset for profile icon
 
         let offsetX = layout.offsetAt(currentIndex - 1) + // Width of all cells to left
             (currentWidth / 2) - // Width of current cell
@@ -418,7 +423,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         
         currentBackgroundOffset.x = offsetX
         self.tabBar.collectionView.contentOffset = currentBackgroundOffset
-        //self.tabBar.collectionView.layoutIfNeeded()
+        // self.tabBar.collectionView.layoutIfNeeded()
     }
     
     func goToSubreddit(index: Int) {
@@ -452,7 +457,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     func doLeftItem() {
         let label = UILabel()
         label.text = "   \(SettingValues.reduceColor ? "      " : "")\(SettingValues.subredditBar ? "" : self.currentTitle)"
-        label.textColor = SettingValues.reduceColor ? ColorUtil.theme.fontColor : .white
+        label.textColor = SettingValues.reduceColor ? UIColor.fontColor : .white
         label.adjustsFontSizeToFitWidth = true
         label.font = UIFont.boldSystemFont(ofSize: 20)
         
@@ -568,7 +573,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func screenEdgeSwiped() {
         switch SettingValues.sideGesture {
         case .SUBS:()
-            //TODO show sidebar
+            // TODO show sidebar
         case .INBOX:
             self.showCurrentAccountMenu(nil)
         case .POST:
@@ -627,19 +632,28 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     func checkForUpdate() {
-        if !SettingValues.done6() || !SettingValues.doneVersion() {
-            if !SettingValues.done6() {
+        if !SettingValues.done7() || !SettingValues.doneVersion() {
+            if !SettingValues.done7() {
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
                     let viewController = OnboardingViewController()
-                    viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+                    viewController.view.backgroundColor = OnboardingViewController.versionBackgroundColor
                     let newParent = TapBehindModalViewController.init(rootViewController: viewController)
                     newParent.navigationBar.shadowImage = UIImage()
                     newParent.navigationBar.isTranslucent = false
-                    newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
-
+                    newParent.navigationBar.barTintColor = OnboardingViewController.versionBackgroundColor
                     newParent.navigationBar.shadowImage = UIImage()
-                    newParent.navigationBar.isTranslucent = false
+                    newParent.navigationBar.setBackgroundImage(UIImage(), for: .default)
 
+                    if #available(iOS 13, *) {
+                        let navBarAppearance = UINavigationBarAppearance()
+                        navBarAppearance.configureWithOpaqueBackground()
+                        navBarAppearance.shadowColor = .clear
+                        navBarAppearance.shadowImage = UIImage()
+                        navBarAppearance.backgroundColor = OnboardingViewController.versionBackgroundColor
+                        newParent.navigationBar.standardAppearance = navBarAppearance
+                        newParent.navigationBar.scrollEdgeAppearance = navBarAppearance
+                    }
+                    
                     let button = UIButtonWithContext.init(type: .custom)
                     button.parentController = newParent
                     button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
@@ -662,7 +676,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                 try session?.getList(Paginator.init(), subreddit: Subreddit.init(subreddit: "slide_ios"), sort: LinkSortType.hot, timeFilterWithin: TimeFilterWithin.hour, completion: { (result) in
                     switch result {
                     case .failure:
-                        //Ignore this
+                        // Ignore this
                         break
                     case .success(let listing):
                         let settings = UserDefaults.standard
@@ -699,7 +713,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
                             
                             settings.set(storedTitle, forKey: "vtitle")
                             settings.set(storedLink, forKey: "vlink")
-                            if SettingValues.done6() && !SettingValues.doneVersion() {
+                            if SettingValues.done7() && !SettingValues.doneVersion() {
                                 DispatchQueue.main.async {
                                     SettingValues.showVersionDialog(storedTitle, submissions[0], parentVC: self)
                                 }
@@ -723,7 +737,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
 
     @objc func showCurrentAccountMenu(_ sender: UIButton?) {
-        //TODO check for view controller count
+        // TODO check for view controller count
         if let parent = self.parent {
             parent.navigationController?.popViewController(animated: true)
         } else {
@@ -747,7 +761,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     @objc func showMenu(_ sender: AnyObject) {
         getSubredditVC()?.showMore(sender, parentVC: self)
     }
-    //MARK: - Overrides
+    // MARK: - Overrides
     func handleToolbars() {
     }
     
@@ -755,6 +769,12 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     func doRetheme() {
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        hasAppeared = true
     }
     
     public func viewWillAppearActions(override: Bool = false) {
@@ -794,24 +814,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     }
     
     @objc func showDrawer(_ sender: AnyObject) {
-    }
-
-    //MARK: - Other stuff
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        if #available(iOS 13.0, *) {
-            if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-                    ColorUtil.matchTraitCollection()
-                }
-            } else {
-                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                    if themeChanged {
-                        ColorUtil.matchTraitCollection()
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -880,43 +882,6 @@ extension MainViewController: UIPageViewControllerDelegate {
         let prevSub = getSubredditVC()?.sub ?? ""
         color2 = ColorUtil.getColorForSub(sub: pendingSub, true)
         color1 = ColorUtil.getColorForSub(sub: prevSub, true)
-    }
-}
-
-class IndicatorTemplate: NSObject, MDCTabBarIndicatorTemplate {
-    func indicatorAttributes(
-        for context: MDCTabBarIndicatorContext
-        ) -> MDCTabBarIndicatorAttributes {
-        let bounds = context.bounds
-        let attributes = MDCTabBarIndicatorAttributes()
-        let underlineFrame = CGRect.init(x: bounds.minX,
-                                         y: bounds.height - (UIDevice.current.userInterfaceIdiom == .pad ? 9 : 7),
-                                         width: bounds.width,
-                                         height: UIDevice.current.userInterfaceIdiom == .pad ? 4 : 5)
-        attributes.path = UIBezierPath.init(roundedRect: underlineFrame, byRoundingCorners: UIDevice.current.userInterfaceIdiom == .pad ? UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight, UIRectCorner.bottomLeft, UIRectCorner.bottomRight) : UIRectCorner.init(arrayLiteral: UIRectCorner.topLeft, UIRectCorner.topRight), cornerRadii: UIDevice.current.userInterfaceIdiom == .pad ? CGSize.init(width: 2, height: 2) : CGSize.init(width: 8, height: 8))
-        return attributes
-    }
-}
-
-extension MainViewController: MDCTabBarDelegate {
-    func tabBar(_ tabBar: MDCTabBar, didSelect item: UITabBarItem) {
-        selected = true
-        let firstViewController = SingleSubredditViewController(subName: finalSubs[tabBar.items.firstIndex(of: item)!], parent: self)
-
-        weak var weakPageVc = self
-        setViewControllers([firstViewController],
-                           direction: .forward,
-                           animated: false,
-                           completion: { (_) in
-                                guard let pageVc = weakPageVc else {
-                                    return
-                                }
-
-                                DispatchQueue.main.async {
-                                    pageVc.doCurrentPage(tabBar.items.firstIndex(of: item)!)
-                                }
-                            })
-
     }
 }
 

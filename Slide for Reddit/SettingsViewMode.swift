@@ -14,6 +14,7 @@ import UIKit
 class SettingsViewMode: BubbleSettingTableViewController {
     
     var singleMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "single")
+    var desktopMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "desktop")
     var splitMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "split")
     var multicolumnMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multi")
     var multicolumnCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multicount")
@@ -29,6 +30,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     var disablePopup = InsetCell()
     var disablePopupSwitch = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    var desktopModeSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     var disablePopupSubreddit = InsetCell()
@@ -59,6 +63,9 @@ class SettingsViewMode: BubbleSettingTableViewController {
         } else if changed == disablePopupSwitch {
             SettingValues.disablePopupIpad = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disablePopupIpad)
+        } else if changed == desktopModeSwitch {
+            SettingValues.desktopMode = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_desktopMode)
         } else if changed == disablePopupSubredditSwitch {
             SettingValues.disableSubredditPopupIpad = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableSubredditPopupIpad)
@@ -68,8 +75,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -84,7 +91,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
         super.loadView()
         
         headers = ["Subreddit display mode", "Other settings"]
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "App Behavior"
         
@@ -99,41 +106,48 @@ class SettingsViewMode: BubbleSettingTableViewController {
         createCell(multicolumnCount, isOn: false, text: "Multi-column count (Pro)")
         createCell(multicolumnPortraitCount, isOn: false, text: "Portrait Multi-column count (Pro)")
         createCell(galleryCount, isOn: false, text: "Gallery-mode column count (Pro)")
+        createCell(desktopMode, desktopModeSwitch, isOn: SettingValues.desktopMode, text: "Desktop Mode")
 
         self.singleMode.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.singleMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.singleMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.singleMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.singleMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.singleMode.backgroundColor = UIColor.foregroundColor
+        self.singleMode.textLabel?.textColor = UIColor.fontColor
         self.singleMode.detailTextLabel?.numberOfLines = 0
         
         self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
-        self.splitMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.splitMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.splitMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.splitMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.splitMode.backgroundColor = UIColor.foregroundColor
+        self.splitMode.textLabel?.textColor = UIColor.fontColor
         self.splitMode.detailTextLabel?.numberOfLines = 0
+        
+        self.desktopMode.detailTextLabel?.text = "Always show Slide Navigation sidebar, right-click shortcuts on Submissions and Comments"
+        self.desktopMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.desktopMode.backgroundColor = UIColor.foregroundColor
+        self.desktopMode.textLabel?.textColor = UIColor.fontColor
+        self.desktopMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnMode.detailTextLabel?.text = SettingValues.AppMode.MULTI_COLUMN.getDescription()
-        self.multicolumnMode.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnMode.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumnMode.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.multicolumnMode.backgroundColor = UIColor.foregroundColor
+        self.multicolumnMode.textLabel?.textColor = UIColor.fontColor
         self.multicolumnMode.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.multicolumnCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnCount.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumnCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnCount.detailTextLabel?.textColor = UIColor.fontColor
+        self.multicolumnCount.backgroundColor = UIColor.foregroundColor
+        self.multicolumnCount.textLabel?.textColor = UIColor.fontColor
         self.multicolumnCount.detailTextLabel?.numberOfLines = 0
 
         self.multicolumnPortraitCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.multicolumnPortraitCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.multicolumnPortraitCount.backgroundColor = ColorUtil.theme.foregroundColor
-        self.multicolumnPortraitCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.multicolumnPortraitCount.detailTextLabel?.textColor = UIColor.fontColor
+        self.multicolumnPortraitCount.backgroundColor = UIColor.foregroundColor
+        self.multicolumnPortraitCount.textLabel?.textColor = UIColor.fontColor
         self.multicolumnPortraitCount.detailTextLabel?.numberOfLines = 0
 
         self.galleryCount.detailTextLabel?.text = SettingValues.AppMode.SINGLE.getDescription()
-        self.galleryCount.detailTextLabel?.textColor = ColorUtil.theme.fontColor
-        self.galleryCount.backgroundColor = ColorUtil.theme.foregroundColor
-        self.galleryCount.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.galleryCount.detailTextLabel?.textColor = UIColor.fontColor
+        self.galleryCount.backgroundColor = UIColor.foregroundColor
+        self.galleryCount.textLabel?.textColor = UIColor.fontColor
         self.galleryCount.detailTextLabel?.numberOfLines = 0
 
         self.setSelected()
@@ -212,6 +226,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             case 0: return self.singleMode
             case 1: return self.splitMode
             case 2: return self.multicolumnMode
+            case 3: return self.desktopMode
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -253,7 +268,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
                     keyWindow = UIApplication.shared.connectedScenes
                         .filter({ $0.activationState == .foregroundActive })
                         .map({ $0 as? UIWindowScene })
-                        .compactMap({$0})
+                        .compactMap({ $0 })
                         .first?.windows
                         .filter({ $0.isKeyWindow }).first
                 }
@@ -262,7 +277,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
                 fatalError("Window must exist when resetting the stack!")
             }
 
-            (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
+            _ = (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         } else if indexPath.section == 1 && indexPath.row == 0 {
             showMultiColumn()
         } else if indexPath.section == 1 && indexPath.row == 1 {
@@ -293,7 +308,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Landscape column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         actionSheetController.addChild(pickerView)
         
@@ -326,7 +341,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Portrait column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Portrait column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         actionSheetController.addChild(pickerView)
         
@@ -359,7 +374,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
         actionSheetController.setupTheme()
         
-        actionSheetController.attributedTitle = NSAttributedString(string: "Gallery column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+        actionSheetController.attributedTitle = NSAttributedString(string: "Gallery column count", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         actionSheetController.addChild(pickerView)
         
@@ -377,11 +392,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var ipadOffset = 0
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        var isIpad = false
+        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+            isIpad = true
             ipadOffset = 3
         }
         switch section {
-        case 0: return 3
+        case 0: return 3 + (isIpad ? 1 : 0)
         case 1: return 4 + ipadOffset
         default: fatalError("Unknown number of sections")
         }

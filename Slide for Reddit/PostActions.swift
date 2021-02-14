@@ -7,7 +7,7 @@
 //
 
 import Anchorage
-import RealmSwift
+import CoreData
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
@@ -19,7 +19,7 @@ protocol SubmissionMoreDelegate: class {
     func showFilterMenu(_ cell: LinkCellView)
     func applyFilters()
     func hide(index: Int)
-    func subscribe(link: RSubmission)
+    func subscribe(link: SubmissionObject)
 }
 
 class PostActions: NSObject {
@@ -67,11 +67,11 @@ class PostActions: NSObject {
         case .CROSSPOST:
             PostActions.crosspost(cell.link!, parent)
         case .READ_LATER:
-            if !ReadLater.isReadLater(id: link.getIdentifier()) {
-                ReadLater.addReadLater(id: cell.link!.getIdentifier(), subreddit: cell.link!.subreddit)
+            if !ReadLater.isReadLater(id: link.id) {
+                ReadLater.addReadLater(id: cell.link!.id, subreddit: cell.link!.subreddit)
                 BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             } else {
-                ReadLater.removeReadLater(id: cell.link!.getIdentifier())
+                ReadLater.removeReadLater(id: cell.link!.id)
                 BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
             }
         case .SHARE_CONTENT:
@@ -99,7 +99,7 @@ class PostActions: NSObject {
         case .SAFARI:
             if link.url != nil {
                 if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(link.url!, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                    UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
                 } else {
                     UIApplication.shared.openURL(link.url!)
                 }
@@ -111,14 +111,14 @@ class PostActions: NSObject {
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
             let text = UITextView().then {
                 $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
-                $0.textColor = ColorUtil.theme.fontColor
+                $0.textColor = UIColor.fontColor
                 $0.backgroundColor = .clear
                 $0.isEditable = false
-                $0.text = cell.link!.body.decodeHTML()
+                $0.text = cell.link?.markdownBody?.decodeHTML() ?? ""
             }
             
             alert.contentView.addSubview(text)
@@ -129,7 +129,7 @@ class PostActions: NSObject {
             
             alert.addCloseButton()
             alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
-                UIPasteboard.general.string = cell.link!.body.decodeHTML()
+                UIPasteboard.general.string = cell.link?.markdownBody?.decodeHTML() ?? ""
             }))
             
             alert.addBlurView()
@@ -159,28 +159,44 @@ class PostActions: NSObject {
         alertController.show(parent)
     }
     
+    @available(iOS 13.0, *)
+    public static func getMoreContextMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) -> UIMenu {
+        // Create a UIAction for sharing
+        var buttons = [UIAction]()
+        if let link = cell.link {
+            for item in SettingValues.PostOverflowAction.getMenu(link, mutableList: mutableList) {
+                buttons.append(UIAction(title: item.getTitle(), image: item.getImage(), handler: { (action) in
+                    handleAction(action: item, cell: cell, parent: parent, nav: nav, mutableList: mutableList, delegate: delegate, index: index)
+                }))
+            }
+        }
+        // Create and return a UIMenu with the share action
+        return UIMenu(title: "Submission Options", children: buttons)
+    }
+    
     static func showModMenu(_ cell: LinkCellView, parent: UIViewController) {
        // TODO: - remove with reason, new icons
         let alertController = DragDownAlertMenu(title: "Moderation", subtitle: "Submission by u/\(cell.link!.author)", icon: cell.link!.thumbnailUrl, themeColor: GMColor.lightGreen500Color())
-        
-        alertController.addAction(title: "\(cell.link!.reports.count) reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
-            var reports = ""
-            for report in cell.link!.reports {
-                reports += report + "\n"
+        if let reportsDictionary = cell.link?.reportsDictionary {
+            alertController.addAction(title: "\(reportsDictionary.keys.count > 0 ? "\(reportsDictionary.keys.count)" : "No") reports", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
+                var reports = ""
+                for reporter in reportsDictionary.keys {
+                    reports += "\(reporter): \(reportsDictionary[reporter] as? String ?? "")\n"
+                }
+                let alert = UIAlertController(title: "Reports",
+                                              message: reports,
+                                              preferredStyle: UIAlertController.Style.alert)
+                
+                let cancelAction = UIAlertAction(title: "OK",
+                                                 style: .cancel, handler: nil)
+                
+                alert.addAction(cancelAction)
+                parent.present(alert, animated: true, completion: nil)
             }
-            let alert = UIAlertController(title: "Reports",
-                                          message: reports,
-                                          preferredStyle: UIAlertController.Style.alert)
-            
-            let cancelAction = UIAlertAction(title: "OK",
-                                             style: .cancel, handler: nil)
-            
-            alert.addAction(cancelAction)
-            parent.present(alert, animated: true, completion: nil)
         }
         
-        if cell.link!.approved {
-            alertController.addAction(title: "Approved by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
+        if cell.link!.isApproved {
+            alertController.addAction(title: "Approved by \(cell.link!.approvedBy ?? "unknown")", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon(), enabled: false) {
             }
         } else {
             alertController.addAction(title: "Approve", icon: UIImage(sfString: SFSymbol.handThumbsupFill, overrideString: "approve")!.menuIcon()) {
@@ -188,8 +204,8 @@ class PostActions: NSObject {
             }
         }
         
-        if cell.link!.removed {
-            alertController.addAction(title: "Removed by u/\(cell.link!.approvedBy)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
+        if cell.link!.isRemoved {
+            alertController.addAction(title: "Removed by \(cell.link!.approvedBy ?? "unknown")", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon(), enabled: false) {
             }
         } else {
             alertController.addAction(title: "Remove", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.menuIcon()) {
@@ -205,7 +221,7 @@ class PostActions: NSObject {
             cell.flairSelf()
         }
 
-        if !cell.link!.nsfw {
+        if !cell.link!.isNSFW {
             alertController.addAction(title: "Mark as NSFW", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
                 self.modNSFW(cell, true)
             }
@@ -215,7 +231,7 @@ class PostActions: NSObject {
             }
         }
         
-        if !cell.link!.spoiler {
+        if !cell.link!.isSpoiler {
             alertController.addAction(title: "Mark as spoiler", icon: UIImage(sfString: SFSymbol.exclamationmarkCircleFill, overrideString: "reports")!.menuIcon()) {
                 self.modSpoiler(cell, true)
             }
@@ -225,7 +241,7 @@ class PostActions: NSObject {
             }
         }
         
-        if cell.link!.locked {
+        if cell.link!.isLocked {
             alertController.addAction(title: "Unlock thread", icon: UIImage(named: "lock")!.menuIcon()) {
                 self.modLock(cell, false)
             }
@@ -241,7 +257,7 @@ class PostActions: NSObject {
             }
         }
         
-        if cell.link!.stickied {
+        if cell.link!.isStickied {
             alertController.addAction(title: "Un-sticky post", icon: UIImage(sfString: SFSymbol.pinSlashFill, overrideString: "flag")!.menuIcon()) {
                 self.modSticky(cell, sticky: false)
             }
@@ -280,7 +296,7 @@ class PostActions: NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(!set ? "un" : "")locked!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.locked = set
+                        cell.link!.isLocked = set
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -307,7 +323,7 @@ class PostActions: NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Spoiler tag set!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.spoiler = set
+                        cell.link!.isSpoiler = set
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -334,7 +350,7 @@ class PostActions: NSObject {
                     }
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "NSFW tag set!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.nsfw = set
+                        cell.link!.isNSFW = set
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -406,7 +422,7 @@ class PostActions: NSObject {
                 case .success:
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Submission \(sticky ? "" : "un-")stickied!", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController)
-                        cell.link!.stickied = sticky
+                        cell.link!.isStickied = sticky
                         cell.refreshLink(cell.link!, np: false)
                     }
                 }
@@ -563,7 +579,7 @@ class PostActions: NSObject {
     static var subText: String?
     static var titleText: String?
     
-    static func crosspost(_ thing: RSubmission, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
+    static func crosspost(_ thing: SubmissionObject, _ parent: UIViewController, _ title: String? = nil, _ subreddit: String? = nil, _ error: String? = "") {
         VCPresenter.showVC(viewController: ReplyViewController.init(submission: thing, completion: { (submission) in
             VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.init(string: submission!.permalink)!), popupIfPossible: true, parentNavigationController: parent.navigationController, parentViewController: parent)
         }), popupIfPossible: true, parentNavigationController: nil, parentViewController: parent)
@@ -571,17 +587,17 @@ class PostActions: NSObject {
     
     static var reportText: String?
     
-    static func report(_ thing: Object, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
+    static func report(_ thing: RedditObject, parent: UIViewController, index: Int, delegate: SubmissionMoreDelegate?) {
         let alert = AlertController(title: "Report this content", message: "", preferredStyle: .alert)
         
         if !AccountController.isLoggedIn {
             alert.addAction(AlertAction(title: "Log in to report this content", style: .normal, handler: { (_) in
-                //TODO how to do this now MainViewController.doAddAccount(register: false)
+                // TODO how to do this now MainViewController.doAddAccount(register: false)
             }))
             alert.addAction(AlertAction(title: "Create a Reddit account", style: .normal, handler: { (_) in
                 let alert = UIAlertController(title: "Create a new Reddit account", message: "After finishing the process on the next screen, click the 'back' arrow to finish setting up your account!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (_) in
-                    //TODO how to do this now MainViewController.doAddAccount(register: true)
+                    // TODO how to do this now MainViewController.doAddAccount(register: true)
                 }))
                 alert.addCancelButton()
                 VCPresenter.presentAlert(alert, parentVC: parent)
@@ -596,11 +612,11 @@ class PostActions: NSObject {
         } else {
             let config: TextField.Config = { textField in
                 textField.becomeFirstResponder()
-                textField.textColor = ColorUtil.theme.fontColor
-                textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor.withAlphaComponent(0.3)])
-                textField.left(image: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")?.menuIcon(), color: ColorUtil.theme.fontColor)
-                textField.layer.borderColor = ColorUtil.theme.fontColor.withAlphaComponent(0.3) .cgColor
-                textField.backgroundColor = ColorUtil.theme.foregroundColor
+                textField.textColor = UIColor.fontColor
+                textField.attributedPlaceholder = NSAttributedString(string: "Reason (optional)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.3)])
+                textField.left(image: UIImage(sfString: SFSymbol.exclamationmarkBubbleFill, overrideString: "flag")?.menuIcon(), color: UIColor.fontColor)
+                textField.layer.borderColor = UIColor.fontColor.withAlphaComponent(0.3) .cgColor
+                textField.backgroundColor = UIColor.foregroundColor
                 textField.leftViewPadding = 12
                 textField.layer.borderWidth = 1
                 textField.layer.cornerRadius = 8
@@ -616,7 +632,7 @@ class PostActions: NSObject {
             
             alert.setupTheme()
             
-            alert.attributedTitle = NSAttributedString(string: "Report this content", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "Report this content", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
             alert.contentView.addSubview(textField)
             
@@ -626,7 +642,7 @@ class PostActions: NSObject {
             alert.addAction(AlertAction(title: "Report", style: .destructive, handler: { (_) in
                 let text = self.reportText ?? ""
                 do {
-                    let name = (thing is RComment) ? (thing as! RComment).id : (thing as! RSubmission).id
+                    let name = (thing is CommentObject) ? (thing as! CommentObject).id : (thing as! SubmissionObject).id
                     try (UIApplication.shared.delegate as! AppDelegate).session?.report(name, reason: text, otherReason: "", completion: { (_) in
                         DispatchQueue.main.async {
                             BannerUtil.makeBanner(text: "Report sent!", color: GMColor.green500Color(), seconds: 3, context: parent)
@@ -665,7 +681,7 @@ class PostActions: NSObject {
                         case .success(let account):
                                 DispatchQueue.main.async {
                                     do {
-                                        try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaId(account.getId(), completion: { (result) in
+                                        try (UIApplication.shared.delegate as! AppDelegate).session?.blockViaId(account.id, completion: { (result) in
                                             print(result)
                                         })
                                     } catch {
@@ -710,11 +726,6 @@ class PostActions: NSObject {
         }
         return nil
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }
 
 class SubjectItemSource: NSObject, UIActivityItemSource {

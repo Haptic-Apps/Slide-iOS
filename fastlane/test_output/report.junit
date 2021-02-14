@@ -5,9 +5,9 @@
   </testsuite>
   <testsuite name='Slide_for_RedditTests.Slide_for_RedditTests' tests='2' failures='0'>
     <testcase classname='Slide_for_RedditTests.Slide_for_RedditTests' name='testExample' time='0.001'/>
-    <testcase classname='Slide_for_RedditTests.Slide_for_RedditTests' name='testPerformanceExample' time='0.257'/>
+    <testcase classname='Slide_for_RedditTests.Slide_for_RedditTests' name='testPerformanceExample' time='0.255'/>
   </testsuite>
   <testsuite name='Slide_for_RedditTests.SubmissionObjectReportService' tests='1' failures='0'>
-    <testcase classname='Slide_for_RedditTests.SubmissionObjectReportService' name='testConvertToCDAndBack' time='0.445'/>
+    <testcase classname='Slide_for_RedditTests.SubmissionObjectReportService' name='testConvertToCDAndBack' time='0.211'/>
   </testsuite>
 </testsuites>

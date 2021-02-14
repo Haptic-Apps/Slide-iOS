@@ -62,12 +62,12 @@ extension UIImage {
         var maxX: Int = 0
         var maxY: Int = 0
         
-        //Filter through data and look for non-transparent pixels.
+        // Filter through data and look for non-transparent pixels.
         for y in 0..<height {
             for x in 0..<width {
                 let pixelIndex = (width * y + x) * 4 /* 4 for A, R, G, B */
                 
-                if data[Int(pixelIndex)] != 0 { //Alpha value is not zero pixel is not transparent.
+                if data[Int(pixelIndex)] != 0 { // Alpha value is not zero pixel is not transparent.
                     if x < minX {
                         minX = x
                     }
@@ -152,19 +152,80 @@ extension UIImage {
 
     // TODO: - These should make only one copy and do in-place operations on those
     func navIcon(_ white: Bool = false) -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor && !white ? ColorUtil.theme.navIconColor : .white)
+        if #available(iOS 13.0, *) {
+            let lightImage = navIconThemed(white, night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
+            let darkImage = navIconThemed(white, night: true)
+            
+            let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
+            return asset.image()
+        } else {
+            return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor && !white ? UIColor.navIconColor : .white)
+        }
     }
 
+    func navIconThemed(_ white: Bool = false, night: Bool) -> UIImage {
+        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: SettingValues.reduceColor && !white ? (night ? ColorUtil.getNightTheme().navIconColor : ColorUtil.getDayTheme().navIconColor) : .white)
+    }
+    
     func smallIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 12, height: 12), withColor: ColorUtil.theme.navIconColor)
+        if #available(iOS 13.0, *) {
+            let lightImage = smallIconThemed(night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
+            let darkImage = smallIconThemed(night: true)
+            
+            let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
+            return asset.image()
+        } else {
+            return self.getCopy(withSize: CGSize(width: 12, height: 12), withColor: UIColor.navIconColor)
+        }
+    }
+
+    func smallIconThemed(night: Bool) -> UIImage {
+        return self.getCopy(withSize: CGSize(width: 12, height: 12), withColor: night ? ColorUtil.getNightTheme().navIconColor : ColorUtil.getDayTheme().navIconColor)
     }
 
     func toolbarIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: ColorUtil.theme.navIconColor)
+        if #available(iOS 13.0, *) {
+            let lightImage = toolbarIconThemed(night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
+            let darkImage = toolbarIconThemed(night: true)
+            
+            let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
+            return asset.image()
+        } else {
+            return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: UIColor.navIconColor)
+        }
+    }
+    
+    func toolbarIconThemed(night: Bool) -> UIImage {
+        return self.getCopy(withSize: CGSize(width: 25, height: 25), withColor: night ? ColorUtil.getNightTheme().navIconColor : ColorUtil.getDayTheme().navIconColor)
     }
 
     func menuIcon() -> UIImage {
-        return self.getCopy(withSize: CGSize(width: 20, height: 20), withColor: ColorUtil.theme.navIconColor)
+        if #available(iOS 13.0, *) {
+            let lightImage = menuIconThemed(night: false)
+            if !SettingValues.nightModeEnabled {
+                return lightImage
+            }
+
+            let darkImage = menuIconThemed(night: true)
+            
+            let asset = UIImageAsset(lightModeImage: lightImage, darkModeImage: darkImage)
+            return asset.image()
+        } else {
+            return self.getCopy(withSize: CGSize(width: 20, height: 20), withColor: UIColor.navIconColor)
+        }
+    }
+    
+    func menuIconThemed(night: Bool) -> UIImage {
+        return self.getCopy(withSize: CGSize(width: 20, height: 20), withColor: night ? ColorUtil.getNightTheme().navIconColor : ColorUtil.getDayTheme().navIconColor)
     }
 
     func cropToBounds(image: UIImage, width: Double, height: Double) -> UIImage {
@@ -358,5 +419,43 @@ extension UIImage {
         UIGraphicsEndImageContext()
 
         return imageWithPadding
+    }
+}
+
+@available(iOS 13.0, *)
+public extension UIImageAsset {
+
+    /// Creates an image asset with registration of tht eimages with the light and dark trait collections.
+    /// - Parameters:
+    ///   - lightModeImage: The image you want to register with the image asset with light user interface style.
+    ///   - darkModeImage: The image you want to register with the image asset with dark user interface style.
+    convenience init(lightModeImage: UIImage?, darkModeImage: UIImage?) {
+        self.init()
+        register(lightModeImage: lightModeImage, darkModeImage: darkModeImage)
+    }
+
+    /// Register an images with the light and dark trait collections respectively.
+    /// - Parameters:
+    ///   - lightModeImage: The image you want to register with the image asset with light user interface style.
+    ///   - darkModeImage: The image you want to register with the image asset with dark user interface style.
+    func register(lightModeImage: UIImage?, darkModeImage: UIImage?) {
+        register(lightModeImage, for: UITraitCollection(traitsFrom: [.current, UITraitCollection(userInterfaceStyle: .light)]))
+        register(darkModeImage, for: UITraitCollection(traitsFrom: [.current, UITraitCollection(userInterfaceStyle: .dark)]))
+    }
+
+    /// Register an image with the specified trait collection.
+    /// - Parameters:
+    ///   - image: The image you want to register with the image asset.
+    ///   - traitCollection: The traits to associate with image.
+    func register(_ image: UIImage?, for traitCollection: UITraitCollection) {
+        guard let image = image else {
+            return
+        }
+        register(image, with: traitCollection)
+    }
+
+    /// Returns the variant of the image that best matches the current trait collection. For early SDKs returns the image for light user interface style.
+    func image() -> UIImage {
+        return image(with: .current)
     }
 }

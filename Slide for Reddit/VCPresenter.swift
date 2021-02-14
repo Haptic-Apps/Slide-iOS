@@ -20,7 +20,7 @@ public class VCPresenter {
         }
         
         if viewController is InboxViewController {
-            //Siri Shortcuts integration
+            // Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = InboxViewController.openInboxActivity()
                 viewController.userActivity = activity
@@ -43,14 +43,25 @@ public class VCPresenter {
             override13 = false
         }
         
-        var respectedOverride13 = override13
+        
+        // Yes, this logic is a mess. I need to redo it sometime...
+        let respectedOverride13 = override13
+        var shouldPopup = popupIfPossible
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if viewController is SingleSubredditViewController && SettingValues.disableSubredditPopupIpad {
+                shouldPopup = false
+            } else if (viewController is CommentViewController || viewController is PagingCommentViewController) && SettingValues.disablePopupIpad {
+                shouldPopup = false
+            }
+        }
 
         override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
         
-        if (viewController is PagingCommentViewController || viewController is CommentViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController || viewController is WebsiteViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && popupIfPossible) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && popupIfPossible && override13) || parentNavigationController == nil {
+        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
             
             if viewController is SingleSubredditViewController {
                 (viewController as! SingleSubredditViewController).isModal = true
@@ -68,8 +79,8 @@ public class VCPresenter {
 
             let barButton = UIBarButtonItem.init(customView: button)
 
-            //Let's figure out how to present it
-            let small: Bool = popupIfPossible && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
+            // Let's figure out how to present it
+            let small: Bool = shouldPopup && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
 
             if small || override13 || respectedOverride13 {
                 newParent.modalPresentationStyle = .pageSheet
@@ -104,7 +115,7 @@ public class VCPresenter {
             viewController.navigationItem.leftBarButtonItem = barButton
 
             if !(parentViewController is SplitMainViewController) && !(parentViewController?.parent is SplitMainViewController) {
-                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = DefaultGestureDelegate()
+                viewController.navigationController?.interactivePopGestureRecognizer?.delegate = nil
                 viewController.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
             }
         }
@@ -115,8 +126,8 @@ public class VCPresenter {
         let newParent = TapBehindModalViewController(rootViewController: viewController)
         newParent.navigationBar.shadowImage = UIImage()
         newParent.navigationBar.isTranslucent = false
-        newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
-        newParent.view.backgroundColor = ColorUtil.theme.foregroundColor
+        newParent.navigationBar.barTintColor = UIColor.foregroundColor
+        newParent.view.backgroundColor = UIColor.foregroundColor
         let button = UIButtonWithContext.init(type: .custom)
         button.parentController = newParent
         button.contextController = parentViewController
@@ -124,7 +135,7 @@ public class VCPresenter {
         button.setImage(UIImage(sfString: SFSymbol.xmark, overrideString: "close")!.navIcon().getCopy(withSize: CGSize.square(size: 20)), for: UIControl.State.normal)
         button.frame = CGRect.init(x: -10, y: 0, width: 35, height: 35)
         button.clipsToBounds = true
-        button.layer.cornerRadius = 35/2
+        button.layer.cornerRadius = 35 / 2
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
         let barButton = UIBarButtonItem.init(customView: button)
@@ -136,11 +147,11 @@ public class VCPresenter {
         if let delegate = (UIApplication.shared.delegate as? AppDelegate)?.transitionDelegateModal {
             newParent.transitioningDelegate = delegate
         }
-        newParent.view.backgroundColor = ColorUtil.theme.foregroundColor
+        newParent.view.backgroundColor = UIColor.foregroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.foregroundColor
+            popover.backgroundColor = UIColor.foregroundColor
             
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {
@@ -149,7 +160,7 @@ public class VCPresenter {
                 popover.delegate = (parentViewController as! MediaTableViewController)
             }
         }
-        //TODO deallocate that delegate....
+        // TODO deallocate that delegate....
         
         viewController.navigationItem.rightBarButtonItems = [barButton]
         parentViewController.present(newParent, animated: true, completion: nil)
@@ -158,11 +169,11 @@ public class VCPresenter {
     public static func proDialogShown(feature: Bool, _ parentViewController: UIViewController) -> Bool {
         if (feature && !SettingValues.isPro) || (!feature && !SettingValues.isPro) {
             let viewController = SettingsPro()
-            viewController.view.backgroundColor = ColorUtil.theme.foregroundColor
+            viewController.view.backgroundColor = UIColor.foregroundColor
             let newParent = TapBehindModalViewController.init(rootViewController: viewController)
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
-            newParent.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
+            newParent.navigationBar.barTintColor = UIColor.foregroundColor
 
             newParent.navigationBar.shadowImage = UIImage()
             newParent.navigationBar.isTranslucent = false
@@ -206,11 +217,11 @@ public class VCPresenter {
         let barButton = UIBarButtonItem.init(customView: button)
         
         newParent.modalPresentationStyle = .popover
-        newParent.view.backgroundColor = ColorUtil.theme.backgroundColor
+        newParent.view.backgroundColor = UIColor.backgroundColor
         if let popover = newParent.popoverPresentationController {
             popover.sourceView = parentViewController.view
             popover.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-            popover.backgroundColor = ColorUtil.theme.backgroundColor
+            popover.backgroundColor = UIColor.backgroundColor
 
             popover.sourceRect = CGRect(x: parentViewController.view.bounds.midX, y: parentViewController.view.bounds.midY, width: 0, height: 0)
             if parentViewController is MediaViewController {
@@ -246,7 +257,7 @@ public class VCPresenter {
     public static func openRedditLink(_ link: String, _ parentNav: UINavigationController?, _ parentVC: UIViewController?) {
         let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: link)!)
         if vc is SingleSubredditViewController {
-            //Siri Shortcuts integration
+            // Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: (vc as! SingleSubredditViewController).sub)
                 vc.userActivity = activity

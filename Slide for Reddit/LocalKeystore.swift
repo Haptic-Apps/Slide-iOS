@@ -65,7 +65,7 @@ public class LocalKeystore {
             var tokenArray = UserDefaults.standard.array(forKey: "SAVED_TOKENS") as? [String] ?? [String]()
             for item in tokenArray {
                 if item == token.name {
-                    //Username is already saved
+                    // Username is already saved
                     UserDefaults.standard.synchronize()
                     return
                 }
@@ -100,7 +100,7 @@ public class LocalKeystore {
             var tokenArray = UserDefaults.standard.array(forKey: "SAVED_TOKENS") as? [String] ?? [String]()
             for item in tokenArray {
                 if item == token.name {
-                    //Username is already saved
+                    // Username is already saved
                     UserDefaults.standard.synchronize()
                     return
                 }

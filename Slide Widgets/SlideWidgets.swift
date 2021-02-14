@@ -175,7 +175,6 @@ struct AccountEntry: TimelineEntry {
     public let readLater: Int
 }
 
-
 class ImageLoader: ObservableObject {
     /*
     Corresponds to USR_DOMAIN in info.plist, which derives its value
@@ -359,7 +358,7 @@ struct SubredditLoader {
 
         if let subs = shared?.array(forKey: "subscriptions") as? [String], subreddit.lowercased() == "frontpage" {
             let filteredSubs = subs.map({ $0.lowercased() }).filter { (sub) -> Bool in
-                //XCode was complaining that this would take too long to type check on one line :/
+                // XCode was complaining that this would take too long to type check on one line :/
                 if !sub.contains("m/") && sub != "frontpage" && sub != "all" && sub != "popular" && sub != "friends" && sub != "moderated" {
                     return true
                 }
@@ -368,7 +367,7 @@ struct SubredditLoader {
             
             var subsString = ""
             for item in filteredSubs {
-                if subsString.count > 2500 { //Max header length on Reddit is around 2500 chars
+                if subsString.count > 2500 { // Max header length on Reddit is around 2500 chars
                     break
                 }
                 if subsString != "" {
@@ -404,8 +403,8 @@ struct SubredditLoader {
     static func getSubredditInfo(subreddit: String, fromData data: Foundation.Data) -> SubredditPosts {
         var posts = [Post]()
         do {
-            let json = try? JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-            if let json = json, json["data"] != nil && (json["data"] as? [String : Any])?["children"] != nil {
+            let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            if let json = json, json["data"] != nil && (json["data"] as? [String: Any])?["children"] != nil {
                 let children = (json["data"] as! [String: Any])["children"] as! [[String: Any]]
                 for child in children {
                     let data = child["data"] as! [String: Any]

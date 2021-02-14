@@ -6,7 +6,6 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
-import RealmSwift
 import reddift
 import UIKit
 import UserNotifications
@@ -22,16 +21,7 @@ class OfflineOverviewViewController: UITableViewController {
         self.subComments = [:]
         self.subTime = [:]
         super.init(style: .plain)
-        do {
-            let realm = try Realm()
-            realm.objects(RListing.self).forEach({ (listing) in
-                self.subComments[listing.subreddit] = listing.comments
-                self.subs.append(listing.subreddit)
-                self.subTime[listing.subreddit] = listing.updated
-            })
-        } catch {
-            
-        }
+        // TODO load all offline subs here
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,7 +40,7 @@ class OfflineOverviewViewController: UITableViewController {
     override func loadView() {
         super.loadView()
         
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Offline content"
         self.tableView.separatorStyle = .none
@@ -65,13 +55,13 @@ class OfflineOverviewViewController: UITableViewController {
         let row = indexPath.row
         let sub = subs[row]
         
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
+        cell.textLabel?.textColor = UIColor.fontColor
         cell.textLabel?.font = FontGenerator.boldFontOfSize(size: 16, submission: true)
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.accessoryType = .disclosureIndicator
-        cell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        cell.detailTextLabel?.textColor = UIColor.fontColor
         cell.detailTextLabel?.numberOfLines = 0
         cell.detailTextLabel?.text = subComments[sub] ?? false ? "Comments cached \(DateFormatter().timeSince(from: subTime[sub] ?? NSDate(), numericDates: true))" : ""
        // if indexPath.row == 0 {
@@ -92,7 +82,7 @@ class OfflineOverviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return self.subs.count //+ 1
+        case 0: return self.subs.count // + 1
         default: fatalError("Unknown number of sections")
         }
     }

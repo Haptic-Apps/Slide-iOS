@@ -35,6 +35,14 @@ class SwipeForwardNavigationController: UINavigationController {
 
         setup()
     }
+    
+    override var childForStatusBarHidden: UIViewController? {
+        return topViewController
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .slide
+    }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -170,7 +178,16 @@ extension SwipeForwardNavigationController: UIGestureRecognizerDelegate {
                 let rad = atan(velocity.y / velocity.x)
                 let deg = rad * 180 / CGFloat.pi
 
-                if abs(deg) > 20 { //Only accept if the angle of the gesture is above 20 degrees (horizontal)
+                if abs(deg) > 45 && velocity.x > 0 { // Only accept if the angle of the gesture is below 45 degrees (horizontal)
+                    shouldBegin = false
+                }
+            } else if gestureRecognizer == interactivePushGestureRecognizer {
+                let velocity = fullWidthBackGestureRecognizer.velocity(in: view)
+
+                let rad = atan(velocity.y / velocity.x)
+                let deg = rad * 180 / CGFloat.pi
+
+                if abs(deg) > 45 && velocity.x < 0 { // Only accept if the angle of the gesture is below 45 degrees and in the  (horizontal)
                     shouldBegin = false
                 }
             }
@@ -260,7 +277,7 @@ extension SwipeForwardNavigationController {
 extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
     func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
         if #available(iOS 13, *) {
-            return self //Disable left sidebar
+            return self // Disable left sidebar
         } else {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 guard let primaryNavigation = primaryViewController as? UINavigationController else {
@@ -276,10 +293,10 @@ extension SwipeForwardNavigationController: UISplitViewControllerDelegate {
         var main: UIViewController?
         var newViewControllers = [UIViewController]()
         
-        for viewController in navigationController.viewControllers.reversed() { //viewControllers is LIFO, reverse it
+        for viewController in navigationController.viewControllers.reversed() { // viewControllers is LIFO, reverse it
             if viewController is MainViewController {
                 let newNav = SwipeForwardNavigationController(rootViewController: viewController)
-                for previousVC in newViewControllers.reversed() { //put back in LIFO
+                for previousVC in newViewControllers.reversed() { // put back in LIFO
                     newNav.pushViewController(previousVC, animated: false)
                 }
                 return newNav

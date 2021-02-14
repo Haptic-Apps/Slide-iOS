@@ -34,10 +34,13 @@ class RedditLink {
         }
         if url.isEmpty() {
             if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-                let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+                let safariVC = SFHideSafariViewController(url: oldUrl, configuration: config)
+
                 if #available(iOS 10.0, *) {
-                    safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
-                    safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                    safariVC.preferredBarTintColor = UIColor.backgroundColor
+                    safariVC.preferredControlTintColor = UIColor.fontColor
                 } else {
                     // Fallback on earlier versions
                 }
@@ -70,6 +73,8 @@ class RedditLink {
             return CommentViewController.init(submission: parts[1], subreddit: nil, np: np)
         case .MULTI:
             return SingleSubredditViewController.init(subName: "/u/\(parts[2])/m/\(parts[4])", single: true)
+        case .DIRECT_MESSAGE:
+            return ThreadViewControler(threadID: parts[2], title: "")
         case .LIVE:
             print(parts[1])
             return LiveThreadViewController.init(id: parts[2])
@@ -147,10 +152,12 @@ class RedditLink {
             break
         }
         if SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL || SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY {
-            let safariVC = SFHideSafariViewController(url: oldUrl, entersReaderIfAvailable: SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY)
+            let config = SFSafariViewController.Configuration()
+            config.entersReaderIfAvailable = SettingValues.browser == SettingValues.BROWSER_SAFARI_INTERNAL_READABILITY
+            let safariVC = SFHideSafariViewController(url: oldUrl, configuration: config)
             if #available(iOS 10.0, *) {
-                safariVC.preferredBarTintColor = ColorUtil.theme.backgroundColor
-                safariVC.preferredControlTintColor = ColorUtil.theme.fontColor
+                safariVC.preferredBarTintColor = UIColor.backgroundColor
+                safariVC.preferredControlTintColor = UIColor.fontColor
             } else {
                 // Fallback on earlier versions
             }
@@ -204,7 +211,7 @@ class RedditLink {
         }
         
         url = url.removingPercentEncoding ?? url
-        url = url.removingPercentEncoding ?? url //For some reason, some links are doubly encoded
+        url = url.removingPercentEncoding ?? url // For some reason, some links are doubly encoded
         
         url = url.replacingOccurrences(of: "&amp;", with: "&")
 
@@ -226,6 +233,8 @@ class RedditLink {
             return RedditLinkType.LIVE
         } else if url.matches(regex: "(?i)reddit\\.com/message/compose.*") {
             return RedditLinkType.MESSAGE
+        } else if url.matches(regex: "(?i)reddit\\.com/message/direct.*") {
+            return RedditLinkType.DIRECT_MESSAGE
         } else if url.matches(regex: "(?i)reddit\\.com(?:/r/[a-z0-9-_.]+)?/(?:wiki|help).*") {
             // Wiki link. Format: reddit.com/r/$subreddit/wiki/$page [optional]
             return RedditLinkType.WIKI
@@ -254,7 +263,7 @@ class RedditLink {
             // User. Format: reddit.com/u [or user]/$username/$page [optional]
             return RedditLinkType.USER
         } else {
-            //Open all links that we can't open in another app
+            // Open all links that we can't open in another app
             return RedditLinkType.OTHER
         }
     }
@@ -270,6 +279,7 @@ class RedditLink {
         case MULTI
         case SEARCH
         case MESSAGE
+        case DIRECT_MESSAGE
         case LIVE
         case OTHER
     }

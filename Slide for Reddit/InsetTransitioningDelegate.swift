@@ -74,7 +74,7 @@ class SlideInTransitionModal: NSObject, UIViewControllerAnimatedTransitioning {
             }
         }
         
-        let completionBlock: (Bool) -> Void = { finished in
+        let completionBlock: (Bool) -> Void = { _ in
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
 
@@ -182,9 +182,9 @@ public class PanGestureInteractionControllerModal: UIPercentDrivenInteractiveTra
     
     weak var scrollView: UIScrollView? {
         didSet {
-            //self.scrollView?.bounces = false
-            //self.scrollView?.delegate = self
-            //self.scrollView?.contentOffset = CGPoint.zero
+            // self.scrollView?.bounces = false
+            // self.scrollView?.delegate = self
+            // self.scrollView?.contentOffset = CGPoint.zero
             self.gestureRecognizer.delegate = self
         }
     }

@@ -82,7 +82,7 @@ class AnyModalViewController: UIViewController {
     
     var scrubber = VideoScrubberView()
     
-    var didStartPan : (_ panStart: Bool) -> Void = { result in }
+    var didStartPan : (_ panStart: Bool) -> Void = { _ in }
     private let blurEffect = (NSClassFromString("_UICustomBlurEffect") as! UIBlurEffect.Type).init()
     
     private var savedColor: UIColor?
@@ -100,10 +100,10 @@ class AnyModalViewController: UIViewController {
         self.embeddedPlayer = cellView.videoView.player
         self.toReturnTo = cellView
         self.baseURL = cellView.videoURL ?? cellView.link?.url
-        if VideoMediaViewController.VideoType.fromPath(self.baseURL!.absoluteString) == .REDDIT {
-            self.baseURL = URL(string: cellView.link!.videoPreview)
+        if let urlString = cellView.link?.videoPreview, VideoMediaViewController.VideoType.fromPath(self.baseURL!.absoluteString) == .REDDIT {
+            self.baseURL = URL(string: urlString)
         }
-        AnyModalViewController.linkID = cellView.link!.getId()
+        AnyModalViewController.linkID = cellView.link!.id
     }
     
     init(baseUrl: URL, _ commentCallback: (() -> Void)?, upvoteCallback: (() -> Void)?, isUpvoted: Bool, failure: ((_ url: URL) -> Void)?) {
@@ -194,7 +194,7 @@ class AnyModalViewController: UIViewController {
             }
             
             DispatchQueue.global(qos: .background).async {
-                //Prevent video from stopping system background audio
+                // Prevent video from stopping system background audio
                 do {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                     try AVAudioSession.sharedInstance().setActive(true)
@@ -242,7 +242,10 @@ class AnyModalViewController: UIViewController {
             size = self.view.bounds.size
         }
 
-        self.videoView.frame = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
+        let newRect = AVMakeRect(aspectRatio: size, insideRect: self.view.bounds)
+        if newRect.size != self.videoView.frame.size {
+            self.videoView.frame = newRect
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -293,12 +296,13 @@ class AnyModalViewController: UIViewController {
 
         player.isMuted = false
 
-        //SettingValues.autoplayAudioMode.activate()
+        // SettingValues.autoplayAudioMode.activate()
 
         if SettingValues.modalVideosRespectHardwareMuteSwitch && !overrideMuteSwitch {
             try? AVAudioSession.sharedInstance().setCategory(.soloAmbient, options: [])
         } else {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
+            VideoMediaViewController.soundLocked = true
         }
 
         setMuteButtonImage(muted: false)
@@ -349,7 +353,7 @@ class AnyModalViewController: UIViewController {
         
         alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
             if #available(iOS 10.0, *) {
-                UIApplication.shared.open(baseURL, options: convertToUIApplicationOpenExternalURLOptionsKeyDictionary([:]), completionHandler: nil)
+                UIApplication.shared.open(baseURL, options: [:], completionHandler: nil)
             } else {
                 UIApplication.shared.openURL(baseURL)
             }
@@ -455,6 +459,8 @@ class AnyModalViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        VideoMediaViewController.soundLocked = false
+
         super.viewWillDisappear(animated)
         timer?.invalidate()
         
@@ -504,6 +510,7 @@ class AnyModalViewController: UIViewController {
     deinit {
         stopDisplayLink()
         AnyModalViewController.linkID = ""
+        VideoMediaViewController.soundLocked = false
     }
     
     //    override func didReceiveMemoryWarning() {
@@ -716,7 +723,7 @@ class AnyModalViewController: UIViewController {
     }
     
     func connectGestures() {
-        didStartPan = { [weak self] result in
+        didStartPan = { [weak self] _ in
             if let strongSelf = self {
                 strongSelf.unFullscreen(strongSelf.videoView)
             }
@@ -839,13 +846,15 @@ extension AnyModalViewController: UIGestureRecognizerDelegate {
             currentPositionTouched = panGesture.location(in: view)
             didStartPan(true)
         } else if panGesture.state == .changed {
-            viewToMove.frame.origin = CGPoint(
+            var newFrame = viewToMove.frame
+            newFrame.origin = CGPoint(
                 x: 0,
                 y: originalPosition!.y + translation.y
             )
+
+            viewToMove.frame = newFrame
             let progress = translation.y / (self.view.frame.size.height / 2)
             self.view.alpha = 1 - (abs(progress) * 1.3)
-            
         } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
             
@@ -963,7 +972,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         
         let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
         let newCMTime = CMTimeMakeWithSeconds(Float64(newTime), preferredTimescale: 1000)
-        self.videoView.player?.seek(to: newCMTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero) { _ in
+        self.videoView.player?.seek(to: newCMTime, toleranceBefore: tolerance, toleranceAfter: tolerance) { _ in
             self.videoView.player?.play()
         }
     }
@@ -974,7 +983,7 @@ extension AnyModalViewController: VideoScrubberViewDelegate {
         
         let targetTime = CMTime(seconds: Double(toSeconds), preferredTimescale: 1000)
         let tolerance: CMTime = CMTimeMakeWithSeconds(0.001, preferredTimescale: 1000) // 1 ms with a resolution of 1 ms
-        self.videoView.player?.seek(to: targetTime, toleranceBefore: CMTime.zero, toleranceAfter: CMTime.zero)
+        self.videoView.player?.seek(to: targetTime, toleranceBefore: tolerance, toleranceAfter: tolerance)
     }
     
     func sliderDidBeginDragging() {
@@ -1031,14 +1040,4 @@ extension AVAsset {
         }
         return estimatedSize
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value) })
 }

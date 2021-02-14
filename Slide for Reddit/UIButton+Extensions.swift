@@ -25,7 +25,7 @@ extension UIButton {
         self.imageView?.contentMode = .scaleAspectFit
     }
     
-    convenience init(buttonImage: UIImage?, toolbar: Bool = false) { //TODO accessibility here too
+    convenience init(buttonImage: UIImage?, toolbar: Bool = false) { // TODO accessibility here too
         self.init(type: .custom)
         if toolbar {
             self.setImage(buttonImage?.navIcon(), for: UIControl.State.normal)

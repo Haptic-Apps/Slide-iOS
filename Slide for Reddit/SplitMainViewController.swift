@@ -10,13 +10,12 @@ import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
-import SDWebImage
-import SwiftyJSON
-import MaterialComponents.MaterialTabs
-import RealmSwift
+import MaterialComponents.MDCActivityIndicator
 import reddift
 import SDCAlertView
+import SDWebImage
 import StoreKit
+import SwiftyJSON
 import UIKit
 import WatchConnectivity
 #if canImport(WidgetKit)
@@ -26,6 +25,9 @@ import WidgetKit
 class SplitMainViewController: MainViewController {
 
     static var isFirst = true
+    var removeCachingHeader: (() -> Void)?
+
+    var autoCacheProgress: MDCActivityIndicator?
 
     override func handleToolbars() {
     }
@@ -37,7 +39,6 @@ class SplitMainViewController: MainViewController {
     override var childForHomeIndicatorAutoHidden: UIViewController? {
         return nil
     }
-
 
     override func redoSubs() {
         setupTabBar(finalSubs)
@@ -53,7 +54,7 @@ class SplitMainViewController: MainViewController {
 
     override func colorChanged(_ color: UIColor) {
         tabBar?.tintColor = ColorUtil.accentColorForSub(sub: MainViewController.current)
-        inHeadView.backgroundColor = SettingValues.reduceColor ? ColorUtil.theme.foregroundColor : color
+        inHeadView.backgroundColor = SettingValues.reduceColor ? UIColor.foregroundColor : color
         if SettingValues.hideStatusBar {
             inHeadView.backgroundColor = .clear
         }
@@ -85,6 +86,14 @@ class SplitMainViewController: MainViewController {
         account.contentMode = .scaleAspectFill
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
+        var not13 = true
+        if #available(iOS 13.0, *) {
+            not13 = false
+        }
+        if SettingValues.desktopMode && (!not13 || SettingValues.appMode != .SPLIT) {
+            account.isHidden = true
+        }
+
         account.sizeAnchors /==/ CGSize.square(size: 30)
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
@@ -94,6 +103,8 @@ class SplitMainViewController: MainViewController {
             let interaction = UIContextMenuInteraction(delegate: self)
             self.accountB.customView?.addInteraction(interaction)
         }
+        self.autoCacheProgress = nil
+
         didUpdate()
     }
     
@@ -139,11 +150,20 @@ class SplitMainViewController: MainViewController {
         account.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
         account.sizeAnchors /==/ CGSize.square(size: 30)
         account.addTarget(self, action: #selector(self.openDrawer(_:)), for: .touchUpInside)
+        
+        var not13 = true
+        if #available(iOS 13.0, *) {
+            not13 = false
+        }
+        if SettingValues.desktopMode && (!not13 || SettingValues.appMode != .SPLIT) {
+            account.isHidden = true
+        }
+
         accountB = UIBarButtonItem(customView: account)
         accountB.accessibilityIdentifier = "Account button"
         accountB.accessibilityLabel = "Account"
         accountB.accessibilityHint = "Open account page"
-
+        
         if #available(iOS 13, *) {
             let interaction = UIContextMenuInteraction(delegate: self)
             self.accountB.customView?.addInteraction(interaction)
@@ -194,13 +214,11 @@ class SplitMainViewController: MainViewController {
     override func viewDidLoad() {
         SplitMainViewController.isFirst = true
         
-        self.color1 = ColorUtil.theme.foregroundColor
-        self.color2 = ColorUtil.theme.foregroundColor
+        self.color1 = UIColor.foregroundColor
+        self.color2 = UIColor.foregroundColor
         
         self.restartVC()
         self.navigationController?.modalPresentationStyle = .currentContext
-
-        doButtons()
         
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
@@ -240,7 +258,7 @@ class SplitMainViewController: MainViewController {
         
         if SettingValues.autoCache {
             if UserDefaults.standard.string(forKey: "DAY_LAUNCH") != today {
-                _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+                _ = AutoCache.init(subs: Subscriptions.offline)
                 UserDefaults.standard.setValue(today, forKey: "DAY_LAUNCH")
             }
         }
@@ -252,6 +270,10 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(doReAppearToolbar), name: UIApplication.willEnterForegroundNotification, object: nil)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(autoCacheStarted(_:)), name: .autoCacheStarted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(autoCacheFinished(_:)), name: .autoCacheFinished, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(autoCacheProgress(_:)), name: .autoCacheProgress, object: nil)
+
         if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
@@ -262,9 +284,9 @@ class SplitMainViewController: MainViewController {
     @objc func onThemeChanged() {
         SingleSubredditViewController.cellVersion += 1
         MainViewController.needsReTheme = true
-        navigationController?.toolbar.barTintColor = ColorUtil.theme.backgroundColor
-        navigationController?.toolbar.tintColor = ColorUtil.theme.fontColor
-        self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+        navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+        navigationController?.toolbar.tintColor = UIColor.fontColor
+        self.parent?.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         doRetheme()
     }
@@ -293,7 +315,7 @@ class SplitMainViewController: MainViewController {
         let vc = self.viewControllers![0] as! SingleSubredditViewController
         if currentIndex == 0 && SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
-        } else if SettingValues.submissionGestureMode == .HALF_FULL { //Always allow swipe back with paging disabled and not full
+        } else if SettingValues.submissionGestureMode == .HALF_FULL { // Always allow swipe back with paging disabled and not full
             vc.setupSwipeGesture()
         } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
@@ -347,7 +369,7 @@ class SplitMainViewController: MainViewController {
             setupTabBar(finalSubs)
         }
         setupBaseBarColors(ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
-        toolbar?.backgroundColor = ColorUtil.theme.foregroundColor.add(overlay: ColorUtil.theme.isLight ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
+        toolbar?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         self.doButtons()
         MainViewController.needsReTheme = false
     }
@@ -357,7 +379,7 @@ class SplitMainViewController: MainViewController {
         self.edgesForExtendedLayout = .all
         self.extendedLayoutIncludesOpaqueBars = true
         self.splitViewController?.presentsWithGesture = true
-        //self.navigationController?.setNavigationBarHidden(true, animated: false)
+        // self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.setNeedsStatusBarAppearanceUpdate()
         self.navigationController?.hidesBarsWhenVerticallyCompact = false
         self.inHeadView.backgroundColor = SettingValues.hideStatusBar ? .clear : ColorUtil.getColorForSub(sub: self.currentTitle, true)
@@ -383,7 +405,7 @@ class SplitMainViewController: MainViewController {
     
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
         self.parent?.navigationController?.navigationBar.isTranslucent = false
-        self.parent?.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+        self.parent?.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         
         setNeedsStatusBarAppearanceUpdate()
@@ -401,8 +423,10 @@ class SplitMainViewController: MainViewController {
         ReadLater.delegate = self
         if Reachability().connectionStatus().description == ReachabilityStatus.Offline.description {
             MainViewController.isOffline = true
+            /* TODO replace this?
             let offlineVC = OfflineOverviewViewController(subs: finalSubs)
             VCPresenter.showVC(viewController: offlineVC, popupIfPossible: false, parentNavigationController: nil, parentViewController: self)
+             */
         }
         
         if MainViewController.needsRestart {
@@ -434,7 +458,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
+                    .compactMap({ $0 })
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
@@ -443,7 +467,7 @@ class SplitMainViewController: MainViewController {
             fatalError("Window must exist when resetting the stack!")
         }
 
-        if soft && false { //in case we need to not destroy the stack, disable for now
+        if soft && false { // in case we need to not destroy the stack, disable for now
         } else {
             (UIApplication.shared.delegate as! AppDelegate).resetStack(window: keyWindow)
         }
@@ -481,7 +505,7 @@ class SplitMainViewController: MainViewController {
                 keyWindow = UIApplication.shared.connectedScenes
                     .filter({ $0.activationState == .foregroundActive })
                     .map({ $0 as? UIWindowScene })
-                    .compactMap({$0})
+                    .compactMap({ $0 })
                     .first?.windows
                     .filter({ $0.isKeyWindow }).first
             }
@@ -524,7 +548,7 @@ class SplitMainViewController: MainViewController {
             }
 
             let firstViewController = SingleSubredditViewController(subName: self.finalSubs[index!], parent: self)
-            //Siri Shortcuts integration
+            // Siri Shortcuts integration
             if #available(iOS 12.0, *) {
                 let activity = SingleSubredditViewController.openSubredditActivity(subreddit: self.finalSubs[index!])
                 firstViewController.userActivity = activity
@@ -535,8 +559,8 @@ class SplitMainViewController: MainViewController {
                 self.color1 = ColorUtil.baseColor
                 self.color2 = ColorUtil.getColorForSub(sub: (firstViewController ).sub)
             } else {
-                self.color1 = ColorUtil.theme.foregroundColor
-                self.color2 = ColorUtil.theme.foregroundColor
+                self.color1 = UIColor.foregroundColor
+                self.color2 = UIColor.foregroundColor
             }
             
             DispatchQueue.main.async {
@@ -589,8 +613,8 @@ class SplitMainViewController: MainViewController {
         }
         
         CachedTitle.titles.removeAll()
-        view.backgroundColor = ColorUtil.theme.backgroundColor
-        splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        view.backgroundColor = UIColor.backgroundColor
+        splitViewController?.view.backgroundColor = UIColor.foregroundColor
         SubredditReorderViewController.changed = false
         
         finalSubs = []
@@ -781,7 +805,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 if text == "" {
                     let alert = AlertController(attributedTitle: nil, attributedMessage: nil, preferredStyle: .alert)
                     alert.setupTheme()
-                    alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+                    alert.attributedTitle = NSAttributedString(string: "Name cannot be empty!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
                     alert.addAction(AlertAction(title: "Ok", style: .normal, handler: { (_) in
                         self.navigation(homeViewController, didRequestNewMulti: ())
                     }))
@@ -932,9 +956,9 @@ extension SplitMainViewController: NavigationHomeDelegate {
             let alert = AlertController.init(title: "Caption", message: "", preferredStyle: .alert)
             
             alert.setupTheme()
-            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "You have no subs set to Auto Cache", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "You can set this up in Settings > Offline Caching", fontSize: 14, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             
             alert.addCloseButton()
             alert.addBlurView()
@@ -942,7 +966,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
             doOpen(OpenState.POPOVER_ANY, homeViewController, toExecute: nil, toPresent: alert)
         } else {
             doOpen(OpenState.POPOVER_AFTER_NAVIGATION, homeViewController, toExecute: {
-                _ = AutoCache.init(baseController: self, subs: Subscriptions.offline)
+                _ = AutoCache.init(subs: Subscriptions.offline)
             }, toPresent: nil)
         }
     }
@@ -956,9 +980,9 @@ extension SplitMainViewController: NavigationHomeDelegate {
             let alert = AlertController.init(title: "You haven't created a collection yet!", message: nil, preferredStyle: .alert)
             
             alert.setupTheme()
-            alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor])
+            alert.attributedTitle = NSAttributedString(string: "You haven't created a collection yet!", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
             
-            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil)
+            alert.attributedMessage = TextDisplayStackView.createAttributedChunk(baseHTML: "Create a new collection by long pressing on the 'save' icon of a post", fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil)
             
             alert.addCloseButton()
             alert.addBlurView()
@@ -1034,7 +1058,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
             }
         case .POPOVER_AFTER_NAVIGATION:
             if let nav = homeViewController.navigationController as? SwipeForwardNavigationController, nav.topViewController != self, nav.pushableViewControllers.count > 0 {
-                nav.delegate = nav //Fixes strange case where the nav delegate is either overwritten or not equal to self, which is needed for the toExecute() stuff
+                nav.delegate = nav // Fixes strange case where the nav delegate is either overwritten or not equal to self, which is needed for the toExecute() stuff
                 nav.pushNextViewControllerFromRight() {
                     if let present = toPresent {
                         VCPresenter.showVC(viewController: present, popupIfPossible: true, parentNavigationController: homeViewController.navigationController, parentViewController: homeViewController)
@@ -1092,7 +1116,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.desktopMode {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in
@@ -1136,5 +1160,202 @@ extension MainViewController: PagingTitleDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             self.doToolbarOffset()
         }
+    }
+}
+
+extension SplitMainViewController: AutoCacheDelegate {
+    @objc func autoCacheStarted(_ notification: Notification) {
+        DispatchQueue.main.async {
+            self.doSubCachingIcon(notification)
+        }
+    }
+    
+    @objc func autoCacheFinished(_ notification: Notification) {
+        DispatchQueue.main.async {
+            self.autoCacheProgress?.removeFromSuperview()
+            self.autoCacheProgress = nil
+            self.doProfileIcon()
+        }
+    }
+    
+    func doSubCachingIcon(_ notification: Notification) {
+        let backView = UIView()
+        let subIcon = UIImageView()
+        let subreddit = notification.userInfo?["subreddit"] as? String ?? "all"
+        subIcon.contentMode = .scaleAspectFit
+
+        if let icon = Subscriptions.icon(for: subreddit) {
+            subIcon.contentMode = .scaleAspectFill
+            subIcon.image = UIImage()
+            subIcon.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
+        } else {
+            subIcon.contentMode = .center
+            if subreddit.contains("m/") {
+                subIcon.image = SubredditCellView.defaultIconMulti
+            } else if subreddit.lowercased() == "all" {
+                subIcon.image = SubredditCellView.allIcon
+                subIcon.backgroundColor = GMColor.blue500Color()
+            } else if subreddit.lowercased() == "frontpage" {
+                subIcon.image = SubredditCellView.frontpageIcon
+                subIcon.backgroundColor = GMColor.green500Color()
+            } else if subreddit.lowercased() == "popular" {
+                subIcon.image = SubredditCellView.popularIcon
+                subIcon.backgroundColor = GMColor.purple500Color()
+            } else {
+                subIcon.image = SubredditCellView.defaultIcon
+            }
+        }
+
+        backView.frame = CGRect.init(x: 0, y: 0, width: 30, height: 30)
+        backView.sizeAnchors /==/ CGSize.square(size: 30)
+        subIcon.layer.cornerRadius = 10
+        subIcon.clipsToBounds = true
+        
+        self.autoCacheProgress = MDCActivityIndicator()
+        self.autoCacheProgress?.indicatorMode = .indeterminate
+        self.autoCacheProgress?.progress = 0
+        self.autoCacheProgress?.strokeWidth = 5
+        self.autoCacheProgress?.radius = 15
+        self.autoCacheProgress?.cycleColors = [ColorUtil.baseAccent]
+        self.autoCacheProgress?.tintColor = ColorUtil.baseAccent
+
+        backView.addSubview(subIcon)
+        subIcon.sizeAnchors /==/ CGSize.square(size: 20)
+        subIcon.centerAnchors /==/ backView.centerAnchors
+        
+        backView.addSubview(self.autoCacheProgress!)
+        self.autoCacheProgress!.edgeAnchors /==/ backView.edgeAnchors
+
+        backView.bringSubviewToFront(self.autoCacheProgress!)
+        self.autoCacheProgress?.startAnimating()
+
+        self.accountB = UIBarButtonItem(customView: backView)
+        self.accountB.accessibilityIdentifier = "Account button"
+        self.accountB.accessibilityLabel = "Account"
+        self.accountB.accessibilityHint = "Open account page"
+
+        backView.addTapGestureRecognizer { (_) in
+            self.showCacheDetails()
+        }
+        self.navigationItem.leftBarButtonItem = self.accountB
+    }
+    
+    func showCacheDetails() {
+        if getHeaderView() != nil || removeCachingHeader != nil {
+            self.removeCachingHeader?()
+            return
+        }
+        
+        let oldView = self.navigationItem.titleView
+        let oldRight = self.navigationItem.rightBarButtonItems
+        
+        let cancel = UIBarButtonItem(title: "Stop", style: UIBarButtonItem.Style.done, target: self, action: #selector(cancelCache))
+        self.navigationItem.rightBarButtonItem = cancel
+        
+        self.navigationItem.titleView = ProgressHeaderView()
+        getHeaderView()?.sizeToFit()
+        getHeaderView()?.alpha = 0
+        getHeaderView()?.title.text = "Caching \(AutoCache.current?.currentSubreddit ?? "")"
+        getHeaderView()?.progress.progress = AutoCache.current?.cacheProgress ?? 0
+        UIView.animate(withDuration: 0.5) {
+            self.getHeaderView()?.alpha = 1
+            self.autoCacheProgress?.alpha = 0
+        } completion: { (_) in
+            self.autoCacheProgress?.stopAnimating()
+            self.autoCacheProgress?.isHidden = true
+        }
+        
+        removeCachingHeader = {
+            self.hideCacheDetails(oldView, oldButtons: oldRight)
+            self.removeCachingHeader = nil
+        }
+        
+        getHeaderView()?.addTapGestureRecognizer(action: { (_) in
+            self.removeCachingHeader?()
+        })
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+            self.removeCachingHeader?()
+        }
+    }
+    
+    @objc func cancelCache() {
+        NotificationCenter.default.post(name: .cancelAutoCache, object: nil, userInfo: [:])
+        self.removeCachingHeader?()
+    }
+    
+    func hideCacheDetails(_ oldView: UIView?, oldButtons: [UIBarButtonItem]?) {
+        if !(self.navigationItem.titleView is ProgressHeaderView) {
+            return
+        }
+        self.navigationItem.titleView = oldView
+        self.navigationItem.titleView?.alpha = 0
+        self.autoCacheProgress?.isHidden = false
+        self.autoCacheProgress?.alpha = 0
+        self.autoCacheProgress?.startAnimating()
+
+        UIView.animate(withDuration: 0.5) {
+            self.navigationItem.titleView?.alpha = 1
+            self.autoCacheProgress?.alpha = 1
+            self.navigationItem.rightBarButtonItems = oldButtons
+        } completion: { (_) in
+        }
+
+    }
+    
+    func getHeaderView() -> ProgressHeaderView? {
+        return self.navigationItem.titleView as? ProgressHeaderView
+    }
+    
+    @objc func autoCacheProgress(_ notification: Notification) {
+        DispatchQueue.main.async {
+            if self.autoCacheProgress == nil && AutoCache.current != nil {
+                self.doSubCachingIcon(notification)
+            }
+            
+            if self.autoCacheProgress?.indicatorMode ?? .determinate == .indeterminate {
+                self.autoCacheProgress?.stopAnimating()
+                self.autoCacheProgress?.indicatorMode = .determinate
+                self.autoCacheProgress?.startAnimating()
+            }
+            self.autoCacheProgress?.progress = notification.userInfo?["progress"] as? Float ?? 0
+            self.getHeaderView()?.title.text = "Caching \(AutoCache.current?.currentSubreddit ?? "")"
+            self.getHeaderView()?.progress.progress = AutoCache.current?.cacheProgress ?? 0
+        }
+    }
+}
+
+class ProgressHeaderView: UIView {
+    var title = UILabel()
+    var progress = UIProgressView()
+    
+    init() {
+        title = UILabel().then {
+            $0.textColor = UIColor.fontColor
+            $0.font = UIFont.systemFont(ofSize: 14)
+            $0.text = ""
+            $0.textAlignment = .center
+        }
+        
+        progress = UIProgressView().then {
+            $0.progressTintColor = ColorUtil.baseAccent
+            $0.progress = 0
+        }
+        
+        super.init(frame: .zero)
+        
+        self.addSubviews(title, progress)
+        
+        title.topAnchor /==/ self.topAnchor
+        title.horizontalAnchors /==/ self.horizontalAnchors
+        
+        progress.topAnchor /==/ title.bottomAnchor + 4
+        progress.horizontalAnchors /==/ self.horizontalAnchors + 20
+        progress.bottomAnchor /==/ self.bottomAnchor
+        progress.heightAnchor /==/ 3
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

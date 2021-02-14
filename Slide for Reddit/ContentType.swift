@@ -145,7 +145,7 @@ class ContentType {
         let host = uri.host?.lowercased()
         let path = uri.path.lowercased()
         
-        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/") || uri.absoluteString.contains("youtu")
+        return hostContains(host: host, bases: ["youtu.be", "youtube.com", "youtube.co.uk"]) && !path.contains("/user/") && !path.contains("/channel/")
     }
     
     public static func isImgurLink(uri: URL) -> Bool {
@@ -259,9 +259,9 @@ class ContentType {
      * @return Content type of the Submission
      * @see #getContentType(String)
      */
-    public static func getContentType(submission: RSubmission?) -> CType {
+    public static func getContentType(submission: SubmissionObject?) -> CType {
         if submission == nil {
-            return CType.SELF; //hopefully shouldn't be null, but catch it in case
+            return CType.SELF; // hopefully shouldn't be null, but catch it in case
         }
         
         let url = submission?.url

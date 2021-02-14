@@ -32,8 +32,8 @@ class ActionViewController: UIViewController {
                             let absolute = shareURL.absoluteString ?? ""
                             
                             if !absolute.matches(regex: "(?i)redd\\.it/\\w+") && !absolute.matches(regex: "(?i)reddit\\.com/[^/]*") {
-                                //Not a Reddit URL
-                                //causing crashes, need to revisit self.extensionContext?.cancelRequest(withError: NSError())
+                                // Not a Reddit URL
+                                // causing crashes, need to revisit self.extensionContext?.cancelRequest(withError: NSError())
                                 return
                             }
                             
@@ -63,7 +63,7 @@ class ActionViewController: UIViewController {
             }
             
             if urlFound {
-                //Only do first link
+                // Only do first link
                 break
             }
         }

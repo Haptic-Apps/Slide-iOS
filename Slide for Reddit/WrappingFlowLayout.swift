@@ -39,9 +39,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
         }
         return cvWidth - (insets.left + insets.right)
     }
+    
     override var collectionViewContentSize: CGSize {
         return CGSize(width: contentWidth, height: contentHeight)
     }
+    
     func reset(modal: Bool, vc: UIViewController, isGallery: Bool) {
         cache = []
         contentHeight = 0

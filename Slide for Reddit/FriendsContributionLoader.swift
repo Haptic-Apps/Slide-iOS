@@ -6,12 +6,12 @@
 //  Copyright © 2018 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
 import reddift
 
 class FriendsContributionLoader: ContributionLoader {
-    var content: [Object]
+    var content: [RedditObject]
     
     var color: UIColor
     var canGetMore: Bool
@@ -28,7 +28,7 @@ class FriendsContributionLoader: ContributionLoader {
     }
     
     var paginator: Paginator
-    var delegate: ContentListingViewController?
+    weak var delegate: ContentListingViewController?
     var paging = false
     
     func getData(reload: Bool) {
@@ -47,10 +47,10 @@ class FriendsContributionLoader: ContributionLoader {
                         }
                         let before = self.content.count
                         for user in listing {
-                            self.content.append(RealmDataWrapper.friendToRealm(user: user))
+                            self.content.append(FriendObject.userToFriendObject(user: user))
                         }
-                        //self.paginator = listing.paginator
-                        //self.canGetMore = listing.paginator.hasMore()
+                        // self.paginator = listing.paginator
+                        // self.canGetMore = listing.paginator.hasMore()
                         DispatchQueue.main.async {
                             self.delegate?.doneLoading(before: before, filter: false)
                         }

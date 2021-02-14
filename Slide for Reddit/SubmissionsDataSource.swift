@@ -6,8 +6,8 @@
 //  Copyright © 2020 Haptic Apps. All rights reserved.
 //
 
+import CoreData
 import Foundation
-import RealmSwift
 import reddift
 
 protocol SubmissionDataSouceDelegate: class {
@@ -15,7 +15,7 @@ protocol SubmissionDataSouceDelegate: class {
     func generalError(title: String, message: String)
     func loadSuccess(before: Int, count: Int)
     func preLoadItems()
-    func doPreloadImages(values: [RSubmission])
+    func doPreloadImages(values: [SubmissionObject])
     func loadOffline()
     
     func emptyState(_ listing: Listing)
@@ -35,8 +35,7 @@ class SubmissionsDataSource {
     var sorting: LinkSortType
     var time: TimeFilterWithin
     var isReset = false
-    var realmListing: RListing?
-    var updated = NSDate()
+    var updated = Date()
     var contentIDs = [String]()
     
     weak var currentSession: URLSessionDataTask?
@@ -52,7 +51,7 @@ class SubmissionsDataSource {
     }
     
     var paginator: Paginator
-    var content: [RSubmission]
+    var content: [SubmissionObject]
     weak var delegate: SubmissionDataSouceDelegate?
     
     var loading = false
@@ -95,7 +94,7 @@ class SubmissionsDataSource {
     }
     func hideReadPostsPermanently(callback: @escaping (_ indexPaths: [IndexPath]) -> Void) {
         var indexPaths: [IndexPath] = []
-        var toRemove: [RSubmission] = []
+        var toRemove: [SubmissionObject] = []
         
         var index = 0
         var count = 0
@@ -157,7 +156,7 @@ class SubmissionsDataSource {
             }
             return
         }
-        if !loading || force {
+        if (!loading || force) && (!offline || content.count == 0) {
             if !loaded {
                 if let delegate = delegate {
                     delegate.showIndicator()
@@ -191,39 +190,7 @@ class SubmissionsDataSource {
                     self.isReset = false
                     switch result {
                     case .failure:
-                        print(result.error!)
-                        //test if realm exists and show that
-                        DispatchQueue.main.async {
-                            do {
-                                let realm = try Realm()
-                                self.updated = NSDate()
-                                if let listing = realm.objects(RListing.self).filter({ (item) -> Bool in
-                                    return item.subreddit == self.subreddit
-                                }).first {
-                                    self.content = []
-                                    self.contentIDs = []
-                                    for i in listing.links {
-                                        self.content.append(i)
-                                    }
-                                    self.updated = listing.updated
-                                }
-                                var paths = [IndexPath]()
-                                for i in 0..<self.content.count {
-                                    paths.append(IndexPath.init(item: i, section: 0))
-                                }
-                                
-                                self.loading = false
-                                self.nomore = true
-                                self.offline = true
-                                
-                                if let delegate = self.delegate {
-                                    delegate.loadOffline()
-                                }
-                            } catch {
-                                
-                            }
-
-                        }
+                        self.loadOffline()
                     case .success(let listing):
                         self.loading = false
                         self.tries = 0
@@ -238,23 +205,22 @@ class SubmissionsDataSource {
                         let before = self.content.count
 
                         let newLinks = listing.children.compactMap({ $0 as? Link })
-                        var converted: [RSubmission] = []
+                        var converted: [SubmissionObject] = []
                         var ids = [String]()
                         for link in newLinks {
-                            ids.append(link.getId())
-                            let newRS = RealmDataWrapper.linkToRSubmission(submission: link)
+                            let newRS = SubmissionObject.linkToSubmissionObject(submission: link)
+                            ids.append(newRS.getId())
                             converted.append(newRS)
                             CachedTitle.addTitle(s: newRS)
                         }
                         
                         self.delegate?.doPreloadImages(values: converted)
-                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! RSubmission }
+                        var values = PostFilter.filter(converted, previous: self.contentIDs, baseSubreddit: self.subreddit, gallery: self.delegate?.vcIsGallery() ?? false).map { $0 as! SubmissionObject }
                         self.numberFiltered += (converted.count - values.count)
                         if self.page > 0 && !values.isEmpty && SettingValues.showPages {
-                            let pageItem = RSubmission()
-                            pageItem.subreddit = DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true)
-                            pageItem.author = "PAGE_SEPARATOR"
-                            pageItem.title = "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts"
+                            let uuid = UUID().uuidString
+                            
+                            let pageItem = SubmissionObject(id: uuid, title: "Page \(self.page + 1)\n\(self.content.count + values.count - self.page) posts", postsSince: DateFormatter().timeSince(from: self.startTime as NSDate, numericDates: true))
                             values.insert(pageItem, at: 0)
                         }
                         self.page += 1
@@ -264,6 +230,9 @@ class SubmissionsDataSource {
                         
                         self.paginator = listing.paginator
                         self.nomore = !listing.paginator.hasMore() || (values.isEmpty && self.content.isEmpty)
+                        
+                        SlideCoreData.sharedInstance.saveContext()
+
                         DispatchQueue.main.async { [weak self] in
                             guard let self = self else { return }
 
@@ -286,5 +255,101 @@ class SubmissionsDataSource {
     
     func loadMore() {
         getData(reload: false)
+    }
+    
+}
+
+extension SubmissionsDataSource: Cacheable {
+    func insertSelf(into context: NSManagedObjectContext, andSave: Bool) -> NSManagedObject? {
+        context.performAndWaitReturnable {
+            var ids = [String]()
+            for link in content {
+                ids.append(link.getId())
+                
+                _ = link.insertSelf(into: context, andSave: false)
+            }
+            
+            var subredditPosts: SubredditPosts! = nil
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubredditPosts")
+            let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
+            fetchRequest.predicate = predicate
+            do {
+                let results = try context.fetch(fetchRequest) as! [SubredditPosts]
+                subredditPosts = results.first
+            } catch {
+                
+            }
+            if subredditPosts == nil {
+                subredditPosts = NSEntityDescription.insertNewObject(forEntityName: "SubredditPosts", into: context) as? SubredditPosts
+            }
+
+            subredditPosts.posts = ids.joined(separator: ",")
+            subredditPosts.time = Date()
+            subredditPosts.subreddit = subreddit
+            
+            if andSave {
+                do {
+                    try context.save()
+                } catch let error as NSError {
+                    print("Failed to save managed context \(error): \(error.userInfo)")
+                    return nil
+                }
+            }
+            
+            return subredditPosts
+        }
+    }
+    
+    func loadOffline() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubredditPosts")
+        let sort = NSSortDescriptor(key: #keyPath(SubredditPosts.time), ascending: false)
+        let predicate = NSPredicate(format: "subreddit = %@", self.subreddit)
+        fetchRequest.sortDescriptors = [sort]
+        fetchRequest.predicate = predicate
+        do {
+            let results = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(fetchRequest) as! [SubredditPosts]
+            self.content = []
+            self.contentIDs = []
+
+            if let first = results.first {
+                let postsRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SubmissionModel")
+                let postPredicate = NSPredicate(format: "id in %@", first.posts?.split(",") ?? [])
+                postsRequest.predicate = postPredicate
+                let links = try SlideCoreData.sharedInstance.persistentContainer.viewContext.fetch(postsRequest) as! [SubmissionModel]
+
+                var linksDict = [String: SubmissionObject]() // Use dictionary to sort values below
+                for model in links {
+                    let object = SubmissionObject.fromModel(model)
+                    linksDict[object.getId()] = object
+                }
+
+                let order = first.posts?.split(",") ?? []
+                
+                for id in order {
+                    if let link = linksDict[id] {
+                        self.content.append(link)
+                    }
+                }
+
+                self.updated = first.time ?? Date()
+            }
+            var paths = [IndexPath]()
+            for i in 0..<self.content.count {
+                paths.append(IndexPath.init(item: i, section: 0))
+            }
+            
+            self.loading = false
+            self.nomore = true
+            self.offline = true
+            
+            if let delegate = self.delegate {
+                DispatchQueue.main.async {
+                    delegate.loadOffline()
+                }
+            }
+        } catch {
+
+        }
+
     }
 }

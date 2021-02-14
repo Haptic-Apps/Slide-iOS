@@ -10,7 +10,6 @@ import reddift
 import SDWebImage
 import Starscream
 import UIKit
-import YYText
 
 class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, WrappingFlowLayoutDelegate, UICollectionViewDataSource {
     func headerOffset() -> Int {
@@ -53,7 +52,7 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         self.tableView.dataSource = self
         self.tableView.register(LiveThreadUpdate.classForCoder(), forCellWithReuseIdentifier: "live")
 
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         session = (UIApplication.shared.delegate as! AppDelegate).session
 
         refresh()
@@ -152,14 +151,14 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
         let itemWidth = width - 10
         let id = data["id"] as! String
         if estimatedHeights[id] == nil {
-            let content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
+            let content = NSMutableAttributedString(string: "u/\(data["author"] as! String) \(DateFormatter().timeSince(from: NSDate(timeIntervalSince1970: TimeInterval(data["created_utc"] as! Int)), numericDates: true))", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 14, submission: false)])
             
             if let body = data["body_html"] as? String {
                 if !body.isEmpty() {
                     let html = body.unescapeHTML
                     content.append(NSAttributedString(string: "\n"))
                    // TODO: - maybe link parsing here?
-                    content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: ColorUtil.theme.fontColor, linksCallback: nil, indexCallback: nil))
+                    content.append(TextDisplayStackView.createAttributedChunk(baseHTML: html, fontSize: 16, submission: false, accentColor: ColorUtil.baseAccent, fontColor: UIColor.fontColor, linksCallback: nil, indexCallback: nil))
                 }
             }
 
@@ -173,10 +172,8 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 }
             }
 
-            let size = CGSize(width: width - 18, height: CGFloat.greatestFiniteMagnitude)
-            let layout = YYTextLayout(containerSize: size, text: content)!
-            let infoHeight = layout.textBoundingSize.height
-            estimatedHeights[id] = CGFloat(24 + infoHeight + CGFloat(imageHeight))
+            let textHeight = content.height(containerWidth: width - 18)
+            estimatedHeights[id] = CGFloat(24 + textHeight + CGFloat(imageHeight))
         }
         return CGSize(width: itemWidth, height: estimatedHeights[id]!)
     }
@@ -239,15 +236,15 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
     var socket: WebSocket?
     func setupWatcher(websocketUrl: String) {
         socket = WebSocket(url: URL(string: websocketUrl)!)
-        //websocketDidConnect
+        // websocketDidConnect
         socket!.onConnect = {
             print("websocket is connected")
         }
-        //websocketDidDisconnect
+        // websocketDidDisconnect
         socket!.onDisconnect = { (error: Error?) in
             print("websocket is disconnected: \(error?.localizedDescription ?? "")")
         }
-        //websocketDidReceiveMessage
+        // websocketDidReceiveMessage
         socket!.onText = { (text: String) in
             print("got some text: \(text)")
             do {
@@ -279,11 +276,11 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
                 
             }
         }
-        //websocketDidReceiveData
+        // websocketDidReceiveData
         socket!.onData = { (data: Data) in
             print("got some data: \(data.count)")
         }
-        //you could do onPong as well.
+        // you could do onPong as well.
         socket!.connect()
     }
 
@@ -293,30 +290,4 @@ class LiveThreadViewController: MediaViewController, UICollectionViewDelegate, W
             self.tableView.reloadData()
         }
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-	return input.rawValue
 }

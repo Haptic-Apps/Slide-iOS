@@ -6,13 +6,14 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
+import Alamofire
 import Anchorage
 import AudioToolbox
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
+import SwiftyJSON
 import UIKit
-import YYText
 
 class SubredditHeaderView: UIView {
 
@@ -83,36 +84,36 @@ class SubredditHeaderView: UIView {
 
         self.submit.textLabel?.text = "New post"
         self.submit.accessoryType = .none
-        self.submit.backgroundColor = ColorUtil.theme.foregroundColor
-        self.submit.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.submit.backgroundColor = UIColor.foregroundColor
+        self.submit.textLabel?.textColor = UIColor.fontColor
         self.submit.imageView?.image = UIImage(sfString: SFSymbol.pencil, overrideString: "edit")?.menuIcon()
-        self.submit.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.submit.imageView?.tintColor = UIColor.fontColor
         self.submit.layer.cornerRadius = 5
         self.submit.clipsToBounds = true
 
         self.sorting.textLabel?.text = "Default subreddit sorting"
         self.sorting.accessoryType = .none
-        self.sorting.backgroundColor = ColorUtil.theme.foregroundColor
-        self.sorting.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.sorting.backgroundColor = UIColor.foregroundColor
+        self.sorting.textLabel?.textColor = UIColor.fontColor
         self.sorting.imageView?.image = UIImage(sfString: SFSymbol.arrowUpArrowDownCircle, overrideString: "ic_sort_white")?.menuIcon()
-        self.sorting.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.sorting.imageView?.tintColor = UIColor.fontColor
         self.sorting.layer.cornerRadius = 5
         self.sorting.clipsToBounds = true
 
         self.mods.textLabel?.text = "Subreddit moderators"
         self.mods.accessoryType = .none
-        self.mods.backgroundColor = ColorUtil.theme.foregroundColor
-        self.mods.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.mods.backgroundColor = UIColor.foregroundColor
+        self.mods.textLabel?.textColor = UIColor.fontColor
         self.mods.imageView?.image = UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon()
-        self.mods.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.mods.imageView?.tintColor = UIColor.fontColor
         self.mods.layer.cornerRadius = 5
         self.mods.clipsToBounds = true
 
         self.flair.accessoryType = .none
-        self.flair.backgroundColor = ColorUtil.theme.foregroundColor
-        self.flair.textLabel?.textColor = ColorUtil.theme.fontColor
+        self.flair.backgroundColor = UIColor.foregroundColor
+        self.flair.textLabel?.textColor = UIColor.fontColor
         self.flair.imageView?.image = UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")?.menuIcon()
-        self.flair.imageView?.tintColor = ColorUtil.theme.fontColor
+        self.flair.imageView?.tintColor = UIColor.fontColor
         self.flair.layer.cornerRadius = 5
         self.flair.clipsToBounds = true
 
@@ -162,53 +163,79 @@ class SubredditHeaderView: UIView {
     }
     
     @objc func flair(_ selector: UITableViewCell) {
-        do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.userFlairList(subreddit!.displayName, completion: { (result) in
-                switch result {
-                case .success(let flairList):
-                    DispatchQueue.main.async {
+        if let subName = subreddit?.displayName, let token = (UIApplication.shared.delegate as? AppDelegate)?.session?.token {
+            let requestString = "https://www.reddit.com/r/\(subName)/api/user_flair_v2.json"
+            Alamofire.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
+                guard let self = self else { return }
+                do {
+                    guard let data = response.data else {
+                        return
+                    }
+                    let json = try JSON(data: data)
+                    if let flairs = json.array {
                         let alert = DragDownAlertMenu(title: "Available flairs", subtitle: "r/\(self.subreddit!.displayName)", icon: nil)
                         
-                        for item in flairList {
-                            alert.addAction(title: item.text.isEmpty ? item.name : item.text, icon: nil, action: {
-                                self.setFlair(item)
-                            })
+                        for item in flairs {
+                            if let richtext = item["richtext"].array?[0] {
+                                let image = richtext["u"].stringValue
+                                let text = richtext["t"].stringValue
+                                let iconText = richtext["a"].stringValue
+                                let title = item["text"].stringValue
+                                let editable = item["text_editable"].boolValue
+                                let id = item["id"].stringValue
+
+                                if !image.isEmpty {
+                                    alert.addView(title: title, icon_url: image) { [weak self] in
+                                        guard let self = self else { return }
+                                        alert.dismiss(animated: true) {
+                                            if editable {
+                                                self.editFlair(flairID: id, flairText: iconText, subName: subName, icon: image)
+                                            } else {
+                                                self.submitFlairChange(id, subName: subName)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    alert.addAction(title: title, icon: nil) { [weak self] in
+                                        guard let self = self else { return }
+                                        alert.dismiss(animated: true) {
+                                            if editable {
+                                                self.editFlair(flairID: id, flairText: text, subName: subName, icon: image)
+                                            } else {
+                                                self.submitFlairChange(id, subName: subName)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         
                         alert.show(self.parentController)
                     }
-                case .failure(let error):
-                    print(error)
-                    
+                } catch {
                 }
-            })
-        } catch {
-            
+            }
         }
     }
     
     var flairText: String?
     
-    func setFlair(_ flair: FlairTemplate) {
-        if flair.editable {
-            let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "\(flair.name)", icon: nil)
-            
-            alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "save-1")?.menuIcon(), action: {
-                alert.dismiss(animated: true) { [weak self] in
-                    guard let self = self else { return }
-                    self.submitFlairChange(flair, text: alert.getText() ?? "")
-                }
-            }, inputPlaceholder: "Flair text...", inputValue: flair.text, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
-            
-            alert.show(parentController)
-        } else {
-            submitFlairChange(flair)
-        }
+    func editFlair(flairID: String, flairText: String, subName: String, icon: String?) {
+        let alert = DragDownAlertMenu(title: "Edit flair text", subtitle: "", icon: icon)
+        
+        alert.addTextInput(title: "Set flair", icon: UIImage(sfString: SFSymbol.flagFill, overrideString: "save-1")?.menuIcon(), action: {
+            alert.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.submitFlairChange(flairID, subName: subName, text: alert.getText() ?? flairText)
+            }
+        }, inputPlaceholder: "Flair text...", inputValue: flairText, inputIcon: UIImage(sfString: SFSymbol.flagFill, overrideString: "flag")!.menuIcon(), textRequired: true, exitOnAction: true)
+        
+        alert.show(parentController)
     }
     
-    func submitFlairChange(_ flair: FlairTemplate, text: String? = "") {
+    func submitFlairChange(_ flairID: String, subName: String, text: String? = "") {
         do {
-            try (UIApplication.shared.delegate as! AppDelegate).session?.flairUser(self.subreddit!.displayName, flairId: flair.id, username: AccountController.currentName, text: text ?? "") { result in
+            try (UIApplication.shared.delegate as! AppDelegate).session?.flairUser(subName, flairId: flairID, username: AccountController.currentName, text: text ?? "") { result in
                 switch result {
                 case .failure(let error):
                     print(error)
@@ -219,7 +246,7 @@ class SubredditHeaderView: UIView {
                     print(success)
                     DispatchQueue.main.async {
                         BannerUtil.makeBanner(text: "Flair set successfully!", seconds: 3, context: self.parentController)
-                        self.flair.textLabel?.text = text?.isEmpty ?? true ? flair.name : text
+                        // TODO update flair view on sidebar
                     }
                 }}
         } catch {
@@ -285,7 +312,7 @@ class SubredditHeaderView: UIView {
     var content: NSAttributedString?
     var textHeight: CGFloat = 0
     var descHeight: CGFloat = 0
-    var parentController: (UIViewController & MediaVCDelegate)?
+    weak var parentController: (UIViewController & MediaVCDelegate)?
 
     func setSubreddit(subreddit: Subreddit, parent: MediaViewController, _ width: CGFloat) {
         self.subreddit = subreddit
@@ -298,16 +325,16 @@ class SubredditHeaderView: UIView {
         here.font = subscribers.font
         here.textAlignment = .center
         subscribers.textAlignment = .center
-        here.textColor = ColorUtil.theme.fontColor
-        subscribers.textColor = ColorUtil.theme.fontColor
+        here.textColor = UIColor.fontColor
+        subscribers.textColor = UIColor.fontColor
 
-        let attrs = [convertFromNSAttributedStringKey(NSAttributedString.Key.font): FontGenerator.boldFontOfSize(size: 20, submission: true)]
-        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+        let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 20, submission: true)]
+        var attributedString = NSMutableAttributedString(string: "\(subreddit.subscribers.delimiter)", attributes: attrs)
         var subt = NSMutableAttributedString(string: "\nSUBSCRIBERS")
         attributedString.append(subt)
         subscribers.attributedText = attributedString
         
-        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: convertToOptionalNSAttributedStringKeyDictionary(attrs))
+        attributedString = NSMutableAttributedString(string: "\(subreddit.accountsActive.delimiter)", attributes: attrs)
         subt = NSMutableAttributedString(string: "\nHERE")
         attributedString.append(subt)
         here.attributedText = attributedString
@@ -373,7 +400,7 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
         if !text.isEmpty {
             self.parentController?.showSpoiler(text)
         } else {
-            self.parentController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: RSubmission())
+            self.parentController?.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
         }
     }
     
@@ -418,6 +445,10 @@ extension SubredditHeaderView: TextDisplayStackViewDelegate {
             alertController.show(parentController!)
         }
     }
+    
+    func previewProfile(profile: String) {
+        // unused
+    }
 }
 
 extension UIImage {
@@ -455,67 +486,67 @@ extension UIView {
 
     // Set our computed property type to a closure
     private var tapGestureRecognizerAction: Action? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.tapGestureRecognizer) as? Action
-            return tapGestureRecognizerActionInstance
-        }
     }
 
     private var longTapGestureRecognizerAction: Action? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer) as? Action
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizer) as? Action
-            return tapGestureRecognizerActionInstance
-        }
     }
     
     private var longTapGestureRecognizer: UIGestureRecognizer? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance) as? UIGestureRecognizer
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureRecognizerInstance) as? UIGestureRecognizer
-            return tapGestureRecognizerActionInstance
-        }
     }
 
     private var timer: Timer? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer) as? Timer
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
         }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureTimer) as? Timer
-            return tapGestureRecognizerActionInstance
-        }
     }
 
     private var cancelled: Bool? {
+        get {
+            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled) as? Bool
+            return tapGestureRecognizerActionInstance
+        }
         set {
             if let newValue = newValue {
                 // Computed properties get stored as associated objects
                 objc_setAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN)
             }
-        }
-        get {
-            let tapGestureRecognizerActionInstance = objc_getAssociatedObject(self, &AssociatedObjectKeys.longTapGestureCancelled) as? Bool
-            return tapGestureRecognizerActionInstance
         }
     }
 
@@ -541,6 +572,15 @@ extension UIView {
         let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
         tapGestureRecognizer.minimumPressDuration = 0.36
         self.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    public func addLongTapGestureRecognizerReturn(action: ((_ sender: UIGestureRecognizer) -> Void)?) -> UILongPressGestureRecognizer {
+        self.isUserInteractionEnabled = true
+        self.longTapGestureRecognizerAction = action
+        let tapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTapGesture))
+        tapGestureRecognizer.minimumPressDuration = 0.36
+        self.addGestureRecognizer(tapGestureRecognizer)
+        return tapGestureRecognizer
     }
     
     public func addLongTapGestureRecognizer(delegate: UIGestureRecognizerDelegate, action: ((_ sender: UIGestureRecognizer) -> Void)?) {
@@ -607,15 +647,4 @@ extension Int {
     var delimiter: String {
         return Int.numberFormatter.string(from: NSNumber(value: self)) ?? ""
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
 }

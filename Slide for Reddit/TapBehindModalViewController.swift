@@ -6,7 +6,7 @@
 //  Copyright © 2017 Haptic Apps. All rights reserved.
 //
 
-//Code from https://stackoverflow.com/a/44171475/3697225
+// Code from https://stackoverflow.com/a/44171475/3697225
 
 import Anchorage
 import Foundation

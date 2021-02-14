@@ -10,10 +10,10 @@ import Alamofire
 import Anchorage
 import AudioToolbox
 import BadgeSwift
-import SDCAlertView
-import SwiftyJSON
 import reddift
+import SDCAlertView
 import SDWebImage
+import SwiftyJSON
 import Then
 import UIKit
 
@@ -25,7 +25,7 @@ class NavigationHomeViewController: UIViewController {
     var parentController: SplitMainViewController?
     var topView: UIView?
     var bottomOffset: CGFloat = 64
-    var muxColor = ColorUtil.theme.foregroundColor
+    var muxColor = UIColor.foregroundColor
     var lastY: CGFloat = 0.0
     var timer: Timer?
     static var edgeGesture: UIPanGestureRecognizer?
@@ -69,7 +69,7 @@ class NavigationHomeViewController: UIViewController {
         $0.autocapitalizationType = .none
         $0.spellCheckingType = .no
         $0.returnKeyType = .search
-        if !ColorUtil.theme.isLight {
+        if !UIColor.isLightTheme {
             $0.keyboardAppearance = .dark
         }
         $0.searchBarStyle = UISearchBar.Style.minimal
@@ -82,7 +82,7 @@ class NavigationHomeViewController: UIViewController {
     
     var accountHeader: CurrentAccountHeaderView?
 
-    //let horizontalSubGroup = HorizontalSubredditGroup()
+    // let horizontalSubGroup = HorizontalSubredditGroup()
     
     init(controller: SplitMainViewController) {
         self.parentController = controller
@@ -125,30 +125,13 @@ class NavigationHomeViewController: UIViewController {
         doViews()
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        if #available(iOS 13.0, *) {
-            if #available(iOS 14.0, *) {
-                if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
-                    ColorUtil.matchTraitCollection()
-                }
-            } else {
-                if let themeChanged = previousTraitCollection?.hasDifferentColorAppearance(comparedTo: traitCollection) {
-                    if themeChanged {
-                        ColorUtil.matchTraitCollection()
-                    }
-                }
-            }
-        }
-    }
-
     func doViews() {
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
-        tableView.backgroundColor = ColorUtil.theme.foregroundColor
-        tableView.separatorColor = ColorUtil.theme.foregroundColor
+        tableView.backgroundColor = UIColor.foregroundColor
+        tableView.separatorColor = UIColor.foregroundColor
         
-        self.navigationController?.navigationBar.barTintColor = ColorUtil.theme.foregroundColor
-        self.splitViewController?.view.backgroundColor = ColorUtil.theme.foregroundColor
+        self.navigationController?.navigationBar.barTintColor = UIColor.foregroundColor
+        self.splitViewController?.view.backgroundColor = UIColor.foregroundColor
 
         tableView.sectionIndexColor = ColorUtil.baseAccent
 
@@ -186,10 +169,10 @@ class NavigationHomeViewController: UIViewController {
                 return
             }
             if text.contains(" ") {
-                //do search
+                // do search
                 VCPresenter.showVC(viewController: SearchViewController(subreddit: MainViewController.current, searchFor: text), popupIfPossible: false, parentNavigationController: parentController?.navigationController, parentViewController: parentController)
             } else {
-                //go to sub
+                // go to sub
                 parentController?.goToSubreddit(subreddit: text)
             }
         }
@@ -203,6 +186,7 @@ class NavigationHomeViewController: UIViewController {
         self.inHeadView.removeFromSuperview()
         self.view.endEditing(true)
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillBeShown),
@@ -218,22 +202,22 @@ class NavigationHomeViewController: UIViewController {
         }
 
         inHeadView = UIView.init(frame: CGRect.init(x: 0, y: 0, width: max(self.view.frame.size.width, self.view.frame.size.height), height: statusBarHeight))
-        self.inHeadView.backgroundColor = ColorUtil.theme.foregroundColor
-        let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
-        //if !landscape {
+        self.inHeadView.backgroundColor = UIColor.foregroundColor
+        // let landscape = UIScreen.main.bounds.width > UIScreen.main.bounds.height
+        // if !landscape {
             self.view.addSubview(inHeadView)
-        //}
+        // }
 
         // Update any things that can change due to user settings here
-        tableView.backgroundColor = ColorUtil.theme.foregroundColor
-        tableView.separatorColor = ColorUtil.theme.foregroundColor
+        tableView.backgroundColor = UIColor.foregroundColor
+        tableView.separatorColor = UIColor.foregroundColor
         
         self.edgesForExtendedLayout = UIRectEdge.all
         self.extendedLayoutIncludesOpaqueBars = true
 
         navigationController?.setNavigationBarHidden(true, animated: true)
         navigationController?.setToolbarHidden(false, animated: false)
-        self.navigationController?.toolbar.barTintColor = ColorUtil.theme.foregroundColor
+        self.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
         
         if SettingValues.scrollSidebar {
             self.tableView.setContentOffset(CGPoint.zero, animated: false)
@@ -243,7 +227,7 @@ class NavigationHomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if SettingValues.autoKeyboard {
-            //TODO enable this? searchBar.becomeFirstResponder()
+            // TODO enable this? searchBar.becomeFirstResponder()
         }
         splitViewController?.navigationItem.hidesBackButton = true
         navigationController?.navigationItem.hidesBackButton = true
@@ -263,10 +247,11 @@ class NavigationHomeViewController: UIViewController {
 
     func configureViews() {
 
-        //horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
-        //horizontalSubGroup.delegate = self
-        //view.addSubview(horizontalSubGroup)
+        // horizontalSubGroup.setSubreddits(subredditNames: ["FRONTPAGE", "ALL", "POPULAR"])
+        // horizontalSubGroup.delegate = self
+        // view.addSubview(horizontalSubGroup)
 
+        accountHeader?.removeFromSuperview()
         accountHeader = CurrentAccountHeaderView()
         accountHeader?.delegate = parentController
         accountHeader!.initCurrentAccount(self)
@@ -308,9 +293,9 @@ class NavigationHomeViewController: UIViewController {
 
     func configureLayout() {
     
-        //horizontalSubGroup.topAnchor /==/ view.topAnchor
-        //horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
-        //horizontalSubGroup.heightAnchor /==/ 90
+        // horizontalSubGroup.topAnchor /==/ view.topAnchor
+        // horizontalSubGroup.horizontalAnchors /==/ view.horizontalAnchors
+        // horizontalSubGroup.heightAnchor /==/ 90
         accountHeader!.topAnchor /==/ headerView.topAnchor
         accountHeader!.horizontalAnchors /==/ headerView.horizontalAnchors
         accountHeader!.heightAnchor /==/ accountHeader!.estimateHeight()
@@ -336,20 +321,20 @@ class NavigationHomeViewController: UIViewController {
 
     func setColors(_ sub: String) {
         DispatchQueue.main.async {
-            //self.horizontalSubGroup.setColors()
-            //self.horizontalSubGroup.backgroundColor = ColorUtil.theme.foregroundColor
-            self.headerView.backgroundColor = ColorUtil.theme.foregroundColor
-            self.searchBar.tintColor = ColorUtil.theme.fontColor
-            self.searchBar.textColor = ColorUtil.theme.fontColor
+            // self.horizontalSubGroup.setColors()
+            // self.horizontalSubGroup.backgroundColor = UIColor.foregroundColor
+            self.headerView.backgroundColor = UIColor.foregroundColor
+            self.searchBar.tintColor = UIColor.fontColor
+            self.searchBar.textColor = UIColor.fontColor
             self.searchBar.backgroundColor = .clear
-            self.tableView.backgroundColor = ColorUtil.theme.foregroundColor
+            self.tableView.backgroundColor = UIColor.foregroundColor
             self.tableView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
         }
     }
     
     func setSubreddit(subreddit: String) {
         setColors(subreddit)
-        tableView.backgroundColor = ColorUtil.theme.foregroundColor
+        tableView.backgroundColor = UIColor.foregroundColor
     }
     
     func reloadData() {
@@ -419,7 +404,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return false && !isSearching //Disable pinning for now
+        return false && !isSearching // Disable pinning for now
     }
 
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
@@ -494,15 +479,15 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         toReturn.addSubview(label)
         label.centerYAnchor /==/ toReturn.centerYAnchor
         label.leftAnchor /==/ toReturn.safeLeftAnchor + 16
-        toReturn.backgroundColor = ColorUtil.theme.foregroundColor
+        toReturn.backgroundColor = UIColor.foregroundColor
 
         if section == 0 {
             return headerView
         }
         if isSearching {
             switch section {
-            case 0: label.text  = ""
-            default: label.text  = "REDDIT SUGGESTIONS"
+            case 0: label.text = ""
+            default: label.text = "REDDIT SUGGESTIONS"
             }
         } else {
             let sectionTitle = subsSource.sortedSectionTitles[section]
@@ -594,7 +579,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
             }
         }
 
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.backgroundColor = UIColor.foregroundColor
 
         return cell
     }
@@ -775,9 +760,9 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
             }
         } else if lastY < self.headerView.frame.size.height * 0.5 && !(self.tableView.sectionIndexView?.isHidden ?? true) {
             tableView.sectionIndexView?.alpha = 1
-            UIView.animate(withDuration: 0.2, animations: {
+            UIView.animate(withDuration: 0.2) {
                 self.tableView.sectionIndexView?.alpha = 0
-            }) { (_) in
+            } completion: { (_) in
                 self.tableView.sectionIndexView?.isHidden = true
             }
         }
@@ -787,8 +772,8 @@ extension NavigationHomeViewController: UIScrollViewDelegate {
         // User-initiated scrolling
 
         // Hide the keyboard if it's out
-        //TODO this?
-        //self.tableView.endEditing(true)
+        // TODO this?
+        // self.tableView.endEditing(true)
         searchBar.resignFirstResponder()
     }
 }
@@ -801,16 +786,16 @@ extension NavigationHomeViewController: HorizontalSubredditGroupDelegate {
 
 extension NavigationHomeViewController {
     @objc func keyboardWillBeShown(notification: NSNotification) {
-        //get the end position keyboard frame
+        // get the end position keyboard frame
         let keyInfo: Dictionary = notification.userInfo!
         var keyboardFrame: CGRect = keyInfo[UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
-        //convert it to the same view coords as the tableView it might be occluding
+        // convert it to the same view coords as the tableView it might be occluding
         keyboardFrame = self.tableView.convert(keyboardFrame, to: self.tableView)
-        //calculate if the rects intersect
+        // calculate if the rects intersect
         let intersect: CGRect = keyboardFrame.intersection(self.tableView.bounds)
         if !intersect.isNull {
-            //yes they do - adjust the insets on tableview to handle it
-            //first get the duration of the keyboard appearance animation
+            // yes they do - adjust the insets on tableview to handle it
+            // first get the duration of the keyboard appearance animation
             let duration: TimeInterval = keyInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
             // Change the table insets to match - animated to the same duration of the keyboard appearance
             UIView.animate(withDuration: duration, animations: {
@@ -842,7 +827,7 @@ extension NavigationHomeViewController {
     }
 
     @objc func accessibilityCloseButtonActivated(_ sender: UIButton) {
-        //todo go back home
+        // todo go back home
     }
 }
 
@@ -890,12 +875,12 @@ class CurrentAccountHeaderView: UIView {
     }
     
     func estimateHeight() -> CGFloat {
-        return 12 + 70 + shortcutsView.estimateHeight() //TODO estimate account label height
+        return 12 + 70 + shortcutsView.estimateHeight() // TODO estimate account label height
     }
     
     var spinner = UIActivityIndicatorView().then {
         $0.style = UIActivityIndicatorView.Style.whiteLarge
-        $0.color = ColorUtil.theme.fontColor
+        $0.color = UIColor.fontColor
         $0.hidesWhenStopped = true
     }
     
@@ -904,13 +889,13 @@ class CurrentAccountHeaderView: UIView {
     }
     
     var settingsButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: .gear, overrideString: "settings")!.getCopy(withSize: .square(size: 30), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: .gear, overrideString: "settings")!.getCopy(withSize: .square(size: 30), withColor: UIColor.fontColor), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "App Settings"
     }
     
     var forwardButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: UIDevice.current.userInterfaceIdiom == .pad ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: ColorUtil.theme.fontColor), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: UIDevice.current.userInterfaceIdiom == .pad ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: UIColor.fontColor), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Go home"
     }
@@ -959,7 +944,7 @@ class CurrentAccountHeaderView: UIView {
     
     var accountNameLabel = UILabel().then {
         $0.font = FontGenerator.boldFontOfSize(size: 18, submission: false)
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.numberOfLines = 1
         $0.adjustsFontSizeToFitWidth = true
         $0.minimumScaleFactor = 0.5
@@ -968,13 +953,13 @@ class CurrentAccountHeaderView: UIView {
     
     var accountAgeLabel = UILabel().then {
         $0.font = FontGenerator.fontOfSize(size: 10, submission: false)
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.numberOfLines = 0
         $0.text = ""
     }
     
     var accountImageView = UIImageView().then {
-        $0.backgroundColor = ColorUtil.theme.foregroundColor
+        $0.backgroundColor = UIColor.foregroundColor
         $0.contentMode = .scaleAspectFit
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
@@ -992,7 +977,7 @@ class CurrentAccountHeaderView: UIView {
     
     var emptyStateLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.textColor = ColorUtil.theme.fontColor
+        $0.textColor = UIColor.fontColor
         $0.textAlignment = .center
         $0.attributedText = {
             var font = UIFont.boldSystemFont(ofSize: 20)
@@ -1018,7 +1003,7 @@ class CurrentAccountHeaderView: UIView {
         let forwardItem = UIBarButtonItem(customView: forwardButton)
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
-        if UIApplication.shared.isMac() {
+        if SettingValues.desktopMode {
             parent.toolbarItems = [leftItem, space, rightItem]
         } else {
             parent.toolbarItems = [leftItem, space, rightItem, forwardItem]
@@ -1110,19 +1095,18 @@ extension CurrentAccountHeaderView {
     }
     
     func configureForCurrentAccount() {
-        
         updateMailBadge()
         updateModBadge()
         
         if AccountController.current != nil {
             accountImageView.contentMode = .scaleAspectFill
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: ColorUtil.theme.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
         } else {
             accountImageView.contentMode = .center
-            accountImageView.image = UIImage(sfStringHQ: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 50), withColor: ColorUtil.theme.fontColor)
+            accountImageView.image = UIImage(sfStringHQ: SFSymbol.personFill, overrideString: "profile")?.getCopy(withSize: CGSize.square(size: 50), withColor: UIColor.fontColor)
         }
         setEmptyState(!AccountController.isLoggedIn, animate: true)
         
@@ -1156,7 +1140,7 @@ extension CurrentAccountHeaderView {
             }()
             let day = Calendar.current.ordinality(of: .day, in: .month, for: Date()) == Calendar.current.ordinality(of: .day, in: .month, for: creationDate as Date)
             let month = Calendar.current.ordinality(of: .month, in: .year, for: Date()) == Calendar.current.ordinality(of: .month, in: .year, for: creationDate as Date)
-            let attrs = [NSAttributedString.Key.foregroundColor: ColorUtil.theme.fontColor, NSAttributedString.Key.font: accountAgeLabel.font]
+            let attrs = [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: accountAgeLabel.font]
             let currentText = NSMutableAttributedString()
             currentText.append(NSAttributedString(string: day && month ? "🍰 Created \(creationDateString) 🍰" : "Created \(creationDateString)", attributes: attrs as [NSAttributedString.Key: Any]))
             currentText.append(NSAttributedString(string: "\n"))
@@ -1251,6 +1235,10 @@ extension CurrentAccountHeaderView {
                 is14Column = true
             }
             
+            if SettingValues.desktopMode {
+                is14Column = true
+            }
+            
             if let barButtonItem = self.parent?.splitViewController?.displayModeButtonItem, let action = barButtonItem.action, let target = barButtonItem.target, !is14Column {
                 UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
             } else {
@@ -1318,7 +1306,7 @@ extension CurrentAccountHeaderView {
     
     override func accessibilityPerformEscape() -> Bool {
         super.accessibilityPerformEscape()
-        //TODO go back home
+        // TODO go back home
         return true
     }
     
@@ -1343,7 +1331,7 @@ class AccountShortcutsView: UIView {
         super.init(frame: frame)
         
         addSubviews(cellStack)
-        //infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
+        // infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
         for action in actions {
             if !action.needsAccount() || AccountController.isLoggedIn {
                 cellStack.addArrangedSubview(UITableViewCell().then {
@@ -1354,8 +1342,8 @@ class AccountShortcutsView: UIView {
                         }
                     }
                     $0.heightAnchor />=/ 50
-                    $0.backgroundColor = ColorUtil.theme.foregroundColor
-                    $0.contentView.backgroundColor = ColorUtil.theme.foregroundColor
+                    $0.backgroundColor = UIColor.foregroundColor
+                    $0.contentView.backgroundColor = UIColor.foregroundColor
                     $0.accessoryType = .disclosureIndicator
                 })
             }
@@ -1399,8 +1387,8 @@ class AccountShortcutsView: UIView {
     }
         
     func setupAnchors() {
-        //infoStack.topAnchor /==/ topAnchor
-        //infoStack.horizontalAnchors /==/ horizontalAnchors
+        // infoStack.topAnchor /==/ topAnchor
+        // infoStack.horizontalAnchors /==/ horizontalAnchors
         
         cellStack.topAnchor /==/ topAnchor
         cellStack.horizontalAnchors /==/ horizontalAnchors

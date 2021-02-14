@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import AudioToolbox
 import reddift
 import SDWebImage
 import UIKit
@@ -15,12 +16,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     var currentPlayingIndex = [IndexPath]()
     
     var isScrollingDown = true
-    
     var lastScrollDirectionWasDown = false
-    
     var lastYUsed = CGFloat.zero
-    
     var lastY = CGFloat.zero
+    
+    weak var profilePresentationManager: ProfileInfoPresentationManager?
+    
+    var longBlocking = false
     
     func getTableView() -> UICollectionView {
         return self.tableView
@@ -31,7 +33,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         return 0
     }
     
-    func subscribe(link: RSubmission) {
+    func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
         let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
@@ -80,7 +82,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if ColorUtil.theme.isLight && SettingValues.reduceColor {
+        if UIColor.isLightTheme && SettingValues.reduceColor {
                         if #available(iOS 13, *) {
                 return .darkContent
             } else {
@@ -109,7 +111,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func showFilterMenu(_ cell: LinkCellView) {
-        //Not implemented
+        // Not implemented
     }
     public var inHeadView = UIView()
     
@@ -192,7 +194,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.dataSource = self
         
         refreshControl = UIRefreshControl()
-        refreshControl.tintColor = ColorUtil.theme.fontColor
+        refreshControl.tintColor = UIColor.fontColor
         
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
@@ -209,7 +211,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.register(MessageCellView.classForCoder(), forCellWithReuseIdentifier: "message")
         self.tableView.register(ModlogCellView.classForCoder(), forCellWithReuseIdentifier: "modlog")
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
-        tableView.backgroundColor = ColorUtil.theme.backgroundColor
+        tableView.backgroundColor = UIColor.backgroundColor
         
         var top = 0
         
@@ -271,10 +273,10 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     func collectionView(_ tableView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let thing = baseData.content[indexPath.row]
         var cell: UICollectionViewCell?
-        if thing is RSubmission {
+        if thing is SubmissionObject {
             let tableWidth = self.tableView.frame.size.width
             var c: LinkCellView?
-            switch SingleSubredditViewController.cellType(forSubmission: thing as! RSubmission, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
+            switch SingleSubredditViewController.cellType(foSubmission: thing as! SubmissionObject, false, cellWidth: (tableWidth == 0 ? UIScreen.main.bounds.size.width : tableWidth) ) {
             case .thumb:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbnailLinkCellView
             case .banner:
@@ -282,7 +284,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             case .autoplay:
                 c = tableView.dequeueReusableCell(withReuseIdentifier: "autoplay", for: indexPath) as! AutoplayBannerLinkCellView
             default:
-                if !SettingValues.hideImageSelftext && (thing as! RSubmission).height > 0 {
+                if !SettingValues.hideImageSelftext && (thing as? SubmissionObject)?.imageHeight ?? 0 > 0 && SettingValues.postImageMode != .NONE {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "banner", for: indexPath) as! BannerLinkCellView
                 } else {
                     c = tableView.dequeueReusableCell(withReuseIdentifier: "text", for: indexPath) as! TextLinkCellView
@@ -292,31 +294,50 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
             c?.preservesSuperviewLayoutMargins = false
             c?.del = self
             
-            (c)!.configure(submission: thing as! RSubmission, parent: self, nav: self.navigationController, baseSub: "", np: false)
+            (c)!.configure(submission: thing as! SubmissionObject, parent: self, nav: self.navigationController, baseSub: "", np: false)
                         
             if self is ReadLaterViewController {
                 c?.readLater.isHidden = false
             }
             
             cell = c
-        } else if thing is RComment {
+        } else if thing is CommentObject {
+            // Show comment cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "comment", for: indexPath) as! CommentCellView
-            c.setComment(comment: (thing as! RComment), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.delegate = self
+            c.textDelegate = self
+
+            c.setComment(comment: (thing as! CommentObject), width: self.view.frame.size.width)
             cell = c
-        } else if thing is RFriend {
+        } else if thing is FriendObject {
+            // Show friend cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "friend", for: indexPath) as! FriendCellView
-            c.setFriend(friend: (thing as! RFriend), parent: self)
+            c.delegate = self
+
+            c.setFriend(friend: (thing as! FriendObject))
             cell = c
-        } else if thing is RMessage {
+        } else if thing is MessageObject {
+            // Show message cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "message", for: indexPath) as! MessageCellView
-            c.setMessage(message: (thing as! RMessage), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.delegate = self
+            c.textDelegate = self
+            
+            if let base = baseData as? InboxContributionLoader, base.messages == .messages {
+                c.state = .THREAD_PREVIEW
+            }
+
+            c.setMessage(message: (thing as! MessageObject), width: self.view.frame.size.width)
             cell = c
         } else {
-            //Is mod log item
+            // Show modlog cell
             let c = tableView.dequeueReusableCell(withReuseIdentifier: "modlog", for: indexPath) as! ModlogCellView
-            c.setLogItem(logItem: (thing as! RModlogItem), parent: self, nav: self.navigationController, width: self.view.frame.size.width)
+            c.delegate = self
+            c.textDelegate = self
+
+            c.setLogItem(logItem: (thing as! ModLogObject), width: self.view.frame.size.width)
             cell = c
         }
+        // TODO: Don't use ! for these objects, could cause crashes with unknown objects
         
         return cell!
     }
@@ -333,39 +354,37 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         if indexPath.row < baseData.content.count {
             let thing = baseData.content[indexPath.row]
             
-            if thing is RSubmission {
-                let submission = thing as! RSubmission
+            if thing is SubmissionObject {
+                let submission = thing as! SubmissionObject
                 return SingleSubredditViewController.sizeWith(submission, width, false, false)
-            } else if thing is RComment {
-                let comment = thing as! RComment
+            } else if thing is CommentObject {
+                let comment = thing as! CommentObject
                 if estimatedHeights[comment.id] == nil {
                     let titleText = CommentCellView.getTitle(comment)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: comment.htmlBody)
                     
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: comment.htmlText)
-                    
-                    estimatedHeights[comment.id] = height + 20
+                    estimatedHeights[comment.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[comment.id]!)
-            } else if thing is RFriend {
+            } else if thing is FriendObject {
                 return CGSize(width: itemWidth, height: 70)
-            } else if thing is RMessage {
-                let message = thing as! RMessage
+            } else if thing is MessageObject {
+                let message = thing as! MessageObject
                 if estimatedHeights[message.id] == nil {
-                    let titleText = MessageCellView.getTitleText(message: message)
+                    let titleText = MessageCellView.getTitleText(message: message, state: (baseData as? InboxContributionLoader)?.messages == .messages ? .THREAD_PREVIEW : .IN_MESSAGES)
+                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: true, width: itemWidth - 12, titleString: titleText, htmlString: (baseData as? InboxContributionLoader)?.messages == .messages ? "" : message.htmlBody)
                     
-                    let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16 - (message.subject.unescapeHTML.hasPrefix("re:") ? 30 : 0), titleString: titleText, htmlString: message.htmlBody)
-                    
-                    estimatedHeights[message.id] = height + 20
+                    estimatedHeights[message.id] = height
                 }
+
                 return CGSize(width: itemWidth, height: estimatedHeights[message.id]!)
             } else {
-                let logItem = thing as! RModlogItem
+                let logItem = thing as! ModLogObject
                 if estimatedHeights[logItem.id] == nil {
                     let titleText = ModlogCellView.getTitleText(item: logItem)
-                    
                     let height = TextDisplayStackView.estimateHeight(fontSize: 16, submission: false, width: itemWidth - 16, titleString: titleText, htmlString: logItem.targetTitle)
                     
-                    estimatedHeights[logItem.id] = height + 20
+                    estimatedHeights[logItem.id] = height
                 }
                 return CGSize(width: itemWidth, height: estimatedHeights[logItem.id]!)
             }
@@ -515,7 +534,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.refreshControl.endRefreshing()
         self.refreshControl.removeFromSuperview()
         self.refreshControl = UIRefreshControl()
-        self.refreshControl.tintColor = ColorUtil.theme.fontColor
+        self.refreshControl.tintColor = UIColor.fontColor
         
         self.refreshControl.attributedTitle = NSAttributedString(string: "")
         self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
@@ -547,7 +566,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
                     top += 22
                 }
                 
-                //New xcode is complaining about computation times...
+                // New xcode is complaining about computation times...
                 let headerOffset = CGFloat((self.baseData is FriendsContributionLoader || self.baseData is ProfileContributionLoader || self.baseData is InboxContributionLoader || self.baseData is CollectionsContributionLoader || self.baseData is ModQueueContributionLoader || self.baseData is ModMailContributionLoader) ? 45 : 0)
                 let totalOffset = (-1 * (headerOffset + (self.navigationController?.navigationBar.frame.size.height ?? 64)))
                 self.tableView.contentOffset = CGPoint.init(x: 0, y: -18 + totalOffset - top)
@@ -573,16 +592,24 @@ extension ContentListingViewController: LinkCellViewDelegate {
     }
     
     func deleteSelf(_ cell: LinkCellView) {
-        //Dont implememt
+        // Dont implememt
     }
     
     func more(_ cell: LinkCellView) {
         PostActions.showMoreMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
     }
     
+    @available(iOS 13, *)
+    func getMoreMenu(_ cell: LinkCellView) -> UIMenu? {
+        if let nav = self.navigationController {
+            return PostActions.getMoreContextMenu(cell: cell, parent: self, nav: self.navigationController, mutableList: false, delegate: self, index: tableView.indexPath(for: cell)?.row ?? 0)
+        }
+        return nil
+    }
+
     func upvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up, name: (cell.link?.id)!, completion: { (_) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .up ? .none : .up)
@@ -596,7 +623,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
     
     func downvote(_ cell: LinkCellView) {
         do {
-            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.getId())!, completion: { (_) in
+            try session?.setVote(ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down, name: (cell.link?.id)!, completion: { (_) in
                 
             })
             ActionStates.setVoteDirection(s: cell.link!, direction: ActionStates.getVoteDirection(s: cell.link!) == .down ? .none : .down)
@@ -619,8 +646,8 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 alert.addAction(UIAlertAction(title: "Remove", style: UIAlertAction.Style.destructive, handler: { (_) in
                     Collections.removeFromCollection(link: cell.link!, title: ctitle)
                     self.baseData.content = self.baseData.content.filter { (object) -> Bool in
-                        if let link = object as? RSubmission {
-                            if link.getId() == cell.link!.getId() {
+                        if let link = object as? SubmissionObject {
+                            if link.id == cell.link!.id {
                                 return false
                             }
                         }
@@ -633,7 +660,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
             }
         } else {
             do {
-                try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.getId())!, completion: { (_) in
+                try session?.setSave(!ActionStates.isSaved(s: cell.link!), name: (cell.link?.id)!, completion: { (_) in
                     
                 })
                 ActionStates.setSaved(s: cell.link!, saved: !ActionStates.isSaved(s: cell.link!))
@@ -662,7 +689,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
         }
         
         if self is ReadLaterViewController {
-            ReadLater.removeReadLater(id: cell.link!.getId())
+            ReadLater.removeReadLater(id: cell.link!.id)
             let savedIndex = tableView.indexPath(for: cell)?.row ?? 0
             self.baseData.content.remove(at: savedIndex)
             if self.baseData.content.count == 0 {
@@ -671,7 +698,7 @@ extension ContentListingViewController: LinkCellViewDelegate {
                 self.tableView.deleteItems(at: [IndexPath.init(row: savedIndex, section: 0)])
             }
             BannerUtil.makeBanner(text: "Removed from Read Later\nTap to undo", color: GMColor.red500Color(), seconds: 3, context: self, top: false) {
-                ReadLater.addReadLater(id: cell.link!.getId(), subreddit: cell.link!.subreddit)
+                ReadLater.addReadLater(id: cell.link!.id, subreddit: cell.link!.subreddit)
                 self.baseData.content.insert(cell.link!, at: savedIndex)
                 if ReadLater.readLaterIDs.count == 1 {
                     self.tableView.reloadData()
@@ -687,7 +714,194 @@ extension ContentListingViewController: LinkCellViewDelegate {
         }
         cell.refresh()
     }
+}
+
+extension ContentListingViewController: FriendCellViewDelegate {
+    func showProfile(name: String) {
+        VCPresenter.openRedditLink("/u/\(name)", self.navigationController, self)
+    }
+}
+
+extension ContentListingViewController: TextDisplayStackViewDelegate {
+    func linkTapped(url: URL, text: String) {
+        if !text.isEmpty {
+            self.showSpoiler(text)
+        } else {
+            self.doShow(url: url, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
+        }
+    }
+
+    func linkLongTapped(url: URL) {
+        longBlocking = true
+        
+        let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
+        
+        alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
+            let shareItems: Array = [url]
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.view
+            self.present(activityViewController, animated: true, completion: nil)
+        }
+        
+        alertController.addAction(title: "Copy URL", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()) {
+            UIPasteboard.general.setValue(url, forPasteboardType: "public.url")
+            BannerUtil.makeBanner(text: "URL Copied", seconds: 5, context: self)
+        }
+        
+        alertController.addAction(title: "Open in default app", icon: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav")!.menuIcon()) {
+            if #available(iOS 10.0, *) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            } else {
+                UIApplication.shared.openURL(url)
+            }
+        }
+        
+        let open = OpenInChromeController.init()
+        if open.isChromeInstalled() {
+            alertController.addAction(title: "Open in Chrome", icon: UIImage(named: "world")!.menuIcon()) {
+                open.openInChrome(url, callbackURL: nil, createNewTab: true)
+            }
+        }
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        
+        alertController.show(self)
+    }
     
+    func previewProfile(profile: String) {
+        let vc = ProfileInfoViewController(accountNamed: profile)
+        vc.modalPresentationStyle = .custom
+        let presentation = ProfileInfoPresentationManager()
+        self.profilePresentationManager = presentation
+        vc.transitioningDelegate = presentation
+        self.present(vc, animated: true)
+    }
+}
+
+extension ContentListingViewController: CommentCellViewDelegate {
+    func openComment(_ comment: CommentObject) {
+        VCPresenter.openRedditLink(comment.permalink, self.navigationController, self)
+    }
+}
+
+extension ContentListingViewController: ModlogCellViewDelegate {
+    func didClick(on modLogObject: ModLogObject) {
+        let url = "https://www.reddit.com\(modLogObject.permalink)"
+        VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+    
+    func showMenu(for modLogObject: ModLogObject) {
+        let alertController = DragDownAlertMenu(title: "Modlog Item", subtitle: modLogObject.targetTitle.unescapeHTML, icon: nil)
+
+        alertController.addAction(title: "View author profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
+            let url = "https://www.reddit.com/u/\(modLogObject.targetAuthor)"
+            VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        alertController.addAction(title: "View original content", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
+            let url = "https://www.reddit.com\(modLogObject.permalink)"
+            VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        alertController.show(self)
+    }
+}
+
+extension ContentListingViewController: MessageCellViewDelegate {
+    func showThread(id: String, title: String) {
+        VCPresenter.showVC(viewController: ThreadViewControler(threadID: id, title: title), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
+    }
+
+    func doReply(to message: MessageObject, cell: MessageCellView) {
+        if !ActionStates.isRead(s: message) {
+            let session = (UIApplication.shared.delegate as! AppDelegate).session
+            do {
+                try session?.markMessagesAsRead([message.name.contains("_") ? message.name : (message.wasComment ? "t1_" : "t4_") + message.name], completion: { (result) in
+                    if result.error != nil {
+                        print(result.error!.description)
+                    } else {
+                        NotificationCenter.default.post(name: .accountRefreshRequested, object: nil, userInfo: nil)
+                    }
+                })
+            } catch {
+            }
+            ActionStates.setRead(s: message, read: true)
+            let titleText = MessageCellView.getTitleText(message: message, state: cell.state)
+            cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
+
+        } else {
+            if let context = message.context, message.wasComment {
+                let url = "https://www.reddit.com\(context)"
+                let vc = RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!)
+                VCPresenter.showVC(viewController: vc, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            } else {
+                VCPresenter.presentAlert(TapBehindModalViewController.init(rootViewController: ReplyViewController.init(message: message, completion: {(_) in
+                    DispatchQueue.main.async(execute: { () -> Void in
+                        BannerUtil.makeBanner(text: "Message sent!", seconds: 3, context: self)
+                    })
+                })), parentVC: self)
+            }
+        }
+    }
+    
+    func showMenu(for message: MessageObject, cell: MessageCellView) {
+        let alertController = DragDownAlertMenu(title: "Message from u/\(message.author)", subtitle: message.subject, icon: nil)
+
+        alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: message.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {
+            let prof = ProfileViewController.init(name: message.author)
+            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+        }
+
+        alertController.addAction(title: "Reply to message", icon: UIImage(sfString: SFSymbol.arrowshapeTurnUpLeftFill, overrideString: "reply")!.menuIcon()) {
+            self.doReply(to: message, cell: cell)
+        }
+
+        alertController.addAction(title: ActionStates.isRead(s: message) ? "Mark as unread" : "Mark as read", icon: ActionStates.isRead(s: message) ? UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "seen")!.menuIcon() : UIImage(sfString: SFSymbol.eyeFill, overrideString: "seen")!.menuIcon()) {
+            if ActionStates.isRead(s: message) {
+                let session = (UIApplication.shared.delegate as! AppDelegate).session
+                do {
+                    try session?.markMessagesAsUnread([message.name.contains("_") ? message.name : (message.wasComment ? "t1_" : "t4_") + message.name], completion: { (result) in
+                        if result.error != nil {
+                            print(result.error!.description)
+                        }
+                    })
+                } catch {
+                    
+                }
+                ActionStates.setRead(s: message, read: false)
+                let titleText = MessageCellView.getTitleText(message: message, state: cell.state)
+                cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
+                
+            } else {
+                let session = (UIApplication.shared.delegate as! AppDelegate).session
+                do {
+                    try session?.markMessagesAsRead([message.name.contains("_") ? message.name : (message.wasComment ? "t1_" : "t4_") + message.name], completion: { (result) in
+                        if result.error != nil {
+                            print(result.error!.description)
+                        }
+                    })
+                } catch {
+                    
+                }
+                ActionStates.setRead(s: message, read: true)
+                let titleText = MessageCellView.getTitleText(message: message, state: cell.state)
+                cell.text.setTextWithTitleHTML(titleText, htmlString: message.htmlBody)
+            }
+        }
+
+        if let context = message.context, message.wasComment {
+            alertController.addAction(title: "View comment thread", icon: UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()) {
+                let url = "https://www.reddit.com\(context)"
+                VCPresenter.showVC(viewController: RedditLink.getViewControllerForURL(urlS: URL.initPercent(string: url)!), popupIfPossible: true, parentNavigationController: self.navigationController, parentViewController: self)
+            }
+        }
+
+        alertController.show(self)
+    }
 }
 
 class EmptyStateView: UIView {
@@ -718,45 +932,19 @@ class EmptyStateView: UIView {
     func setText(title: String, message: String?) {
         let finalText: NSMutableAttributedString!
         if let message = message {
-            let firstPart = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([
-                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.8),
-                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 20),
-            ]))
-            let secondPart = NSMutableAttributedString.init(string: "\n\n" + message, attributes: convertToOptionalNSAttributedStringKeyDictionary([
-                convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): ColorUtil.theme.fontColor.withAlphaComponent(0.5),
-                convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 14),
-            ]))
+            let firstPart = NSMutableAttributedString(string: title, attributes: [
+                NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.8),
+                NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20),
+            ])
+            let secondPart = NSMutableAttributedString.init(string: "\n\n" + message, attributes: [
+                NSAttributedString.Key.foregroundColor: UIColor.fontColor.withAlphaComponent(0.5),
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14),
+            ])
             firstPart.append(secondPart)
             finalText = firstPart
         } else {
-            finalText = NSMutableAttributedString.init(string: title, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.white, convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14)]))
+            finalText = NSMutableAttributedString(string: title, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
         }
         titleLabel.attributedText = finalText
     }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalNSAttributedStringKeyDictionary(_ input: [String: Any]?) -> [NSAttributedString.Key: Any]? {
-    guard let input = input else { return nil }
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToNSAttributedStringDocumentReadingOptionKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.DocumentReadingOptionKey: Any] {
-    return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.DocumentReadingOptionKey(rawValue: key), value) })
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentAttributeKey(_ input: NSAttributedString.DocumentAttributeKey) -> String {
-    return input.rawValue
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertFromNSAttributedStringDocumentType(_ input: NSAttributedString.DocumentType) -> String {
-    return input.rawValue
 }

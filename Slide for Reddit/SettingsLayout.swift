@@ -231,7 +231,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     
     func doLink() {
         
-        let fakesub = RSubmission()
+        let fakesub = SubmissionObject()
         let calendar: NSCalendar! = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
         let now: NSDate! = NSDate()
         
@@ -240,40 +240,40 @@ class SettingsLayout: BubbleSettingTableViewController {
         fakesub.id = "234"
         fakesub.name = "234"
         fakesub.author = "ccrama"
-        fakesub.created = date0 as NSDate
-        fakesub.edited = NSDate(timeIntervalSince1970: 1)
-        fakesub.gilded = false
+        fakesub.created = date0
+        fakesub.edited = Date(timeIntervalSince1970: 1)
         fakesub.htmlBody = ""
-        fakesub.body = "This is where the selftext preview goes in a normal submission."
+        fakesub.markdownBody = "This is where the selftext preview goes in a normal submission."
         fakesub.title = "Chameleons are cool!"
         fakesub.subreddit = "all"
-        fakesub.archived = false
-        fakesub.locked = false
-        fakesub.urlString = "http://i.imgur.com/mAs9Lk3.png"
+        fakesub.isArchived = false
+        fakesub.isLocked = false
+        fakesub.contentUrl = "http://i.imgur.com/mAs9Lk3.png"
         fakesub.distinguished = ""
         fakesub.isEdited = false
         fakesub.commentCount = 42
-        fakesub.saved = false
-        fakesub.stickied = false
-        fakesub.visited = false
+        fakesub.isSaved = false
+        fakesub.isStickied = false
+        fakesub.isVisited = false
         fakesub.isSelf = false
         fakesub.permalink = ""
         fakesub.bannerUrl = "http://i.imgur.com/mAs9Lk3.png"
         fakesub.thumbnailUrl = "http://i.imgur.com/mAs9Lk3s.png"
-        fakesub.lqUrl = "http://i.imgur.com/mAs9Lk3m.png"
-        fakesub.lQ = false
-        fakesub.thumbnail = true
-        fakesub.banner = true
+        fakesub.lqURL = "http://i.imgur.com/mAs9Lk3m.png"
+        fakesub.isLQ = false
+        fakesub.hasThumbnail = true
+        fakesub.hasBanner = true
         fakesub.score = 52314
-        fakesub.flair = "Cool!"
         fakesub.domain = "imgur.com"
-        fakesub.voted = false
-        fakesub.height = 288
-        fakesub.width = 636
-        fakesub.vote = false
+        fakesub.hasVoted = false
+        fakesub.imageHeight = 288
+        fakesub.imageWidth = 636
+        fakesub.voteDirection = false
 
         link.innerView.removeFromSuperview()
-        if SettingValues.postImageMode == .THUMBNAIL {
+        if SettingValues.postImageMode == .NONE {
+            link = TextLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
+        } else if SettingValues.postImageMode == .THUMBNAIL {
             link = ThumbnailLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
         } else {
             link = BannerLinkCellView(frame: CGRect.init(x: 0, y: 0, width: min(self.tableView.frame.size.width, 350), height: 500))
@@ -283,7 +283,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         self.link.configure(submission: fakesub, parent: MediaViewController(), nav: nil, baseSub: "all", test: true, np: false)
         self.link.isUserInteractionEnabled = false
         self.linkCell.isUserInteractionEnabled = false
-        linkCell.contentView.backgroundColor = ColorUtil.theme.backgroundColor
+        linkCell.contentView.backgroundColor = UIColor.backgroundColor
         link.innerView.heightAnchor /==/ link.estimateHeight(false, true, np: false)
         link.innerView.widthAnchor /==/ min(self.tableView.frame.size.width, 350)
         linkCell.contentView.addSubview(link.innerView)
@@ -303,6 +303,8 @@ class SettingsLayout: BubbleSettingTableViewController {
         switch SettingValues.postImageMode {
         case .CROPPED_IMAGE:
             imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
+        case .NONE:
+            imageCell.imageView?.image = UIImage(named: "hide")?.toolbarIcon()
         case .SHORT_IMAGE:
             imageCell.imageView?.image = UIImage(named: "crop")?.toolbarIcon()
         case .FULL_IMAGE:
@@ -415,7 +417,7 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
 
-            alertController.addAction(title: "No image (thumbnail only)", icon: UIImage(named: "thumb")!.menuIcon()) {
+            alertController.addAction(title: "Thumbnail only", icon: UIImage(named: "thumb")!.menuIcon()) {
                 UserDefaults.standard.set("thumbnail", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .THUMBNAIL
                 UserDefaults.standard.synchronize()
@@ -426,6 +428,17 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
             
+            alertController.addAction(title: "No image", icon: UIImage(named: "hide")!.menuIcon()) {
+                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
+                SettingValues.postImageMode = .NONE
+                UserDefaults.standard.synchronize()
+                self.doDisables()
+                self.doLink()
+                tableView.reloadData()
+                self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
+                MainViewController.needsReTheme = true
+            }
+
             alertController.show(self)
         } else if indexPath.section == 1 && indexPath.row == 2 {
             let alertController = DragDownAlertMenu(title: "Button bar mode", subtitle: "Sets the layout for the submission buttons", icon: nil)
@@ -497,8 +510,8 @@ class SettingsLayout: BubbleSettingTableViewController {
     
     public func createCell(_ cell: UITableViewCell, _ switchV: UISwitch? = nil, isOn: Bool, text: String) {
         cell.textLabel?.text = text
-        cell.textLabel?.textColor = ColorUtil.theme.fontColor
-        cell.backgroundColor = ColorUtil.theme.foregroundColor
+        cell.textLabel?.textColor = UIColor.fontColor
+        cell.backgroundColor = UIColor.foregroundColor
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
         if let s = switchV {
@@ -513,7 +526,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         super.loadView()
         
         headers = ["", "Display", "Information line", "Flairs", "Thumbnails", "Advanced"]
-        self.view.backgroundColor = ColorUtil.theme.backgroundColor
+        self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Card layout"
         
@@ -521,31 +534,31 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(thumbInfoCell, thumbInfo, isOn: SettingValues.thumbTag, text: "Show link type on thumbnail")
 
         createCell(cardModeCell, isOn: false, text: "View type")
-        cardModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        cardModeCell.detailTextLabel?.textColor = UIColor.fontColor
         cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
         cardModeCell.detailTextLabel?.numberOfLines = 0
         cardModeCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(imageCell, isOn: false, text: "Image size")
-        imageCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        imageCell.detailTextLabel?.textColor = UIColor.fontColor
         imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
         imageCell.detailTextLabel?.numberOfLines = 0
         imageCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(actionBarCell, isOn: false, text: "Button bar mode")
-        actionBarCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        actionBarCell.detailTextLabel?.textColor = UIColor.fontColor
         actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
         actionBarCell.detailTextLabel?.numberOfLines = 0
         actionBarCell.detailTextLabel?.lineBreakMode = .byWordWrapping
         
         createCell(hideImageSelftextCell, hideImageSelftext, isOn: !SettingValues.hideImageSelftext, text: "Text post preview images")
-        hideImageSelftextCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        hideImageSelftextCell.detailTextLabel?.textColor = UIColor.fontColor
         hideImageSelftextCell.detailTextLabel?.text = "Enabling this will show image previews on text-only posts"
         hideImageSelftextCell.detailTextLabel?.numberOfLines = 0
         hideImageSelftextCell.detailTextLabel?.lineBreakMode = .byWordWrapping
 
         createCell(coloredFlairsCell, coloredFlairs, isOn: SettingValues.coloredFlairs, text: "Show flair colors")
-        coloredFlairsCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        coloredFlairsCell.detailTextLabel?.textColor = UIColor.fontColor
         coloredFlairsCell.detailTextLabel?.text = "When enabled, flairs will be colored for supported subreddits"
         coloredFlairsCell.detailTextLabel?.numberOfLines = 0
         coloredFlairsCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -570,12 +583,12 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(thumbLinkCell, thumbLink, isOn: SettingValues.linkAlwaysThumbnail, text: "Hide banner image on link submissions")
         createCell(flatModeCell, flatMode, isOn: SettingValues.flatMode, text: "Flat Mode")
         createCell(moreCell, more, isOn: SettingValues.menuButton, text: "Menu button")
-        flatModeCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        flatModeCell.detailTextLabel?.textColor = UIColor.fontColor
         flatModeCell.detailTextLabel?.text = "Disables rounded corners and shadows throughout Slide"
         flatModeCell.detailTextLabel?.numberOfLines = 0
 
         createCell(reduceElevationCell, reduceElevation, isOn: SettingValues.reduceElevation, text: "Reduce Elevation")
-        reduceElevationCell.detailTextLabel?.textColor = ColorUtil.theme.fontColor
+        reduceElevationCell.detailTextLabel?.textColor = UIColor.fontColor
         reduceElevationCell.detailTextLabel?.text = "Disables shadows on cards and images"
         reduceElevationCell.detailTextLabel?.numberOfLines = 0
 
@@ -607,6 +620,29 @@ class SettingsLayout: BubbleSettingTableViewController {
             readLaterCell.contentView.alpha = 1
 
         }
+        
+        if SettingValues.postImageMode == .NONE {
+            thumbLink.isEnabled = false
+            largerThumbnail.isEnabled = false
+            leftThumb.isEnabled = false
+            thumbInfo.isEnabled = false
+            
+            thumbLinkCell.alpha = 0.5
+            largerThumbnailCell.alpha = 0.5
+            leftThumbCell.alpha = 0.5
+            thumbInfoCell.alpha = 0.5
+        } else {
+            thumbLink.isEnabled = true
+            largerThumbnail.isEnabled = true
+            leftThumb.isEnabled = true
+            thumbInfo.isEnabled = true
+            
+            thumbLinkCell.alpha = 1
+            largerThumbnailCell.alpha = 1
+            leftThumbCell.alpha = 1
+            thumbInfoCell.alpha = 1
+        }
+        
         if SettingValues.postImageMode == .THUMBNAIL {
             thumbLink.isEnabled = false
             
@@ -616,7 +652,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             
             thumbLinkCell.contentView.alpha = 1
         }
-        
+
         if !SettingValues.showFlairs {
             coloredFlairs.isEnabled = false
             imageFlairs.isEnabled = false
@@ -633,7 +669,7 @@ class SettingsLayout: BubbleSettingTableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return 6
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
