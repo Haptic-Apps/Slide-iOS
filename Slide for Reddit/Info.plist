@@ -207,6 +207,15 @@
 				<key>UIPrerenderedIcon</key>
 				<false/>
 			</dict>
+			<key>matteblack</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>ic_matte</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
 			<key>blackwhite</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
