@@ -964,10 +964,8 @@ class CurrentAccountHeaderView: UIView {
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
         }
-        if !SettingValues.flatMode {
-            $0.layer.cornerRadius = 10
-            $0.clipsToBounds = true
-        }
+        $0.layer.cornerRadius = 10
+        $0.clipsToBounds = true
         if !SettingValues.reduceElevation {
             $0.elevate(elevation: 2.0)
         }
