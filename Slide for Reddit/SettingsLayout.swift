@@ -428,8 +428,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 MainViewController.needsReTheme = true
             }
             
-            alertController.addAction(title: "No image", icon: UIImage(named: "thumb")!.menuIcon()) {
-                UserDefaults.standard.set("hide", forKey: SettingValues.pref_postImageMode)
+            alertController.addAction(title: "No image", icon: UIImage(named: "hide")!.menuIcon()) {
+                UserDefaults.standard.set("none", forKey: SettingValues.pref_postImageMode)
                 SettingValues.postImageMode = .NONE
                 UserDefaults.standard.synchronize()
                 self.doDisables()
