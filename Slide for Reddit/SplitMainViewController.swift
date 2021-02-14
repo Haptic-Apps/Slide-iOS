@@ -137,9 +137,8 @@ class SplitMainViewController: MainViewController {
         sortB = UIBarButtonItem.init(customView: sortButton)
 
         let account = ExpandedHitButton(type: .custom)
-        let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
+        let accountImage = UIImage(sfString: SFSymbol.personCropCircleFill, overrideString: "profile")?.navIcon()
         if let image = AccountController.current?.image, let imageUrl = URL(string: image) {
-            print("Loading \(image)")
             account.sd_setImage(with: imageUrl, for: UIControl.State.normal, placeholderImage: accountImage, options: [.allowInvalidSSLCertificates], context: nil)
         } else {
             account.setImage(accountImage, for: UIControl.State.normal)

@@ -74,9 +74,6 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         lock.onTintColor = ColorUtil.baseAccent
-        if SettingsPro.changed {
-            doPro()
-        }
         let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
         button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
         button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
@@ -86,7 +83,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         navigationItem.leftBarButtonItem = barButton
     }
     
-    func doPro() {
+    @objc func onPro() {
         self.tableView.reloadData()
         let menuB = UIBarButtonItem(image: UIImage(sfString: SFSymbol.heartCircleFill, overrideString: "support")?.toolbarIcon().getCopy(withColor: GMColor.red500Color()), style: .plain, target: self, action: #selector(SettingsViewController.didPro(_:)))
         navigationItem.rightBarButtonItem = menuB
@@ -148,6 +145,8 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         doCells()
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(onPro), name: .onProStatusChanged, object: nil)
     }
     
     @objc func didPro(_ sender: AnyObject) {

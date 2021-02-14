@@ -695,7 +695,7 @@ class SettingValues {
 
     public static func done7() -> Bool {
         let settings = UserDefaults.standard
-        return settings.object(forKey: "7") != nil
+        return settings.object(forKey: "7.0.0") != nil
     }
     
     public static func doneVersion() -> Bool {
