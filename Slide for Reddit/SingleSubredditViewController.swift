@@ -40,12 +40,8 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         return true
     }
     
-    override var childForHomeIndicatorAutoHidden: UIViewController? {
-        return nil
-    }
-
     override var prefersStatusBarHidden: Bool {
-        return SettingValues.hideStatusBar
+        return SettingValues.hideStatusBar && isToolbarHidden
     }
     
     var autoplayHandler: AutoplayScrollViewHandler!
@@ -604,7 +600,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else {
             self.isHiding = false
         }
-        
+                
         if single || parent is SplitMainViewController {
             if SettingValues.hideBottomBar {
                 self.navigationController?.setToolbarHidden(true, animated: true)
@@ -635,6 +631,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             //            }
         }
         self.isToolbarHidden = true
+        
+        if SettingValues.hideStatusBar {
+            setNeedsStatusBarAppearanceUpdate()
+        }
     }
 
     func showUI(_ disableBottom: Bool = false) {
@@ -657,7 +657,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 self.fab?.transform = CGAffineTransform.identity
             })
         }
-
+        
         if (single || parent is SplitMainViewController) && !MainViewController.isOffline {
             self.navigationController?.setToolbarHidden(false, animated: true)
         } else if !disableBottom {
@@ -682,6 +682,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             }*/
         }
         self.isToolbarHidden = false
+        
+        if SettingValues.hideStatusBar {
+            setNeedsStatusBarAppearanceUpdate()
+        }
     }
 
     func show(_ animated: Bool = true) {

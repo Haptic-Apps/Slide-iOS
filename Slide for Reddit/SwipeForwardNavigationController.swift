@@ -35,6 +35,14 @@ class SwipeForwardNavigationController: UINavigationController {
 
         setup()
     }
+    
+    override var childForStatusBarHidden: UIViewController? {
+        return topViewController
+    }
+    
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .slide
+    }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
