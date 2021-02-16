@@ -157,6 +157,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         super.viewDidLoad()
         redoThemes()
         self.tableView.register(ThemeCellView.classForCoder(), forCellReuseIdentifier: "theme")
+        NotificationCenter.default.addObserver(self, selector: #selector(onSettingsThemeNeedsRestart), name: .settingsThemeNeedsRestart, object: nil)
     }
 
     func pickAccent() {
@@ -242,17 +243,20 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
     }
 
     var doneOnce = false
-    static var needsRestart = false
+    
+    @objc func onSettingsThemeNeedsRestart() {
+        self.setupViews()
+        self.redoThemes()
+        self.tochange!.doCells()
+        self.tochange!.tableView.reloadData()
+        self.tableView.reloadData()
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        if doneOnce || SettingsTheme.needsRestart {
-            SettingsTheme.needsRestart = false
-            self.setupViews()
-            self.redoThemes()
-            self.tochange!.doCells()
-            self.tochange!.tableView.reloadData()
-            self.tableView.reloadData()
+        if doneOnce {
+            onSettingsThemeNeedsRestart()
         } else {
             doneOnce = true
         }
@@ -380,15 +384,10 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
     var themeText: String?
 
     @objc func switchIsChanged(_ changed: UISwitch) {
-        if changed == reduceColor {
-            MainViewController.needsReTheme = true
-            SettingValues.reduceColor = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
-        } else if changed == tintOutsideSwitch {
+        if changed == tintOutsideSwitch {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
         } else if changed == reduceColor {
-            MainViewController.needsReTheme = true
             SettingValues.reduceColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
             setupBaseBarColors()
@@ -401,12 +400,18 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             let barButton = UIBarButtonItem.init(customView: button)
             
             navigationItem.leftBarButtonItem = barButton
+            
+            NotificationCenter.default.post(name: .reduceColorChanged, object: nil)
         } else if changed == nightEnabled {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+
+            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
+                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+            }
+
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
@@ -511,7 +516,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             UserDefaults.standard.synchronize()
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+
+            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
+                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+            }
+
             self.setupViews()
             self.tableView.reloadData()
             self.tochange!.doCells()
@@ -553,7 +562,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                     _ = ColorUtil.doInit()
                     SingleSubredditViewController.cellVersion += 1
                     self.tableView.reloadData()
-                    MainViewController.needsReTheme = true
+
+                    if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
+                        NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+                    }
+
                     self.setupViews()
                     self.tochange!.doCells()
                     self.tochange!.tableView.reloadData()
@@ -601,7 +614,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
             self.tableView.reloadData()
-            MainViewController.needsReTheme = true
+
+            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
+                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+            }
+
             self.setupViews()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -628,7 +645,11 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             _ = ColorUtil.doInit()
             self.setupViews()
             SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+
+            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
+                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+            }
+
             self.tableView.reloadData()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -770,11 +791,14 @@ final public class PickerViewViewControllerColored: UIViewController {
 
 extension SettingsTheme: SettingsCustomThemeDelegate {
     func themeSaved() {
-        SettingsTheme.needsRestart = false
         _ = ColorUtil.doInit()
         SingleSubredditViewController.cellVersion += 1
         self.tableView.reloadData()
-        MainViewController.needsReTheme = true
+        
+        if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
+            NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+        }
+
         self.setupViews()
         self.tochange!.doCells()
         self.tochange!.tableView.reloadData()

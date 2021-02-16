@@ -112,7 +112,8 @@ class NavigationHomeViewController: UIViewController {
         updateAccessibility()
         searchBar.isUserInteractionEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(onSubredditOrderChanged), name: .subredditOrderChanged, object: nil)
+
         /*if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) { //DISABLE for now
             NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
             NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
@@ -125,6 +126,11 @@ class NavigationHomeViewController: UIViewController {
         doViews()
     }
 
+    @objc func onSubredditOrderChanged() {
+        subsSource.reload()
+        self.tableView.reloadData()
+    }
+    
     func doViews() {
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.backgroundColor = UIColor.foregroundColor
@@ -671,6 +677,7 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                             self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                             self.tableView.reloadData()
                             self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: false)
+                            self.tableView.resignFirstResponder()
                             self.searchBar.becomeFirstResponder()
                         }
                     }
@@ -697,6 +704,7 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                         self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                         self.tableView.reloadData()
                         self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: false)
+                        self.tableView.resignFirstResponder()
                         self.searchBar.becomeFirstResponder()
                     }
                 case .failure(let error):
@@ -704,7 +712,6 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                 }
             })
         }
-
     }
 
     func searchTableList() {

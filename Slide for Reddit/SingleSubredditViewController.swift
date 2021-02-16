@@ -192,6 +192,18 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
     
+    @objc func cellsNeedReDraw() {
+        reloadDataReset()
+    }
+    
+    @objc func subNeedsReload() {
+        swipeBackAdded = false
+        
+        reloadDataReset()
+        setupSwipeGesture()
+        setupGestures()
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -205,6 +217,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(youTubePlaying), name: .onYouTubeWillStart, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(cellsNeedReDraw), name: .cellsNeedReDraw, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(subNeedsReload), name: .subNeedsReload, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reduceColorChanged), name: .reduceColorChanged, object: nil)
 
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
@@ -963,6 +978,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         } else {
             toolbarItems = [searchB, flexButton, moreB]
         }
+    }
+    
+    @objc func reduceColorChanged() {
+        reloadNeedingColor()
     }
     
     func reloadNeedingColor() {
@@ -2988,7 +3007,8 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
     func setupGestures() {
         if cellGestureRecognizer != nil {
-            return
+            cellGestureRecognizer.view?.removeGestureRecognizer(cellGestureRecognizer)
+            cellGestureRecognizer = nil
         }
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self

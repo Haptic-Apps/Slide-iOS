@@ -59,6 +59,7 @@ class SplitMainViewController: MainViewController {
             inHeadView.backgroundColor = .clear
         }
     }
+    
     override func doProfileIcon() {
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
@@ -109,7 +110,7 @@ class SplitMainViewController: MainViewController {
     }
     
     override func doButtons() {
-        if menu.superview != nil && !MainViewController.needsReTheme {
+        if menu.superview != nil { // What was this for... && !MainViewController.needsReTheme {
             return
         }
         
@@ -273,6 +274,10 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(autoCacheFinished(_:)), name: .autoCacheFinished, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(autoCacheProgress(_:)), name: .autoCacheProgress, object: nil)
 
+        NotificationCenter.default.addObserver(self, selector: #selector(subredditOrderDidChange), name: .subredditOrderChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(resetTabBars), name: .tabBarsChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .reduceColorChanged, object: nil)
+
         if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
@@ -282,7 +287,7 @@ class SplitMainViewController: MainViewController {
 
     @objc func onThemeChanged() {
         SingleSubredditViewController.cellVersion += 1
-        MainViewController.needsReTheme = true
+
         navigationController?.toolbar.barTintColor = UIColor.backgroundColor
         navigationController?.toolbar.tintColor = UIColor.fontColor
         self.parent?.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
@@ -370,7 +375,6 @@ class SplitMainViewController: MainViewController {
         setupBaseBarColors(ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
         toolbar?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         self.doButtons()
-        MainViewController.needsReTheme = false
     }
     
     var isReappear = false
@@ -395,11 +399,8 @@ class SplitMainViewController: MainViewController {
             }
         }
                     
-        if subChanged || SubredditReorderViewController.changed {
-            finalSubs = []
-            finalSubs.append(contentsOf: Subscriptions.pinned)
-            finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
-            redoSubs()
+        if subChanged {
+            subredditOrderDidChange()
         }
     
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
@@ -408,6 +409,13 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         
         setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    @objc func subredditOrderDidChange() {
+        finalSubs = []
+        finalSubs.append(contentsOf: Subscriptions.pinned)
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        redoSubs()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -428,26 +436,24 @@ class SplitMainViewController: MainViewController {
              */
         }
         
-        if MainViewController.needsRestart {
-            MainViewController.needsRestart = false
-            tabBar?.removeFromSuperview()
-            self.navigationItem.leftBarButtonItems = []
-            self.navigationItem.rightBarButtonItems = []
-            if SettingValues.subredditBar {
-                setupTabBar(finalSubs)
-                if SettingValues.submissionGestureMode.shouldPage() {
-                    self.dataSource = self
-                }
-            } else {
-                self.navigationItem.titleView = nil
-                self.dataSource = nil
-            }
-        } else if MainViewController.needsReTheme {
-            doRetheme()
-        }
         didUpdate()
         
         setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
+    }
+    
+    @objc func resetTabBars() {
+        tabBar?.removeFromSuperview()
+        self.navigationItem.leftBarButtonItems = []
+        self.navigationItem.rightBarButtonItems = []
+        if SettingValues.subredditBar {
+            setupTabBar(finalSubs)
+            if SettingValues.submissionGestureMode.shouldPage() {
+                self.dataSource = self
+            }
+        } else {
+            self.navigationItem.titleView = nil
+            self.dataSource = nil
+        }
     }
 
     override func hardReset(soft: Bool = false) {
@@ -614,7 +620,6 @@ class SplitMainViewController: MainViewController {
         CachedTitle.titles.removeAll()
         view.backgroundColor = UIColor.backgroundColor
         splitViewController?.view.backgroundColor = UIColor.foregroundColor
-        SubredditReorderViewController.changed = false
         
         finalSubs = []
         LinkCellView.cachedInternet = nil
