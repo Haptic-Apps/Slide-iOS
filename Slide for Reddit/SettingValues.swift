@@ -604,7 +604,7 @@ class SettingValues {
         SettingValues.swapLongPress = settings.bool(forKey: SettingValues.pref_swapLongPress)
         SettingValues.domainInInfo = settings.bool(forKey: SettingValues.pref_domainInInfo)
         SettingValues.notifications = settings.bool(forKey: SettingValues.pref_notifications)
-        SettingValues.hideBottomBar = settings.bool(forKey: SettingValues.pref_totallyCollapse)
+        SettingValues.hideBottomBar = settings.object(forKey: SettingValues.pref_totallyCollapse) == nil ? true : settings.bool(forKey: SettingValues.pref_totallyCollapse)
         SettingValues.hideStatusBar = settings.bool(forKey: SettingValues.pref_fullyHideNavbar)
         SettingValues.showFirstParagraph = settings.object(forKey: SettingValues.pref_showFirstParagraph) == nil ? true : settings.bool(forKey: SettingValues.pref_showFirstParagraph)
         SettingValues.disableNavigationBar = settings.bool(forKey: SettingValues.pref_disableNavigationBar)

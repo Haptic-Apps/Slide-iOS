@@ -136,6 +136,7 @@ class TitleUITextView: UITextView {
 }
 
 extension TitleUITextView: UIGestureRecognizerDelegate {
+    
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         var toReturn = false
         self.layoutManager.textStorage?.enumerateAttributes(in: NSRange(location: 0, length: self.attributedText.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, bgStyleRange, _) in

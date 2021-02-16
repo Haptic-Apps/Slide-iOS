@@ -65,15 +65,17 @@ class MessageCellView: UICollectionViewCell {
             guard let self = self, let message = self.message else { return }
             if self.state == .THREAD_PREVIEW {
                 self.delegate?.showThread(id: message.name, title: message.subject)
+            } else if !message.wasComment {
+                self.delegate?.showThread(id: message.name, title: message.subject)
             } else {
                 self.delegate?.doReply(to: message, cell: self)
             }
         }
-        let long = self.innerView.addLongTapGestureRecognizerReturn { [weak self] (_) in
+        
+        self.innerView.addLongTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let message = self.message else { return }
             self.delegate?.showMenu(for: message, cell: self)
         }
-        self.text?.parentLongPress = long
     }
     
     func configureLayout() {
@@ -189,7 +191,7 @@ class MessageCellView: UICollectionViewCell {
                 let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true)) from ", attributes: attrs)
                 endString.append(authorString)
                 
-                if message.isNew {
+                if !ActionStates.isRead(s: message) {
                     attrs[.foregroundColor] = GMColor.red500Color()
                 }
                 attrs[.font] = FontGenerator.fontOfSize(size: 16, submission: true)
@@ -198,7 +200,15 @@ class MessageCellView: UICollectionViewCell {
                 infoString = NSMutableAttributedString()
                 infoString.append(endString)
             } else {
-                let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true)) from ", attributes: attrs)
+                var attrsUnread = attrs
+                if !ActionStates.isRead(s: message) {
+                    attrsUnread[.badgeColor] = GMColor.red500Color()
+                }
+
+                let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))", attributes: attrsUnread)
+                
+                let spacerString = NSMutableAttributedString(string: " from ", attributes: attrs)
+                endString.append(spacerString)
                 endString.append(authorString)
                 
                 infoString = NSMutableAttributedString()
