@@ -16,9 +16,6 @@ import SDWebImage
 import UIKit
 
 class SettingsDonate: UIViewController, MFMailComposeViewControllerDelegate {
-    
-    static var changed = false
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }

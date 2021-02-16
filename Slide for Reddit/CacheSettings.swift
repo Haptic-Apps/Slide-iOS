@@ -79,8 +79,6 @@ class CacheSettings: BubbleSettingTableViewController {
 
     var delete = UIButton()
 
-    public static var changed = false
-
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return indexPath.section == 0 ? 80 : 60
     }

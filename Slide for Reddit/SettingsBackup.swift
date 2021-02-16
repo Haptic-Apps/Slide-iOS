@@ -14,9 +14,6 @@ import SDWebImage
 import UIKit
 
 class SettingsBackup: BubbleSettingTableViewController {
-    
-    static var changed = false
-
     var restore: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: nil)
     var backup: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: nil)
 

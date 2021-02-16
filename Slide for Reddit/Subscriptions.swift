@@ -135,9 +135,11 @@ class Subscriptions {
 
     public static func subscribe(_ name: String, _ subscribe: Bool, session: Session?) {
         var sub = Subscriptions.subreddits
-        SubredditReorderViewController.changed = true
+
         sub.append(name)
         set(name: AccountController.currentName, subs: sub) { () in }
+        
+        NotificationCenter.default.post(name: .subredditOrderChanged, object: nil)
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         } else if SettingValues.hapticFeedback {
@@ -158,8 +160,10 @@ class Subscriptions {
         var subs = Subscriptions.subreddits
         subs = subs.filter { $0 != name }
         setPinned(name: AccountController.currentName, subs: pinned.filter { $0 != name }, completion: {})
-        SubredditReorderViewController.changed = true
+
         set(name: AccountController.currentName, subs: subs) { () in }
+        
+        NotificationCenter.default.post(name: .subredditOrderChanged, object: nil)
         if #available(iOS 10.0, *) {
             HapticUtility.hapticActionStrong()
         } else if SettingValues.hapticFeedback {

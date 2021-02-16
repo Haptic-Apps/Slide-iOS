@@ -79,8 +79,8 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
         self.navigationController?.delegate = self
         
         if !loaded && !loading {
-            self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
-            refreshControl.beginRefreshing()
+            self.tableView.contentOffset = CGPoint(x: 0, y: -(self.refreshControl?.frame.size.height ?? 0))
+            refreshControl?.beginRefreshing()
         } else {
             self.tableView.reloadData()
         }
@@ -149,13 +149,15 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        refreshControl = UIRefreshControl()
-        refreshControl.tintColor = UIColor.fontColor
-        
-        refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-        tableView.addSubview(refreshControl)
-        refreshControl.centerAnchors /==/ tableView.centerAnchors
+        if !UIApplication.shared.isMac() {
+            refreshControl = UIRefreshControl()
+            refreshControl?.tintColor = UIColor.fontColor
+            
+            refreshControl?.attributedTitle = NSAttributedString(string: "")
+            refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+            tableView.addSubview(refreshControl!)
+            refreshControl!.centerAnchors /==/ tableView.centerAnchors
+        }
         
         tableView.alwaysBounceVertical = true
         
@@ -267,13 +269,13 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
        // TODO: - maybe add this later
     }
     
-    var refreshControl: UIRefreshControl!
+    var refreshControl: UIRefreshControl?
     
     func refresh() {
         loading = true
         emptyStateView.isHidden = true
         baseData.reset()
-        refreshControl.beginRefreshing()
+        refreshControl?.beginRefreshing()
         flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: false)
         flowLayout.invalidateLayout()
         tableView.reloadData()
@@ -292,14 +294,17 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
     }
         
     func endAndResetRefresh() {
-        self.refreshControl.endRefreshing()
-        self.refreshControl.removeFromSuperview()
+        if UIApplication.shared.isMac() {
+            return
+        }
+        self.refreshControl?.endRefreshing()
+        self.refreshControl?.removeFromSuperview()
         self.refreshControl = UIRefreshControl()
-        self.refreshControl.tintColor = UIColor.fontColor
+        self.refreshControl?.tintColor = UIColor.fontColor
         
-        self.refreshControl.attributedTitle = NSAttributedString(string: "")
-        self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-        self.tableView.addSubview(self.refreshControl)
+        self.refreshControl?.attributedTitle = NSAttributedString(string: "")
+        self.refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+        self.tableView.addSubview(self.refreshControl!)
     }
     
     var loading: Bool = false

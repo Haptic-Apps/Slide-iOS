@@ -79,7 +79,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
 
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == showPagesSwitch {
-            MainViewController.needsRestart = true
+            NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             SettingValues.showPages = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showPages)
         } else if changed == autoKeyboardSwitch {
@@ -100,7 +100,8 @@ class SettingsGeneral: BubbleSettingTableViewController {
         } else if changed == hideFABSwitch {
             SettingValues.hiddenFAB = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_hiddenFAB)
-            SubredditReorderViewController.changed = true
+            
+            NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             doDisables()
         } else if changed == hapticFeedback {
             SettingValues.hapticFeedback = !changed.isOn
@@ -136,7 +137,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         } else if changed == pinToolbarSwitch {
             SettingValues.dontHideTopBar = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_pinToolbar)
-            SubredditReorderViewController.changed = true
+            NotificationCenter.default.post(name: .tabBarsChanged, object: nil)
             if SettingValues.dontHideTopBar {
                 self.totallyCollapse.contentView.alpha = 0.5
                 self.totallyCollapse.isUserInteractionEnabled = false

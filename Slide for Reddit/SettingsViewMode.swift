@@ -51,7 +51,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
 
     @objc func switchIsChanged(_ changed: UISwitch) {
         if changed == subredditBarSwitch {
-            MainViewController.needsRestart = true
+            NotificationCenter.default.post(name: .tabBarsChanged, object: nil)
             SettingValues.fullWidthHeaderCells = !changed.isOn
             UserDefaults.standard.set(!changed.isOn, forKey: SettingValues.pref_fullWidthHeaderCells)
         } else if changed == thireenPopupSwitch {
@@ -286,7 +286,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             showPortraitMultiColumn()
         }
         
-        SubredditReorderViewController.changed = true
+        NotificationCenter.default.post(name: .subNeedsReload, object: nil)
         UserDefaults.standard.synchronize()
         setSelected()
     }
@@ -300,7 +300,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
                     SettingValues.multiColumnCount = value
                     UserDefaults.standard.set(value, forKey: SettingValues.pref_multiColumnCount)
                     UserDefaults.standard.synchronize()
-                    SubredditReorderViewController.changed = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.setSelected()
                 }
             }
@@ -317,7 +318,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
                 SettingValues.multiColumnCount = chosen.row + 1
                 UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_multiColumnCount)
                 UserDefaults.standard.synchronize()
-                SubredditReorderViewController.changed = true
+
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                 self.setSelected()
             })
 
@@ -351,7 +353,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
             SettingValues.portraitMultiColumnCount = chosen.row + 1
             UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_portraitMultiColumnCount)
             UserDefaults.standard.synchronize()
-            SubredditReorderViewController.changed = true
+
+            NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             self.setSelected()
         })
 
@@ -384,7 +387,8 @@ class SettingsViewMode: BubbleSettingTableViewController {
             SettingValues.galleryCount = chosen.row + 1
             UserDefaults.standard.set(chosen.row + 1, forKey: SettingValues.pref_galleryCount)
             UserDefaults.standard.synchronize()
-            SubredditReorderViewController.changed = true
+            
+            NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             self.setSelected()
         })
 

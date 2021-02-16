@@ -222,7 +222,9 @@ class SettingsLayout: BubbleSettingTableViewController {
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceElevation)
         }
         SingleSubredditViewController.cellVersion += 1
-        MainViewController.needsReTheme = true
+        
+        NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
+
         UserDefaults.standard.synchronize()
         doDisables()
         doLink()
@@ -341,7 +343,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+                
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Large card view", icon: UIImage(named: "card")!.menuIcon()) {
@@ -353,7 +356,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
             
             alertController.addAction(title: "Centered Image large card view", icon: UIImage(named: "centeredimage")!.menuIcon()) {
@@ -365,7 +369,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Compact list view", icon: UIImage(named: "compact")!.menuIcon()) {
@@ -377,7 +382,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.cardModeCell.detailTextLabel?.text = SettingValues.postViewMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
             
             alertController.show(self)
@@ -392,7 +398,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Cropped image", icon: UIImage(named: "crop")!.menuIcon()) {
@@ -403,7 +410,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
             
             alertController.addAction(title: "Shortened image", icon: UIImage(named: "crop")!.menuIcon()) {
@@ -414,7 +422,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Thumbnail only", icon: UIImage(named: "thumb")!.menuIcon()) {
@@ -425,7 +434,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
             
             alertController.addAction(title: "No image", icon: UIImage(named: "hide")!.menuIcon()) {
@@ -436,7 +446,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 self.doLink()
                 tableView.reloadData()
                 self.imageCell.detailTextLabel?.text = SettingValues.postImageMode.rawValue.capitalize()
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.show(self)
@@ -452,7 +463,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Left aligned button bar", icon: UIImage(sfString: SFSymbol.handPointLeftFill, overrideString: "code")!.menuIcon()) {
@@ -464,7 +476,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Vote buttons on left side", icon: UIImage(sfString: SFSymbol.chevronUp, overrideString: "up")!.menuIcon()) {
@@ -476,7 +489,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Vote buttons on right side", icon: UIImage(sfString: SFSymbol.chevronDown, overrideString: "down")!.menuIcon()) {
@@ -488,8 +502,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
 
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.addAction(title: "Disable buttons", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()) {
@@ -501,7 +515,8 @@ class SettingsLayout: BubbleSettingTableViewController {
                 tableView.reloadData()
                 self.actionBarCell.detailTextLabel?.text = SettingValues.actionBarMode.rawValue.capitalize()
                 SingleSubredditViewController.cellVersion += 1
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
             }
 
             alertController.show(self)

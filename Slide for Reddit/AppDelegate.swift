@@ -509,6 +509,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         splitViewController.presentsWithGesture = true
 
         if UIApplication.shared.isMac() {
+            splitViewController.presentsWithGesture = false
             setupSplitPaneLayout(splitViewController)
         } else {
             // Set display mode and split behavior

@@ -42,7 +42,8 @@ class SettingsGestures: BubbleSettingTableViewController {
         if changed == disableBanner {
             SettingValues.disableBanner = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableBanner)
-            SubredditReorderViewController.changed = true
+
+            NotificationCenter.default.post(name: .subNeedsReload, object: nil)
         }
 
         UserDefaults.standard.synchronize()
@@ -61,8 +62,8 @@ class SettingsGestures: BubbleSettingTableViewController {
                 UserDefaults.standard.synchronize()
                 self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
                 self.updateCells()
-                SplitMainViewController.needsReTheme = true
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             }
         }
         alertController.show(self)
@@ -80,8 +81,8 @@ class SettingsGestures: BubbleSettingTableViewController {
                 UserDefaults.standard.synchronize()
                 self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
                 self.updateCells()
-                SplitMainViewController.needsReTheme = true
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             }
         }
         alertController.show(self)
@@ -168,7 +169,7 @@ class SettingsGestures: BubbleSettingTableViewController {
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionForceTouch)
                 }
                 
-                SubredditReorderViewController.changed = true
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                 UserDefaults.standard.synchronize()
                 self.updateCells()
             }
@@ -408,7 +409,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionLeftRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+                    
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -418,7 +420,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionLeftLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftLeft)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -428,7 +431,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionRightLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -437,7 +441,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionRightRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightRight)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -446,9 +451,9 @@ public class GesturePreviewCell: InsetCell {
                 self.showActionSub { (action) in
                     SettingValues.submissionActionLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
-                    SubredditReorderViewController.changed = true
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -457,9 +462,9 @@ public class GesturePreviewCell: InsetCell {
                 self.showActionSub { (action) in
                     SettingValues.submissionActionRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionRight)
-                    SubredditReorderViewController.changed = true
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
