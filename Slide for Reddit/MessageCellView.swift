@@ -65,7 +65,7 @@ class MessageCellView: UICollectionViewCell {
             guard let self = self, let message = self.message else { return }
             if self.state == .THREAD_PREVIEW {
                 self.delegate?.showThread(id: message.name, title: message.subject)
-            } else if !message.wasComment {
+            } else if !message.wasComment && self.state != .IN_THREAD {
                 self.delegate?.showThread(id: message.name, title: message.subject)
             } else {
                 self.delegate?.doReply(to: message, cell: self)
@@ -203,9 +203,10 @@ class MessageCellView: UICollectionViewCell {
                 var attrsUnread = attrs
                 if !ActionStates.isRead(s: message) {
                     attrsUnread[.badgeColor] = GMColor.red500Color()
+                    attrsUnread[.foregroundColor] = UIColor.white
                 }
 
-                let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))", attributes: attrsUnread)
+                let endString = NSMutableAttributedString(string: "\u{00A0}\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))\u{00A0}", attributes: attrsUnread)
                 
                 let spacerString = NSMutableAttributedString(string: " from ", attributes: attrs)
                 endString.append(spacerString)
