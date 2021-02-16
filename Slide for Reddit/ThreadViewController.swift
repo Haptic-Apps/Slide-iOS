@@ -169,7 +169,6 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
         self.tableView.register(FriendCellView.classForCoder(), forCellWithReuseIdentifier: "friend")
         tableView.backgroundColor = UIColor.backgroundColor
         
-        
         self.tableView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 65, right: 0)
         
         self.view.addSubview(emptyStateView)
@@ -343,8 +342,10 @@ extension ThreadViewControler: SingleMessageContributionLoaderDelegate {
                 self.tableView.insertItems(at: paths)
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.tableView.scrollToItem(at: IndexPath(row: self.baseData.content.count - 1, section: 0), at: .bottom, animated: true)
+            if self.baseData.content.count > 1 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.tableView.scrollToItem(at: IndexPath(row: self.baseData.content.count - 1, section: 0), at: .bottom, animated: true)
+                }
             }
 
             self.endAndResetRefresh()

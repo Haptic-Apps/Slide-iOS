@@ -1924,6 +1924,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             registered = true
         } else if SettingValues.submissionActionForceTouch != .NONE && force == nil {
             force = ForceTouchGestureRecognizer()
+            print("Adding force touch")
             force?.addTarget(self, action: #selector(self.do3dTouch(_:)))
             force?.cancelsTouchesInView = false
             self.innerView.addGestureRecognizer(force!)

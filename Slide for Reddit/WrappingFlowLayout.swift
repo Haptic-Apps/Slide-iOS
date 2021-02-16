@@ -78,6 +78,17 @@ class WrappingFlowLayout: UICollectionViewLayout {
             numberOfColumns = 2
             portraitCount = 1
         }
+        
+        if let vc = vc as? ContentListingViewController, let inbox = vc.baseData as? InboxContributionLoader, inbox.messages == .messages {
+            numberOfColumns = 1
+            portraitCount = 1
+        }
+        
+        if vc is ThreadViewControler {
+            numberOfColumns = 1
+            portraitCount = 1
+        }
+        
         if isGallery {
             numberOfColumns = SettingValues.galleryCount
         }

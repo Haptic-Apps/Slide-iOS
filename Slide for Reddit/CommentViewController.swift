@@ -3268,6 +3268,10 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         if UIDevice.current.userInterfaceIdiom != .pad {
             // cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         }
+        
+        if #available(iOS 13.5, *) {
+            cellGestureRecognizer.allowedScrollTypesMask = .continuous
+        }
         if let parent = parent as? ColorMuxPagingViewController {
             parent.requireFailureOf(cellGestureRecognizer)
         }

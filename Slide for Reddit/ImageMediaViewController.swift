@@ -444,7 +444,7 @@ extension ImageMediaViewController: UIScrollViewDelegate {
     func getFitZoomScale(_ size: CGSize) -> CGFloat {
         let widthScale = (size.width / (imageView.image?.size.width ?? imageView.bounds.width))
         let heightScale = (size.height / (imageView.image?.size.height ?? imageView.bounds.height))
-        let maxScale = max(widthScale, heightScale)
+        let maxScale = max(widthScale * 1.3, heightScale * 1.3)
         return maxScale
     }
 

@@ -960,14 +960,15 @@ class CurrentAccountHeaderView: UIView {
     
     var accountImageView = UIImageView().then {
         $0.backgroundColor = UIColor.foregroundColor
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
         }
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
-        if !SettingValues.reduceElevation {
-            $0.elevate(elevation: 2.0)
+        $0.layer.masksToBounds = true
+        if !SettingValues.reduceElevation { // Let's just keep this rounded...
+            //$0.elevate(elevation: 2.0)
         }
     }
     
