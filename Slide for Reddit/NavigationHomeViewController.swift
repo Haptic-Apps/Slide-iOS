@@ -1097,9 +1097,9 @@ extension CurrentAccountHeaderView {
         updateMailBadge()
         updateModBadge()
         
-        if AccountController.current != nil {
+        if AccountController.current != nil, let accountImage = AccountController.current?.image.decodeHTML(), let accountImageUrl = URL(string: accountImage) {
             accountImageView.contentMode = .scaleAspectFill
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+            accountImageView.sd_setImage(with: accountImageUrl, placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }
