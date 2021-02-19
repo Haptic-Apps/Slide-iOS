@@ -40,7 +40,7 @@ class SwipeDownModalVC: ColorMuxPagingViewController {
         if #available(iOS 13.4, *) {
             panGestureRecognizer!.allowedScrollTypesMask = .continuous
         }
-
+        
         panGestureRecognizer2!.direction = .horizontal
         panGestureRecognizer!.cancelsTouchesInView = false
         

@@ -284,7 +284,7 @@ class NavigationHomeViewController: UIViewController {
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
         
-        view.addSubview(tableView)
+        view.addSubviews(headerView, tableView)
 
         setColors(MainViewController.current)
     }
@@ -310,7 +310,9 @@ class NavigationHomeViewController: UIViewController {
         searchBar.heightAnchor /==/ 50
         searchBar.bottomAnchor /==/ headerView.bottomAnchor
 
-        tableView.topAnchor /==/ view.safeTopAnchor
+        headerView.topAnchor /==/ view.safeTopAnchor
+        headerView.horizontalAnchors /==/ view.horizontalAnchors
+        tableView.topAnchor /==/ headerView.bottomAnchor
         tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         tableView.horizontalAnchors /==/ view.horizontalAnchors
         tableView.bottomAnchor /==/ view.bottomAnchor
@@ -401,7 +403,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
-            return 50 + 4 + accountHeader!.estimateHeight()
+            return 0
         }
         if isSearching && section == 0 {
             return 0
@@ -488,7 +490,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         toReturn.backgroundColor = UIColor.foregroundColor
 
         if section == 0 {
-            return headerView
+            return UIView()
         }
         if isSearching {
             switch section {
