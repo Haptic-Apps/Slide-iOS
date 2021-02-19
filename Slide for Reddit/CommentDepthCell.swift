@@ -655,6 +655,10 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         if parent == nil {
             return
         }
+        
+        if isMore {
+            return
+        }
 
         if parent!.menuCell != nil {
             parent!.menuCell?.checkReply { (finished) in
@@ -691,7 +695,9 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
         }, completion: { (_) in
         })
-        parent!.menuId = comment!.id
+        if let comment = comment {
+            parent?.menuId = comment.id
+        }
     }
     
     func showCommentMenu(_ animate: Bool = true) {

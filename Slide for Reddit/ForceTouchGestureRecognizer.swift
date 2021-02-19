@@ -36,7 +36,6 @@ final class ForceTouchGestureRecognizer: UIGestureRecognizer {
     }
     
     func handleTouch(_ firstTouch: UITouch) {
-        print("\(firstTouch.force) max \(firstTouch.maximumPossibleForce)")
         guard firstTouch.force != 0 && firstTouch.maximumPossibleForce != 0 else {
             return
         }

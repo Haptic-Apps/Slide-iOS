@@ -944,8 +944,8 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                                     if let item = CommentObject.thingToCommentOrMore(thing: i.0, depth: i.1) {
                                         self.content[item.getId()] = item
                                         self.comments.append(item.getId())
-                                        if i.1 == 1 && item is CommentModel {
-                                            currentOP = (item as! CommentModel).author
+                                        if i.1 == 1 && item is CommentObject {
+                                            currentOP = (item as! CommentObject).author
                                         }
                                         self.parents[item.getId()] = currentOP
                                         currentIndex += 1
@@ -2348,7 +2348,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                     strongSelf.tableView.beginUpdates()
                     
                     var indexPaths: [IndexPath] = []
-                    for row in i...counter { // TODO ...<
+                    for row in i..<counter + 1 {
                         indexPaths.append(IndexPath(row: row, section: 0))
                     }
                     strongSelf.tableView.deleteRows(at: indexPaths, with: .fade)

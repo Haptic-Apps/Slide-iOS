@@ -116,7 +116,7 @@ class MessageCellView: UICollectionViewCell {
     
     public static func getTitleText(message: MessageObject, state: MessageCellViewState) -> NSAttributedString {
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
-        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        let titleFont = FontGenerator.fontOfSize(size: 11, submission: true)
         var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColorOverlaid(withForeground: true, 0.24)] as [NSAttributedString.Key: Any]
 
         var infoString: NSMutableAttributedString
