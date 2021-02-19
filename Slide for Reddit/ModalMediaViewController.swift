@@ -285,7 +285,11 @@ class ModalMediaViewController: UIViewController {
                 panGestureRecognizer!.allowedScrollTypesMask = .continuous
             }
             panGestureRecognizer!.cancelsTouchesInView = false
-            
+            if UIApplication.shared.isMac() {
+                panGestureRecognizer!.allowedScrollTypesMask = .discrete
+                panGestureRecognizer!.maximumNumberOfTouches = 0
+            }
+
             view.addGestureRecognizer(panGestureRecognizer!)
             
             background = UIView()
@@ -524,6 +528,8 @@ extension ModalMediaViewController: UIGestureRecognizerDelegate {
             
         } else if panGesture.state == .ended {
             let velocity = panGesture.velocity(in: view)
+            
+            print(velocity)
             
             let down = panGesture.velocity(in: view).y > 0
             if abs(velocity.y) >= 1000 || abs(self.view.frame.origin.y) > self.view.frame.size.height / 2 {
