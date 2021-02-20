@@ -646,7 +646,6 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 longPress?.delegate = self
                 if full {
                     longPress?.cancelsTouchesInView = false
-                    textView.parentLongPress = longPress!
                 }
                 
                 let long2 = UILongPressGestureRecognizer(target: self, action: #selector(LinkCellView.linkMenu(sender:)))

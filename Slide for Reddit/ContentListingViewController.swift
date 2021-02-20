@@ -857,6 +857,7 @@ extension ContentListingViewController: MessageCellViewDelegate {
     }
     
     func showMenu(for message: MessageObject, cell: MessageCellView) {
+        print("Showing Menu")
         let alertController = DragDownAlertMenu(title: "Message from u/\(message.author)", subtitle: message.subject, icon: nil)
 
         alertController.addAction(title: "\(AccountController.formatUsernamePosessive(input: message.author, small: false)) profile", icon: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")!.menuIcon()) {

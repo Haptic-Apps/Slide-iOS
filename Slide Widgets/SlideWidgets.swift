@@ -375,17 +375,18 @@ struct SubredditLoader {
                 }
                 subsString += item
             }
-            let subredditUrl = URL(string: "https://reddit.com/r/\(subsString)/hot.json?limit=7&raw_json=1")!
-            let request = URLRequest(url: subredditUrl)
-            let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-                guard error == nil else {
-                    completion(.failure(error!))
-                    return
+            if let subredditUrl = URL(string: "https://reddit.com/r/\(subsString)/hot.json?limit=7&raw_json=1") {
+                let request = URLRequest(url: subredditUrl)
+                let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+                    guard error == nil else {
+                        completion(.failure(error!))
+                        return
+                    }
+                    let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
+                    completion(.success(subreddit))
                 }
-                let subreddit = getSubredditInfo(subreddit: subreddit, fromData: data!)
-                completion(.success(subreddit))
+                task.resume()
             }
-            task.resume()
         } else {
             let subredditUrl = URL(string: apiUrl)!
             let task = URLSession.shared.dataTask(with: subredditUrl) { (data, _, error) in

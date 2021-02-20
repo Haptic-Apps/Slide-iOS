@@ -362,6 +362,10 @@ class CachedTitle {
             poll.append(finalText)
 
             for option in submission.pollDictionary.keys {
+                if option == "total" {
+                    continue
+                }
+                
                 poll.append(NSAttributedString.init(string: "\n"))
                 let count = submission.pollDictionary[option] as? Int ?? -1
                                 

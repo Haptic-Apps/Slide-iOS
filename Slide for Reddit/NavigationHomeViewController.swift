@@ -973,14 +973,15 @@ class CurrentAccountHeaderView: UIView {
     
     var accountImageView = UIImageView().then {
         $0.backgroundColor = UIColor.foregroundColor
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
         if #available(iOS 11.0, *) {
             $0.accessibilityIgnoresInvertColors = true
         }
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
-        if !SettingValues.reduceElevation {
-            $0.elevate(elevation: 2.0)
+        $0.layer.masksToBounds = true
+        if !SettingValues.reduceElevation { // Let's just keep this rounded...
+            //$0.elevate(elevation: 2.0)
         }
     }
     
@@ -1109,9 +1110,9 @@ extension CurrentAccountHeaderView {
         updateMailBadge()
         updateModBadge()
         
-        if AccountController.current != nil {
+        if AccountController.current != nil, let accountImage = AccountController.current?.image.decodeHTML(), let accountImageUrl = URL(string: accountImage) {
             accountImageView.contentMode = .scaleAspectFill
-            accountImageView.sd_setImage(with: URL(string: AccountController.current!.image.decodeHTML()), placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
+            accountImageView.sd_setImage(with: accountImageUrl, placeholderImage: UIImage(sfString: SFSymbol.personFill, overrideString: "profile")?.getCopy(withColor: UIColor.fontColor), options: [.allowInvalidSSLCertificates]) {[weak self] (image, _, _, _) in
                 guard let strongSelf = self else { return }
                 strongSelf.accountImageView.image = image
             }

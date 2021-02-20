@@ -25,7 +25,6 @@ public class TextDisplayStackView: UIStackView {
 
     var estimatedWidth = CGFloat(0)
     var estimatedHeight = CGFloat(0)
-    weak var parentLongPress: UILongPressGestureRecognizer?
     
     let firstTextView: TitleUITextView
     let overflow: UIStackView

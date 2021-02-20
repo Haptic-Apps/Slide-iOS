@@ -65,15 +65,17 @@ class MessageCellView: UICollectionViewCell {
             guard let self = self, let message = self.message else { return }
             if self.state == .THREAD_PREVIEW {
                 self.delegate?.showThread(id: message.name, title: message.subject)
+            } else if !message.wasComment && self.state != .IN_THREAD {
+                self.delegate?.showThread(id: message.name, title: message.subject)
             } else {
                 self.delegate?.doReply(to: message, cell: self)
             }
         }
-        let long = self.innerView.addLongTapGestureRecognizerReturn { [weak self] (_) in
+        
+        self.innerView.addLongTapGestureRecognizer { [weak self] (_) in
             guard let self = self, let message = self.message else { return }
             self.delegate?.showMenu(for: message, cell: self)
         }
-        self.text?.parentLongPress = long
     }
     
     func configureLayout() {
@@ -114,7 +116,7 @@ class MessageCellView: UICollectionViewCell {
     
     public static func getTitleText(message: MessageObject, state: MessageCellViewState) -> NSAttributedString {
         let fontSize = 12 + CGFloat(SettingValues.postFontOffset)
-        let titleFont = FontGenerator.boldFontOfSize(size: 12, submission: true)
+        let titleFont = FontGenerator.fontOfSize(size: 11, submission: true)
         var attrs = [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: UIColor.fontColorOverlaid(withForeground: true, 0.24)] as [NSAttributedString.Key: Any]
 
         var infoString: NSMutableAttributedString
@@ -189,7 +191,7 @@ class MessageCellView: UICollectionViewCell {
                 let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true)) from ", attributes: attrs)
                 endString.append(authorString)
                 
-                if message.isNew {
+                if !ActionStates.isRead(s: message) {
                     attrs[.foregroundColor] = GMColor.red500Color()
                 }
                 attrs[.font] = FontGenerator.fontOfSize(size: 16, submission: true)
@@ -198,7 +200,16 @@ class MessageCellView: UICollectionViewCell {
                 infoString = NSMutableAttributedString()
                 infoString.append(endString)
             } else {
-                let endString = NSMutableAttributedString(string: "\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true)) from ", attributes: attrs)
+                var attrsUnread = attrs
+                if !ActionStates.isRead(s: message) {
+                    attrsUnread[.badgeColor] = GMColor.red500Color()
+                    attrsUnread[.foregroundColor] = UIColor.white
+                }
+
+                let endString = NSMutableAttributedString(string: "\u{00A0}\(DateFormatter().timeSince(from: message.created as NSDate, numericDates: true))\u{00A0}", attributes: attrsUnread)
+                
+                let spacerString = NSMutableAttributedString(string: " from ", attributes: attrs)
+                endString.append(spacerString)
                 endString.append(authorString)
                 
                 infoString = NSMutableAttributedString()
