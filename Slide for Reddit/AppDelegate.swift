@@ -395,7 +395,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     SwipeForwardNavigationController(
                         rootViewController: main),
                 ]
-            case .SPLIT:
+            default:
                 let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
                 swipeNav.pushViewController(main, animated: false)
                 splitViewController.viewControllers = [
@@ -418,12 +418,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
-        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || UIApplication.shared.isMac() ? .tripleColumn : .doubleColumn
+        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || SettingValues.appMode == .TRIPLE_MULTI_COLUMN
+            ? .tripleColumn : .doubleColumn
         var splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
-        if UIApplication.shared.isMac() {
+        if SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
             splitViewController.setViewController(
                 SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
                 for: .primary)
@@ -436,7 +437,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         } else {
             switch UIDevice.current.userInterfaceIdiom {
-            case .pad:
+            case .pad, .mac:
                 switch SettingValues.appMode {
                 case .SINGLE, .MULTI_COLUMN:
                     splitViewController.setViewController(
@@ -455,7 +456,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     splitViewController.setViewController(
                         SwipeForwardNavigationController(rootViewController: main),
                         for: .secondary)
-                case .SPLIT:
+                default:
                     splitViewController.setViewController(
                         SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
                         for: .primary)
@@ -485,7 +486,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupSplitLayout(_ splitViewController: UISplitViewController) {
         // Set column widths
         if #available(iOS 14.0, *) {
-            if UIApplication.shared.isMac() {
+            if SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
                 splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.15
                 splitViewController.preferredPrimaryColumnWidthFraction = 0.15
                 splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.15
@@ -508,7 +509,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         splitViewController.presentsWithGesture = true
 
-        if UIApplication.shared.isMac() {
+        if SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
             splitViewController.presentsWithGesture = false
             setupSplitPaneLayout(splitViewController)
         } else {
@@ -530,7 +531,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             splitViewController.preferredSplitBehavior = .overlay
                         }
                     }
-                case .SPLIT:
+                default:
                     setupSplitPaneLayout(splitViewController)
                 }
             default:
@@ -541,7 +542,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func setupSplitPaneLayout(_ splitViewController: UISplitViewController) {
         if #available(iOS 14.0, *) {
-            if SettingValues.desktopMode || UIApplication.shared.isMac() {
+            if SettingValues.desktopMode || UIDevice.current.isMac() {
                 splitViewController.preferredDisplayMode = .twoBesideSecondary
                 splitViewController.preferredSplitBehavior = .tile
             } else {
@@ -1187,7 +1188,7 @@ extension AppDelegate: UIWindowSceneDelegate {
     }
     
     func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace, interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection) {
-        if UIApplication.shared.isMac() {
+        if UIDevice.current.isMac() {
             let size = windowScene.coordinateSpace.bounds.size
             
             for window in windowScene.windows {

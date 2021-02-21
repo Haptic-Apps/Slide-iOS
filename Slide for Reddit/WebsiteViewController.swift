@@ -89,7 +89,11 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         items.append(forwardB)
         items.append(space)
 
-        toolbarItems = items
+        if UIDevice.current.isMac() {
+            navigationItem.rightBarButtonItems = items
+        } else {
+            toolbarItems = items
+        }
     }
     
     @objc func goBack() {
@@ -294,7 +298,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func loadUrl() {
-        if url?.host == "twitter.com" && UIApplication.shared.respectIpadLayout() {
+        if url?.host == "twitter.com" && UIDevice.current.respectIpadLayout() {
             webView.customUserAgent = "Googlebot/2.1 (+http://www.google.com/bot.html)"
         }
         let myURLRequest: URLRequest = URLRequest(url: url!)

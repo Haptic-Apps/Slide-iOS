@@ -48,10 +48,10 @@ class WrappingFlowLayout: UICollectionViewLayout {
         cache = []
         contentHeight = 0
         var portraitCount = SettingValues.portraitMultiColumnCount
-        let pad = UIApplication.shared.respectIpadLayout()
+        let pad = UIDevice.current.respectIpadLayout()
         
-        if SettingValues.appMode == .MULTI_COLUMN || UIApplication.shared.isMac() {
-            if (UIApplication.shared.statusBarOrientation.isPortrait && !UIApplication.shared.isMac()) || (vc.presentingViewController != nil && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
+        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
+            if (UIApplication.shared.statusBarOrientation.isPortrait && !UIDevice.current.isMac()) || (vc.presentingViewController != nil && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
                 if !pad {
                     numberOfColumns = SettingValues.portraitMultiColumnCount
                 } else {
@@ -68,7 +68,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
             numberOfColumns = 1
         }
         
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds || UIApplication.shared.isSplitOrSlideOver {
                 numberOfColumns = 1
             }

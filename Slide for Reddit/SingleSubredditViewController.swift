@@ -212,7 +212,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIApplication.shared.respectIpadLayout() && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIDevice.current.respectIpadLayout() && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
@@ -924,7 +924,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         if self.dataSource.loaded && !self.dataSource.loading {
                             self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                             self.tableView.reloadData()
-                            if !UIApplication.shared.respectIpadLayout() {
+                            if !UIDevice.current.respectIpadLayout() {
                                 var newOffset = self.tableView.contentOffset
                                 newOffset.y -= self.headerHeight(false)
                                 self.tableView.setContentOffset(newOffset, animated: false)
@@ -2119,7 +2119,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
-            let headerHeight = (UIApplication.shared.respectIpadLayout() && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
+            let headerHeight = (UIDevice.current.respectIpadLayout() && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
             let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
             setOffset = paddingOffset + navOffset + topOffset + headerHeight
@@ -2262,7 +2262,7 @@ extension SingleSubredditViewController {
 
         isAccent = false
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
@@ -2342,7 +2342,7 @@ extension SingleSubredditViewController {
 
         isAccent = true
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
@@ -2646,7 +2646,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         var numberOfColumns = CGFloat.zero
         let portraitCount = SettingValues.portraitMultiColumnCount
         
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let pad = UIDevice.current.respectIpadLayout()
         
         if SettingValues.appMode == .MULTI_COLUMN {
             if UIApplication.shared.statusBarOrientation.isPortrait {
@@ -2737,7 +2737,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIApplication.shared.respectIpadLayout() && SettingValues.disablePopupIpad || !UIApplication.shared.respectIpadLayout()) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.respectIpadLayout() && SettingValues.disablePopupIpad || !UIDevice.current.respectIpadLayout()) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 
@@ -3049,7 +3049,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             full.view?.removeGestureRecognizer(full)
         }
         
-        if UIApplication.shared.respectIpadLayout() {
+        if UIDevice.current.respectIpadLayout() {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
             swipe.direction = .right
@@ -3099,7 +3099,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIApplication.shared.respectIpadLayout()) {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.respectIpadLayout()) {
                         return true
                     }
                 } else if !SettingValues.submissionGestureMode.shouldPage() && abs(translation.x) > abs(translation.y) {
@@ -3493,7 +3493,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 header.addSubview(imageView)
                 imageView.clipsToBounds = true
                 
-                if UIApplication.shared.respectIpadLayout() {
+                if UIDevice.current.respectIpadLayout() {
                     imageView.verticalAnchors /==/ header.verticalAnchors
                     imageView.horizontalAnchors /==/ header.horizontalAnchors + 4
                     imageView.layer.cornerRadius = 15
@@ -3532,7 +3532,7 @@ public class SubLinkItem {
 
 extension SingleSubredditViewController: TapBehindModalViewControllerDelegate {
     func shouldDismiss() -> Bool {
-        return UIApplication.shared.respectIpadLayout()
+        return UIDevice.current.respectIpadLayout()
     }
 }
 

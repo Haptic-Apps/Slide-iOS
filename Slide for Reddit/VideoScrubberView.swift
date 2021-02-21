@@ -73,7 +73,7 @@ class VideoScrubberView: UIView {
         slider.maximumValue = 1
         slider.isContinuous = true
 
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             slider.minimumTrackTintColor = ColorUtil.accentColorForSub(sub: "")
             slider.maximumTrackTintColor = ColorUtil.accentColorForSub(sub: "").withAlphaComponent(0.4)
 
@@ -162,7 +162,7 @@ extension VideoScrubberView {
 
     @objc func sliderDidBeginDragging(_ sender: ThickSlider) {
         delegate?.sliderDidBeginDragging()
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             slider.setThumbImage(largeThumbImage, for: .normal)
         }
         UIView.animate(withDuration: 0.3) {
@@ -172,7 +172,7 @@ extension VideoScrubberView {
 
     @objc func sliderDidEndDragging(_ sender: ThickSlider) {
         delegate?.sliderDidEndDragging()
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             slider.setThumbImage(smallThumbImage, for: .normal)
         }
         UIView.animate(withDuration: 0.3) {

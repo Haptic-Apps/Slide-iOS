@@ -16,6 +16,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     var singleMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "single")
     var desktopMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "desktop")
     var splitMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "split")
+    var tripleMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "triple")
     var multicolumnMode: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multi")
     var multicolumnCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "multicount")
     var multicolumnPortraitCount: UITableViewCell = InsetCell.init(style: .subtitle, reuseIdentifier: "portrait")
@@ -100,9 +101,10 @@ class SettingsViewMode: BubbleSettingTableViewController {
         createCell(disablePopupSubreddit, disablePopupSubredditSwitch, isOn: SettingValues.disableSubredditPopupIpad, text: "Show subreddits full screen")
         createCell(disablePopup, disablePopupSwitch, isOn: SettingValues.disablePopupIpad, text: "Show comments full screen")
         createCell(disableMulticolumn, disableMulticolumnSwitch, isOn: !SettingValues.disableMulticolumnCollections, text: "Multi-column in profile and inbox")
-        createCell(singleMode, isOn: false, text: "Single-column posts")
-        createCell(multicolumnMode, isOn: false, text: "Multi-column posts")
-        createCell(splitMode, isOn: false, text: "Split-content")
+        createCell(singleMode, isOn: false, text: "Single-column posts\(UIDevice.current.isMac() ? "(designed for iPad)" : "")")
+        createCell(multicolumnMode, isOn: false, text: "Multi-column posts\(UIDevice.current.isMac() ? "(designed for iPad)" : "")")
+        createCell(splitMode, isOn: false, text: "Split-content\(UIDevice.current.isMac() ? "(designed for iPad)" : "")")
+        createCell(tripleMode, isOn: false, text: "Triple-pane Multi-column\(UIDevice.current.isMac() ? "(designed for MacOS)" : "")")
         createCell(multicolumnCount, isOn: false, text: "Multi-column count (Pro)")
         createCell(multicolumnPortraitCount, isOn: false, text: "Portrait Multi-column count (Pro)")
         createCell(galleryCount, isOn: false, text: "Gallery-mode column count (Pro)")
@@ -113,7 +115,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
         self.singleMode.backgroundColor = UIColor.foregroundColor
         self.singleMode.textLabel?.textColor = UIColor.fontColor
         self.singleMode.detailTextLabel?.numberOfLines = 0
-        
+
+        self.tripleMode.detailTextLabel?.text = SettingValues.AppMode.TRIPLE_MULTI_COLUMN.getDescription()
+        self.tripleMode.detailTextLabel?.textColor = UIColor.fontColor
+        self.tripleMode.backgroundColor = UIColor.foregroundColor
+        self.tripleMode.textLabel?.textColor = UIColor.fontColor
+        self.tripleMode.detailTextLabel?.numberOfLines = 0
+
         self.splitMode.detailTextLabel?.text = SettingValues.AppMode.SPLIT.getDescription()
         self.splitMode.detailTextLabel?.textColor = UIColor.fontColor
         self.splitMode.backgroundColor = UIColor.foregroundColor
@@ -167,13 +175,15 @@ class SettingsViewMode: BubbleSettingTableViewController {
             self.splitMode.accessoryType = .checkmark
         case .MULTI_COLUMN:
             self.multicolumnMode.accessoryType = .checkmark
+        case .TRIPLE_MULTI_COLUMN:
+            self.tripleMode.accessoryType = .checkmark
         }
             
         self.galleryCount.isUserInteractionEnabled = true
         self.galleryCount.textLabel!.isEnabled = true
         self.galleryCount.detailTextLabel!.isEnabled = true
 
-        if !SettingValues.isPro && !UIApplication.shared.isMac() {
+        if !SettingValues.isPro && !UIDevice.current.isMac() {
             multicolumnCount.isUserInteractionEnabled = false
             multicolumnCount.textLabel!.isEnabled = false
             multicolumnCount.detailTextLabel!.isEnabled = false
@@ -188,13 +198,13 @@ class SettingsViewMode: BubbleSettingTableViewController {
             multicolumnPortraitCount.contentView.alpha = 0.8
         }
 
-        if !UIApplication.shared.respectIpadLayout() {
+        if !UIDevice.current.respectIpadLayout() {
             self.splitMode.isUserInteractionEnabled = false
             self.splitMode.textLabel!.isEnabled = false
             self.splitMode.detailTextLabel!.isEnabled = false
         }
         
-        if (SettingValues.appMode != .MULTI_COLUMN || !SettingValues.isPro) && !UIApplication.shared.respectIpadLayout(){
+        if (SettingValues.appMode != .MULTI_COLUMN || !SettingValues.isPro) && !UIDevice.current.respectIpadLayout(){
             self.multicolumnCount.isUserInteractionEnabled = false
             self.multicolumnCount.textLabel!.isEnabled = false
             self.multicolumnCount.detailTextLabel!.isEnabled = false
@@ -226,7 +236,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             case 0: return self.singleMode
             case 1: return self.splitMode
             case 2: return self.multicolumnMode
-            case 3: return self.desktopMode
+            case 3: return UIDevice.current.isMac() ? self.tripleMode : self.desktopMode
             default: fatalError("Unknown row in section 0")
             }
         case 1:
@@ -259,6 +269,11 @@ class SettingsViewMode: BubbleSettingTableViewController {
             case 2:
                 SettingValues.appMode = .MULTI_COLUMN
                 UserDefaults.standard.set(SettingValues.AppMode.MULTI_COLUMN.rawValue, forKey: SettingValues.pref_appMode)
+            case 3:
+                if UIDevice.current.isMac() {
+                    SettingValues.appMode = .TRIPLE_MULTI_COLUMN
+                    UserDefaults.standard.set(SettingValues.AppMode.TRIPLE_MULTI_COLUMN.rawValue, forKey: SettingValues.pref_appMode)
+                }
             default:
                 break
             }
@@ -292,7 +307,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
     
     func showMultiColumn() {
-        if UIApplication.shared.isMac() {
+        if UIDevice.current.isMac() {
             let popup = DragDownAlertMenu(title: "Column Count", subtitle: "", icon: nil)
             
             for value in 1...5 {
@@ -308,7 +323,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
             
             popup.show(self)
         } else {
-            let pad = UIApplication.shared.respectIpadLayout()
+            let pad = UIDevice.current.respectIpadLayout()
             let actionSheetController = AlertController(title: "Column count", message: nil, preferredStyle: .alert)
 
             actionSheetController.addCloseButton()
@@ -343,7 +358,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
 
     func showPortraitMultiColumn() {
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let pad = UIDevice.current.respectIpadLayout()
         let actionSheetController = AlertController(title: "Column count", message: nil, preferredStyle: .alert)
 
         actionSheetController.addCloseButton()
@@ -377,7 +392,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     }
 
     func showGalleryColumn() {
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let pad = UIDevice.current.respectIpadLayout()
         let actionSheetController = AlertController(title: "Gallery column count", message: nil, preferredStyle: .alert)
 
         actionSheetController.addCloseButton()
@@ -413,7 +428,7 @@ class SettingsViewMode: BubbleSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var ipadOffset = 0
         var isIpad = false
-        if UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac() {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
             isIpad = true
             ipadOffset = 3
         }

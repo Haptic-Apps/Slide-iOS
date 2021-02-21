@@ -82,7 +82,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         } else {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 200)
+            let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 200)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColor()
@@ -118,7 +118,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
-            if UIApplication.shared.respectIpadLayout() {
+            if UIDevice.current.respectIpadLayout() {
                 alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
             }
 
@@ -173,7 +173,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 200)
+            let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 200)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColorAccent()
@@ -216,7 +216,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
             alertController.modalPresentationStyle = .popover
-            if UIApplication.shared.respectIpadLayout() {
+            if UIDevice.current.respectIpadLayout() {
                 alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
             }
             if let presenter = alertController.popoverPresentationController {

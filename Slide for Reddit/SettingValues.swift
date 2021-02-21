@@ -492,18 +492,18 @@ class SettingValues {
     }
 
     public static func initialize() {
-        let pad = UIApplication.shared.respectIpadLayout()
+        let pad = UIDevice.current.respectIpadLayout()
         let settings = UserDefaults.standard
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.reduceColor = settings.object(forKey: SettingValues.pref_reduceColor) == nil ? true : settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
         var columns = 2 // TODO - Maybe calculate per device?
-        if UIApplication.shared.isMac() {
+        if UIDevice.current.isMac() {
             columns = 1
         }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
-        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIApplication.shared.respectIpadLayout() ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
+        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.respectIpadLayout() ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
         SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
@@ -535,8 +535,8 @@ class SettingValues {
             }
         }
 
-        SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
-        SettingValues.desktopMode = SettingValues.desktopMode && (UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac()) // Only enable this on Mac or iPad
+        SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIDevice.current.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
+        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.respectIpadLayout() || UIDevice.current.isMac()) // Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
@@ -589,7 +589,7 @@ class SettingValues {
         SettingValues.disable13Popup = false // REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
-        if UIApplication.shared.isMac() {
+        if UIDevice.current.isMac() {
             SettingValues.fullWidthHeaderCells = true
         }
         SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
@@ -664,10 +664,7 @@ class SettingValues {
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
-        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "multi" : "single")) ?? (pad ? .SPLIT : .SINGLE)
-        if UIApplication.shared.isMac() {
-            SettingValues.appMode = .SPLIT
-        }
+        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (UIDevice.current.isMac() ? "triple" : (pad ? "multi" : "single"))) ?? (UIDevice.current.isMac() ? .TRIPLE_MULTI_COLUMN : (pad ? .SPLIT : .SINGLE))
         SettingValues.hideSeen = settings.bool(forKey: SettingValues.pref_hideSeen)
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
@@ -1288,12 +1285,13 @@ class SettingValues {
     }
 
     public enum AppMode: String {
-        public static let cases: [AppMode] = [.SPLIT, .SINGLE, .MULTI_COLUMN]
+        public static let cases: [AppMode] = UIDevice.current.isMac() ? [.SPLIT, .SINGLE, .MULTI_COLUMN, .TRIPLE_MULTI_COLUMN] : [.SPLIT, .SINGLE, .MULTI_COLUMN]
         
         case SPLIT = "split"
         case SINGLE = "single"
         case MULTI_COLUMN = "multi"
-        
+        case TRIPLE_MULTI_COLUMN = "triple"
+
         func getTitle() -> String {
             switch self {
             case .SPLIT:
@@ -1302,17 +1300,21 @@ class SettingValues {
                 return "Single list"
             case .MULTI_COLUMN:
                 return "Multi-column mode"
+            case .TRIPLE_MULTI_COLUMN:
+                return "Multi-column with comments"
             }
         }
         
         func getDescription() -> String {
             switch self {
             case .SPLIT:
-                return "Displays submissions on the left and comments on the right (requires an iPad)"
+                return "Displays submissions on the left and comments on the right"
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
                 return "Multiple column display of submissions"
+            case .TRIPLE_MULTI_COLUMN:
+                return "Multiple column display of submissions with comments on the right"
             }
         }
     }
