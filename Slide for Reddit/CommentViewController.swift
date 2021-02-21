@@ -1341,7 +1341,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         self.view.backgroundColor = UIColor.backgroundColor
         self.tableView.backgroundColor = UIColor.backgroundColor
         self.navigationController?.view.backgroundColor = UIColor.foregroundColor
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             refreshControl = UIRefreshControl()
             refreshControl?.tintColor = UIColor.fontColor
             refreshControl?.attributedTitle = NSAttributedString(string: "")
@@ -1695,7 +1695,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
         
         refreshControl?.setValue(100, forKey: "_snappingHeight")
         
-        if UIScreen.main.traitCollection.userInterfaceIdiom == .pad && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
+        if UIDevice.current.respectIpadLayout() && Int(round(self.view.bounds.width / CGFloat(320))) > 1 && false {
             self.navigationController!.view.backgroundColor = .clear
         }
         self.isHiding = false
@@ -2143,66 +2143,108 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func updateToolbar() {
-        navigationController?.setToolbarHidden(false, animated: false)
-        self.isToolbarHidden = false
         let space = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        var items: [UIBarButtonItem] = []
-        if !context.isEmpty() {
-            items.append(space)
-            let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:)))
-            loadFullThreadButton.accessibilityLabel = "Load full thread"
-            items.append(loadFullThreadButton)
-            items.append(space)
-        } else {
-            let up = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up"), toolbar: true)
-            up.accessibilityLabel = "Navigate up one comment thread"
-            up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
-            let upB = UIBarButtonItem(customView: up)
+        if UIDevice.current.isMac() {
+            navigationController?.setToolbarHidden(false, animated: false)
+            var items = [UIBarButtonItem]()
             
-            let nav = UIButton(buttonImage: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav"), toolbar: true)
-            nav.accessibilityLabel = "Change criteria for comment thread navigation"
-            nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
-            let navB = UIBarButtonItem(customView: nav)
-            
-            let down = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down"), toolbar: true)
-            down.accessibilityLabel = "Navigate down one comment thread"
-            down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
-            let downB = UIBarButtonItem(customView: down)
-            
-            let more = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh"), toolbar: true)
-            more.accessibilityLabel = "Post options"
-            more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
-            moreB = UIBarButtonItem(customView: more)
-            
-            let mod = UIButton(buttonImage: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod"), toolbar: true)
-            mod.accessibilityLabel = "Moderator options"
-            mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
-            modB = UIBarButtonItem(customView: mod)
-            if modLink.isEmpty() && modB.customView != nil {
-                modB.customView? = UIView(frame: modB.customView!.frame)
+            if !context.isEmpty() {
+                items.append(space)
+                let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:)))
+                loadFullThreadButton.accessibilityLabel = "Load full thread"
+                items.append(loadFullThreadButton)
+                items.append(space)
+                if parent != nil && parent is PagingCommentViewController {
+                    
+                    parent?.toolbarItems = items
+                    parent?.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                    parent?.navigationController?.toolbar.tintColor = UIColor.fontColor
+                } else {
+                    toolbarItems = items
+                    navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                    navigationController?.toolbar.tintColor = UIColor.fontColor
+                }
+            } else {
+                navigationController?.setToolbarHidden(true, animated: false)
+                
+                let more = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh"), toolbar: true)
+                more.accessibilityLabel = "Post options"
+                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+                moreB = UIBarButtonItem(customView: more)
+
+                if parent != nil && parent is PagingCommentViewController {
+                    parent?.navigationItem.leftBarButtonItems = items
+                    parent?.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                    parent?.navigationController?.toolbar.tintColor = UIColor.fontColor
+                } else {
+                    navigationItem.leftBarButtonItems = items
+                    navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                    navigationController?.toolbar.tintColor = UIColor.fontColor
+                }
             }
-            
-            items.append(modB)
-            items.append(space)
-            items.append(upB)
-            items.append(space)
-            items.append(navB)
-            items.append(space)
-            items.append(downB)
-            items.append(space)
-            items.append(moreB)
-        }
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.isTranslucent = false
-        
-        if parent != nil && parent is PagingCommentViewController {
-            parent?.toolbarItems = items
-            parent?.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
-            parent?.navigationController?.toolbar.tintColor = UIColor.fontColor
         } else {
-            toolbarItems = items
-            navigationController?.toolbar.barTintColor = UIColor.backgroundColor
-            navigationController?.toolbar.tintColor = UIColor.fontColor
+            navigationController?.setToolbarHidden(false, animated: false)
+            self.isToolbarHidden = false
+            var items: [UIBarButtonItem] = []
+            if !context.isEmpty() {
+                items.append(space)
+                let loadFullThreadButton = UIBarButtonItem.init(title: "Load full thread", style: .plain, target: self, action: #selector(CommentViewController.loadAll(_:)))
+                loadFullThreadButton.accessibilityLabel = "Load full thread"
+                items.append(loadFullThreadButton)
+                items.append(space)
+            } else {
+                let up = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronCompactUp, overrideString: "up"), toolbar: true)
+                up.accessibilityLabel = "Navigate up one comment thread"
+                up.addTarget(self, action: #selector(CommentViewController.goUp(_:)), for: UIControl.Event.touchUpInside)
+                let upB = UIBarButtonItem(customView: up)
+                
+                let nav = UIButton(buttonImage: UIImage(sfString: SFSymbol.safariFill, overrideString: "nav"), toolbar: true)
+                nav.accessibilityLabel = "Change criteria for comment thread navigation"
+                nav.addTarget(self, action: #selector(CommentViewController.showNavTypes(_:)), for: UIControl.Event.touchUpInside)
+                let navB = UIBarButtonItem(customView: nav)
+                
+                let down = UIButton(buttonImage: UIImage(sfString: SFSymbol.chevronCompactDown, overrideString: "down"), toolbar: true)
+                down.accessibilityLabel = "Navigate down one comment thread"
+                down.addTarget(self, action: #selector(CommentViewController.goDown(_:)), for: UIControl.Event.touchUpInside)
+                let downB = UIBarButtonItem(customView: down)
+                
+                let more = UIButton(buttonImage: UIImage.init(sfString: SFSymbol.ellipsis, overrideString: "moreh"), toolbar: true)
+                more.accessibilityLabel = "Post options"
+                more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
+                moreB = UIBarButtonItem(customView: more)
+                
+                let mod = UIButton(buttonImage: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod"), toolbar: true)
+                mod.accessibilityLabel = "Moderator options"
+                mod.addTarget(self, action: #selector(self.showMod(_:)), for: UIControl.Event.touchUpInside)
+                modB = UIBarButtonItem(customView: mod)
+                if modLink.isEmpty() && modB.customView != nil {
+                    modB.customView? = UIView(frame: modB.customView!.frame)
+                }
+                
+                items.append(modB)
+                items.append(space)
+                items.append(upB)
+                items.append(space)
+                items.append(navB)
+                items.append(space)
+                items.append(downB)
+                items.append(space)
+                items.append(moreB)
+            }
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            navigationController?.navigationBar.isTranslucent = false
+            
+            if parent != nil && parent is PagingCommentViewController {
+                
+                parent?.toolbarItems = items
+                parent?.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                parent?.navigationController?.toolbar.tintColor = UIColor.fontColor
+            } else {
+                toolbarItems = items
+                navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                navigationController?.toolbar.tintColor = UIColor.fontColor
+            }
+
         }
     }
     
@@ -3267,7 +3309,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
         cellGestureRecognizer.delegate = self
         cellGestureRecognizer.maximumNumberOfTouches = 1
         tableView.addGestureRecognizer(cellGestureRecognizer)
-        if !UIApplication.shared.respectIpadLayout() {
+        if !UIDevice.current.respectIpadLayout() {
             // cellGestureRecognizer.require(toFail: tableView.panGestureRecognizer)
         }
         
@@ -3292,7 +3334,7 @@ extension CommentViewController: UIGestureRecognizerDelegate {
             return
         }
         
-        if UIApplication.shared.respectIpadLayout() && SettingValues.appMode != .SINGLE {
+        if UIDevice.current.respectIpadLayout() && SettingValues.appMode != .SINGLE {
             if #available(iOS 14, *) {
                 return
             }

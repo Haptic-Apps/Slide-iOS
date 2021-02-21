@@ -25,7 +25,7 @@ extension AlertController {
     func addAsyncImagePicker(flow: UICollectionView.ScrollDirection, paging: Bool, images: [URL], selection: AsyncImagePickerViewController.SelectionType? = nil) {
         let vc = AsyncImagePickerViewController(flow: flow, paging: paging, images: images, selection: selection)
         
-        if UIApplication.shared.respectIpadLayout() {
+        if UIDevice.current.respectIpadLayout() {
             vc.preferredContentSize.height = vc.preferredSize.height * 0.9
             vc.preferredContentSize.width = vc.preferredSize.width * 0.9
         } else {
@@ -82,7 +82,7 @@ final class AsyncImagePickerViewController: UIViewController {
     }
     
     var columns: CGFloat {
-         return UIApplication.shared.respectIpadLayout() ? 3 : 2
+         return UIDevice.current.respectIpadLayout() ? 3 : 2
     }
     
     var itemSize: CGSize {

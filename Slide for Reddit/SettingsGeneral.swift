@@ -542,7 +542,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let pad = UIApplication.shared.respectIpadLayout()
+        let pad = UIDevice.current.respectIpadLayout()
         switch section {
         case 0: return 4 + (!pad ? 1 : 0)
         case 1: return 3

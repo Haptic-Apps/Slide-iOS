@@ -193,7 +193,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             refreshControl = UIRefreshControl()
             refreshControl?.tintColor = UIColor.fontColor
             
@@ -535,7 +535,7 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func endAndResetRefresh() {
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             self.refreshControl?.endRefreshing()
             self.refreshControl?.removeFromSuperview()
             self.refreshControl = UIRefreshControl()

@@ -40,11 +40,11 @@ public class VCPresenter {
             }
         }
         
-        if UIApplication.shared.isMac() {
+        if UIDevice.current.isMac() {
             parentIs13 = false
         }
         
-        if (!UIApplication.shared.respectIpadLayout() && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
+        if (!UIDevice.current.respectIpadLayout() && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
             override13 = false
         }
         
@@ -52,7 +52,7 @@ public class VCPresenter {
         let respectedOverride13 = override13
         var shouldPopup = popupIfPossible
         
-        if UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac() {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
             if viewController is SingleSubredditViewController && SettingValues.disableSubredditPopupIpad {
                 shouldPopup = false
             } else if (viewController is CommentViewController || viewController is PagingCommentViewController) && SettingValues.disablePopupIpad {
@@ -60,20 +60,20 @@ public class VCPresenter {
             }
         }
 
-        override13 = override13 && (UIApplication.shared.respectIpadLayout() || (viewController is UIPageViewController || viewController is SettingsViewController))
+        override13 = override13 && (UIDevice.current.respectIpadLayout() || (viewController is UIPageViewController || viewController is SettingsViewController))
         
-        if (viewController is PagingCommentViewController || viewController is CommentViewController || (viewController is WebsiteViewController && !((viewController as! WebsiteViewController).url?.absoluteString.contains("login.compact") ?? false))) && (parentViewController?.splitViewController != nil && UIApplication.shared.respectIpadLayout() && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController || (viewController is WebsiteViewController && !((viewController as! WebsiteViewController).url?.absoluteString.contains("login.compact") ?? false))) && (parentViewController?.splitViewController != nil && UIDevice.current.respectIpadLayout() && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if ((!SettingValues.disablePopupIpad) && UIApplication.shared.respectIpadLayout() && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
+        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.respectIpadLayout() && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
             
-            if UIApplication.shared.isMac() && viewController is SettingsViewController {
+            if UIDevice.current.isMac() && viewController is SettingsViewController {
                 UIApplication.shared.requestSceneSessionActivation(nil,
                    userActivity: NSUserActivity(activityType: "settings"),
                    options: nil,
                    errorHandler: nil)
 
-            } else if UIApplication.shared.isMac() && viewController is SingleSubredditViewController {
+            } else if UIDevice.current.isMac() && viewController is SingleSubredditViewController {
                 let activity = NSUserActivity(activityType: "subreddit")
                 activity.userInfo = ["subreddit": (viewController as! SingleSubredditViewController).sub]
                 UIApplication.shared.requestSceneSessionActivation(nil,
@@ -81,21 +81,21 @@ public class VCPresenter {
                    options: nil,
                    errorHandler: nil)
                 
-            } else if UIApplication.shared.isMac() && viewController is InboxViewController {
+            } else if UIDevice.current.isMac() && viewController is InboxViewController {
                 let activity = NSUserActivity(activityType: "inbox")
                 UIApplication.shared.requestSceneSessionActivation(nil,
                    userActivity: activity,
                    options: nil,
                    errorHandler: nil)
 
-            } else if UIApplication.shared.isMac() && viewController is ProfileViewController {
+            } else if UIDevice.current.isMac() && viewController is ProfileViewController {
                 let activity = NSUserActivity(activityType: "profile")
                 activity.userInfo = ["profile": (viewController as! ProfileViewController).name]
                 UIApplication.shared.requestSceneSessionActivation(nil,
                    userActivity: activity,
                    options: nil,
                    errorHandler: nil)
-            } else if UIApplication.shared.isMac() && viewController is WebsiteViewController {
+            } else if UIDevice.current.isMac() && viewController is WebsiteViewController {
                 let activity = NSUserActivity(activityType: "website")
                 activity.userInfo = ["url": (viewController as! WebsiteViewController).url]
                 UIApplication.shared.requestSceneSessionActivation(nil,
@@ -121,7 +121,7 @@ public class VCPresenter {
                 let barButton = UIBarButtonItem.init(customView: button)
 
                 // Let's figure out how to present it
-                let small: Bool = shouldPopup && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
+                let small: Bool = shouldPopup && UIDevice.current.respectIpadLayout() && UIApplication.shared.statusBarOrientation != .portrait
 
                 if small || override13 || respectedOverride13 {
                     newParent.modalPresentationStyle = .pageSheet

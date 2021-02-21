@@ -97,7 +97,7 @@ extension BottomMenuPresentationController {
         let horizontalCoveragePercent: CGFloat = 0.95
 
         // Make smaller on iPad
-        var width = containerView.bounds.size.width * (UIApplication.shared.respectIpadLayout() ? 0.75 : horizontalCoveragePercent)
+        var width = containerView.bounds.size.width * (UIDevice.current.respectIpadLayout() ? 0.75 : horizontalCoveragePercent)
         if width < 250 {
             width = containerView.bounds.size.width * horizontalCoveragePercent
         }
@@ -147,7 +147,7 @@ class SlideInTransition: NSObject, UIViewControllerAnimatedTransitioning {
         guard let viewToAnimate = viewControllerToAnimate.view else { return }
 
         var offsetFrame = viewToAnimate.bounds
-        var width = UIScreen.main.bounds.width * (UIApplication.shared.respectIpadLayout() ? 0.75 : 0.95)
+        var width = UIScreen.main.bounds.width * (UIDevice.current.respectIpadLayout() ? 0.75 : 0.95)
         if width < 250 {
             width = UIScreen.main.bounds.width * 0.95
         }

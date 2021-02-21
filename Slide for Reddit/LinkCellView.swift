@@ -3362,7 +3362,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             })
         }
         
-        if UIApplication.shared.respectIpadLayout() || UIApplication.shared.isMac() {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.del?.getMoreMenu(self)
             })

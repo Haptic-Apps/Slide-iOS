@@ -149,7 +149,7 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             refreshControl = UIRefreshControl()
             refreshControl?.tintColor = UIColor.fontColor
             
@@ -294,7 +294,7 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
     }
         
     func endAndResetRefresh() {
-        if UIApplication.shared.isMac() {
+        if UIDevice.current.isMac() {
             return
         }
         self.refreshControl?.endRefreshing()
