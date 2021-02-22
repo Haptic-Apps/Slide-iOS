@@ -1356,26 +1356,10 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     var triedOnce = false
 
     func submitLink() {
-        let title = text![0]
-        let subreddit = text![1]
-        let body = text![2]
-
-        if title.text.isEmpty() {
-            BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
-        }
-
-        if subreddit.text.isEmpty() {
-            BannerUtil.makeBanner(text: "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
-        }
-
-        if body.text.isEmpty() && (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) {
-            BannerUtil.makeBanner(text: (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) ? "Link cannot be empty" : "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
-            return
-        }
 
         if type == .EDIT_SELFTEXT {
+            let body = text![1]
+
             alertController = UIAlertController(title: "Editing submission...\n\n\n", message: nil, preferredStyle: .alert)
 
             let spinnerIndicator = UIActivityIndicatorView(style: .whiteLarge)
@@ -1398,6 +1382,24 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
             }
 
         } else {
+            let title = text![0]
+            let subreddit = text![1]
+            let body = text![2]
+
+            if title.text.isEmpty() {
+                BannerUtil.makeBanner(text: "Title cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
+
+            if subreddit.text.isEmpty() {
+                BannerUtil.makeBanner(text: "Subreddit cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
+
+            if body.text.isEmpty() && (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) {
+                BannerUtil.makeBanner(text: (type == .SUBMIT_LINK || type == .SUBMIT_IMAGE) ? "Link cannot be empty" : "Body cannot be empty", color: GMColor.red500Color(), seconds: 5, context: self, top: true)
+                return
+            }
             self.session = (UIApplication.shared.delegate as! AppDelegate).session
             
             if let name = self.chosenAccount {

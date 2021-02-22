@@ -15,7 +15,7 @@ class History {
     
     public static var currentVisits = [String]()
     
-    // mark SubmissionsÏ
+    // mark Submissions
     public static func getSeen(s: SubmissionObject) -> Bool {
         if !SettingValues.saveHistory {
             return false
