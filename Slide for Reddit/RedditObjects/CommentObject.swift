@@ -172,6 +172,14 @@ class CommentObject: RedditObject {
             }
         }
         
+        if flairDict.allKeys.isEmpty {
+            if !comment.authorFlairText.isEmpty {
+                flairDict[comment.authorFlairText] = [:]
+            } else if !comment.authorFlairCssClass.isEmpty {
+                flairDict[comment.authorFlairCssClass] = [:]
+            }
+        }
+        
         self.flairJSON = flairDict.jsonString()
 
         let reportsDict = NSMutableDictionary()

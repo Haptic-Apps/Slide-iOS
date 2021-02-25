@@ -322,7 +322,7 @@ class SplitMainViewController: MainViewController {
 
         MainViewController.current = vc.sub
         self.currentTitle = vc.sub
-        UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Viewing \(vc.sub)")
+        UIAccessibility.post(notification: UIAccessibility.Notification.announcement, argument: "Browsing \(vc.sub)")
         
         if !(vc).dataSource.loaded || !SettingValues.subredditBar {
             if vc.dataSource.loaded {

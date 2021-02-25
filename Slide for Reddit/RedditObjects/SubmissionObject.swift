@@ -441,6 +441,15 @@ class SubmissionObject: RedditObject {
                 }
             }
         }
+        
+        if flairDict.allKeys.isEmpty {
+            if !submission.linkFlairText.isEmpty {
+                flairDict[submission.linkFlairText] = [:]
+            } else if !submission.linkFlairCssClass.isEmpty {
+                flairDict[submission.linkFlairCssClass] = [:]
+            }
+        }
+        
         self.flairJSON = flairDict.jsonString()
 
         let galleryDict = NSMutableDictionary()
