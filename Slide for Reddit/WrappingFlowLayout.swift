@@ -55,7 +55,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
                 if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
                     numberOfColumns = SettingValues.portraitMultiColumnCount
                 } else {
-                    if SettingValues.disableMulticolumnCollections {
+                    if SettingValues.disableMulticolumnCollections && vc is ContentListingViewController {
                         numberOfColumns = 1
                     } else {
                         numberOfColumns = portraitCount

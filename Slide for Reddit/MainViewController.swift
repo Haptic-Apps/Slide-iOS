@@ -342,7 +342,7 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
         if !subs.contains("slide_ios") {
             self.alertController?.dismiss(animated: true, completion: {
                 let alert = UIAlertController.init(title: "Subscribe to r/slide_ios?", message: "Would you like to subscribe to the Slide for Reddit iOS community and receive news and updates first?", preferredStyle: .alert)
-                alert.addAction(UIAlertAction.init(title: "Maybe later", style: .cancel, handler: {(_) in
+                alert.addAction(UIAlertAction.init(title: "No.", style: .cancel, handler: {(_) in
                     self.finalizeSetup(subs)
                 }))
                 alert.addAction(UIAlertAction.init(title: "Sure!", style: .default, handler: {(_) in
