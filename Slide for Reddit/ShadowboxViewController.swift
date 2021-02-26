@@ -116,10 +116,13 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
         }
         
         currentVc = self.viewControllers!.first!
-        if (self.currentVc as! ShadowboxLinkViewController).embeddedVC == nil {
-            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).topBody
-        } else {
-            self.viewToMove = (self.currentVc as! ShadowboxLinkViewController).embeddedVC.view
+        if let link = self.currentVc as? ShadowboxLinkViewController {
+            if let embedded = link.embeddedVC {
+                self.viewToMove = embedded.view
+            } else {
+                self.viewToMove = link.topBody
+            }
+            currentIndex = submissionDataSource.content.firstIndex(where: {$0.getId() == link.submission?.getId()}) ?? 0
         }
     }
     
@@ -134,7 +137,7 @@ class ShadowboxViewController: SwipeDownModalVC, UIPageViewControllerDataSource,
                 break
             }
         }
-        
+    
         if viewControllerIndex < 0 || viewControllerIndex > submissionDataSource.content.count {
             return nil
         }
