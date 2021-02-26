@@ -444,7 +444,7 @@ class AlbumViewController: SwipeDownModalVC, UIPageViewControllerDataSource, UIP
             }))
         
         alert.addCloseButton()
-        alert.showWindowless()
+        self.present(alert, animated: true, completion: nil)
         alert.addBlurView()
     }
     
