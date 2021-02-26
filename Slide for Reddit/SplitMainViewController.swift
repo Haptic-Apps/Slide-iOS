@@ -752,6 +752,8 @@ extension SplitMainViewController: NavigationHomeDelegate {
             navigation(homeViewController, didRequestReadLater: ())
         case .SAVED:
             accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 4)
+        case .HIDDEN:
+            accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 6)
         case .UPVOTED:
             accountHeaderView(homeViewController, didRequestProfilePageAtIndex: 3)
         case .HISTORY:

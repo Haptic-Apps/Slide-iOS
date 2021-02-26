@@ -1099,7 +1099,7 @@ class SettingValues {
     }
 
     public enum NavigationHeaderActions: String {
-        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .READ_LATER, .SAVED, .UPVOTED, .HISTORY, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
+        public static let cases: [NavigationHeaderActions] = [.HOME, .POPULAR, .RANDOM, .READ_LATER, .SAVED, .UPVOTED, .HISTORY, .HIDDEN, .AUTO_CACHE, .YOUR_PROFILE, .COLLECTIONS, .CREATE_MULTI, .TRENDING]
 
         case HOME = "home"
         case POPULAR = "popular"
@@ -1107,6 +1107,7 @@ class SettingValues {
         case SAVED = "saved"
         case UPVOTED = "upvoted"
         case HISTORY = "history"
+        case HIDDEN = "hidden"
         case AUTO_CACHE = "auto_cache"
         case YOUR_PROFILE = "profile"
         case COLLECTIONS = "collections"
@@ -1141,6 +1142,8 @@ class SettingValues {
                 return "Home"
             case .POPULAR:
                 return "Popular"
+            case .HIDDEN:
+                return "Hidden"
             case .READ_LATER:
                 return "Read later"
             case .RANDOM:
@@ -1181,6 +1184,8 @@ class SettingValues {
                 return UIImage(sfString: SFSymbol.arrowUp, overrideString: "upvote")!.menuIcon()
             case .HISTORY:
                 return UIImage(sfString: SFSymbol.clockFill, overrideString: "history")!.menuIcon()
+            case .HIDDEN:
+                return UIImage(sfString: SFSymbol.eyeSlashFill, overrideString: "hide")!.menuIcon()
             case .AUTO_CACHE:
                 return UIImage(sfString: SFSymbol.squareAndArrowDownFill, overrideString: "download")!.menuIcon()
             case .YOUR_PROFILE:
