@@ -149,7 +149,7 @@ class PostActions: NSObject {
     public static func showMoreMenu(cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         
-        let alertController: DragDownAlertMenu = DragDownAlertMenu(title: "Submission", subtitle: link.title, icon: link.thumbnailUrl)
+        let alertController: DragDownAlertMenu = DragDownAlertMenu(title: "Submission", subtitle: link.title, icon: link.isNSFW ? "" : link.thumbnailUrl)
         
         for item in SettingValues.PostOverflowAction.getMenu(link, mutableList: mutableList) {
             alertController.addAction(title: item.getTitle(link), icon: item.getImage(link)) {
