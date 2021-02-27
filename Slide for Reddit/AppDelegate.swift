@@ -775,25 +775,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         } else if url.absoluteString.contains("colors") {
             let themeName = url.absoluteString.removingPercentEncoding!.split("#")[1]
-            let alert = UIAlertController(title: "Save \"\(themeName.replacingOccurrences(of: "<H>", with: "#"))\"", message: "You can set it as your theme in Settings > Theme\n\n\n\n\n", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (_) in
-                let colorString = url.absoluteString.removingPercentEncoding!
+            
+            let themeView = ThemeCellView().then {
+                $0.setTheme(string: url.absoluteString.removingPercentEncoding ?? url.absoluteString)
+            }
+            let cv = themeView.contentView
+
+            let alert = DragDownAlertMenu(title: themeName, subtitle: "", icon: nil, extraView: cv, themeColor: nil, full: false)
+            
+            alert.addAction(title: "Save Theme", icon: UIImage(sfString: .squareAndArrowDownFill, overrideString: "save-1")) {
+                let colorString = url.absoluteString.removingPercentEncoding ?? url.absoluteString
                 
                 let title = colorString.split("#")[1]
                 UserDefaults.standard.set(colorString, forKey: "Theme+" + title)
-            }))
-            alert.addCancelButton()
-            let themeView = ThemeCellView().then {
-                $0.setTheme(colors: url.absoluteString.removingPercentEncoding!)
             }
-            let cv = themeView.contentView
-            alert.view.addSubview(cv)
-            cv.leftAnchor /==/ alert.view.leftAnchor + 8
-            cv.rightAnchor /==/ alert.view.rightAnchor - 8
-            cv.topAnchor /==/ alert.view.topAnchor + 90
-            cv.heightAnchor /==/ 60
-        
-            alert.showWindowless()
+
+            alert.show(UIApplication.shared.keyWindow?.topViewController())
             return true
         } else if url.absoluteString.contains("reddit.com") || url.absoluteString.contains("google.com/amp") || url.absoluteString.contains("redd.it") {
                 VCPresenter.openRedditLink(url.absoluteString.replacingOccurrences(of: "slide://", with: ""), window?.rootViewController as? UINavigationController, window?.rootViewController)

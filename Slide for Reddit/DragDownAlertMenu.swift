@@ -202,6 +202,8 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     var timer: Timer?
     var isSearching = false
     var taskSearch: URLSessionDataTask?
+    
+    var extraViewHeight = CGFloat(30)
 
     init(title: String, subtitle: String, icon: String?, extraView: UIView? = nil, themeColor: UIColor? = nil, full: Bool = false) {
         self.descriptor = title
@@ -332,7 +334,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return (subtitle.isEmpty ? (extraView == nil ? 55 : 90) : 80) + (hasInput ? 58 : 0)
+        return (subtitle.isEmpty ? (extraView == nil ? 55 : 55 + extraViewHeight + 16) : 80) + (hasInput ? 58 : 0)
     }
     
     func getText() -> String? {
@@ -388,7 +390,9 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
             }
         } else {
             maxHeight = UIScreen.main.bounds.height * (2 / 3)
-            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + (60 * actions.count) + 60 + (extraView != nil ? 40 : 0)))
+            let evHeight = CGFloat(16 + extraViewHeight) // XCode couldn't compile this inline :/
+            let actionsHeight = CGFloat(60 * actions.count)
+            height = min(maxHeight, CGFloat((subtitle.isEmpty ? 55 : 80) + (hasInput ? 58 : 0) + actionsHeight + 60 + (extraView != nil ? evHeight : 0)))
             if isSearch {
                 height += 158
             }
@@ -468,7 +472,7 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         let close = UIImageView(image: UIImage(sfString: SFSymbol.xmark, overrideString: "close")?.navIcon().getCopy(withColor: themeColor ?? UIColor.fontColor))
         close.contentMode = .center
         toReturn.addSubview(close)
-        close.centerYAnchor /==/ toReturn.centerYAnchor
+        close.topAnchor /==/ toReturn.topAnchor + 16
         close.rightAnchor /==/ toReturn.rightAnchor - 16
         close.heightAnchor /==/ 30
         close.widthAnchor /==/ 30
@@ -516,13 +520,13 @@ class DragDownAlertMenu: UIViewController, UITableViewDelegate, UITableViewDataS
         } else if extraView != nil {
             toReturn.addSubviews(extraView!, label)
             label.leftAnchor /==/ toReturn.leftAnchor + 16
-            label.rightAnchor /==/ close.leftAnchor - 8
+            label.rightAnchor /==/ toReturn.rightAnchor - 16
             label.topAnchor /==/ toReturn.topAnchor + 8
             label.heightAnchor /==/ 40
 
             toReturn.isUserInteractionEnabled = true
             extraView!.leftAnchor /==/ toReturn.leftAnchor + 16
-            extraView!.heightAnchor /==/ 30
+            extraView!.heightAnchor /==/ extraViewHeight ~ .required
             extraView!.rightAnchor /==/ toReturn.rightAnchor - 16
             extraView!.topAnchor /==/ label.bottomAnchor + 8
             extraView!.bottomAnchor /==/ toReturn.bottomAnchor - 8

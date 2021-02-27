@@ -230,7 +230,7 @@ public class TextDisplayStackView: UIStackView {
                 if allLinks.isEmpty && body != nil {
                     mutableBody.enumerateAttributes(in: NSRange.init(location: 0, length: body!.length), options: .longestEffectiveRangeNotRequired, using: { (attrs, range, _) in
                         for attr in attrs {
-                            if let url = attr.value as? URL {
+                            if let highlight = attr.value as? TextHighlight, let url = highlight.userInfo["url"] as? URL {
                                 let type = ContentType.getContentType(baseUrl: url)
                                 if type != .SPOILER {
                                     linkCallback(url)
@@ -266,7 +266,6 @@ public class TextDisplayStackView: UIStackView {
                 }
                 firstTextView.horizontalAnchors /==/ horizontalAnchors
             }
-
         }
         
         if !allLinks.isEmpty && !SettingValues.disablePreviews {
@@ -591,7 +590,11 @@ public class TextDisplayStackView: UIStackView {
         if html.contains("<cite>") {
             codeBlockSeperated = parseBlockquote(codeBlockSeperated)
         }
-        
+
+        if html.contains("<img") {
+            codeBlockSeperated = parseImage(codeBlockSeperated)
+        }
+
         if html.contains("<table") {
             return TextDisplayStackView.parseTableTags(codeBlockSeperated)
         } else {
@@ -676,7 +679,25 @@ public class TextDisplayStackView: UIStackView {
         }
         return preSeperated
     }
-    
+
+    public static func parseImage(_ blocks: [String]) -> [String] {
+        var preSeperated = [String]()
+        
+        // TODO we can render this inline eventually
+        
+        for html in blocks {
+            let imgPattern = "\\<img.+src\\=(?:\\\"|\\')(.+?)(?:\\\"|\\')(?:.+?)\\>"
+            
+            if let regex = try? NSRegularExpression(pattern: imgPattern, options: .caseInsensitive) {
+                let modString = regex.stringByReplacingMatches(in: html, options: .withTransparentBounds, range: NSMakeRange(0, html.length), withTemplate: "Image")
+                preSeperated.append(modString)
+            } else {
+                preSeperated.append(html)
+            }
+        }
+        return preSeperated
+    }
+
     public static func parseTableTags(_ blocks: [String]) -> [String] {
         var newBlocks = [String]()
         for block in blocks {

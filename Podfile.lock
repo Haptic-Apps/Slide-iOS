@@ -119,7 +119,7 @@ CHECKOUT OPTIONS:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: 41300e433197e5955e661a27bda4fd6a58185dfa
+    :commit: 79d54d0d00a3b888f766d413ef4a191c4e4c99f7
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: a22003f93a803c2e14b193f636669c21358fb1d7

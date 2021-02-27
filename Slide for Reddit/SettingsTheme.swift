@@ -545,8 +545,14 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         } else if indexPath.section == 2 {
             if !VCPresenter.proDialogShown(feature: true, self) {
                 let theme = customThemes[indexPath.row - 1]
-                let alert = UIAlertController(title: theme.title, message: nil, preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Apply Theme", style: .default, handler: { (_) in
+                
+                let themeView = ThemeCellView().then {
+                    $0.setTheme(theme: theme)
+                }
+                let cv = themeView.contentView
+
+                let alert = DragDownAlertMenu(title: theme.title, subtitle: "", icon: nil, extraView: cv, themeColor: nil, full: false)
+                alert.addAction(title: "Apply Theme", icon: UIImage(sfString: .checkmark, overrideString: "add")?.navIcon()) {
                     UserDefaults.standard.set(theme.title, forKey: "theme")
                     UserDefaults.standard.synchronize()
                     
@@ -559,14 +565,18 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                     self.tochange!.tableView.reloadData()
                     self.tableView.reloadData()
                     self.setupBaseBarColors()
-                }))
-                alert.addAction(UIAlertAction(title: "Edit Theme", style: .default, handler: { (_) in
+                }
+
+                alert.extraViewHeight = 60
+                
+                alert.addAction(title: "Edit Theme", icon: UIImage(sfString: .pencil, overrideString: "edit")?.navIcon()) {
                     let theme = SettingsCustomTheme()
                     theme.delegate = self
                     theme.inputTheme = self.customThemes[indexPath.row - 1].title
                     VCPresenter.presentAlert(UINavigationController(rootViewController: theme), parentVC: self)
-                }))
-                alert.addAction(UIAlertAction(title: "Share Theme", style: .default, handler: { (_) in
+                }
+
+                alert.addAction(title: "Share Theme", icon: UIImage(sfString: .squareAndArrowUp, overrideString: "share")?.navIcon()) {
                     let inputTheme = self.customThemes[indexPath.row - 1].title
                     let textShare = UserDefaults.standard.string(forKey: "Theme+" + inputTheme) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>").addPercentEncoding) ?? UserDefaults.standard.string(forKey: "Theme+" + inputTheme.replacingOccurrences(of: "#", with: "<H>")) ?? ""
 
@@ -581,17 +591,20 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                     } else {
                         window.rootViewController!.present(activityViewController, animated: true, completion: nil)
                     }
-                }))
-                alert.addAction(UIAlertAction(title: "Delete Theme", style: .destructive, handler: { (_) in
-                    let title = self.customThemes[indexPath.row - 1].title
-                    UserDefaults.standard.removeObject(forKey: "Theme+" + title.addPercentEncoding)
-                    UserDefaults.standard.synchronize()
-                    self.customThemes = self.customThemes.filter({ $0.title != title })
-                    ColorUtil.themes = ColorUtil.themes.filter({ $0.title != title })
-                    self.tableView.reloadData()
-                }))
-                alert.addCancelButton()
-                self.present(alert, animated: true)
+                }
+
+                if ColorUtil.getCurrentTheme() != theme {
+                    alert.addAction(title: "Delete Theme", icon: UIImage(sfString: .trash, overrideString: "delete")?.navIcon()) {
+                        let title = self.customThemes[indexPath.row - 1].title
+                        UserDefaults.standard.removeObject(forKey: "Theme+" + title.addPercentEncoding)
+                        UserDefaults.standard.synchronize()
+                        self.customThemes = self.customThemes.filter({ $0.title != title })
+                        ColorUtil.themes = ColorUtil.themes.filter({ $0.title != title })
+                        self.tableView.reloadData()
+                    }
+                }
+
+                alert.show(self)
             }
         } else if indexPath.section == 3 {
             let row = indexPath.row
