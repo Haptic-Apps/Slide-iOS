@@ -995,7 +995,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
 
-       // tableView.addSubview(refreshControl) // not required when using UITableViewController
+        if let refresh = refreshControl, !UIDevice.current.isMac() {
+            tableView.addSubview(refresh)
+        }
         tableView.alwaysBounceVertical = true
 
         self.automaticallyAdjustsScrollViewInsets = false

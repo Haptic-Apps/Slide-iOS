@@ -67,42 +67,43 @@ public class VCPresenter {
             return
         } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.respectIpadLayout() && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
             
-            if UIDevice.current.isMac() && viewController is SettingsViewController {
-                UIApplication.shared.requestSceneSessionActivation(nil,
-                   userActivity: NSUserActivity(activityType: "settings"),
-                   options: nil,
-                   errorHandler: nil)
+            if UIDevice.current.isMac(), #available(iOS 13, *) {
+                if viewController is SettingsViewController {
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: NSUserActivity(activityType: "settings"),
+                       options: nil,
+                       errorHandler: nil)
 
-            } else if UIDevice.current.isMac() && viewController is SingleSubredditViewController {
-                let activity = NSUserActivity(activityType: "subreddit")
-                activity.userInfo = ["subreddit": (viewController as! SingleSubredditViewController).sub]
-                UIApplication.shared.requestSceneSessionActivation(nil,
-                   userActivity: activity,
-                   options: nil,
-                   errorHandler: nil)
-                
-            } else if UIDevice.current.isMac() && viewController is InboxViewController {
-                let activity = NSUserActivity(activityType: "inbox")
-                UIApplication.shared.requestSceneSessionActivation(nil,
-                   userActivity: activity,
-                   options: nil,
-                   errorHandler: nil)
+                } else if viewController is SingleSubredditViewController {
+                    let activity = NSUserActivity(activityType: "subreddit")
+                    activity.userInfo = ["subreddit": (viewController as! SingleSubredditViewController).sub]
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
+                    
+                } else if viewController is InboxViewController {
+                    let activity = NSUserActivity(activityType: "inbox")
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
 
-            } else if UIDevice.current.isMac() && viewController is ProfileViewController {
-                let activity = NSUserActivity(activityType: "profile")
-                activity.userInfo = ["profile": (viewController as! ProfileViewController).name]
-                UIApplication.shared.requestSceneSessionActivation(nil,
-                   userActivity: activity,
-                   options: nil,
-                   errorHandler: nil)
-            } else if UIDevice.current.isMac() && viewController is WebsiteViewController {
-                let activity = NSUserActivity(activityType: "website")
-                activity.userInfo = ["url": (viewController as! WebsiteViewController).url]
-                UIApplication.shared.requestSceneSessionActivation(nil,
-                   userActivity: activity,
-                   options: nil,
-                   errorHandler: nil)
-
+                } else if viewController is ProfileViewController {
+                    let activity = NSUserActivity(activityType: "profile")
+                    activity.userInfo = ["profile": (viewController as! ProfileViewController).name]
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
+                } else if viewController is WebsiteViewController {
+                    let activity = NSUserActivity(activityType: "website")
+                    activity.userInfo = ["url": (viewController as! WebsiteViewController).url]
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
+                }
             } else {
                 if viewController is SingleSubredditViewController {
                     (viewController as! SingleSubredditViewController).isModal = true

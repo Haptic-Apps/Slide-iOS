@@ -1353,7 +1353,9 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             top = 0
         }
         tableView.contentInset = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
-        //tableView.addSubview(refreshControl!)
+        if let refresh = refreshControl, !UIDevice.current.isMac() {
+            tableView.addSubview(refresh)
+        }
         
         self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItem.Style.plain, target: nil, action: nil)
         
