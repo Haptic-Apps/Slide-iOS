@@ -1265,6 +1265,10 @@ extension AppDelegate: UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             self.window = window
+            
+            if UIDevice.current.isMac() && (connectionOptions.userActivities.first?.activityType != "settings") {
+                windowScene.sizeRestrictions?.minimumSize = CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+            }
 
             didFinishLaunching(window: window)
             /* TODO This launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL

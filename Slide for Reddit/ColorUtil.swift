@@ -105,9 +105,8 @@ public class ColorUtil {
         if accent != nil {
             baseAccent = accent!
         }
-        if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-            NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-        }
+          
+        NotificationCenter.default.post(name: .onThemeChanged, object: nil)
         return true
     }
     

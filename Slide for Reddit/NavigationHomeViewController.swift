@@ -75,9 +75,29 @@ class NavigationHomeViewController: UIViewController {
         $0.searchBarStyle = UISearchBar.Style.minimal
         $0.placeholder = " Search subs, posts, or profiles"
         $0.isTranslucent = true
-        $0.barStyle = .blackTranslucent
+        $0.barStyle = .black
+        if #available(iOS 13.0, *) {
+            $0.searchTextField.tintColor = UIColor.fontColor
+            $0.searchTextField.textColor = UIColor.fontColor
+        } else {
+            // Fallback on earlier versions
+        }
         $0.accessibilityLabel = "Search"
         $0.accessibilityHint = "Search subreddits, posts, or profiles"
+        
+        if UIDevice.current.isMac() {
+            if #available(iOS 13.0, *) {
+                $0.searchTextField.attributedPlaceholder = NSAttributedString(string: " Search subs, posts, or profiles", attributes: [.foregroundColor: UIColor.fontColor])
+                $0.searchTextField.leftView?.tintColor = UIColor.fontColor
+                $0.searchTextField.rightView?.tintColor = UIColor.fontColor
+                $0.searchTextField.backgroundColor = UIColor.backgroundColor
+                if let clearButton = $0.searchTextField.value(forKey: "_clearButton") as? UIButton {
+                    let templateImage =  clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+                    clearButton.setImage(templateImage, for: .normal)
+                    clearButton.tintColor = UIColor.fontColor
+                }
+            }
+        }
     }
     
     var accountHeader: CurrentAccountHeaderView?

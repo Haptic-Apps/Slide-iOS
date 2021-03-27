@@ -293,6 +293,7 @@ class SettingValues {
     public static var coloredFlairs = false
     public static var showFlairs = true
     public static var desktopMode = false
+    public static var tapExitMedia = true
 
     public static var commentLimit = 95
     public static var submissionLimit = 13

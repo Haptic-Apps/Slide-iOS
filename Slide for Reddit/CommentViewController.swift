@@ -2173,16 +2173,12 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 more.accessibilityLabel = "Post options"
                 more.addTarget(self, action: #selector(self.showMenu(_:)), for: UIControl.Event.touchUpInside)
                 moreB = UIBarButtonItem(customView: more)
-
-                if parent != nil && parent is PagingCommentViewController {
-                    parent?.navigationItem.leftBarButtonItems = items
-                    parent?.navigationController?.toolbar.barTintColor = UIColor.backgroundColor
-                    parent?.navigationController?.toolbar.tintColor = UIColor.fontColor
-                } else {
-                    navigationItem.leftBarButtonItems = items
-                    navigationController?.toolbar.barTintColor = UIColor.backgroundColor
-                    navigationController?.toolbar.tintColor = UIColor.fontColor
-                }
+                
+                items.append(moreB)
+                
+                navigationItem.leftBarButtonItems = items
+                navigationController?.toolbar.barTintColor = UIColor.backgroundColor
+                navigationController?.toolbar.tintColor = UIColor.fontColor
             }
         } else {
             navigationController?.setToolbarHidden(false, animated: false)
@@ -2710,6 +2706,16 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     }
     
     func hideUI(inHeader: Bool) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.createJumpButton()
+            strongSelf.isHiding = false
+        }
+
+        if UIDevice.current.isMac() {
+            return
+        }
+
         isHiding = true
         // self.tableView.endEditing(true)
         if inHeadView.superview == nil {
@@ -2724,13 +2730,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
             }
         }
         self.isToolbarHidden = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let strongSelf = self else { return }
-            strongSelf.createJumpButton()
-            strongSelf.isHiding = false
-        }
-        
+                
         if SettingValues.hideStatusBar {
             self.setNeedsStatusBarAppearanceUpdate()
         }
@@ -2738,7 +2738,11 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func showUI() {
         (navigationController)?.setNavigationBarHidden(false, animated: true)
-        (navigationController)?.setToolbarHidden(false, animated: true)
+        
+        if UIDevice.current.isMac() {
+            return
+        }
+        
         if live {
             progressDot.layer.removeAllAnimations()
             let pulseAnimation = CABasicAnimation(keyPath: "transform.scale")

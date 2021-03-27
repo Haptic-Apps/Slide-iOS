@@ -285,12 +285,6 @@ class ModalMediaViewController: UIViewController {
                 panGestureRecognizer!.allowedScrollTypesMask = .continuous
             }
             panGestureRecognizer!.cancelsTouchesInView = false
-            if UIDevice.current.isMac() {
-                if #available(iOS 13.4, *) {
-                    panGestureRecognizer!.allowedScrollTypesMask = .discrete
-                }
-                panGestureRecognizer!.maximumNumberOfTouches = 0
-            }
 
             view.addGestureRecognizer(panGestureRecognizer!)
             

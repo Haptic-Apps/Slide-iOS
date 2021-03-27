@@ -408,10 +408,6 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
 
-            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-            }
-
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
@@ -515,11 +511,6 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             UserDefaults.standard.set(theme.title, forKey: SettingValues.pref_nightTheme)
             UserDefaults.standard.synchronize()
             _ = ColorUtil.doInit()
-            SingleSubredditViewController.cellVersion += 1
-
-            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-            }
 
             self.setupViews()
             self.tableView.reloadData()
@@ -561,25 +552,23 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 let cv = themeView.contentView
 
                 let alert = DragDownAlertMenu(title: theme.title, subtitle: "", icon: nil, extraView: cv, themeColor: nil, full: false)
-                alert.addAction(title: "Apply Theme", icon: UIImage(sfString: .checkmark, overrideString: "add")?.navIcon()) {
-                    UserDefaults.standard.set(theme.title, forKey: "theme")
-                    UserDefaults.standard.synchronize()
-                    
-                    _ = ColorUtil.doInit()
-                    SingleSubredditViewController.cellVersion += 1
-                    self.tableView.reloadData()
+                if ColorUtil.getCurrentTheme() != theme {
+                    alert.addAction(title: "Apply Theme", icon: UIImage(sfString: .checkmark, overrideString: "add")?.navIcon()) {
+                        UserDefaults.standard.set(theme.title, forKey: "theme")
+                        UserDefaults.standard.synchronize()
+                        
+                        _ = ColorUtil.doInit()
+                        SingleSubredditViewController.cellVersion += 1
+                        self.tableView.reloadData()
 
-                    if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-                        NotificationCenter.default.post(name: .onThemeChanged, object: nil)
+                        self.setupViews()
+                        self.tochange!.doCells()
+                        self.tochange!.tableView.reloadData()
+                        self.tableView.reloadData()
+                        self.setupBaseBarColors()
                     }
-
-                    self.setupViews()
-                    self.tochange!.doCells()
-                    self.tochange!.tableView.reloadData()
-                    self.tableView.reloadData()
-                    self.setupBaseBarColors()
                 }
-
+                
                 alert.extraViewHeight = 60
                 
                 alert.addAction(title: "Edit Theme", icon: UIImage(sfString: .pencil, overrideString: "edit")?.navIcon()) {
@@ -628,10 +617,6 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             SingleSubredditViewController.cellVersion += 1
             self.tableView.reloadData()
 
-            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-            }
-
             self.setupViews()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -658,10 +643,6 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             _ = ColorUtil.doInit()
             self.setupViews()
             SingleSubredditViewController.cellVersion += 1
-
-            if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-                NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-            }
 
             self.tableView.reloadData()
             self.tochange!.doCells()
@@ -808,10 +789,6 @@ extension SettingsTheme: SettingsCustomThemeDelegate {
         SingleSubredditViewController.cellVersion += 1
         self.tableView.reloadData()
         
-        if #available(iOS 13.0, *) { } else { // Re-draw views on iOS 11 and 12
-            NotificationCenter.default.post(name: .onThemeChanged, object: nil)
-        }
-
         self.setupViews()
         self.tochange!.doCells()
         self.tochange!.tableView.reloadData()

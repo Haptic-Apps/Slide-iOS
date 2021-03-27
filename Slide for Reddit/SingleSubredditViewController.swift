@@ -493,6 +493,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        if tableView == nil {
+            return
+        }
                 
         inHeadView?.removeFromSuperview()
         fab?.removeFromSuperview()
@@ -973,10 +976,18 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         
-        if parent is SplitMainViewController {
-            parent!.toolbarItems = [searchB, flexButton, moreB]
+        if UIDevice.current.isMac() {
+            if parent is SplitMainViewController {
+                parent!.navigationItem.leftBarButtonItems = [searchB, moreB]
+            } else {
+                navigationItem.leftBarButtonItems = [searchB, moreB]
+            }
         } else {
-            toolbarItems = [searchB, flexButton, moreB]
+            if parent is SplitMainViewController {
+                parent!.toolbarItems = [searchB, flexButton, moreB]
+            } else {
+                toolbarItems = [searchB, flexButton, moreB]
+            }
         }
     }
     
