@@ -1885,7 +1885,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         }
         
         var awardString: NSMutableAttributedString?
-        if !SettingValues.hideAwards {
+        if !SettingValues.hideAwardsComments {
             let to = 3
             if !comment.awardsDictionary.keys.isEmpty {
                 var awardCount = 0

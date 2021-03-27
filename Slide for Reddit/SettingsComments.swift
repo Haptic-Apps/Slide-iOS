@@ -25,8 +25,8 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         $0.onTintColor = ColorUtil.baseAccent
     }
     
-    var showAwardsCell: UITableViewCell = InsetCell()
-    var showAwards = UISwitch().then {
+    var hideAwardsCell: UITableViewCell = InsetCell()
+    var hideAwards = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
     
@@ -74,6 +74,12 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         } else if changed == wideIndicator {
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
+        } else if changed == hideAwards {
+            SettingValues.hideAwards = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAwardsComments)
+        } else if changed == showProfiles {
+            SettingValues.showProfileImagesComments = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showProfileImagesComments)
         } else if changed == hideAutomod {
             SettingValues.hideAutomod = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAutomod)
@@ -103,11 +109,11 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 1 && indexPath.row == 0 {
+        if indexPath.section == 2 && indexPath.row == 0 {
             showAuthorChooser()
-        } else if indexPath.section == 1 && indexPath.row == 1 {
+        } else if indexPath.section == 2 && indexPath.row == 1 {
             showDepthChooser()
-        } else if indexPath.section == 0 && indexPath.row == 2 {
+        } else if indexPath.section == 1 && indexPath.row == 2 {
             showJumpChooser()
         }
     }
@@ -291,7 +297,7 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         self.title = "Comments settings"
         self.headers = ["Profiles and Awards", "Comments page", "Comment display", "Comment interaction"]
 
-        createCell(showAwardsCell, showAwards, isOn: !SettingValues.hideAwardsComments, text: "Show comment awards line")
+        createCell(hideAwardsCell, hideAwards, isOn: SettingValues.hideAwardsComments, text: "Hide Reddit awards")
         createCell(showProfilesCell, showProfiles, isOn: SettingValues.showProfileImagesComments, text: "Show profile images")
         showProfilesCell.detailTextLabel?.textColor = UIColor.fontColor
         showProfilesCell.detailTextLabel?.numberOfLines = 0
@@ -365,7 +371,7 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.showAwardsCell
+            case 0: return self.hideAwardsCell
             case 1: return self.showProfilesCell
             default: fatalError("Unkown row in section 0")
             }
