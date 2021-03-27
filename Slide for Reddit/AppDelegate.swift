@@ -806,12 +806,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let themeName = url.absoluteString.removingPercentEncoding!.split("#")[1]
             
             let themeView = ThemeCellView().then {
-                $0.setTheme(string: url.absoluteString.removingPercentEncoding ?? url.absoluteString)
+                $0.setTheme(colors: url.absoluteString.removingPercentEncoding ?? url.absoluteString)
             }
             let cv = themeView.contentView
 
             let alert = DragDownAlertMenu(title: themeName, subtitle: "", icon: nil, extraView: cv, themeColor: nil, full: false)
-            
+            alert.extraViewHeight = 60
+
             alert.addAction(title: "Save Theme", icon: UIImage(sfString: .squareAndArrowDownFill, overrideString: "save-1")) {
                 let colorString = url.absoluteString.removingPercentEncoding ?? url.absoluteString
                 

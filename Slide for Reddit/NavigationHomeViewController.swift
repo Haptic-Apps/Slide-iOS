@@ -144,6 +144,9 @@ class NavigationHomeViewController: UIViewController {
 
     @objc func onThemeChanged() {
         doViews()
+        
+        self.navigationController?.setToolbarHidden(true, animated: false)
+        self.navigationController?.setToolbarHidden(false, animated: false)
     }
 
     @objc func onSubredditOrderChanged() {
