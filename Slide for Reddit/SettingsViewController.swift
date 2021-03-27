@@ -374,7 +374,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.subCell.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
         self.subCell.imageView?.tintColor = UIColor.fontColor
 
-        self.filters.textLabel?.text = "Filters"
+        self.filters.textLabel?.text = "Content Filters"
         self.filters.accessoryType = .disclosureIndicator
         self.filters.backgroundColor = UIColor.foregroundColor
         self.filters.textLabel?.textColor = UIColor.fontColor

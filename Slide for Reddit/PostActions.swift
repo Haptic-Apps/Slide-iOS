@@ -143,6 +143,16 @@ class PostActions: NSObject {
             cell.downvote()
         case .MODERATE:
             PostActions.showModMenu(cell, parent: parent)
+        case .SHARE_AUTHOR:
+            if let authorUrl = URL(string: "https://reddit.com/u/" + link.subreddit) {
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: authorUrl)], applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = cell.contentView
+                    presenter.sourceRect = cell.contentView.bounds
+                }
+                
+                parent.present(activityViewController, animated: true, completion: nil)
+            }
         }
     }
     

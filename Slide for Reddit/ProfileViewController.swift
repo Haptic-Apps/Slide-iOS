@@ -127,8 +127,12 @@ class ProfileViewController: TabsContentPagingViewController {
 
 extension ProfileViewController: TabsContentPagingViewControllerDelegate {
     func shouldUpdateButtons() {
-        if currentIndex >= 1 {
-            let current = content[currentIndex - 1]
+        var offset = 1
+        if name != AccountController.currentName {
+            offset = 0
+        }
+        if currentIndex >= offset {
+            let current = content[currentIndex - offset]
             if current == .comments || current == .submitted || current == .overview {
                 navigationItem.rightBarButtonItems = [ moreB!, sortB!]
             } else {

@@ -1342,7 +1342,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             par.present(activityViewController, animated: true, completion: {})
         }))
-        
+
         if AccountController.isLoggedIn {
             actions.append(AlertMenuAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon(), action: {
                 par.saveComment(self.comment!)
@@ -1359,6 +1359,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         actions.append(AlertMenuAction(title: "Block u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon(), action: {
             par.blockUser(name: self.comment!.author)
+        }))
+        
+        actions.append(AlertMenuAction(title: "Share u/\(comment!.author)'s profile", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon(), action: {
+            let activityViewController = UIActivityViewController(activityItems: [URL(string: "https://www.reddit.com/u/\(self.comment!.author)") ?? URL(string: "about://blank")], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = self.moreButton
+                presenter.sourceRect = self.moreButton.bounds
+            }
+            par.present(activityViewController, animated: true, completion: {})
         }))
         
         actions.append(AlertMenuAction(title: "Copy text", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon(), action: {

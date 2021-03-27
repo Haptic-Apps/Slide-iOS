@@ -779,6 +779,7 @@ class SettingValues {
         case READ_LATER = "readlater"
         case SHARE_CONTENT = "sharecontent"
         case SHARE_REDDIT = "sharereddit"
+        case SHARE_AUTHOR = "shareauthor"
         case CHROME = "openchrome"
         case SAFARI = "opensafari"
         case FILTER = "filter"
@@ -816,7 +817,7 @@ class SettingValues {
         }
         
         public static func getMenuNone() -> [PostOverflowAction] {
-            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "hide"]
+            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "shareauthor", "openchrome", "opensafari", "filter", "copy", "hide"]
             var toReturn = [PostOverflowAction]()
             for item in menu {
                 toReturn.append(PostOverflowAction(rawValue: item)!)
@@ -858,6 +859,8 @@ class SettingValues {
                 return "Share content link"
             case .SHARE_REDDIT:
                 return "Share reddit link"
+            case .SHARE_AUTHOR:
+                return "Share author profile"
             case .CHROME:
                 return "Open in Chrome"
             case .SAFARI:
@@ -902,6 +905,8 @@ class SettingValues {
                 return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
                 return UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()
+            case .SHARE_AUTHOR:
+                return UIImage(sfString: SFSymbol.arrowUpAndPersonRectanglePortrait, overrideString: "share")!.menuIcon()
             case .CHROME:
                 return UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()
             case .SAFARI:
