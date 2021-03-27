@@ -878,7 +878,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     func loadBubbles() {
         self.subLinks.removeAll()
-        if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+        if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.hasPrefix("m/") || self.sub.hasPrefix("u_") || self.sub.contains("+") {
             return
         }
         do {
@@ -3463,7 +3463,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor
+                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
                     $0.addTapGestureRecognizer { (_) in
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                     }
