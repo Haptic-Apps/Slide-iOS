@@ -300,7 +300,7 @@ public class ColorUtil {
     
     static func initializeThemes() {
         ColorUtil.themes.removeAll()
-        ColorUtil.themes.append(Theme(title: "light", displayName: "Light", foregroundColor: UIColor.white, backgroundColor: UIColor(hexString: "#f2f2f7"), navIconColor: UIColor(hexString: "#000000").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#000000").withAlphaComponent(0.87), isLight: true, isCustom: false))
+        ColorUtil.themes.append(Theme(title: "light", displayName: "Light", foregroundColor: UIColor.white, backgroundColor: UIColor(hexString: "#f2f2f7"), navIconColor: UIColor(hexString: "#3c3c43").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#000000").withAlphaComponent(0.87), isLight: true, isCustom: false))
         ColorUtil.themes.append(Theme(title: "dark", displayName: "Dark Gray", foregroundColor: UIColor(hexString: "#303030"), backgroundColor: UIColor(hexString: "#212121"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false))
         ColorUtil.themes.append(Theme(title: "black", displayName: "Black", foregroundColor: UIColor.black, backgroundColor: UIColor.black, navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false))
         ColorUtil.themes.append(Theme(title: "blue", displayName: "Blue", foregroundColor: UIColor(hexString: "#37474F"), backgroundColor: UIColor(hexString: "#2F3D44"), navIconColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), fontColor: UIColor(hexString: "#FFFFFF").withAlphaComponent(0.87), isLight: false, isCustom: false))

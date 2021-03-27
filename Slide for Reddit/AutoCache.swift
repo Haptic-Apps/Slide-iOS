@@ -39,7 +39,8 @@ public class AutoCache: NSObject {
             AutoCache.current = self
             self.subs = subs
             if !self.subs.isEmpty {
-                doCache(subs: subs, progress: { sub, post, total, _ in
+                let startIndex = UserDefaults.standard.integer(forKey: "CACHE_LAST_INDEX")
+                doCache(subs: subs, startIndex: startIndex, progress: { sub, post, total, _ in
                     DispatchQueue.main.async {
                         NotificationCenter.default.post(name: .autoCacheProgress, object: nil, userInfo: ["subreddit": sub, "progress": Float(post) / Float(total)])
                         self.cacheProgress = Float(post) / Float(total)
@@ -47,6 +48,7 @@ public class AutoCache: NSObject {
                 }, completion: { (total, failed) in
                     DispatchQueue.main.async {
                         AutoCache.current = nil
+                        UserDefaults.standard.setValue(0, forKey: "CACHE_LAST_INDEX")
                         NotificationCenter.default.post(name: .autoCacheFinished, object: nil, userInfo: ["total": total, "failed": failed])
                     }
                 })
@@ -62,8 +64,8 @@ public class AutoCache: NSObject {
         AutoCache.current = nil
     }
 
-    func doCache(subs: [String], progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
-        cacheSub(0, progress: progress, completion: completion, total: 0, failed: 0)
+    func doCache(subs: [String], startIndex: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
+        cacheSub(startIndex, progress: progress, completion: completion, total: 0, failed: 0)
     }
 
     func cacheComments(_ index: Int, commentIndex: Int, currentLinks: [SubmissionObject], done: Int, failed: Int, progress: @escaping (String, Int, Int, Int) -> Void, completion: @escaping (Int, Int) -> Void) {
@@ -132,6 +134,8 @@ public class AutoCache: NSObject {
             self.cacheSub(index + 1, progress: progress, completion: completion, total: total, failed: failed)
             return
         }
+        
+        UserDefaults.standard.setValue(index, forKey: "CACHE_LAST_INDEX")
 
         NotificationCenter.default.post(name: .autoCacheStarted, object: nil, userInfo: ["subreddit": self.subs[index]])
         self.currentSubreddit = self.subs[index]
