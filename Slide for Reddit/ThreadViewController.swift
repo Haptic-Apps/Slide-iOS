@@ -155,9 +155,11 @@ class ThreadViewControler: MediaViewController, UICollectionViewDelegate, Wrappi
             
             refreshControl?.attributedTitle = NSAttributedString(string: "")
             refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+
             if let refresh = refreshControl, !UIDevice.current.isMac() {
                 tableView.addSubview(refresh)
             }
+
             refreshControl!.centerAnchors /==/ tableView.centerAnchors
         }
         

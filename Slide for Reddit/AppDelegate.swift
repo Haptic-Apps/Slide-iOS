@@ -1365,9 +1365,8 @@ extension AppDelegate: UIWindowSceneDelegate {
                     _ = handleURL(url)
                 }
             }
-
         }
-                
+
         #if targetEnvironment(macCatalyst)
             guard let windowScene = scene as? UIWindowScene else { return }
             

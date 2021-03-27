@@ -1009,6 +1009,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         if let refresh = refreshControl, !UIDevice.current.isMac() {
             tableView.addSubview(refresh)
         }
+
         tableView.alwaysBounceVertical = true
 
         self.automaticallyAdjustsScrollViewInsets = false

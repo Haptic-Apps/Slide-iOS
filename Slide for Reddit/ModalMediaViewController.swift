@@ -285,7 +285,6 @@ class ModalMediaViewController: UIViewController {
                 panGestureRecognizer!.allowedScrollTypesMask = .continuous
             }
             panGestureRecognizer!.cancelsTouchesInView = false
-
             view.addGestureRecognizer(panGestureRecognizer!)
             
             background = UIView()
