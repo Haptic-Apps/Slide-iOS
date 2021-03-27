@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20B28" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18147.2" systemVersion="20D64" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CommentModel" representedClassName="CommentModel" syncable="YES">
         <attribute name="approvedBy" optional="YES" attributeType="String"/>
         <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="authorProfileImage" optional="YES" attributeType="String"/>
         <attribute name="awardsJSON" optional="YES" attributeType="String"/>
         <attribute name="controversality" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -150,7 +151,7 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="599"/>
+        <element name="CommentModel" positionX="-45" positionY="144" width="128" height="614"/>
         <element name="MoreModel" positionX="63" positionY="162" width="128" height="104"/>
         <element name="SubmissionComments" positionX="0" positionY="144" width="128" height="74"/>
         <element name="SubmissionModel" positionX="-63" positionY="-18" width="128" height="1004"/>

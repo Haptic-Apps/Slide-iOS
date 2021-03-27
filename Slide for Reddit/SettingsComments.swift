@@ -24,6 +24,16 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     var wideIndicator = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var showAwardsCell: UITableViewCell = InsetCell()
+    var showAwards = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    
+    var showProfilesCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "profile")
+    var showProfiles = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var floatingJumpCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "jump")
 
@@ -279,7 +289,13 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Comments settings"
-        self.headers = ["Comments page", "Comment display", "Comment interaction"]
+        self.headers = ["Profiles and Awards", "Comments page", "Comment display", "Comment interaction"]
+
+        createCell(showAwardsCell, showAwards, isOn: !SettingValues.hideAwardsComments, text: "Show comment awards line")
+        createCell(showProfilesCell, showProfiles, isOn: SettingValues.showProfileImagesComments, text: "Show profile images")
+        showProfilesCell.detailTextLabel?.textColor = UIColor.fontColor
+        showProfilesCell.detailTextLabel?.numberOfLines = 0
+        showProfilesCell.detailTextLabel?.text = "Experimental"
 
         createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
         createCell(fullscreenImageCell, fullscreenImage, isOn: !SettingValues.commentFullScreen, text: "Crop the lead banner image")
@@ -349,25 +365,31 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.fullscreenImageCell
-            case 1: return self.hideAutomodCell
-            case 2: return self.floatingJumpCell
+            case 0: return self.showAwardsCell
+            case 1: return self.showProfilesCell
             default: fatalError("Unkown row in section 0")
             }
         case 1:
+            switch indexPath.row {
+            case 0: return self.fullscreenImageCell
+            case 1: return self.hideAutomodCell
+            case 2: return self.floatingJumpCell
+            default: fatalError("Unkown row in section 1")
+            }
+        case 2:
             switch indexPath.row {
             case 0: return self.authorThemeCell
             case 1: return self.themeColorCell
             case 2: return self.wideIndicatorCell
             case 3: return self.highlightOpCell
-            default: fatalError("Unknown row in section 1")
+            default: fatalError("Unknown row in section 2")
             }
-        case 2:
+        case 3:
             switch indexPath.row {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
             case 2: return self.swapLongPressCell
-            default: fatalError("Unknown row in section 2")
+            default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
         }
@@ -376,9 +398,10 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 3
-        case 1: return 4
-        case 2: return 3
+        case 0: return 2
+        case 1: return 3
+        case 2: return 4
+        case 3: return 3
         default: fatalError("Unknown number of sections")
         }
     }

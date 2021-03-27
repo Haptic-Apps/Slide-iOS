@@ -135,6 +135,8 @@ class SettingValues {
     public static let pref_commentLimit = "COMMENT_LIMIT"
     public static let pref_submissionLimit = "SUBMISSION_LIMIT"
     public static let pref_hideAwards = "HIDE_AWARDS_v2"
+    public static let pref_hideAwardsComments = "HIDE_AWARDS_COMMENTS_V2"
+    public static let pref_showProfileImagesComments = "SHOW_PROFILE_IMAGES_COMMENTS"
     public static let pref_subredditIcons = "SUBREDDIT_ICONS"
     public static let pref_streamVideos = "STREAM_VIDEOS"
     public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
@@ -284,6 +286,7 @@ class SettingValues {
     public static var disable13Popup = true
     public static var thumbTag = true
     public static var hideAwards = false
+    public static var hideAwardsComments = false
     public static var streamVideos = true
     public static var fullWidthHeaderCells = false
     public static var disablePopupIpad = false
@@ -296,6 +299,7 @@ class SettingValues {
     public static var desktopMode = false
     public static var tapExitMedia = true
     public static var tapProfilesAndSubs = false
+    public static var showProfileImagesComments = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -644,6 +648,8 @@ class SettingValues {
         SettingValues.disableBanner = settings.bool(forKey: SettingValues.pref_disableBanner)
         SettingValues.newIndicator = settings.bool(forKey: SettingValues.pref_newIndicator)
         SettingValues.hideAwards = settings.bool(forKey: SettingValues.pref_hideAwards)
+        SettingValues.hideAwardsComments = settings.object(forKey: SettingValues.pref_hideAwardsComments) == nil ? true : settings.bool(forKey: SettingValues.pref_hideAwardsComments)
+        SettingValues.showProfileImagesComments = settings.bool(forKey: SettingValues.pref_showProfileImagesComments)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
