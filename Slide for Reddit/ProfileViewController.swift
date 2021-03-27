@@ -97,6 +97,7 @@ class ProfileViewController: TabsContentPagingViewController {
         let vc = ProfileInfoViewController(accountNamed: user)
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = currentAccountTransitioningManager
+        vc.profile = self
         present(vc, animated: true)
     }
 

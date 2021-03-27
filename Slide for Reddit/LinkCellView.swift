@@ -1551,7 +1551,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         setVisibility(downvote, actions.isVotingPossible)
         setVisibility(hide, actions.isHideEnabled && !full)
         setVisibility(readLater, actions.isReadLaterEnabled)
-        setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
+        setVisibility(save, (actions.isSaveEnabled && actions.isSavePossible) || (self.parentViewController is ContentListingViewController && (self.parentViewController as? ContentListingViewController)?.baseData is CollectionsContributionLoader))
         setVisibility(reply, actions.isReplyPossible && full)
         setVisibility(menu, actions.isMenuEnabled)
         setVisibility(share, actions.isShareEnabled)
@@ -3471,6 +3471,17 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 children.append(UIAction(title: "Send Message", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
                     VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parentViewController?.navigationController, self.parentViewController)
                 })
+
+                if !Subscriptions.isSubscriber("u_\(username)") {
+                    children.append(UIAction(title: "Follow user", image: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()) { _ in
+                        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+                            Subscriptions.subscribe("u_\(username)", true, session: session)
+                            DispatchQueue.main.async {
+                                BannerUtil.makeBanner(text: "Followed \(username)", seconds: 3, context: self.parentViewController)
+                            }
+                        }
+                    })
+                }
 
                 children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
                     guard let self = self else { return }

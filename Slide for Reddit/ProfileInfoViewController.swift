@@ -237,7 +237,7 @@ extension ProfileInfoViewController {
                             b.addTapGestureRecognizer(action: { _ in
                                 if trophy.url != nil {
                                     var trophyURL = trophy.url!.absoluteString
-                                    if !trophyURL.contains("reddit.com") {
+                                    if !trophyURL.contains("http") {
                                         trophyURL = "https://www.reddit.com" + trophyURL
                                     }
                                     VCPresenter.presentModally(viewController: WebsiteViewController(url: URL(string: trophyURL) ?? trophy.url!, subreddit: ""), self, nil)
@@ -346,6 +346,24 @@ extension ProfileInfoViewController {
 }
 
 extension ProfileInfoViewController: ProfileHeaderViewDelegate {
+    func didRequestUnFollow() {
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session, let username = self.user?.name {
+            Subscriptions.unsubscribe("u_\(username)", session: session)
+            DispatchQueue.main.async {
+                BannerUtil.makeBanner(text: "Un-followed \(username)", seconds: 3, context: self)
+            }
+        }
+    }
+    
+    func didRequestFollow() {
+        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session, let username = self.user?.name {
+            Subscriptions.subscribe("u_\(username)", true, session: session)
+            DispatchQueue.main.async {
+                BannerUtil.makeBanner(text: "Followed \(username)", seconds: 3, context: self)
+            }
+        }
+    }
+    
     func didRequestPrivateMessage() {
         if user == nil {
             return
@@ -458,6 +476,8 @@ protocol ProfileHeaderViewDelegate: AnyObject {
     func didRequestPrivateMessage()
     func didRequestRemoveFriend()
     func didRequestAddFriend()
+    func didRequestUnFollow()
+    func didRequestFollow()
     func didRequestSetColor()
     func didRequestEditTag()
 }
@@ -493,6 +513,7 @@ class ProfileHeaderView: UIView {
     var user: Account?
 
     var friendCell = UITableViewCell()
+    var followCell = UITableViewCell()
 
     var colorCell = UITableViewCell().then {
         $0.configure(text: "Set user color", imageName: "add", sfSymbolName: .eyedropperFull, imageColor: GMColor.yellow500Color())
@@ -520,7 +541,7 @@ class ProfileHeaderView: UIView {
         
         addSubviews(infoStack, trophyArea, cellStack)
         infoStack.addArrangedSubviews(commentKarmaLabel, postKarmaLabel)
-        cellStack.addArrangedSubviews(messageCell, friendCell, colorCell, tagCell)
+        cellStack.addArrangedSubviews(messageCell, friendCell, followCell, colorCell, tagCell)
         
         self.clipsToBounds = true
         
@@ -549,6 +570,9 @@ class ProfileHeaderView: UIView {
         
         self.friendCell.configure(text: account?.isFriend ?? false ? "Remove friend" : "Add friend", imageName: "profile", sfSymbolName: account?.isFriend ?? false ? SFSymbol.personBadgeMinusFill : SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
         
+        let isFollower = Subscriptions.isSubscriber("u_\(account?.name ?? "")")
+        self.followCell.configure(text: isFollower ? "Stop following and unsubscribe" : "Follow and Subscribe", imageName: "add", sfSymbolName: isFollower ? SFSymbol.minusCircleFill : SFSymbol.plusCircleFill, imageColor: GMColor.yellow500Color())
+
         postKarmaLabel.attributedText = {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 16, submission: true)]
             let attributedString = NSMutableAttributedString(string: "\(account?.linkKarma.delimiter ?? "0")", attributes: attrs)
@@ -570,6 +594,7 @@ class ProfileHeaderView: UIView {
         cellStack.horizontalAnchors /==/ horizontalAnchors
         
         messageCell.heightAnchor /==/ 50
+        followCell.heightAnchor /==/ 50
         friendCell.heightAnchor /==/ 50
         tagCell.heightAnchor /==/ 50
         colorCell.heightAnchor /==/ 50
@@ -581,10 +606,25 @@ class ProfileHeaderView: UIView {
         friendCell.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }
             if strongSelf.user?.isFriend ?? false {
+                strongSelf.friendCell.configure(text: "Add friend", imageName: "profile", sfSymbolName: SFSymbol.personBadgePlusFill, imageColor: GMColor.yellow500Color())
                 strongSelf.delegate?.didRequestRemoveFriend()
             } else {
+                strongSelf.friendCell.configure(text: "Remove friend", imageName: "profile", sfSymbolName: SFSymbol.personBadgeMinusFill, imageColor: GMColor.yellow500Color())
                 strongSelf.delegate?.didRequestAddFriend()
             }
+        }
+        
+        followCell.addTapGestureRecognizer { [weak self] (_) in
+            guard let strongSelf = self else { return }
+            let isFollower = Subscriptions.isSubscriber("u_\(strongSelf.user?.name ?? "")")
+
+            if !isFollower {
+                strongSelf.delegate?.didRequestFollow()
+            } else {
+                strongSelf.delegate?.didRequestUnFollow()
+            }
+            
+            strongSelf.followCell.configure(text: !isFollower ? "Stop following and unsubscribe" : "Follow and Subscribe", imageName: "add", sfSymbolName: !isFollower ? SFSymbol.minusCircleFill : SFSymbol.plusCircleFill, imageColor: GMColor.yellow500Color())
         }
         messageCell.addTapGestureRecognizer { [weak self] (_) in
             guard let strongSelf = self else { return }

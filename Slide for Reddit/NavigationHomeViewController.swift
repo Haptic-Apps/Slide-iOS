@@ -92,7 +92,7 @@ class NavigationHomeViewController: UIViewController {
                 $0.searchTextField.rightView?.tintColor = UIColor.fontColor
                 $0.searchTextField.backgroundColor = UIColor.backgroundColor
                 if let clearButton = $0.searchTextField.value(forKey: "_clearButton") as? UIButton {
-                    let templateImage =  clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+                    let templateImage = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
                     clearButton.setImage(templateImage, for: .normal)
                     clearButton.tintColor = UIColor.fontColor
                 }

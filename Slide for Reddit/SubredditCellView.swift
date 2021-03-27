@@ -139,7 +139,7 @@ class SubredditCellView: UITableViewCell {
         if !exists {
             title.text = "Go to r/\(subreddit)"
         } else {
-            title.text = subreddit
+            title.text = subreddit.starts(with: "u_") ? subreddit.replacingOccurrences(of: "u_", with: "u/") : subreddit
         }
         
         failedLabel?.removeFromSuperview()

@@ -2619,6 +2619,17 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                     VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parent?.navigationController, self.parent)
                 })
 
+                if !Subscriptions.isSubscriber("u_\(username)") {
+                    children.append(UIAction(title: "Follow user", image: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()) { _ in
+                        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+                            Subscriptions.subscribe("u_\(username)", true, session: session)
+                            DispatchQueue.main.async {
+                                BannerUtil.makeBanner(text: "Followed \(username)", seconds: 3, context: self.parent)
+                            }
+                        }
+                    })
+                }
+
                 children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
                     guard let self = self else { return }
                     if let parent = self.parent {

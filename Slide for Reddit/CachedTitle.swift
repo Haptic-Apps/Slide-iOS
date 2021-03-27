@@ -204,8 +204,8 @@ class CachedTitle {
             authorAttributes[.foregroundColor] = UIColor.white
         }
         
-        if SettingValues.tapProfilesAndSubs || full, let authorUrl = URL(string: "https://www.reddit.com/u/\(submission.author)") {
-            authorAttributes[.urlAction] = authorUrl
+        if SettingValues.tapProfilesAndSubs || full, let authorUrl = URL(string: "/u/\(submission.author)") {
+            authorAttributes[.textHighlight] = TextHighlight(["url": authorUrl])
         }
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.isCakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
