@@ -204,7 +204,9 @@ class CachedTitle {
             authorAttributes[.foregroundColor] = UIColor.white
         }
         
-        authorAttributes[.textHighlight] = TextHighlight(["url": URL(string: "/u/\(submission.author)")])
+        if SettingValues.tapProfilesAndSubs || full, let authorUrl = URL(string: "https://www.reddit.com/u/\(submission.author)") {
+            authorAttributes[.urlAction] = authorUrl
+        }
         let authorString = NSMutableAttributedString(string: "\u{00A0}\(AccountController.formatUsername(input: submission.author, small: false) + (submission.isCakeday ? " 🎂" : ""))\u{00A0}", attributes: authorAttributes)
 
         endString.append(authorString)
@@ -502,7 +504,9 @@ class CachedTitle {
                 attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
             }
             let tapString = NSMutableAttributedString(string: "  r/\(link.subreddit)", attributes: attrs)
-            tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+            if SettingValues.tapProfilesAndSubs || full {
+                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+            }
 
             iconString.append(tapString)
         } else {
@@ -510,11 +514,16 @@ class CachedTitle {
                 let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
                 iconString = preString
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
-                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                if SettingValues.tapProfilesAndSubs || full {
+                    tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                }
+                
                 iconString.append(tapString)
             } else {
                 let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
-                tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                if SettingValues.tapProfilesAndSubs || full {
+                    tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
+                }
                 iconString = tapString
             }
         }

@@ -112,6 +112,11 @@ class SettingsLayout: BubbleSettingTableViewController {
     var more = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var tapCell: UITableViewCell = InsetCell()
+    var tap = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var shareCell: UITableViewCell = InsetCell()
     var share = UISwitch().then {
@@ -165,6 +170,10 @@ class SettingsLayout: BubbleSettingTableViewController {
         } else if changed == more {
             SettingValues.menuButton = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_moreButton)
+        } else if changed == tap {
+            SettingValues.tapProfilesAndSubs = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_tapProfilesAndSubs)
+            CachedTitle.titles.removeAll()
         } else if changed == infoBelowTitle {
             SettingValues.infoBelowTitle = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_infoBelowTitle)
@@ -582,7 +591,8 @@ class SettingsLayout: BubbleSettingTableViewController {
         createCell(imageFlairsCell, imageFlairs, isOn: SettingValues.imageFlairs, text: "Show flair images")
 
         createCell(typeTitleCell, typeTitle, isOn: SettingValues.typeInTitle, text: "Content type in title")
-        createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Hide Reddit awards line")
+        createCell(hideAwardCell, hideAward, isOn: SettingValues.hideAwards, text: "Hide Reddit awards")
+        createCell(tapCell, tap, isOn: SettingValues.tapProfilesAndSubs, text: "Enable tappable author name and subreddit")
         createCell(smalltagCell, smalltag, isOn: SettingValues.smallerTag, text: "Smaller content tag")
         createCell(largerThumbnailCell, largerThumbnail, isOn: SettingValues.largerThumbnail, text: "Larger thumbnail")
         createCell(commentTitleCell, commentTitle, isOn: SettingValues.commentsInTitle, text: "Comment count in title")
@@ -725,6 +735,7 @@ class SettingsLayout: BubbleSettingTableViewController {
             case 5: return self.domainInfoCell
             case 6: return self.hideImageSelftextCell
             case 7: return self.hideAwardCell
+            case 8: return self.tapCell
             default: fatalError("Unknown row in section 2")
             }
         case 3:
@@ -763,7 +774,7 @@ class SettingsLayout: BubbleSettingTableViewController {
         switch section {
         case 0: return 1
         case 1: return 5
-        case 2: return 8
+        case 2: return 9
         case 3: return 3
         case 4: return 4
         case 5: return 7

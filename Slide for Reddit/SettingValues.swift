@@ -148,6 +148,7 @@ class SettingValues {
     public static let pref_coloredFlairs = "COLORED_FLAIRS"
     public static let pref_showFlairs = "SHOW_FLAIRS"
     public static let pref_desktopMode = "DESKTOP_MODE"
+    public static let pref_tapProfilesAndSubs = "TAP_PROFILES_AND_SUBS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -294,6 +295,7 @@ class SettingValues {
     public static var showFlairs = true
     public static var desktopMode = false
     public static var tapExitMedia = true
+    public static var tapProfilesAndSubs = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -597,6 +599,8 @@ class SettingValues {
         SettingValues.imageFlairs = settings.object(forKey: SettingValues.pref_imageFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_imageFlairs)
         SettingValues.coloredFlairs = settings.object(forKey: SettingValues.pref_coloredFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_coloredFlairs)
         SettingValues.showFlairs = settings.object(forKey: SettingValues.pref_showFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_showFlairs)
+        
+        SettingValues.tapProfilesAndSubs = settings.object(forKey: SettingValues.pref_tapProfilesAndSubs) == nil ? true : settings.bool(forKey: SettingValues.pref_tapProfilesAndSubs)
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
         SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)

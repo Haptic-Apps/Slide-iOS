@@ -35,7 +35,6 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
     }
     
-    
     var volume: SubtleVolume?
     let volumeHeight: CGFloat = 3
     var setOnce = false
@@ -92,6 +91,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
     var fastForwardImageView = UIImageView()
     var rewindImageView = UIImageView()
+
+    private var volumeObserver: NSKeyValueObservation!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -161,6 +162,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        volumeObserver?.invalidate()
         VideoMediaViewController.soundLocked = false
     }
 
@@ -742,7 +744,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         DispatchQueue.global(qos: .background).async {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                try AVAudioSession.sharedInstance().setActive(true)
+                try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             } catch let error as NSError {
                 print(error)
             }
@@ -1069,9 +1071,6 @@ extension VideoMediaViewController {
 extension VideoMediaViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if isYoutubeView {
-            if youtubeMute && muteButton.isHidden && SettingValues.muteYouTube {
-                muteButton.isHidden = false
-            }
             if !sliderBeingUsed {
                 youtubeView.getCurrentTime { [weak self] (currentTime: Float, error: Error?) in
                     if error == nil {
@@ -1083,10 +1082,8 @@ extension VideoMediaViewController {
 
         let hasAudioTracks = isYoutubeView || (videoView.player?.currentItem?.tracks.count ?? 1) > 1
         
-        if hasAudioTracks {
-            if (videoView.player?.isMuted ?? youtubeMute) && muteButton.isHidden && (isYoutubeView ? SettingValues.muteYouTube : SettingValues.muteVideosInModal) {
-                muteButton.isHidden = false
-            }
+        if hasAudioTracks && muteButton.isHidden {
+            muteButton.isHidden = false
         }
 
         if !setOnce || lastTracks != hasAudioTracks {
@@ -1113,6 +1110,14 @@ extension VideoMediaViewController {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                 } catch {
                     NSLog(error.localizedDescription)
+                }
+            }
+            
+            volumeObserver = AVAudioSession.sharedInstance().observe(\.outputVolume) { [weak self] (_, _) in
+                guard let self = self else { return }
+                
+                if self.videoView.player?.isMuted ?? false || self.youtubeMute {
+                    self.unmute()
                 }
             }
         }
@@ -1155,7 +1160,7 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
                     }
                 }
 
-                try AVAudioSession.sharedInstance().setActive(true)
+                try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             } catch let error as NSError {
                 print(error)
             }
