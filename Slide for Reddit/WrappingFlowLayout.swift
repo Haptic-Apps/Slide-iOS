@@ -48,11 +48,11 @@ class WrappingFlowLayout: UICollectionViewLayout {
         cache = []
         contentHeight = 0
         var portraitCount = SettingValues.portraitMultiColumnCount
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let pad = UIDevice.current.respectIpadLayout()
         
-        if SettingValues.appMode == .MULTI_COLUMN {
-            if UIApplication.shared.statusBarOrientation.isPortrait || (vc.presentingViewController != nil && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
-                if UIScreen.main.traitCollection.userInterfaceIdiom != .pad {
+        if SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
+            if (UIApplication.shared.statusBarOrientation.isPortrait && !UIDevice.current.isMac()) || (vc.presentingViewController != nil && (vc.modalPresentationStyle == .pageSheet || vc.modalPresentationStyle == .fullScreen)) {
+                if !pad {
                     numberOfColumns = SettingValues.portraitMultiColumnCount
                 } else {
                     if SettingValues.disableMulticolumnCollections && vc is ContentListingViewController {
@@ -68,7 +68,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
             numberOfColumns = 1
         }
         
-        if !UIApplication.shared.isMac() {
+        if !UIDevice.current.isMac() {
             if pad && UIApplication.shared.keyWindow?.frame != UIScreen.main.bounds || UIApplication.shared.isSplitOrSlideOver {
                 numberOfColumns = 1
             }
@@ -92,6 +92,7 @@ class WrappingFlowLayout: UICollectionViewLayout {
         if isGallery {
             numberOfColumns = SettingValues.galleryCount
         }
+        
         cellPadding = (numberOfColumns > 1 && (SettingValues.postViewMode != .LIST) && (SettingValues.postViewMode != .COMPACT)) ? CGFloat(3) : ((SettingValues.postViewMode == .LIST) ? CGFloat(1) : CGFloat(0))
         prepare()
     }

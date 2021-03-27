@@ -1551,7 +1551,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
         setVisibility(downvote, actions.isVotingPossible)
         setVisibility(hide, actions.isHideEnabled && !full)
         setVisibility(readLater, actions.isReadLaterEnabled)
-        setVisibility(save, actions.isSaveEnabled && actions.isSavePossible)
+        setVisibility(save, (actions.isSaveEnabled && actions.isSavePossible) || (self.parentViewController is ContentListingViewController && (self.parentViewController as? ContentListingViewController)?.baseData is CollectionsContributionLoader))
         setVisibility(reply, actions.isReplyPossible && full)
         setVisibility(menu, actions.isMenuEnabled)
         setVisibility(share, actions.isShareEnabled)
@@ -2018,7 +2018,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let attrs = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
+            let boldString = NSMutableAttributedString(string: "\((submission.crosspostSubreddit ?? "").getSubredditFormatted())", attributes: attrs)
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
@@ -2469,7 +2469,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 case .success(let flairs):
                     list.append(contentsOf: flairs)
                     DispatchQueue.main.async {
-                        let sheet = DragDownAlertMenu(title: "r/\(self.link!.subreddit) flairs", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.link!.subreddit), full: true)
+                        let sheet = DragDownAlertMenu(title: "\((self.link?.subreddit ?? "").getSubredditFormatted()) flairs", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.link!.subreddit), full: true)
 
                         for flair in flairs {
                             sheet.addAction(title: (flair.text.isEmpty) ? flair.name : flair.text, icon: nil, action: {
@@ -3362,7 +3362,7 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
             })
         }
         
-        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
                 return self.del?.getMoreMenu(self)
             })
@@ -3471,6 +3471,17 @@ extension LinkCellView: UIContextMenuInteractionDelegate {
                 children.append(UIAction(title: "Send Message", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
                     VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parentViewController?.navigationController, self.parentViewController)
                 })
+
+                if !Subscriptions.isSubscriber("u_\(username)") {
+                    children.append(UIAction(title: "Follow user", image: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()) { _ in
+                        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+                            Subscriptions.subscribe("u_\(username)", true, session: session)
+                            DispatchQueue.main.async {
+                                BannerUtil.makeBanner(text: "Followed \(username)", seconds: 3, context: self.parentViewController)
+                            }
+                        }
+                    })
+                }
 
                 children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
                     guard let self = self else { return }

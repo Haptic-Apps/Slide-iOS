@@ -97,6 +97,7 @@ class ProfileViewController: TabsContentPagingViewController {
         let vc = ProfileInfoViewController(accountNamed: user)
         vc.modalPresentationStyle = .custom
         vc.transitioningDelegate = currentAccountTransitioningManager
+        vc.profile = self
         present(vc, animated: true)
     }
 
@@ -126,8 +127,12 @@ class ProfileViewController: TabsContentPagingViewController {
 
 extension ProfileViewController: TabsContentPagingViewControllerDelegate {
     func shouldUpdateButtons() {
-        if currentIndex >= 1 {
-            let current = content[currentIndex - 1]
+        var offset = 1
+        if name != AccountController.currentName {
+            offset = 0
+        }
+        if currentIndex >= offset {
+            let current = content[currentIndex - offset]
             if current == .comments || current == .submitted || current == .overview {
                 navigationItem.rightBarButtonItems = [ moreB!, sortB!]
             } else {
@@ -156,7 +161,7 @@ extension ProfileViewController: ColorPickerViewDelegate {
         } else {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColor()

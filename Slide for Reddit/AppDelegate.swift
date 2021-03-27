@@ -395,7 +395,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     SwipeForwardNavigationController(
                         rootViewController: main),
                 ]
-            case .SPLIT:
+            default:
                 let swipeNav = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main))
                 swipeNav.pushViewController(main, animated: false)
                 splitViewController.viewControllers = [
@@ -418,46 +418,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
     @available(iOS 14.0, *)
     func doHard14(_ window: UIWindow) -> MainViewController {
-        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT ? .tripleColumn : .doubleColumn
+        let style: UISplitViewController.Style = SettingValues.appMode == .SPLIT || SettingValues.appMode == .TRIPLE_MULTI_COLUMN
+            ? .tripleColumn : .doubleColumn
         var splitViewController: NoHomebarSplitViewController = NoHomebarSplitViewController(style: style)
 
         let main: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            switch SettingValues.appMode {
-            case .SINGLE, .MULTI_COLUMN:
-                splitViewController.setViewController(
-                    SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
-                    for: .primary)
-                splitViewController.setViewController(
-                    SwipeForwardNavigationController(rootViewController: main),
-                    for: .secondary)
-                
-                let main2: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
-                let compact = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main2))
-                
-                compact.pushViewController(main2, animated: false)
-                splitViewController.setViewController(compact, for: .compact)
+        if SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
+            splitViewController.setViewController(
+                SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                for: .primary)
+            splitViewController.setViewController(
+                SwipeForwardNavigationController(rootViewController: main),
+                for: .supplementary)
+            splitViewController.setViewController(
+                PlaceholderViewController(),
+                for: .secondary)
 
-                splitViewController.setViewController(
-                    SwipeForwardNavigationController(rootViewController: main),
-                    for: .secondary)
-            case .SPLIT:
-                splitViewController.setViewController(
-                    SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
-                    for: .primary)
-                splitViewController.setViewController(
-                    SwipeForwardNavigationController(rootViewController: main),
-                    for: .supplementary)
-                splitViewController.setViewController(
-                    PlaceholderViewController(),
-                    for: .secondary)
+        } else {
+            switch UIDevice.current.userInterfaceIdiom {
+            case .pad, .mac:
+                switch SettingValues.appMode {
+                case .SINGLE, .MULTI_COLUMN:
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                        for: .primary)
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: main),
+                        for: .secondary)
+                    
+                    let main2: SplitMainViewController = SplitMainViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
+                    let compact = SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main2))
+                    
+                    compact.pushViewController(main2, animated: false)
+                    splitViewController.setViewController(compact, for: .compact)
+
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: main),
+                        for: .secondary)
+                default:
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: NavigationHomeViewController(controller: main)),
+                        for: .primary)
+                    splitViewController.setViewController(
+                        SwipeForwardNavigationController(rootViewController: main),
+                        for: .supplementary)
+                    splitViewController.setViewController(
+                        PlaceholderViewController(),
+                        for: .secondary)
+                }
+            default:
+                splitViewController = NoHomebarSplitViewController()
+                let navHome = NavigationHomeViewController(controller: main)
+                splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
             }
-        default:
-            splitViewController = NoHomebarSplitViewController()
-            let navHome = NavigationHomeViewController(controller: main)
-            splitViewController.viewControllers = [SwipeForwardNavigationController(rootViewController: navHome), SwipeForwardNavigationController(rootViewController: main)]
         }
 
         window.rootViewController = splitViewController
@@ -472,11 +486,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func setupSplitLayout(_ splitViewController: UISplitViewController) {
         // Set column widths
         if #available(iOS 14.0, *) {
-            splitViewController.preferredPrimaryColumnWidthFraction = 0.33
-            splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
-            if splitViewController.style == .tripleColumn {
-                splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
-                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+            if SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
+                splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.15
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.15
+                splitViewController.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.15
+                
+                splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.25
+                splitViewController.maximumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.25
+                splitViewController.preferredSupplementaryColumnWidthFraction = 0.25
+            } else {
+                splitViewController.preferredPrimaryColumnWidthFraction = 0.33
+                splitViewController.minimumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                if splitViewController.style == .tripleColumn {
+                    splitViewController.preferredSupplementaryColumnWidthFraction = 0.33
+                    splitViewController.minimumSupplementaryColumnWidth = UIScreen.main.bounds.width * 0.33
+                }
             }
         } else {
             splitViewController.preferredPrimaryColumnWidthFraction = 0.4
@@ -485,35 +509,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         splitViewController.presentsWithGesture = true
 
-        // Set display mode and split behavior
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            switch SettingValues.appMode {
-            case .SINGLE, .MULTI_COLUMN:
-                if UIApplication.shared.isSplitOrSlideOver {
+        if SettingValues.appMode == .TRIPLE_MULTI_COLUMN {
+            splitViewController.presentsWithGesture = false
+            setupSplitPaneLayout(splitViewController)
+        } else {
+            // Set display mode and split behavior
+            switch UIDevice.current.userInterfaceIdiom {
+            case .pad:
+                switch SettingValues.appMode {
+                case .SINGLE, .MULTI_COLUMN:
+                    if UIApplication.shared.isSplitOrSlideOver {
+                        setupSplitPaneLayout(splitViewController)
+                    } else if SettingValues.desktopMode {
+                        splitViewController.preferredDisplayMode = .oneBesideSecondary
+                        if #available(iOS 14.0, *) {
+                            splitViewController.preferredSplitBehavior = .displace
+                        }
+                    } else {
+                        splitViewController.preferredDisplayMode = .secondaryOnly
+                        if #available(iOS 14.0, *) {
+                            splitViewController.preferredSplitBehavior = .overlay
+                        }
+                    }
+                default:
                     setupSplitPaneLayout(splitViewController)
-                } else if SettingValues.desktopMode {
-                    splitViewController.preferredDisplayMode = .oneBesideSecondary
-                    if #available(iOS 14.0, *) {
-                        splitViewController.preferredSplitBehavior = .displace
-                    }
-                } else {
-                    splitViewController.preferredDisplayMode = .secondaryOnly
-                    if #available(iOS 14.0, *) {
-                        splitViewController.preferredSplitBehavior = .overlay
-                    }
                 }
-            case .SPLIT:
-                setupSplitPaneLayout(splitViewController)
+            default:
+                splitViewController.preferredDisplayMode = .oneOverSecondary
             }
-        default:
-            splitViewController.preferredDisplayMode = .oneOverSecondary
         }
     }
     
     func setupSplitPaneLayout(_ splitViewController: UISplitViewController) {
         if #available(iOS 14.0, *) {
-            if SettingValues.desktopMode {
+            if SettingValues.desktopMode || UIDevice.current.isMac() {
                 splitViewController.preferredDisplayMode = .twoBesideSecondary
                 splitViewController.preferredSplitBehavior = .tile
             } else {
@@ -777,12 +806,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let themeName = url.absoluteString.removingPercentEncoding!.split("#")[1]
             
             let themeView = ThemeCellView().then {
-                $0.setTheme(string: url.absoluteString.removingPercentEncoding ?? url.absoluteString)
+                $0.setTheme(colors: url.absoluteString.removingPercentEncoding ?? url.absoluteString)
             }
             let cv = themeView.contentView
 
             let alert = DragDownAlertMenu(title: themeName, subtitle: "", icon: nil, extraView: cv, themeColor: nil, full: false)
-            
+            alert.extraViewHeight = 60
+
             alert.addAction(title: "Save Theme", icon: UIImage(sfString: .squareAndArrowDownFill, overrideString: "save-1")) {
                 let colorString = url.absoluteString.removingPercentEncoding ?? url.absoluteString
                 
@@ -1157,7 +1187,27 @@ extension AppDelegate: UIWindowSceneDelegate {
         willResignActive()
         SlideCoreData.sharedInstance.saveContext()
     }
-        
+    
+    func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace, interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection) {
+        if UIDevice.current.isMac() {
+            let size = windowScene.coordinateSpace.bounds.size
+            
+            for window in windowScene.windows {
+                if #available(iOS 14.0, *) {
+                    if let split = window.rootViewController as? UISplitViewController, split.style == .tripleColumn {
+                        split.minimumPrimaryColumnWidth = size.width * 0.15
+                        split.preferredPrimaryColumnWidthFraction = 0.15
+                        split.maximumPrimaryColumnWidth = size.width * 0.15
+                        
+                        split.minimumSupplementaryColumnWidth = size.width * 0.6
+                        split.maximumSupplementaryColumnWidth = size.width * 0.6
+                        split.preferredSupplementaryColumnWidthFraction = 0.6
+                    }
+                }
+            }
+        }
+    }
+            
     func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if let url = shortcutItem.userInfo?["sub"] {
             VCPresenter.openRedditLink("/r/\(url)", window?.rootViewController as? UINavigationController, window?.rootViewController)
@@ -1216,6 +1266,10 @@ extension AppDelegate: UIWindowSceneDelegate {
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
             self.window = window
+            
+            if UIDevice.current.isMac() && (connectionOptions.userActivities.first?.activityType != "settings") {
+                windowScene.sizeRestrictions?.minimumSize = CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+            }
 
             didFinishLaunching(window: window)
             /* TODO This launchedURL = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL
@@ -1230,16 +1284,98 @@ extension AppDelegate: UIWindowSceneDelegate {
             }*/
         }
         
-        if let userActivity = connectionOptions.userActivities.first {
-            if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
-                VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
-            } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
-                VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
-            } else if let url = userActivity.webpageURL {
-                _ = handleURL(url)
-            }
+        if #available(iOS 14, *) {
+            if let userActivity = connectionOptions.userActivities.first {
+                if connectionOptions.userActivities.first?.activityType == "settings" {
+                    window?.rootViewController = SwipeForwardNavigationController(rootViewController: SettingsViewController())
+                } else if connectionOptions.userActivities.first?.activityType == "website", let url = userActivity.userInfo?["url"] as? URL {
+                    window?.rootViewController = SwipeForwardNavigationController(rootViewController: WebsiteViewController(url: url, subreddit: ""))
+                } else if connectionOptions.userActivities.first?.activityType == "subreddit", let subreddit = userActivity.userInfo?["subreddit"] as? String {
+                    let subVC = SingleSubredditViewController(subName: subreddit, single: true)
+                    let split = UISplitViewController(style: .doubleColumn)
+                    split.setViewController(subVC, for: .primary)
+                    split.setViewController(PlaceholderViewController(), for: .secondary)
+                    let size = window?.frame.size ?? CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
 
+                    split.preferredContentSize = size
+                    split.minimumPrimaryColumnWidth = split.preferredContentSize.width * 0.60
+                    split.preferredPrimaryColumnWidthFraction = 0.60
+                    split.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                    
+                    split.preferredDisplayMode = .oneBesideSecondary
+                    split.preferredSplitBehavior = .tile
+                    split.presentsWithGesture = false
+                    split.showsSecondaryOnlyButton = false
+                    
+                    window?.rootViewController = split
+                } else if connectionOptions.userActivities.first?.activityType == "inbox" {
+                    let subVC = InboxViewController()
+                    let split = UISplitViewController(style: .doubleColumn)
+                    split.setViewController(subVC, for: .primary)
+                    split.setViewController(PlaceholderViewController(), for: .secondary)
+                    let size = window?.frame.size ?? CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+
+                    split.preferredContentSize = size
+                    split.minimumPrimaryColumnWidth = split.preferredContentSize.width * 0.60
+                    split.preferredPrimaryColumnWidthFraction = 0.60
+                    split.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                    
+                    split.preferredDisplayMode = .oneBesideSecondary
+                    split.preferredSplitBehavior = .tile
+                    split.presentsWithGesture = false
+                    split.showsSecondaryOnlyButton = false
+
+                    window?.rootViewController = split
+                } else if connectionOptions.userActivities.first?.activityType == "profile", let profile = userActivity.userInfo?["profile"] as? String {
+                    let subVC = SwipeForwardNavigationController(rootViewController: ProfileViewController(name: profile))
+                    let split = UISplitViewController(style: .doubleColumn)
+                    split.setViewController(subVC, for: .primary)
+                    split.setViewController(PlaceholderViewController(), for: .secondary)
+                    let size = window?.frame.size ?? CGSize(width: UIScreen.main.bounds.width * 0.75, height: UIScreen.main.bounds.height * 0.75)
+
+                    split.preferredContentSize = size
+                    split.minimumPrimaryColumnWidth = split.preferredContentSize.width * 0.60
+                    split.preferredPrimaryColumnWidthFraction = 0.60
+                    split.maximumPrimaryColumnWidth = UIScreen.main.bounds.width * 0.60
+                    
+                    split.preferredDisplayMode = .oneBesideSecondary
+                    split.preferredSplitBehavior = .tile
+                    split.presentsWithGesture = false
+                    split.showsSecondaryOnlyButton = false
+
+                    window?.rootViewController = split
+                } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
+                    VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
+                } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+                } else if let url = userActivity.webpageURL {
+                    _ = handleURL(url)
+                }
+            }
+        } else {
+            if let userActivity = connectionOptions.userActivities.first {
+                if connectionOptions.userActivities.first?.activityType == "settings" {
+                    window?.rootViewController = SwipeForwardNavigationController(rootViewController: SettingsViewController())
+                } else if connectionOptions.userActivities.first?.activityType == "website", let url = userActivity.userInfo?["url"] as? URL {
+                    window?.rootViewController = SwipeForwardNavigationController(rootViewController: WebsiteViewController(url: url, subreddit: ""))
+                } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "SUBREDDIT" {
+                    VCPresenter.openRedditLink("/r/\(userActivity.title ?? "")", window?.rootViewController as? UINavigationController, window?.rootViewController)
+                } else if (userActivity.userInfo?["TYPE"] as? NSString) ?? "" == "INBOX" {
+                    VCPresenter.showVC(viewController: InboxViewController(), popupIfPossible: false, parentNavigationController: window?.rootViewController as? UINavigationController, parentViewController: window?.rootViewController)
+                } else if let url = userActivity.webpageURL {
+                    _ = handleURL(url)
+                }
+            }
         }
+
+        #if targetEnvironment(macCatalyst)
+            guard let windowScene = scene as? UIWindowScene else { return }
+            
+            if let titlebar = windowScene.titlebar {
+                titlebar.titleVisibility = .hidden
+                titlebar.toolbar = nil
+            }
+        #endif
     }
 }
 
@@ -1287,3 +1423,38 @@ class NoHomebarSplitViewController: UISplitViewController {
         }
     }
 }
+
+#if targetEnvironment(macCatalyst)
+extension AppDelegate: NSToolbarDelegate {
+    
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        let identifiers: [NSToolbarItem.Identifier] = [
+            
+        ]
+        return identifiers
+    }
+    
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return toolbarDefaultItemIdentifiers(toolbar)
+    }
+    
+    func toolbar(_ toolbar: NSToolbar,
+                 itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
+                 willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+        
+        var toolbarItem: NSToolbarItem?
+        
+        switch itemIdentifier {
+        case .toggleSidebar:
+            toolbarItem = NSToolbarItem(itemIdentifier: itemIdentifier)
+            
+        default:
+            toolbarItem = nil
+        }
+        
+        return toolbarItem
+    }
+
+}
+#endif
+

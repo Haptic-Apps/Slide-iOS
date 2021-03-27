@@ -576,7 +576,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
                     })
                     
                     let requestString = "https://oauth.reddit.com/r/\(subreddit)/api/link_flair_v2.json"
-                    Alamofire.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
+                    AF.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
                         guard let self = self else { return }
                         do {
                             guard let data = response.data else {
@@ -1292,7 +1292,7 @@ class ReplyViewController: MediaViewController, UITextViewDelegate {
     }
 
     var alertController: UIAlertController?
-    var session: Session?
+    var session: reddift.Session?
 
     func getSubmissionEdited(_ name: String) {
         DispatchQueue.main.async {

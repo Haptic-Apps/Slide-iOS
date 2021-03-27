@@ -92,7 +92,7 @@ extension UIAlertController {
             }
         }
         visualEffectView?.effect = UIBlurEffect(style: UIColor.isLightTheme ? UIBlurEffect.Style.light : UIBlurEffect.Style.dark)
-        if self.preferredStyle == .actionSheet && UIDevice.current.userInterfaceIdiom != .pad {
+        if self.preferredStyle == .actionSheet && !UIDevice.current.respectIpadLayout() {
             cancelActionView?.backgroundColor = UIColor.foregroundColor
         }
     }

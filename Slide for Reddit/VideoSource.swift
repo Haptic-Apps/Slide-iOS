@@ -117,6 +117,7 @@ class StreamableVideoSource: VideoSource {
         let hash = url.substring(url.lastIndexOf("/")! + 1, length: url.length - (url.lastIndexOf("/")! + 1))
 
         let finalURL = URL(string: "https://api.streamable.com/videos/" + hash)
+        
         if finalURL == nil {
             failure?()
             return nil
@@ -158,6 +159,9 @@ class StreamableVideoSource: VideoSource {
                     }
                 } catch let error as NSError {
                     print(error)
+                    DispatchQueue.main.async {
+                        failure?()
+                    }
                 }
             }
         }

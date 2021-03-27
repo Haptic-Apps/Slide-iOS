@@ -374,7 +374,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
         self.subCell.imageView?.image = UIImage(sfString: .rCircleFill, overrideString: "subs")?.toolbarIcon()
         self.subCell.imageView?.tintColor = UIColor.fontColor
 
-        self.filters.textLabel?.text = "Filters"
+        self.filters.textLabel?.text = "Content Filters"
         self.filters.accessoryType = .disclosureIndicator
         self.filters.backgroundColor = UIColor.foregroundColor
         self.filters.textLabel?.textColor = UIColor.fontColor
@@ -482,7 +482,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
             }
         } else if changed == subIcons {
             SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+            NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
 
             SettingValues.subredditIcons = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_subredditIcons)
@@ -712,7 +712,7 @@ class SettingsViewController: MediaTableViewController, MFMailComposeViewControl
                         UserDefaults.standard.synchronize()
                         self.autoPlayCell.detailTextLabel?.text = SettingValues.autoPlayMode.description() + "\nAutoPlaying videos can lead to more data use"
                         SingleSubredditViewController.cellVersion += 1
-                        SubredditReorderViewController.changed = true
+                        NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
                     }
                 }
                 alertController.show(self)

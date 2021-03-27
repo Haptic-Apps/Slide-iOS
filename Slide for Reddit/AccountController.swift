@@ -22,7 +22,6 @@ class AccountController {
     }
 
     static func switchAccount(name: String) {
-        changed = true
         ActionStates.upVotedFullnames.removeAll()
         ActionStates.downVotedFullnames.removeAll()
         ActionStates.savedFullnames.removeAll()
@@ -36,7 +35,6 @@ class AccountController {
 
     static var isLoggedIn = false
     static var isGold = false
-    static var changed = false
     static var modSubs: [String] = []
 
     static var current: Account?

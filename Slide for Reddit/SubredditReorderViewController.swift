@@ -107,8 +107,6 @@ class SubredditReorderViewController: UITableViewController {
 
     var delete = UIButton()
 
-    public static var changed = false
-
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
@@ -130,11 +128,11 @@ class SubredditReorderViewController: UITableViewController {
     }
 
     func save(_ selector: AnyObject?) {
-        SubredditReorderViewController.changed = true
         Subscriptions.setPinned(name: AccountController.currentName, subs: pinned, completion: {
             Subscriptions.set(name: AccountController.currentName, subs: self.subs, completion: {
             })
         })
+        NotificationCenter.default.post(name: .subredditOrderChanged, object: nil)
     }
 
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
@@ -397,4 +395,13 @@ class SubredditReorderViewController: UITableViewController {
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
+}
+
+extension Notification.Name {
+    static let subredditOrderChanged = Notification.Name("subreddit-order-changed")
+    static let cellsNeedReDraw = Notification.Name("cells-need-re-draw")
+    static let subNeedsReload = Notification.Name("sub-needs-reload")
+    static let tabBarsChanged = Notification.Name("tab-bars-changed")
+    static let settingsThemeNeedsRestart = Notification.Name("settings-theme-needs-restart")
+    static let reduceColorChanged = Notification.Name("reduce-color-changed")
 }

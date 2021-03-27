@@ -18,6 +18,7 @@ extension CommentModel {
 
     @NSManaged public var approvedBy: String?
     @NSManaged public var author: String
+    @NSManaged public var authorProfileImage: String?
     @NSManaged public var awardsJSON: String?
     @NSManaged public var controversality: Int64
     @NSManaged public var created: Date

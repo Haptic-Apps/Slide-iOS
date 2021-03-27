@@ -39,16 +39,20 @@ public class VCPresenter {
                 }
             }
         }
-        if (UIDevice.current.userInterfaceIdiom != .pad && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
-            override13 = false
+        
+        if UIDevice.current.isMac() {
+            parentIs13 = false
         }
         
+        if (!UIDevice.current.respectIpadLayout() && viewController is PagingCommentViewController && !parentIs13) || (viewController is WebsiteViewController && parentNavigationController != nil) || viewController is SFHideSafariViewController || SettingValues.disable13Popup {
+            override13 = false
+        }
         
         // Yes, this logic is a mess. I need to redo it sometime...
         let respectedOverride13 = override13
         var shouldPopup = popupIfPossible
         
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
             if viewController is SingleSubredditViewController && SettingValues.disableSubredditPopupIpad {
                 shouldPopup = false
             } else if (viewController is CommentViewController || viewController is PagingCommentViewController) && SettingValues.disablePopupIpad {
@@ -56,50 +60,89 @@ public class VCPresenter {
             }
         }
 
-        override13 = override13 && (UIDevice.current.userInterfaceIdiom == .pad || (viewController is UIPageViewController || viewController is SettingsViewController))
+        override13 = override13 && (UIDevice.current.respectIpadLayout() || (viewController is UIPageViewController || viewController is SettingsViewController))
         
-        if (viewController is PagingCommentViewController || viewController is CommentViewController || viewController is WebsiteViewController) && (parentViewController?.splitViewController != nil && UIDevice.current.userInterfaceIdiom == .pad && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
+        if (viewController is PagingCommentViewController || viewController is CommentViewController || (viewController is WebsiteViewController && !((viewController as! WebsiteViewController).url?.absoluteString.contains("login.compact") ?? false))) && (parentViewController?.splitViewController != nil && UIDevice.current.respectIpadLayout() && (SettingValues.appMode != .MULTI_COLUMN && SettingValues.appMode != .SINGLE)) && !(parentViewController is CommentViewController) && (!override13 || !parentIs13) {
             (parentViewController!.splitViewController)?.showDetailViewController(SwipeForwardNavigationController(rootViewController: viewController), sender: nil)
             return
-        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.userInterfaceIdiom == .pad && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
+        } else if ((!SettingValues.disablePopupIpad) && UIDevice.current.respectIpadLayout() && shouldPopup) || ((parentNavigationController != nil && (override13 || parentNavigationController!.modalPresentationStyle != .pageSheet)) && shouldPopup && override13) || parentNavigationController == nil {
             
-            if viewController is SingleSubredditViewController {
-                (viewController as! SingleSubredditViewController).isModal = true
-            }
+            if UIDevice.current.isMac(), #available(iOS 13, *) {
+                if viewController is SettingsViewController {
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: NSUserActivity(activityType: "settings"),
+                       options: nil,
+                       errorHandler: nil)
 
-            let newParent = TapBehindModalViewController.init(rootViewController: viewController)
+                } else if viewController is SingleSubredditViewController {
+                    let activity = NSUserActivity(activityType: "subreddit")
+                    activity.userInfo = ["subreddit": (viewController as! SingleSubredditViewController).sub]
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
+                    
+                } else if viewController is InboxViewController {
+                    let activity = NSUserActivity(activityType: "inbox")
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
 
-            newParent.navigationBar.shadowImage = UIImage()
-            newParent.navigationBar.isTranslucent = false
-
-            let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
-            button.parentController = newParent
-            button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
-            button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
-
-            let barButton = UIBarButtonItem.init(customView: button)
-
-            // Let's figure out how to present it
-            let small: Bool = shouldPopup && UIScreen.main.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.statusBarOrientation != .portrait
-
-            if small || override13 || respectedOverride13 {
-                newParent.modalPresentationStyle = .pageSheet
-                if !override13 && !respectedOverride13 {
-                    newParent.modalTransitionStyle = .crossDissolve
+                } else if viewController is ProfileViewController {
+                    let activity = NSUserActivity(activityType: "profile")
+                    activity.userInfo = ["profile": (viewController as! ProfileViewController).name]
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
+                } else if viewController is WebsiteViewController {
+                    let activity = NSUserActivity(activityType: "website")
+                    activity.userInfo = ["url": (viewController as! WebsiteViewController).url]
+                    UIApplication.shared.requestSceneSessionActivation(nil,
+                       userActivity: activity,
+                       options: nil,
+                       errorHandler: nil)
                 }
             } else {
-                newParent.modalPresentationStyle = .fullScreen
-                newParent.modalTransitionStyle = .crossDissolve
-            }
+                if viewController is SingleSubredditViewController {
+                    (viewController as! SingleSubredditViewController).isModal = true
+                }
 
-            viewController.navigationItem.leftBarButtonItems = [barButton]
+                let newParent = TapBehindModalViewController.init(rootViewController: viewController)
 
-            parentViewController!.present(newParent, animated: true, completion: nil)
-            if viewController is SFHideSafariViewController {
-                newParent.setNavigationBarHidden(true, animated: false)
-            }
-            if !(viewController is SingleSubredditViewController) {
-                viewController.setupBaseBarColors()
+                newParent.navigationBar.shadowImage = UIImage()
+                newParent.navigationBar.isTranslucent = false
+
+                let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.xmark, overrideString: "close"))
+                button.parentController = newParent
+                button.imageView?.contentMode = UIView.ContentMode.scaleAspectFit
+                button.addTarget(self, action: #selector(VCPresenter.handleCloseNav(controller:)), for: .touchUpInside)
+
+                let barButton = UIBarButtonItem.init(customView: button)
+
+                // Let's figure out how to present it
+                let small: Bool = shouldPopup && UIDevice.current.respectIpadLayout() && UIApplication.shared.statusBarOrientation != .portrait
+
+                if small || override13 || respectedOverride13 {
+                    newParent.modalPresentationStyle = .pageSheet
+                    if !override13 && !respectedOverride13 {
+                        newParent.modalTransitionStyle = .crossDissolve
+                    }
+                } else {
+                    newParent.modalPresentationStyle = .fullScreen
+                    newParent.modalTransitionStyle = .crossDissolve
+                }
+
+                viewController.navigationItem.leftBarButtonItems = [barButton]
+
+                parentViewController!.present(newParent, animated: true, completion: nil)
+                if viewController is SFHideSafariViewController {
+                    newParent.setNavigationBarHidden(true, animated: false)
+                }
+                if !(viewController is SingleSubredditViewController) {
+                    viewController.setupBaseBarColors()
+                }
             }
         } else {
             let button = UIButtonWithContext(buttonImage: UIImage(sfString: SFSymbol.chevronLeft, overrideString: "close"))

@@ -32,8 +32,6 @@ class MainViewController: ColorMuxPagingViewController, UINavigationControllerDe
     var isReload = false
     var readLaterBadge: BadgeSwift?
     public static var current: String = ""
-    public static var needsRestart = false
-    public static var needsReTheme = false
     public var toolbar: UIView?
     var tabBar: SubredditPagingTitleCollectionView!
     var subs: UIView?

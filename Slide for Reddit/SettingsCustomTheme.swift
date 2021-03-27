@@ -147,7 +147,8 @@ class SettingsCustomTheme: UITableViewController {
                 colorString += (self.foregroundColor.toHexString() + self.backgroundColor.toHexString() + self.fontColor.toHexString() + self.navIconColor.toHexString() + ColorUtil.baseColor.toHexString() + ColorUtil.baseAccent.toHexString() + "#" + String(self.statusbarEnabled)).addPercentEncoding
                 UserDefaults.standard.set(colorString, forKey: "Theme+" + (self.themeText ?? today_string))
                 UserDefaults.standard.synchronize()
-                SettingsTheme.needsRestart = true
+                
+                NotificationCenter.default.post(name: .settingsThemeNeedsRestart, object: nil)
                 
                 ColorUtil.initializeThemes()
                 self.dismiss(animated: true, completion: nil)
@@ -171,10 +172,11 @@ class SettingsCustomTheme: UITableViewController {
             UserDefaults.standard.synchronize()
             if isCurrentTheme {
                 _ = ColorUtil.doInit()
-                MainViewController.needsReTheme = true
             }
             ColorUtil.initializeThemes()
-            SettingsTheme.needsRestart = true
+
+            NotificationCenter.default.post(name: .settingsThemeNeedsRestart, object: nil)
+
             self.delegate?.themeSaved()
             self.dismiss(animated: true, completion: nil)
         }
@@ -301,7 +303,7 @@ class SettingsCustomTheme: UITableViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        SubredditReorderViewController.changed = true
+        NotificationCenter.default.post(name: .subNeedsReload, object: nil)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -135,6 +135,8 @@ class SettingValues {
     public static let pref_commentLimit = "COMMENT_LIMIT"
     public static let pref_submissionLimit = "SUBMISSION_LIMIT"
     public static let pref_hideAwards = "HIDE_AWARDS_v2"
+    public static let pref_hideAwardsComments = "HIDE_AWARDS_COMMENTS_V2"
+    public static let pref_showProfileImagesComments = "SHOW_PROFILE_IMAGES_COMMENTS"
     public static let pref_subredditIcons = "SUBREDDIT_ICONS"
     public static let pref_streamVideos = "STREAM_VIDEOS"
     public static let pref_fullWidthHeaderCells = "FULL_WIDTH_HEADER_CELLS"
@@ -148,6 +150,7 @@ class SettingValues {
     public static let pref_coloredFlairs = "COLORED_FLAIRS"
     public static let pref_showFlairs = "SHOW_FLAIRS"
     public static let pref_desktopMode = "DESKTOP_MODE"
+    public static let pref_tapProfilesAndSubs = "TAP_PROFILES_AND_SUBS"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -283,6 +286,7 @@ class SettingValues {
     public static var disable13Popup = true
     public static var thumbTag = true
     public static var hideAwards = false
+    public static var hideAwardsComments = false
     public static var streamVideos = true
     public static var fullWidthHeaderCells = false
     public static var disablePopupIpad = false
@@ -293,6 +297,9 @@ class SettingValues {
     public static var coloredFlairs = false
     public static var showFlairs = true
     public static var desktopMode = false
+    public static var tapExitMedia = true
+    public static var tapProfilesAndSubs = false
+    public static var showProfileImagesComments = false
 
     public static var commentLimit = 95
     public static var submissionLimit = 13
@@ -492,15 +499,18 @@ class SettingValues {
     }
 
     public static func initialize() {
-        let pad = UIDevice.current.userInterfaceIdiom == .pad
+        let pad = UIDevice.current.respectIpadLayout()
         let settings = UserDefaults.standard
         SettingValues.saveNSFWHistory = settings.bool(forKey: SettingValues.pref_saveNSFWHistory)
         SettingValues.reduceColor = settings.object(forKey: SettingValues.pref_reduceColor) == nil ? true : settings.bool(forKey: SettingValues.pref_reduceColor)
         SettingValues.saveHistory = settings.object(forKey: SettingValues.pref_saveHistory) == nil ? true : settings.bool(forKey: SettingValues.pref_saveHistory)
         
-        let columns = 2 // TODO - Maybe calculate per device?
+        var columns = 2 // TODO - Maybe calculate per device?
+        if UIDevice.current.isMac() {
+            columns = 1
+        }
         SettingValues.multiColumnCount = settings.object(forKey: SettingValues.pref_multiColumnCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_multiColumnCount)
-        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
+        SettingValues.portraitMultiColumnCount = settings.object(forKey: SettingValues.pref_portraitMultiColumnCount) == nil ? (UIDevice.current.respectIpadLayout() ? 2 : 1) : settings.integer(forKey: SettingValues.pref_portraitMultiColumnCount)
         SettingValues.galleryCount = settings.object(forKey: SettingValues.pref_galleryCount) == nil ? columns : settings.integer(forKey: SettingValues.pref_galleryCount)
         SettingValues.highlightOp = settings.object(forKey: SettingValues.pref_highlightOp) == nil ? true : settings.bool(forKey: SettingValues.pref_highlightOp)
 
@@ -532,8 +542,8 @@ class SettingValues {
             }
         }
 
-        SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIApplication.shared.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
-        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac()) // Only enable this on Mac or iPad
+        SettingValues.desktopMode = settings.object(forKey: SettingValues.pref_desktopMode) == nil ? UIDevice.current.isMac() : settings.bool(forKey: SettingValues.pref_desktopMode)
+        SettingValues.desktopMode = SettingValues.desktopMode && (UIDevice.current.respectIpadLayout() || UIDevice.current.isMac()) // Only enable this on Mac or iPad
         
         SettingValues.scrollSidebar = settings.object(forKey: SettingValues.pref_scrollSidebar) == nil ? true : settings.bool(forKey: SettingValues.pref_scrollSidebar)
 
@@ -586,10 +596,15 @@ class SettingValues {
         SettingValues.disable13Popup = false // REMOVE this setting settings.bool(forKey: SettingValues.pref_disable13Popup)
         SettingValues.streamVideos = settings.object(forKey: SettingValues.pref_streamVideos) == nil ? true : settings.bool(forKey: SettingValues.pref_streamVideos)
         SettingValues.fullWidthHeaderCells = settings.bool(forKey: SettingValues.pref_fullWidthHeaderCells)
+        if UIDevice.current.isMac() {
+            SettingValues.fullWidthHeaderCells = true
+        }
         SettingValues.gfycatAPI = settings.object(forKey: SettingValues.pref_gfycatAPI) == nil ? true : settings.bool(forKey: SettingValues.pref_gfycatAPI)
         SettingValues.imageFlairs = settings.object(forKey: SettingValues.pref_imageFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_imageFlairs)
         SettingValues.coloredFlairs = settings.object(forKey: SettingValues.pref_coloredFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_coloredFlairs)
         SettingValues.showFlairs = settings.object(forKey: SettingValues.pref_showFlairs) == nil ? true : settings.bool(forKey: SettingValues.pref_showFlairs)
+        
+        SettingValues.tapProfilesAndSubs = settings.object(forKey: SettingValues.pref_tapProfilesAndSubs) == nil ? true : settings.bool(forKey: SettingValues.pref_tapProfilesAndSubs)
 
         SettingValues.subredditIcons = settings.object(forKey: SettingValues.pref_subredditIcons) == nil ? true : settings.bool(forKey: SettingValues.pref_subredditIcons)
         SettingValues.disablePopupIpad = settings.bool(forKey: SettingValues.pref_disablePopupIpad)
@@ -633,6 +648,8 @@ class SettingValues {
         SettingValues.disableBanner = settings.bool(forKey: SettingValues.pref_disableBanner)
         SettingValues.newIndicator = settings.bool(forKey: SettingValues.pref_newIndicator)
         SettingValues.hideAwards = settings.bool(forKey: SettingValues.pref_hideAwards)
+        SettingValues.hideAwardsComments = settings.object(forKey: SettingValues.pref_hideAwardsComments) == nil ? true : settings.bool(forKey: SettingValues.pref_hideAwardsComments)
+        SettingValues.showProfileImagesComments = settings.bool(forKey: SettingValues.pref_showProfileImagesComments)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)
@@ -642,7 +659,8 @@ class SettingValues {
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.readLaterButton = settings.object(forKey: SettingValues.pref_readLaterButton) == nil ? true : settings.bool(forKey: SettingValues.pref_readLaterButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
-        SettingValues.nightModeEnabled = settings.bool(forKey: SettingValues.pref_nightMode)
+        SettingValues.nightModeEnabled = settings.object(forKey: SettingValues.pref_nightMode) == nil ? true : settings.bool(forKey: SettingValues.pref_nightMode)
+
         SettingValues.nightStart = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 9 : settings.integer(forKey: SettingValues.pref_nightStartH)
         SettingValues.nightStartMin = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 0 : settings.integer(forKey: SettingValues.pref_nightStartM)
         SettingValues.nightEnd = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 5 : settings.integer(forKey: SettingValues.pref_nightEndH)
@@ -658,7 +676,7 @@ class SettingValues {
         SettingValues.abbreviateScores = settings.object(forKey: SettingValues.pref_abbreviateScores) == nil ? true : settings.bool(forKey: SettingValues.pref_abbreviateScores)
         SettingValues.scoreInTitle = settings.bool(forKey: SettingValues.pref_scoreInTitle)
         SettingValues.commentsInTitle = settings.bool(forKey: SettingValues.pref_commentsInTitle)
-        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (pad ? "multi" : "single")) ?? (pad ? .SPLIT : .SINGLE)
+        SettingValues.appMode = AppMode.init(rawValue: settings.string(forKey: SettingValues.pref_appMode) ?? (UIDevice.current.isMac() ? "triple" : (pad ? "multi" : "single"))) ?? (UIDevice.current.isMac() ? .TRIPLE_MULTI_COLUMN : (pad ? .SPLIT : .SINGLE))
         SettingValues.hideSeen = settings.bool(forKey: SettingValues.pref_hideSeen)
 
         SettingValues.postViewMode = PostViewType.init(rawValue: settings.string(forKey: SettingValues.pref_postViewMode) ?? "card") ?? .CARD
@@ -767,6 +785,7 @@ class SettingValues {
         case READ_LATER = "readlater"
         case SHARE_CONTENT = "sharecontent"
         case SHARE_REDDIT = "sharereddit"
+        case SHARE_AUTHOR = "shareauthor"
         case CHROME = "openchrome"
         case SAFARI = "opensafari"
         case FILTER = "filter"
@@ -804,7 +823,7 @@ class SettingValues {
         }
         
         public static func getMenuNone() -> [PostOverflowAction] {
-            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "hide"]
+            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "shareauthor", "openchrome", "opensafari", "filter", "copy", "hide"]
             var toReturn = [PostOverflowAction]()
             for item in menu {
                 toReturn.append(PostOverflowAction(rawValue: item)!)
@@ -823,12 +842,12 @@ class SettingValues {
                 if link == nil {
                     return "Subreddit"
                 }
-                return "r/\(link!.subreddit)"
+                return "\(link!.subreddit.getSubredditFormatted())"
             case .SUBSCRIBE:
                 if link == nil {
                     return "Subscribe"
                 }
-                return "Subscribe to r/\(link!.subreddit)"
+                return "Subscribe to \(link!.subreddit.getSubredditFormatted())"
             case .REPORT:
                 return "Report content"
             case .BLOCK:
@@ -846,6 +865,8 @@ class SettingValues {
                 return "Share content link"
             case .SHARE_REDDIT:
                 return "Share reddit link"
+            case .SHARE_AUTHOR:
+                return "Share author profile"
             case .CHROME:
                 return "Open in Chrome"
             case .SAFARI:
@@ -890,6 +911,8 @@ class SettingValues {
                 return UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()
             case .SHARE_REDDIT:
                 return UIImage(sfString: SFSymbol.bubbleLeftAndBubbleRightFill, overrideString: "comments")!.menuIcon()
+            case .SHARE_AUTHOR:
+                return UIImage(sfString: SFSymbol.arrowUpAndPersonRectanglePortrait, overrideString: "share")!.menuIcon()
             case .CHROME:
                 return UIImage(sfString: SFSymbol.link, overrideString: "link")!.menuIcon()
             case .SAFARI:
@@ -1279,12 +1302,13 @@ class SettingValues {
     }
 
     public enum AppMode: String {
-        public static let cases: [AppMode] = [.SPLIT, .SINGLE, .MULTI_COLUMN]
+        public static let cases: [AppMode] = UIDevice.current.isMac() ? [.SPLIT, .SINGLE, .MULTI_COLUMN, .TRIPLE_MULTI_COLUMN] : [.SPLIT, .SINGLE, .MULTI_COLUMN]
         
         case SPLIT = "split"
         case SINGLE = "single"
         case MULTI_COLUMN = "multi"
-        
+        case TRIPLE_MULTI_COLUMN = "triple"
+
         func getTitle() -> String {
             switch self {
             case .SPLIT:
@@ -1293,17 +1317,21 @@ class SettingValues {
                 return "Single list"
             case .MULTI_COLUMN:
                 return "Multi-column mode"
+            case .TRIPLE_MULTI_COLUMN:
+                return "Multi-column with comments"
             }
         }
         
         func getDescription() -> String {
             switch self {
             case .SPLIT:
-                return "Displays submissions on the left and comments on the right (requires an iPad)"
+                return "Displays submissions on the left and comments on the right"
             case .SINGLE:
                 return "Single column display of submissions"
             case .MULTI_COLUMN:
                 return "Multiple column display of submissions"
+            case .TRIPLE_MULTI_COLUMN:
+                return "Multiple column display of submissions with comments on the right"
             }
         }
     }

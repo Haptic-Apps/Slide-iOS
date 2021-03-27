@@ -13,7 +13,9 @@ extension UIApplication {
     var statusBarView: UIView? {
         return statusBarUIView
     }
-    
+}
+
+extension UIDevice {
     public func isMac() -> Bool {
         if #available(iOS 14.0, *) {
             return ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp
@@ -24,6 +26,9 @@ extension UIApplication {
         }
     }
     
+    public func respectIpadLayout() -> Bool {
+        return UIDevice.current.userInterfaceIdiom == .pad || isMac()
+    }
 }
 extension UIApplication {
     public var isSplitOrSlideOver: Bool {

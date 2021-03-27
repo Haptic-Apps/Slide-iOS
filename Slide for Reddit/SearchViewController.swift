@@ -95,7 +95,7 @@ class SearchViewController: ContentListingViewController {
                         self.refreshControl?.beginRefreshing()
                     })
                     base.getData(reload: true)
-                    self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "r/\(self.sub)")
+                    self.navigationItem.titleView = self.setTitle(title: self.search, subtitle: "\(self.sub.getSubredditFormatted())")
                 }
             }
         }, inputPlaceholder: "Edit your search...", inputValue: self.search, inputIcon: UIImage(sfString: SFSymbol.pencil, overrideString: "edit")!.menuIcon(), textRequired: true, exitOnAction: true)

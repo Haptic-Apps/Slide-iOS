@@ -64,7 +64,7 @@ class SettingsAudio: BubbleSettingTableViewController {
             $0.isOn = SettingValues.muteVideosInModal
         }
         muteModalVideoSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        muteModalVideoCell.textLabel?.text = "Always start videos muted"
+        muteModalVideoCell.textLabel?.text = "Mute full-screen videos by default"
         muteModalVideoCell.accessoryView = muteModalVideoSwitch
         muteModalVideoCell.textLabel?.numberOfLines = 0
         muteModalVideoCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -74,7 +74,7 @@ class SettingsAudio: BubbleSettingTableViewController {
             $0.isOn = SettingValues.modalVideosRespectHardwareMuteSwitch
         }
         modalVideoFollowsMuteSwitchSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        modalVideoFollowsMuteSwitchCell.textLabel?.text = "Start videos muted if your device is muted"
+        modalVideoFollowsMuteSwitchCell.textLabel?.text = "Mute full-screen videos when iOS is muted"
         modalVideoFollowsMuteSwitchCell.accessoryView = modalVideoFollowsMuteSwitchSwitch
         modalVideoFollowsMuteSwitchCell.textLabel?.numberOfLines = 0
         modalVideoFollowsMuteSwitchCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -84,7 +84,7 @@ class SettingsAudio: BubbleSettingTableViewController {
             $0.isOn = SettingValues.muteYouTube
         }
         muteYTSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        muteYTCell.textLabel?.text = "Always start YouTube videos muted"
+        muteYTCell.textLabel?.text = "Mute YouTube videos by default"
         muteYTCell.accessoryView = muteYTSwitch
         muteYTCell.textLabel?.numberOfLines = 0
         muteYTCell.selectionStyle = UITableViewCell.SelectionStyle.none

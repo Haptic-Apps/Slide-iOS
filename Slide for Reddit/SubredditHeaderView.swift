@@ -38,9 +38,9 @@ class SubredditHeaderView: UIView {
                 case .success(let users):
                     list.append(contentsOf: users)
                     DispatchQueue.main.async {
-                        let sheet = DragDownAlertMenu(title: "Moderators", subtitle: "r/\(self.subreddit!.displayName)", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: false)
+                        let sheet = DragDownAlertMenu(title: "Moderators", subtitle: "\(self.subreddit!.displayName.getSubredditFormatted())", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: false)
 
-                        sheet.addAction(title: "Message r/\(self.subreddit!.displayName) moderators", icon: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon(), action: {
+                        sheet.addAction(title: "Message \(self.subreddit!.displayName.getSubredditFormatted()) moderators", icon: UIImage(sfString: SFSymbol.shieldLefthalfFill, overrideString: "mod")?.menuIcon(), action: {
                             VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=/r/\(self.subreddit!.displayName)", self.parentController?.navigationController, self.parentController)
                         })
 
@@ -165,7 +165,7 @@ class SubredditHeaderView: UIView {
     @objc func flair(_ selector: UITableViewCell) {
         if let subName = subreddit?.displayName, let token = (UIApplication.shared.delegate as? AppDelegate)?.session?.token {
             let requestString = "https://www.reddit.com/r/\(subName)/api/user_flair_v2.json"
-            Alamofire.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
+            AF.request(requestString, method: .get, headers: ["Authorization": "bearer \(token.accessToken)"]).responseString { [weak self] response in
                 guard let self = self else { return }
                 do {
                     guard let data = response.data else {
@@ -173,7 +173,7 @@ class SubredditHeaderView: UIView {
                     }
                     let json = try JSON(data: data)
                     if let flairs = json.array {
-                        let alert = DragDownAlertMenu(title: "Available flairs", subtitle: "r/\(self.subreddit!.displayName)", icon: nil)
+                        let alert = DragDownAlertMenu(title: "Available flairs", subtitle: "\(self.subreddit!.displayName.getSubredditFormatted())", icon: nil)
                         
                         for item in flairs {
                             if let richtext = item["richtext"].array?[0] {
@@ -254,7 +254,7 @@ class SubredditHeaderView: UIView {
     }
 
     @objc func sort(_ selector: UITableViewCell) {
-        let actionSheetController = DragDownAlertMenu(title: "Default sorting for r/\(self.subreddit!.displayName)", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
+        let actionSheetController = DragDownAlertMenu(title: "Default sorting for \(self.subreddit!.displayName.getSubredditFormatted())", subtitle: "Overrides the default in Settings > General", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), full: true)
 
         let selected = UIImage(sfString: SFSymbol.checkmarkCircle, overrideString: "selected")!.menuIcon()
 
@@ -348,7 +348,7 @@ class SubredditHeaderView: UIView {
             descHeight = info.estimatedHeight
         }
         
-        self.flair.textLabel?.text = "Your flair on r/\(subreddit.displayName)"
+        self.flair.textLabel?.text = "Your flair on \(subreddit.displayName.getSubredditFormatted())"
     }
 
     var subreddit: Subreddit?

@@ -59,6 +59,7 @@ class SplitMainViewController: MainViewController {
             inHeadView.backgroundColor = .clear
         }
     }
+    
     override func doProfileIcon() {
         let account = ExpandedHitButton(type: .custom)
         let accountImage = UIImage(sfString: SFSymbol.personCropCircle, overrideString: "profile")?.navIcon()
@@ -109,13 +110,13 @@ class SplitMainViewController: MainViewController {
     }
     
     override func doButtons() {
-        if menu.superview != nil && !MainViewController.needsReTheme {
+        if menu.superview != nil { // What was this for... && !MainViewController.needsReTheme {
             return
         }
         
         splitViewController?.navigationItem.hidesBackButton = true
         if #available(iOS 14.0, *) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.respectIpadLayout() {
                 splitViewController?.showsSecondaryOnlyButton = false
                 splitViewController?.navigationItem.hidesBackButton = true
                 splitViewController?.navigationItem.backBarButtonItem = UIBarButtonItem()
@@ -198,7 +199,7 @@ class SplitMainViewController: MainViewController {
         if self.navigationController?.viewControllers[0] is NavigationHomeViewController {
             self.navigationController?.popViewController(animated: true)
         } else if #available(iOS 14, *) {
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.respectIpadLayout() {
                 self.splitViewController?.show(UISplitViewController.Column.primary)
             } else {
                 self.navigationController?.popViewController(animated: true)
@@ -273,7 +274,11 @@ class SplitMainViewController: MainViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(autoCacheFinished(_:)), name: .autoCacheFinished, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(autoCacheProgress(_:)), name: .autoCacheProgress, object: nil)
 
-        if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
+        NotificationCenter.default.addObserver(self, selector: #selector(subredditOrderDidChange), name: .subredditOrderChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(resetTabBars), name: .tabBarsChanged, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .reduceColorChanged, object: nil)
+
+        if let splitViewController = splitViewController, (!UIApplication.shared.isSplitOrSlideOver) {
             (UIApplication.shared.delegate as? AppDelegate)?.setupSplitLayout(splitViewController)
         }
     }
@@ -282,7 +287,7 @@ class SplitMainViewController: MainViewController {
 
     @objc func onThemeChanged() {
         SingleSubredditViewController.cellVersion += 1
-        MainViewController.needsReTheme = true
+
         navigationController?.toolbar.barTintColor = UIColor.backgroundColor
         navigationController?.toolbar.tintColor = UIColor.fontColor
         self.parent?.navigationController?.toolbar.barTintColor = UIColor.foregroundColor
@@ -316,7 +321,7 @@ class SplitMainViewController: MainViewController {
             vc.setupSwipeGesture()
         } else if SettingValues.submissionGestureMode == .HALF_FULL { // Always allow swipe back with paging disabled and not full
             vc.setupSwipeGesture()
-        } else if UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
+        } else if UIDevice.current.respectIpadLayout() && !SettingValues.subredditBar && SettingValues.submissionGestureMode != .FULL {
             vc.setupSwipeGesture()
         }
 
@@ -370,7 +375,6 @@ class SplitMainViewController: MainViewController {
         setupBaseBarColors(ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
         toolbar?.backgroundColor = UIColor.foregroundColor.add(overlay: UIColor.isLightTheme ? UIColor.black.withAlphaComponent(0.05) : UIColor.white.withAlphaComponent(0.05))
         self.doButtons()
-        MainViewController.needsReTheme = false
     }
     
     var isReappear = false
@@ -395,11 +399,8 @@ class SplitMainViewController: MainViewController {
             }
         }
                     
-        if subChanged || SubredditReorderViewController.changed {
-            finalSubs = []
-            finalSubs.append(contentsOf: Subscriptions.pinned)
-            finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
-            redoSubs()
+        if subChanged {
+            subredditOrderDidChange()
         }
     
         self.parent?.navigationController?.navigationBar.shadowImage = UIImage()
@@ -408,6 +409,13 @@ class SplitMainViewController: MainViewController {
         self.parent?.navigationController?.navigationBar.barTintColor = ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true)
         
         setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    @objc func subredditOrderDidChange() {
+        finalSubs = []
+        finalSubs.append(contentsOf: Subscriptions.pinned)
+        finalSubs.append(contentsOf: Subscriptions.subreddits.sorted(by: { $0.caseInsensitiveCompare($1) == .orderedAscending }).filter({ return !Subscriptions.pinned.contains($0) }))
+        redoSubs()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -428,26 +436,24 @@ class SplitMainViewController: MainViewController {
              */
         }
         
-        if MainViewController.needsRestart {
-            MainViewController.needsRestart = false
-            tabBar?.removeFromSuperview()
-            self.navigationItem.leftBarButtonItems = []
-            self.navigationItem.rightBarButtonItems = []
-            if SettingValues.subredditBar {
-                setupTabBar(finalSubs)
-                if SettingValues.submissionGestureMode.shouldPage() {
-                    self.dataSource = self
-                }
-            } else {
-                self.navigationItem.titleView = nil
-                self.dataSource = nil
-            }
-        } else if MainViewController.needsReTheme {
-            doRetheme()
-        }
         didUpdate()
         
         setupBaseBarColors( ColorUtil.getColorForSub(sub: getSubredditVC()?.sub ?? "", true))
+    }
+    
+    @objc func resetTabBars() {
+        tabBar?.removeFromSuperview()
+        self.navigationItem.leftBarButtonItems = []
+        self.navigationItem.rightBarButtonItems = []
+        if SettingValues.subredditBar {
+            setupTabBar(finalSubs)
+            if SettingValues.submissionGestureMode.shouldPage() {
+                self.dataSource = self
+            }
+        } else {
+            self.navigationItem.titleView = nil
+            self.dataSource = nil
+        }
     }
 
     override func hardReset(soft: Bool = false) {
@@ -531,7 +537,7 @@ class SplitMainViewController: MainViewController {
         if self.finalSubs.contains(subreddit) && !override {
             let index = self.finalSubs.firstIndex(of: subreddit)
             if index == nil {
-                if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
+                if UIDevice.current.respectIpadLayout() && SettingValues.disableSubredditPopupIpad {
                     if self.navigationController?.topViewController != self && !(self.navigationController?.topViewController is NavigationHomeViewController) {
                         self.navigationController?.popToRootViewController(animated: false)
                     }
@@ -577,7 +583,7 @@ class SplitMainViewController: MainViewController {
                 self.navigationController?.popToRootViewController(animated: false)
             }
 
-            if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disableSubredditPopupIpad {
+            if UIDevice.current.respectIpadLayout() && SettingValues.disableSubredditPopupIpad {
                 VCPresenter.showVC(viewController: SingleSubredditViewController(subName: subreddit.replacingOccurrences(of: " ", with: ""), single: true), popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             } else {
                 VCPresenter.openRedditLink("/r/" + subreddit.replacingOccurrences(of: " ", with: ""), self.navigationController, self)
@@ -614,7 +620,6 @@ class SplitMainViewController: MainViewController {
         CachedTitle.titles.removeAll()
         view.backgroundColor = UIColor.backgroundColor
         splitViewController?.view.backgroundColor = UIColor.foregroundColor
-        SubredditReorderViewController.changed = false
         
         finalSubs = []
         LinkCellView.cachedInternet = nil
@@ -902,7 +907,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
     }
 
     func random(_ vc: NavigationHomeViewController) {
-        Alamofire.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
+        AF.request("https://www.reddit.com/r/random/about.json", method: .get).responseString { response in
             do {
                 guard let data = response.data else {
                     BannerUtil.makeBanner(text: "Random subreddit not found", color: GMColor.red500Color(), seconds: 2, context: self.parent, top: true, callback: nil)
@@ -1069,7 +1074,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMac())) && UIDevice.current.respectIpadLayout() {
                     is14Column = true
                 }
 
@@ -1082,7 +1087,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     }
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.respectIpadLayout() {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in
@@ -1109,7 +1114,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac())) && UIDevice.current.userInterfaceIdiom == .pad {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMac())) && UIDevice.current.respectIpadLayout() {
                     is14Column = true
                 }
 
@@ -1117,7 +1122,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                     UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
                 } else {
                     UIView.animate(withDuration: 0.3, animations: {
-                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad && !SettingValues.desktopMode {
+                        if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.respectIpadLayout() && !SettingValues.desktopMode {
                             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                                 self.splitViewController?.preferredDisplayMode = .primaryHidden
                             }, completion: { (_) in

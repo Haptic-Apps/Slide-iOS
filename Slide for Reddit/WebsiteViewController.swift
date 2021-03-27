@@ -89,7 +89,11 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
         items.append(forwardB)
         items.append(space)
 
-        toolbarItems = items
+        if UIDevice.current.isMac() {
+            navigationItem.rightBarButtonItems = items
+        } else {
+            toolbarItems = items
+        }
     }
     
     @objc func goBack() {
@@ -294,7 +298,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     }
     
     func loadUrl() {
-        if url?.host == "twitter.com" && UIDevice.current.userInterfaceIdiom == .pad {
+        if url?.host == "twitter.com" && UIDevice.current.respectIpadLayout() {
             webView.customUserAgent = "Googlebot/2.1 (+http://www.google.com/bot.html)"
         }
         let myURLRequest: URLRequest = URLRequest(url: url!)
@@ -373,7 +377,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
                 if #available(iOS 13.0, *) {
                     // Let Reddit create new reddit_session Cookie from data returned from Apple Login
                     let jsonData = try JSONSerialization.data(withJSONObject: params, options: .withoutEscapingSlashes)
-                    Alamofire.request("https://www.reddit.com/account/identity_provider_login", method: .post, parameters: [:], encoding: String(data: jsonData, encoding: .utf8)!, headers: nil).responseJSON { (response) in
+                    AF.request("https://www.reddit.com/account/identity_provider_login", method: .post, parameters: [:], encoding: String(data: jsonData, encoding: .utf8)!, headers: nil).responseJSON { (response) in
                         switch response.result {
                         case .success(let JSON):
                             let token = (JSON as? [String: Any])?["token"] as? String ?? ""
@@ -450,7 +454,7 @@ class WebsiteViewController: MediaViewController, WKNavigationDelegate {
     
     // Get user csrf token for Alamofire, which will be used to authorize next
     @objc func loginWithApple() {
-        Alamofire.request("https://www.reddit.com/account/login/?mobile_ui=on&experiment_mweb_sso_login_link=enabled&experiment_mweb_google_onetap=onetap_auto&experiment_mweb_am_refactoring=enabled", method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).response { (response) in
+        AF.request("https://www.reddit.com/account/login/?mobile_ui=on&experiment_mweb_sso_login_link=enabled&experiment_mweb_google_onetap=onetap_auto&experiment_mweb_am_refactoring=enabled", method: .get, parameters: [:], encoding: URLEncoding.default, headers: nil).response { (response) in
             
             if let data = response.data, let stringBody = String(data: data, encoding: .utf8) {
                 // Get token out of body HTML

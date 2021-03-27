@@ -118,7 +118,7 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
             return
         }
         
-        let alrController = DragDownAlertMenu(title: "Follow r/\(sub)", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
+        let alrController = DragDownAlertMenu(title: "Subscribe to \(sub.getSubredditFormatted())", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub), full: true)
 
         if AccountController.isLoggedIn {
             alrController.addAction(title: "Subscribe", icon: nil) {
@@ -133,7 +133,7 @@ class SubredditFindReturnViewController: UITableViewController, UISearchBarDeleg
             return
         }
         
-        alrController.addAction(title: "Casually subscribe", icon: nil) {
+        alrController.addAction(title: "Follow without Subscribing", icon: nil) {
             Subscriptions.subscribe(sub, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
             self.navigationController?.popViewController(animated: true)
             self.callback(sub)

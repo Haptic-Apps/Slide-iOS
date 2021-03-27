@@ -35,20 +35,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
-        let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+        let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
             let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(sub, true, session: self.session!)
                 self.subChanged = true
-                BannerUtil.makeBanner(text: "Subscribed\nr/\(sub)", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+                BannerUtil.makeBanner(text: "Subscribed\n\(sub.getSubredditFormatted())", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             })
             alrController.addAction(somethingAction)
         }
         
-        let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Follow without subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
             Subscriptions.subscribe(sub, false, session: self.session!)
             self.subChanged = true
-            BannerUtil.makeBanner(text: "Added\nr/\(sub) ", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+            BannerUtil.makeBanner(text: "Casually subscribed\n\(sub.getSubredditFormatted()) ", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
         })
         alrController.addAction(somethingAction)
         
@@ -156,8 +156,8 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.navigationController?.delegate = self
         
         if !loaded && !loading {
-            self.tableView.contentOffset = CGPoint(x: 0, y: -self.refreshControl.frame.size.height)
-            refreshControl.beginRefreshing()
+            self.tableView.contentOffset = CGPoint(x: 0, y: -(self.refreshControl?.frame.size.height ?? 0))
+            refreshControl?.beginRefreshing()
         } else {
             self.tableView.reloadData()
         }
@@ -193,13 +193,17 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         self.tableView.delegate = self
         self.tableView.dataSource = self
         
-        refreshControl = UIRefreshControl()
-        refreshControl.tintColor = UIColor.fontColor
-        
-        refreshControl.attributedTitle = NSAttributedString(string: "")
-        refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-        tableView.addSubview(refreshControl)
-        refreshControl.centerAnchors /==/ tableView.centerAnchors
+        if !UIDevice.current.isMac() {
+            refreshControl = UIRefreshControl()
+            refreshControl?.tintColor = UIColor.fontColor
+            
+            refreshControl?.attributedTitle = NSAttributedString(string: "")
+            refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+            if let control = self.refreshControl {
+                self.tableView.addSubview(control)
+                control.centerAnchors /==/ self.tableView.centerAnchors
+            }
+        }
         
         tableView.alwaysBounceVertical = true
         
@@ -493,13 +497,13 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
         }
     }
     
-    var refreshControl: UIRefreshControl!
+    var refreshControl: UIRefreshControl?
     
     func refresh() {
         loading = true
         emptyStateView.isHidden = true
         baseData.reset()
-        refreshControl.beginRefreshing()
+        refreshControl?.beginRefreshing()
         flowLayout.reset(modal: presentingViewController != nil, vc: self, isGallery: false)
         flowLayout.invalidateLayout()
         tableView.reloadData()
@@ -531,14 +535,18 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     }
     
     func endAndResetRefresh() {
-        self.refreshControl.endRefreshing()
-        self.refreshControl.removeFromSuperview()
-        self.refreshControl = UIRefreshControl()
-        self.refreshControl.tintColor = UIColor.fontColor
-        
-        self.refreshControl.attributedTitle = NSAttributedString(string: "")
-        self.refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
-        self.tableView.addSubview(self.refreshControl)
+        if !UIDevice.current.isMac() {
+            self.refreshControl?.endRefreshing()
+            self.refreshControl?.removeFromSuperview()
+            self.refreshControl = UIRefreshControl()
+            self.refreshControl?.tintColor = UIColor.fontColor
+            
+            self.refreshControl?.attributedTitle = NSAttributedString(string: "")
+            self.refreshControl?.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
+            if let control = self.refreshControl {
+                self.tableView.addSubview(control)
+            }
+        }
     }
     
     var loading: Bool = false

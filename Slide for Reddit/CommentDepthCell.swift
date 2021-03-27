@@ -747,7 +747,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         
-        if UIDevice.current.userInterfaceIdiom == .pad && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) {
+        if UIDevice.current.respectIpadLayout() && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMac()) {
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
@@ -1342,7 +1342,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             }
             par.present(activityViewController, animated: true, completion: {})
         }))
-        
+
         if AccountController.isLoggedIn {
             actions.append(AlertMenuAction(title: ActionStates.isSaved(s: comment!) ? "Unsave" : "Save", icon: UIImage(sfString: SFSymbol.starFill, overrideString: "save")!.menuIcon(), action: {
                 par.saveComment(self.comment!)
@@ -1359,6 +1359,15 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         actions.append(AlertMenuAction(title: "Block u/\(comment!.author)", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon(), action: {
             par.blockUser(name: self.comment!.author)
+        }))
+        
+        actions.append(AlertMenuAction(title: "Share u/\(comment!.author)'s profile", icon: UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon(), action: {
+            let activityViewController = UIActivityViewController(activityItems: [URL(string: "https://www.reddit.com/u/\(self.comment!.author)") ?? URL(string: "about://blank")], applicationActivities: nil)
+            if let presenter = activityViewController.popoverPresentationController {
+                presenter.sourceView = self.moreButton
+                presenter.sourceRect = self.moreButton.bounds
+            }
+            par.present(activityViewController, animated: true, completion: {})
         }))
         
         actions.append(AlertMenuAction(title: "Copy text", icon: UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon(), action: {
@@ -1874,6 +1883,64 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
                 flairString = flairTitle
             }
         }
+        
+        var awardString: NSMutableAttributedString?
+        if !SettingValues.hideAwards {
+            let to = 3
+            if !comment.awardsDictionary.keys.isEmpty {
+                var awardCount = 0
+                let awardDict = comment.awardsDictionary
+
+                let values = awardDict.values
+                let sortedValues = values.sorted { (a, b) -> Bool in
+                    let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
+                    let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
+
+                    return amountA > amountB
+                }
+                for raw in sortedValues {
+                    if let award = raw as? [String] {
+                        awardCount += Int(award[2]) ?? 0
+                    }
+                }
+                
+                var totalAwards = 0
+                var attachments = [NSTextAttachment]()
+                
+                for raw in sortedValues {
+                    if let award = raw as? [String] {
+                        if totalAwards == to {
+                            break
+                        }
+                        
+                        totalAwards += 1
+
+                        let url = award[1]
+                        if let urlAsURL = URL(string: url) {
+                            let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: false, backgroundColor: UIColor.foregroundColor)
+                            attachment.bounds = CGRect(x: 0, y: -2 + (15 * -0.5) / 2, width: 15, height: 15)
+                            attachments.append(attachment)
+                        }
+                    }
+                }
+                
+                let awardLine = NSMutableAttributedString(string: "\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.foregroundColor])
+
+                for award in attachments {
+                    awardLine.append(NSAttributedString(attachment: award))
+                    awardLine.appendString(" ")
+                }
+                
+                if totalAwards == to {
+                    awardLine.append(NSMutableAttributedString(string: "\(awardCount) Awards", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.fontColor, .baselineOffset: -2]))
+                }
+                
+                awardLine.addAttributes([.urlAction: URL(string: CachedTitle.AWARD_KEY)!], range: NSRange(location: 2, length: awardLine.length - 2)) // We will catch this URL later on, start it after the newline
+
+                awardString = awardLine
+                awardString?.append(NSAttributedString(string: "\u{00A0}")) // Stop tap from going to the end of the view width
+            }
+        }
 
         let pinned = NSMutableAttributedString.init(string: "\u{00A0}PINNED\u{00A0}", attributes: [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), .badgeColor: GMColor.green500Color(), NSAttributedString.Key.foregroundColor: UIColor.white])
 
@@ -1924,13 +1991,6 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(spacer)
             infoString.append(pinned)
         }
-        
-        // TODO flairs and awards
-        /*if comment.isCakeday {
-            infoString.append(spacer)
-            let gild = NSMutableAttributedString.yy_attachmentString(withEmojiImage: UIImage(named: "cakeday")!, fontSize: boldFont.pointSize)!
-            infoString.append(gild)
-        }*/
 
         if parent!.removed.contains(comment.id) || (!(comment.removedBy ?? "").isEmpty() && !parent!.approved.contains(comment.id)) {
             let attrs = [NSAttributedString.Key.font: FontGenerator.boldFontOfSize(size: 12, submission: false), NSAttributedString.Key.foregroundColor: GMColor.red500Color()]
@@ -1946,9 +2006,22 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
             infoString.append(NSMutableAttributedString.init(string: "Approved\(!(comment.approvedBy ?? "").isEmpty() ? " by \(comment.approvedBy!)":"")", attributes: attrs))
         }
         
+        if let awards = awardString {
+            infoString.append(awards)
+        }
+        
         paragraphStyle.lineSpacing = 1.5
         // infoString.setAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle], range: NSRange(location: 0, length: infoString.length))
 
+        if SettingValues.showProfileImagesComments && comment.authorProfileImage != nil {
+            if let urlAsURL = URL(string: comment.authorProfileImage?.unescapeHTML ?? "") {
+                let attachment = AsyncTextAttachmentNoLoad(imageURL: urlAsURL, delegate: nil, rounded: true, backgroundColor: color)
+                attachment.bounds = CGRect(x: -2, y: -2, width: boldFont.pointSize + 4, height: boldFont.pointSize + 4)
+                infoString.insert(NSAttributedString(string: "  "), at: 0)
+                infoString.insert(NSAttributedString(attachment: attachment), at: 0)
+            }
+        }
+        
         commentBody.tColor = ColorUtil.accentColorForSub(sub: comment.subreddit)
         if !isCollapsed || !SettingValues.collapseFully {
             title.linkTextAttributes = [NSAttributedString.Key.foregroundColor: ColorUtil.accentColorForSub(sub: comment.subreddit)]
@@ -2085,8 +2158,58 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
 }
 
 extension CommentDepthCell: TextDisplayStackViewDelegate {
+    func showAwardMenu() {
+        guard let comment = comment else { return }
+        let awardDict = comment.awardsDictionary
+
+        let alertController = DragDownAlertMenu(title: "Comment awards", subtitle: "", icon: nil)
+        var coinTotal = 0
+        
+        let sortedValues = awardDict.values.sorted { (a, b) -> Bool in
+            let amountA = Int((a as? [String])?[4] ?? "0") ?? 0
+            let amountB = Int((b as? [String])?[4] ?? "0") ?? 0
+
+            return amountA > amountB
+        }
+
+        for raw in sortedValues {
+            if let award = raw as? [String] {
+                coinTotal += Int(award[4]) ?? 0
+                alertController.addView(title: "\(award[0]) x\(award[2])", icon_url: award[5], action: {() in
+                    let alertController = DragDownAlertMenu(title: award[0], subtitle: award[3], icon: award[5])
+                    alertController.modalPresentationStyle = .overCurrentContext
+                    if let window = UIApplication.shared.keyWindow, let modalVC = window.rootViewController?.presentedViewController {
+                        if let presented = modalVC.presentedViewController {
+                            alertController.show(presented)
+                        } else {
+                            alertController.show(modalVC)
+                        }
+                    } else if let window = UIApplication.shared.keyWindow, let root = window.rootViewController {
+                        alertController.show(root)
+                    }
+                })
+            }
+        }
+        
+        alertController.subtitle = "\(coinTotal) coins spent"
+        
+        if #available(iOS 10.0, *) {
+            HapticUtility.hapticActionStrong()
+        } else if SettingValues.hapticFeedback {
+            AudioServicesPlaySystemSound(1519)
+        }
+        if let parent = parent {
+            alertController.show(parent)
+        }
+    }
+
     func linkTapped(url: URL, text: String) {
         islink = true
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
+
         if !text.isEmpty {
             self.parent?.showSpoiler(text)
         } else {
@@ -2097,6 +2220,11 @@ extension CommentDepthCell: TextDisplayStackViewDelegate {
     func linkLongTapped(url: URL) {
         longBlocking = true
         
+        if url.absoluteString == CachedTitle.AWARD_KEY {
+            showAwardMenu()
+            return
+        }
+
         let alertController = DragDownAlertMenu(title: "Link options", subtitle: url.absoluteString, icon: url.absoluteString)
         
         alertController.addAction(title: "Share URL", icon: UIImage(sfString: SFSymbol.squareAndArrowUp, overrideString: "share")!.menuIcon()) {
@@ -2503,7 +2631,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             }
         }
         
-        if UIDevice.current.userInterfaceIdiom == .pad || UIApplication.shared.isMac() {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
             if self.parent?.menuCell == self {
                 if let parent = self.parent {
                     let menu = self.getMoreMenu(parent)
@@ -2618,6 +2746,17 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
                 children.append(UIAction(title: "Send Message", image: UIImage(sfString: SFSymbol.personFill, overrideString: "copy")!.menuIcon()) { _ in
                     VCPresenter.openRedditLink("https://www.reddit.com/message/compose?to=\(username)", self.parent?.navigationController, self.parent)
                 })
+
+                if !Subscriptions.isSubscriber("u_\(username)") {
+                    children.append(UIAction(title: "Follow user", image: UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "add")!.menuIcon()) { _ in
+                        if let session = (UIApplication.shared.delegate as? AppDelegate)?.session {
+                            Subscriptions.subscribe("u_\(username)", true, session: session)
+                            DispatchQueue.main.async {
+                                BannerUtil.makeBanner(text: "Followed \(username)", seconds: 3, context: self.parent)
+                            }
+                        }
+                    })
+                }
 
                 children.append(UIAction(title: "Block user", image: UIImage(sfString: SFSymbol.personCropCircleBadgeXmark, overrideString: "copy")!.menuIcon(), attributes: UIMenuElement.Attributes.destructive, handler: { [weak self] (_) in
                     guard let self = self else { return }
