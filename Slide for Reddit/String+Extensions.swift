@@ -88,4 +88,20 @@ extension String {
             return "r/\(self)"
         }
     }
+    
+    func getSubredditFormattedShort() -> String {
+        if self.hasPrefix("/m/") {
+            return self.replacingOccurrences(of: "/m/", with: "m/")
+        }
+        
+        if self.hasPrefix("u_") {
+            return self.replacingOccurrences(of: "u_", with: "u/")
+        }
+        
+        if self.hasPrefix("/r/") {
+            return self.replacingOccurrences(of: "/r/", with: "")
+        }
+
+        return self
+    }
 }

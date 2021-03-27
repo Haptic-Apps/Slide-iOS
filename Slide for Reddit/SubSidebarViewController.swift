@@ -86,7 +86,7 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
             BannerUtil.makeBanner(text: "Unsubscribed from \(subreddit!.displayName.getSubredditFormatted())", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: self, top: true)
             
         } else {
-            let alrController = DragDownAlertMenu(title: "Subscribe to \(subreddit!.displayNamegetSubredditFormatted())", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: subreddit!.displayName), full: true)
+            let alrController = DragDownAlertMenu(title: "Subscribe to \(subreddit!.displayName.getSubredditFormatted())", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: subreddit!.displayName), full: true)
             
             if AccountController.isLoggedIn {
                 alrController.addAction(title: "Subscribe", icon: nil) {

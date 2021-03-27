@@ -20,12 +20,11 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if UIColor.isLightTheme && SettingValues.reduceColor {
-                        if #available(iOS 13, *) {
+            if #available(iOS 13, *) {
                 return .darkContent
             } else {
                 return .default
             }
-
         } else {
             return .lightContent
         }

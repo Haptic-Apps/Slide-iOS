@@ -446,7 +446,7 @@ extension UIColor {
     
     static var isLightTheme: Bool {
         if #available(iOS 13.0, *) {
-            return UITraitCollection.current.userInterfaceStyle != .dark && SettingValues.nightModeEnabled ? ColorUtil.theme.isLight : ColorUtil.nightTheme.isLight
+            return UITraitCollection.current.userInterfaceStyle == .dark && SettingValues.nightModeEnabled ? ColorUtil.nightTheme.isLight : ColorUtil.theme.isLight
         } else {
             return ColorUtil.swappedTheme.isLight
         }

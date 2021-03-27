@@ -137,9 +137,9 @@ class SubredditCellView: UITableViewCell {
         self.sideView.isHidden = false
         self.icon.isHidden = false
         if !exists {
-            title.text = "Go to \(subreddit.getSubredditFormatted())"
+            title.text = "Go to \(subreddit.getSubredditFormattedShort())"
         } else {
-            title.text = subreddit.getSubredditFormatted()
+            title.text = subreddit.getSubredditFormattedShort()
         }
         
         failedLabel?.removeFromSuperview()

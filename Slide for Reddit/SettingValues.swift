@@ -653,7 +653,8 @@ class SettingValues {
         SettingValues.saveButton = settings.object(forKey: SettingValues.pref_saveButton) == nil ? true : settings.bool(forKey: SettingValues.pref_saveButton)
         SettingValues.readLaterButton = settings.object(forKey: SettingValues.pref_readLaterButton) == nil ? true : settings.bool(forKey: SettingValues.pref_readLaterButton)
         SettingValues.hideButton = settings.bool(forKey: SettingValues.pref_hideButton)
-        SettingValues.nightModeEnabled = settings.bool(forKey: SettingValues.pref_nightMode)
+        SettingValues.nightModeEnabled = settings.object(forKey: SettingValues.pref_nightMode) == nil ? true : settings.bool(forKey: SettingValues.pref_nightMode)
+
         SettingValues.nightStart = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 9 : settings.integer(forKey: SettingValues.pref_nightStartH)
         SettingValues.nightStartMin = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 0 : settings.integer(forKey: SettingValues.pref_nightStartM)
         SettingValues.nightEnd = settings.object(forKey: SettingValues.pref_nightStartH) == nil ? 5 : settings.integer(forKey: SettingValues.pref_nightEndH)
