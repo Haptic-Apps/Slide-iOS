@@ -7,6 +7,7 @@
 //
 
 import Anchorage
+import CloudKit
 import reddift
 import RLBAlertsPickers
 import SDCAlertView
@@ -14,6 +15,13 @@ import UIKit
 import UserNotifications
 
 class SettingsGeneral: BubbleSettingTableViewController {
+    /**
+     Corresponds to USR_DOMAIN in info.plist, which derives its value
+     from USR_DOMAIN in the pbxproj build settings. Default is `ccrama.me`.
+     */
+    lazy var USR_DOMAIN: String = {
+        return Bundle.main.object(forInfoDictionaryKey: "USR_DOMAIN") as! String
+    }()
 
     var hideFAB: InsetCell = InsetCell(style: .subtitle, reuseIdentifier: "hidefab")
     var scrubUsername: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "scrub")
@@ -34,6 +42,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     var commentSorting: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "comment")
     var searchSorting: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "search")
     var notifications: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "notif")
+    var debugiCloud: InsetCell = InsetCell.init(style: .subtitle, reuseIdentifier: "debugicloud")
     var hideFABSwitch = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
@@ -179,7 +188,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     
     override func loadView() {
         super.loadView()
-        headers = ["Subreddits", "Auto-Hide", "Interaction", "Notifications", "Sorting", "Loading limits"]
+        headers = ["Subreddits", "Auto-Hide", "Interaction", "Notifications", "Sorting", "Loading limits", "Debug"]
 
         // set the title
         self.title = "General"
@@ -198,6 +207,11 @@ class SettingsGeneral: BubbleSettingTableViewController {
         createCell(fullyHideNavbar, fullyHideNavbarSwitch, isOn: SettingValues.hideStatusBar, text: "Hide status bar on scroll")
         createCell(alwaysShowHeader, alwaysShowHeaderSwitch, isOn: SettingValues.alwaysShowHeader, text: "Show subreddit header")
         createCell(scrollSidebar, scrollSidebarSwitch, isOn: SettingValues.scrollSidebar, text: "Reset sidebar automatically")
+
+        createCell(debugiCloud, nil, isOn: false, text: "Tap to test Slide's iCloud connection")
+        self.debugiCloud.detailTextLabel?.text = "Any errors will be copied to your clipboard"
+        self.debugiCloud.detailTextLabel?.textColor = UIColor.fontColor
+        self.debugiCloud.detailTextLabel?.numberOfLines = 0
 
         self.alwaysShowHeader.detailTextLabel?.text = "When off, scrolling up past the first post will display the header"
         self.alwaysShowHeader.detailTextLabel?.textColor = UIColor.fontColor
@@ -364,7 +378,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 6
+        return 7
     }
     
     func doDisables() {
@@ -402,32 +416,37 @@ class SettingsGeneral: BubbleSettingTableViewController {
             case 0: cell = self.pinToolbar
             case 1: cell = self.totallyCollapse
             case 2: cell = self.fullyHideNavbar
-            default: fatalError("Unknown row in section 0")
+            default: fatalError("Unknown row in section 1")
             }
         case 2:
             switch indexPath.row {
             case 0: cell = self.hapticFeedback
             case 1: cell = self.scrollSidebar
             // case 1: return self.matchSilence
-            default: fatalError("Unknown row in section 0")
+            default: fatalError("Unknown row in section 2")
             }
         case 3:
             switch indexPath.row {
             case 0: cell = self.notifications
-            default: fatalError("Unknown row in section 1")
+            default: fatalError("Unknown row in section 3")
             }
         case 4:
             switch indexPath.row {
             case 0: cell = self.postSorting
             case 1: cell = self.commentSorting
             case 2: cell = self.searchSorting
-            default: fatalError("Unknown row in section 2")
+            default: fatalError("Unknown row in section 4")
             }
         case 5:
             switch indexPath.row {
             case 0: cell = self.postLimit
             case 1: cell = self.commentLimit
-            default: fatalError("Unknown row in section 2")
+            default: fatalError("Unknown row in section 5")
+            }
+        case 6:
+            switch indexPath.row {
+            case 0: cell = debugiCloud
+            default: fatalError("Unknown row in section 6")
             }
         default: fatalError("Unknown section")
         }
@@ -537,8 +556,50 @@ class SettingsGeneral: BubbleSettingTableViewController {
             showMenuComments(tableView.cellForRow(at: indexPath))
         } else if indexPath.section == 4 && indexPath.row == 2 {
             showMenuSearch(tableView.cellForRow(at: indexPath))
+        } else if indexPath.section == 6 && indexPath.row == 0 {
+            doDebugiCloud()
         }
-
+    }
+    
+    func doDebugiCloud() {
+        let privateDatabase = CKContainer(identifier: "iCloud.\(USR_DOMAIN).redditslide").privateCloudDatabase
+        
+        let query = CKQuery(recordType: CKRecord.RecordType(stringLiteral: "collections"), predicate: NSPredicate(value: true))
+        privateDatabase.perform(query, inZoneWith: nil) { (records, error) in
+            if error != nil {
+                DispatchQueue.main.async {
+                    BannerUtil.makeBanner(text: "Slide can't connect to iCloud. The error has been copied to your clipboard", color: GMColor.red500Color(), seconds: 4, context: self)
+                }
+                let pasteboard = UIPasteboard.general
+                pasteboard.string = error?.localizedDescription ?? error.debugDescription
+            } else {
+                if let unwrappedRecord = records?[0] {
+                    if let object = unwrappedRecord.object(forKey: "data_xml") as? String {
+                        if let data = object.data(using: String.Encoding.utf8) {
+                            do {
+                                let dict = try PropertyListSerialization.propertyList(from: data, options: PropertyListSerialization.ReadOptions.mutableContainersAndLeaves, format: nil) as? NSMutableDictionary
+                                DispatchQueue.main.async {
+                                    BannerUtil.makeBanner(text: "Slide successfully connected to iCloud", color: GMColor.green500Color(), seconds: 4, context: self)
+                                }
+                                return
+                            } catch {
+                                DispatchQueue.main.async {
+                                    BannerUtil.makeBanner(text: "Slide can't connect to iCloud. The error has been copied to your clipboard", color: GMColor.red500Color(), seconds: 4, context: self)
+                                }
+                                let pasteboard = UIPasteboard.general
+                                pasteboard.string = "Error: Could not deserialize list"
+                            }
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        BannerUtil.makeBanner(text: "Slide can't connect to iCloud. The error has been copied to your clipboard", color: GMColor.red500Color(), seconds: 4, context: self)
+                    }
+                    let pasteboard = UIPasteboard.general
+                    pasteboard.string = "Error: No records found"
+                }
+            }
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -550,6 +611,7 @@ class SettingsGeneral: BubbleSettingTableViewController {
         case 3: return 1
         case 4: return 3
         case 5: return 2
+        case 6: return 1
         default: fatalError("Unknown number of sections")
         }
     }
