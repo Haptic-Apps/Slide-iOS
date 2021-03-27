@@ -62,7 +62,7 @@ class Sidebar: NSObject {
             parent!.subChanged = false
             BannerUtil.makeBanner(text: "Unsubscribed", seconds: 5, context: self.parent, top: true)
         } else {
-            let alrController = DragDownAlertMenu(title: "Follow r/\(sub.displayName)", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub.displayName), full: true)
+            let alrController = DragDownAlertMenu(title: "Subscribe to \(sub.displayName.getSubredditFormatted())", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: sub.displayName), full: true)
             if AccountController.isLoggedIn {
                 alrController.addAction(title: "Subscribe", icon: nil) {
                     Subscriptions.subscribe(sub.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
@@ -71,7 +71,7 @@ class Sidebar: NSObject {
                 }
             }
             
-            alrController.addAction(title: "Casually subscribe", icon: nil) {
+            alrController.addAction(title: "Follow without Subscribing", icon: nil) {
                 Subscriptions.subscribe(sub.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
                 self.parent!.subChanged = true
                 BannerUtil.makeBanner(text: "Added to subscription list", seconds: 5, context: self.parent, top: true)

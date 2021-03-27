@@ -137,9 +137,9 @@ class SubredditCellView: UITableViewCell {
         self.sideView.isHidden = false
         self.icon.isHidden = false
         if !exists {
-            title.text = "Go to r/\(subreddit)"
+            title.text = "Go to \(subreddit.getSubredditFormatted())"
         } else {
-            title.text = subreddit.starts(with: "u_") ? subreddit.replacingOccurrences(of: "u_", with: "u/") : subreddit
+            title.text = subreddit.getSubredditFormatted()
         }
         
         failedLabel?.removeFromSuperview()
@@ -203,7 +203,7 @@ class SubredditCellView: UITableViewCell {
         self.icon.isHidden = false
         self.sideView.isHidden = true
         self.navController = nav
-        title.text = "Search " + (sub == nil ? "Reddit" : "r/\(self.subreddit)")
+        title.text = "Search " + (sub == nil ? "Reddit" : "\(self.subreddit.getSubredditFormatted())")
         self.icon.contentMode = .center
         self.icon.image = UIImage.init(sfString: SFSymbol.magnifyingglass, overrideString: "search")!.menuIcon()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)
@@ -284,7 +284,7 @@ class SubredditCellView: UITableViewCell {
                 if let icon = Subscriptions.icon(for: submission.subreddit) {
                     subDot.sd_setImage(with: URL(string: icon.unescapeHTML), completed: nil)
                 }
-                subName.text = "r/\(submission.subreddit)"
+                subName.text = "\(submission.subreddit.getSubredditFormatted())"
                 thumbView.contentMode = .scaleAspectFill
                 
                 if submission.hasBanner {

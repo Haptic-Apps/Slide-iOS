@@ -130,7 +130,7 @@ class MessageCellView: UICollectionViewCell {
                     iconString.append(NSAttributedString(attachment: attachment))
                     attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
                 }
-                let tapString = NSMutableAttributedString(string: "  r/\(message.subreddit)", attributes: attrs)
+                let tapString = NSMutableAttributedString(string: "  \(message.subreddit.getSubredditFormatted())", attributes: attrs)
                 tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(message.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
 
                 iconString.append(tapString)
@@ -138,11 +138,11 @@ class MessageCellView: UICollectionViewCell {
                 if color != ColorUtil.baseColor {
                     let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
                     iconString = preString
-                    let tapString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: attrs)
+                    let tapString = NSMutableAttributedString(string: "\(message.subreddit.getSubredditFormatted())", attributes: attrs)
                     tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(message.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                     iconString.append(tapString)
                 } else {
-                    let tapString = NSMutableAttributedString(string: "r/\(message.subreddit)", attributes: attrs)
+                    let tapString = NSMutableAttributedString(string: "\(message.subreddit.getSubredditFormatted())", attributes: attrs)
                     tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(message.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                     iconString = tapString
                 }

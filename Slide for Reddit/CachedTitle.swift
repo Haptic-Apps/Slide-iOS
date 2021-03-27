@@ -334,7 +334,7 @@ class CachedTitle {
 
             let attrs = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
+            let boldString = NSMutableAttributedString(string: "\((submission.crosspostSubreddit ?? "").getSubredditFormatted())", attributes: attrs)
             
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
@@ -422,7 +422,7 @@ class CachedTitle {
             attributedTitle.append(oc)
         }
 
-        let endString = NSMutableAttributedString(string: "r/\(submission.subreddit)  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited! as NSDate, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
+        let endString = NSMutableAttributedString(string: "\(submission.subreddit.getSubredditFormatted())  •  \(DateFormatter().timeSince(from: submission.created as NSDate, numericDates: true))\((submission.isEdited ? ("(edit \(DateFormatter().timeSince(from: submission.edited! as NSDate, numericDates: true)))") : ""))  •  ", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF])
 
         var authorAttributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 12, submission: true), NSAttributedString.Key.foregroundColor: colorF]
         let userColor = ColorUtil.getColorForUser(name: submission.author)
@@ -503,7 +503,7 @@ class CachedTitle {
                 iconString.append(NSAttributedString(attachment: attachment))
                 attrs[.baselineOffset] = (((24 - fontSize) / 2) - (titleFont.descender / 2))
             }
-            let tapString = NSMutableAttributedString(string: "  r/\(link.subreddit)", attributes: attrs)
+            let tapString = NSMutableAttributedString(string: "  \(link.subreddit.getSubredditFormatted())", attributes: attrs)
             if SettingValues.tapProfilesAndSubs || full {
                 tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
             }
@@ -513,14 +513,14 @@ class CachedTitle {
             if color != ColorUtil.baseColor {
                 let preString = NSMutableAttributedString(string: "⬤  ", attributes: [NSAttributedString.Key.font: titleFont, NSAttributedString.Key.foregroundColor: color])
                 iconString = preString
-                let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
+                let tapString = NSMutableAttributedString(string: "\(link.subreddit.getSubredditFormatted())", attributes: attrs)
                 if SettingValues.tapProfilesAndSubs || full {
                     tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                 }
                 
                 iconString.append(tapString)
             } else {
-                let tapString = NSMutableAttributedString(string: "r/\(link.subreddit)", attributes: attrs)
+                let tapString = NSMutableAttributedString(string: "\(link.subreddit.getSubredditFormatted())", attributes: attrs)
                 if SettingValues.tapProfilesAndSubs || full {
                     tapString.addAttributes([.urlAction: URL(string: "https://www.reddit.com/r/\(link.subreddit)")!], range: NSRange(location: 0, length: tapString.length))
                 }

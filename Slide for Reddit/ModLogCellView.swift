@@ -91,7 +91,7 @@ class ModlogCellView: UICollectionViewCell {
             color = UIColor.fontColor
         }
 
-        let subString = NSMutableAttributedString(string: "r/\(item.subreddit)", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false), NSAttributedString.Key.foregroundColor: color])
+        let subString = NSMutableAttributedString(string: "\(item.subreddit.getSubredditFormatted())", attributes: [NSAttributedString.Key.font: FontGenerator.fontOfSize(size: 16, submission: false), NSAttributedString.Key.foregroundColor: color])
         
         let infoString = NSMutableAttributedString()
         infoString.append(endString)

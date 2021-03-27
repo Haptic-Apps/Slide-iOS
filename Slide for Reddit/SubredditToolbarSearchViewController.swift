@@ -693,7 +693,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     func setupHeader(_ subreddit: String) {
-        let titleString = NSMutableAttributedString(string: "r/\(subreddit)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
+        let titleString = NSMutableAttributedString(string: "\(subreddit.getSubredditFormatted())", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
         
         subTitleView.attributedText = titleString
         subTitleView.numberOfLines = 0
@@ -722,7 +722,7 @@ class SubredditToolbarSearchViewController: UIViewController, UIGestureRecognize
     }
     
     func setDescriptionLabel(_ subreddit: Subreddit) {
-        let titleString = NSMutableAttributedString(string: "r/\(subreddit.displayName)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
+        let titleString = NSMutableAttributedString(string: "\(subreddit.displayName.getSubredditFormatted())", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 18)])
         titleString.appendString("\n")
         titleString.append(NSMutableAttributedString(string: "\(subreddit.accountsActive) HERE • \(subreddit.subscribers) SUBSCRIBERS", attributes: [NSAttributedString.Key.foregroundColor: UIColor.fontColor, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 12)]))
         

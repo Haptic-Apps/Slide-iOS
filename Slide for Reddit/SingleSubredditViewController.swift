@@ -1135,7 +1135,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     }
                                     if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
                                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                            let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
+                                            let alert = UIAlertController.init(title: "\(self.sub.getSubredditFormatted()) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                                 self.navigationController?.popViewController(animated: true)
                                                 self.dismiss(animated: true, completion: nil)
@@ -1222,7 +1222,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             subb.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "addcircle")?.navIcon(), for: UIControl.State.normal)
         } else {
-            let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
             if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
@@ -1233,7 +1233,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 alrController.addAction(somethingAction)
             }
 
-            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Follow without Subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "r/\(self.sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
@@ -1404,7 +1404,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         alert.setupTheme()
         
         alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
-        alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+        alert.attributedMessage = NSAttributedString(string: "\(sub.getSubredditFormatted())", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         alert.contentView.addSubview(filterView)
         settings.didMove(toParent: alert)
@@ -2834,7 +2834,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
-        let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+        let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
             let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(sub, true, session: self.session!)
@@ -2844,10 +2844,10 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             alrController.addAction(somethingAction)
         }
         
-        let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Follow without Subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
             Subscriptions.subscribe(sub, false, session: self.session!)
             self.subChanged = true
-            BannerUtil.makeBanner(text: "r/\(sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+            BannerUtil.makeBanner(text: "\(sub.getSubredditFormatted()) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
         })
         alrController.addAction(somethingAction)
         
@@ -2996,7 +2996,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         }
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { _ -> Void in
+        cancelActionButton = UIAlertAction(title: "Posts from \(link.subreddit.getSubredditFormatted())", style: .default) { _ -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
             self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject }

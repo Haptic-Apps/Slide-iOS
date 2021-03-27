@@ -34,7 +34,7 @@ class ModerationViewController: TabsContentPagingViewController {
     }
     
     override func appearOthers() {
-        self.title = "r/\(subreddit)"
+        self.title = "\(subreddit.getSubredditFormatted())"
     }
 
     @objc func new(_ sender: AnyObject) {

@@ -83,21 +83,21 @@ class SubSidebarViewController: MediaViewController, UIGestureRecognizerDelegate
     @objc func doSub(_ changed: UISwitch) {
         if !changed.isOn {
             Subscriptions.unsubscribe(subreddit!.displayName, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-            BannerUtil.makeBanner(text: "Unsubscribed from r/\(subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: self, top: true)
+            BannerUtil.makeBanner(text: "Unsubscribed from \(subreddit!.displayName.getSubredditFormatted())", color: ColorUtil.accentColorForSub(sub: subreddit!.displayName), seconds: 3, context: self, top: true)
             
         } else {
-            let alrController = DragDownAlertMenu(title: "Follow \(subreddit!.displayName)", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: subreddit!.displayName), full: true)
+            let alrController = DragDownAlertMenu(title: "Subscribe to \(subreddit!.displayNamegetSubredditFormatted())", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: subreddit!.displayName), full: true)
             
             if AccountController.isLoggedIn {
                 alrController.addAction(title: "Subscribe", icon: nil) {
                     Subscriptions.subscribe(self.subreddit!.displayName, true, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                    BannerUtil.makeBanner(text: "Subscribed to r/\(self.subreddit!.displayName)", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
+                    BannerUtil.makeBanner(text: "Subscribed to \(self.subreddit!.displayName.getSubredditFormatted())", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
                 }
             }
             
-            alrController.addAction(title: "Casually subscribe", icon: nil) {
+            alrController.addAction(title: "Follow without Subscribing", icon: nil) {
                 Subscriptions.subscribe(self.subreddit!.displayName, false, session: (UIApplication.shared.delegate as! AppDelegate).session!)
-                BannerUtil.makeBanner(text: "r/\(self.subreddit!.displayName) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
+                BannerUtil.makeBanner(text: "\(self.subreddit!.displayName.getSubredditFormatted()) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.subreddit!.displayName), seconds: 3, context: self, top: true)
             }
             
             alrController.show(self)

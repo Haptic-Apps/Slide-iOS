@@ -21,7 +21,7 @@ extension SingleSubredditViewController {
         let attributes = CSSearchableItemAttributeSet(itemContentType: kUTTypeItem as String)
         activity.title = subreddit
         activity.userInfo = ["TYPE": "SUBREDDIT"]
-        attributes.contentDescription = "Open r/\(subreddit) in Slide"
+        attributes.contentDescription = "Open \(subreddit.getSubredditFormatted()) in Slide"
         activity.contentAttributeSet = attributes
 
         return activity

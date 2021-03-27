@@ -834,12 +834,12 @@ class SettingValues {
                 if link == nil {
                     return "Subreddit"
                 }
-                return "r/\(link!.subreddit)"
+                return "\(link!.subreddit.getSubredditFormatted())"
             case .SUBSCRIBE:
                 if link == nil {
                     return "Subscribe"
                 }
-                return "Subscribe to r/\(link!.subreddit)"
+                return "Subscribe to \(link!.subreddit.getSubredditFormatted())"
             case .REPORT:
                 return "Report content"
             case .BLOCK:

@@ -35,20 +35,20 @@ class ContentListingViewController: MediaViewController, UICollectionViewDelegat
     
     func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
-        let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+        let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
             let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(sub, true, session: self.session!)
                 self.subChanged = true
-                BannerUtil.makeBanner(text: "Subscribed\nr/\(sub)", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+                BannerUtil.makeBanner(text: "Subscribed\n\(sub.getSubredditFormatted())", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             })
             alrController.addAction(somethingAction)
         }
         
-        let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Follow without subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
             Subscriptions.subscribe(sub, false, session: self.session!)
             self.subChanged = true
-            BannerUtil.makeBanner(text: "Added\nr/\(sub) ", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+            BannerUtil.makeBanner(text: "Casually subscribed\n\(sub.getSubredditFormatted()) ", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
         })
         alrController.addAction(somethingAction)
         

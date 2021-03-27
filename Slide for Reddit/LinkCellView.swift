@@ -2018,7 +2018,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             
             let attrs = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: colorF] as [NSAttributedString.Key: Any]
             
-            let boldString = NSMutableAttributedString(string: "r/\(submission.crosspostSubreddit ?? "")", attributes: attrs)
+            let boldString = NSMutableAttributedString(string: "\((submission.crosspostSubreddit ?? "").getSubredditFormatted())", attributes: attrs)
             let color = ColorUtil.getColorForSub(sub: submission.crosspostSubreddit ?? "")
             if color != ColorUtil.baseColor {
                 boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
@@ -2469,7 +2469,7 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
                 case .success(let flairs):
                     list.append(contentsOf: flairs)
                     DispatchQueue.main.async {
-                        let sheet = DragDownAlertMenu(title: "r/\(self.link!.subreddit) flairs", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.link!.subreddit), full: true)
+                        let sheet = DragDownAlertMenu(title: "\((self.link?.subreddit ?? "").getSubredditFormatted()) flairs", subtitle: "", icon: nil, themeColor: ColorUtil.accentColorForSub(sub: self.link!.subreddit), full: true)
 
                         for flair in flairs {
                             sheet.addAction(title: (flair.text.isEmpty) ? flair.name : flair.text, icon: nil, action: {

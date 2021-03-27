@@ -34,20 +34,20 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
     
     func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
-        let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+        let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
             let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(sub, true, session: self.session!)
                 self.subChanged = true
-                BannerUtil.makeBanner(text: "Subscribed to r/\(sub)", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+                BannerUtil.makeBanner(text: "Subscribed to \(sub.getSubredditFormatted())", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             })
             alrController.addAction(somethingAction)
         }
         
-        let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Follow without Subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
             Subscriptions.subscribe(sub, false, session: self.session!)
             self.subChanged = true
-            BannerUtil.makeBanner(text: "r/\(sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+            BannerUtil.makeBanner(text: "\(sub.getSubredditFormatted()) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
         })
         alrController.addAction(somethingAction)
         
@@ -1781,7 +1781,7 @@ class CommentViewController: MediaViewController, UITableViewDelegate, UITableVi
                 VCPresenter.showVC(viewController: related, popupIfPossible: false, parentNavigationController: self.navigationController, parentViewController: self)
             }
             
-            alertController.addAction(title: "View r/\(link.subreddit)'s sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
+            alertController.addAction(title: "View \(link.subreddit.getSubredditFormatted())'s sidebar", icon: UIImage(sfString: SFSymbol.infoCircle, overrideString: "info")!.menuIcon()) {
                 Sidebar.init(parent: self, subname: self.submission!.subreddit).displaySidebar()
             }
             
