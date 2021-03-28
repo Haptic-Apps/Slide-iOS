@@ -255,6 +255,8 @@ class NavigationHomeViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        accountHeader?.initCurrentAccount(self)
+        
         if SettingValues.autoKeyboard {
             // TODO enable this? searchBar.becomeFirstResponder()
         }

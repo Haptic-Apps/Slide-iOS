@@ -1281,11 +1281,13 @@ class LinkCellView: UICollectionViewCell, UIViewControllerPreviewingDelegate, UI
             videoView?.isHidden = false
             topVideoView?.isHidden = false
             sound.isHidden = true
+
             self.updateProgress(-1, "", buffering: false)
             self.innerView.bringSubviewToFront(topVideoView!)
             self.progressDot.isHidden = true
             self.timeView.isHidden = true
             if wasPlayingAudio {
+                sound.setImage(UIImage(sfString: SFSymbol.speakerSlashFill, overrideString: "mute")?.getCopy(withSize: CGSize.square(size: 20), withColor: GMColor.red400Color()), for: .normal)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     if (self.videoView?.player?.currentItem?.tracks.count ?? 1) > 1 && !VideoMediaViewController.soundLocked {
                          do {

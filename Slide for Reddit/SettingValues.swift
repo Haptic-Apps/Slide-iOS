@@ -151,6 +151,7 @@ class SettingValues {
     public static let pref_showFlairs = "SHOW_FLAIRS"
     public static let pref_desktopMode = "DESKTOP_MODE"
     public static let pref_tapProfilesAndSubs = "TAP_PROFILES_AND_SUBS"
+    public static let pref_tapExitMedia = "TAP_EXIT_MEDIA"
 
     public static let BROWSER_INTERNAL = "internal"
     public static let BROWSER_SAFARI_INTERNAL_READABILITY = "readability"
@@ -650,6 +651,7 @@ class SettingValues {
         SettingValues.hideAwards = settings.bool(forKey: SettingValues.pref_hideAwards)
         SettingValues.hideAwardsComments = settings.object(forKey: SettingValues.pref_hideAwardsComments) == nil ? true : settings.bool(forKey: SettingValues.pref_hideAwardsComments)
         SettingValues.showProfileImagesComments = settings.bool(forKey: SettingValues.pref_showProfileImagesComments)
+        SettingValues.tapExitMedia = settings.bool(forKey: SettingValues.pref_tapExitMedia)
 
         SettingValues.dataSavingEnabled = settings.bool(forKey: SettingValues.pref_dataSavingEnabled)
         SettingValues.dataSavingDisableWiFi = settings.bool(forKey: SettingValues.pref_dataSavingDisableWifi)

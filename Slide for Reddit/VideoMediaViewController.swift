@@ -464,6 +464,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     @objc func handleHideUI(hideTitle: Bool) {
         if !self.scrubber.isHidden || hideTitle {
+            if SettingValues.tapExitMedia {
+                if let parent = parent as? ModalMediaViewController {
+                    parent.exit()
+                    return
+                }
+            }
+
             if let parent = parent as? ModalMediaViewController {
                 parent.fullscreen(self, hideTitle)
             }
