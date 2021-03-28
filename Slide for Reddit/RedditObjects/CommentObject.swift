@@ -46,6 +46,7 @@ class CommentObject: RedditObject {
     public var scoreHidden: Bool = false
     public var submissionTitle: String = ""
     public var subreddit: String = ""
+    public var authorProfileImage: String?
     public var voteDirection: Bool = false
     
     static func thingToCommentOrMore(thing: Thing, depth: Int) -> RedditObject? {
@@ -97,6 +98,7 @@ class CommentObject: RedditObject {
         self.parentID = model.parentID
         self.permalink = model.permalink
         self.removalNote = model.removalNote
+        self.authorProfileImage = model.authorProfileImage
         
         self.removalReason = model.removalReason
         self.removedBy = model.removedBy
@@ -120,6 +122,7 @@ class CommentObject: RedditObject {
         self.isSaved = comment.saved
         self.markdownBody = comment.body
         self.removalReason = comment.baseJson["ban_note"] as? String ?? ""
+        self.authorProfileImage = comment.baseJson["profile_img"] as? String
         self.removalNote = comment.baseJson["mod_note"] as? String ?? ""
         self.removedBy = comment.baseJson["banned_by"] as? String ?? ""
         self.isRemoved = !(self.removedBy ?? "").isEmpty()
@@ -257,6 +260,7 @@ extension CommentObject: Cacheable {
 
             commentModel.approvedBy = self.approvedBy
             commentModel.author = self.author
+            commentModel.authorProfileImage = self.authorProfileImage
             commentModel.awardsJSON = self.awardsJSON
             commentModel.controversality = Int64(self.controversality)
             commentModel.created = self.created

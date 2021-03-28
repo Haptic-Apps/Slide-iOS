@@ -1,5 +1,4 @@
 PODS:
-  - Alamofire (4.9.1)
   - DTCoreText (1.6.26):
     - DTCoreText/Core (= 1.6.26)
     - DTFoundation/Core (~> 1.7.5)
@@ -19,24 +18,24 @@ PODS:
     - DTFoundation/Core
   - HTMLSpecialCharacters (1.3.6)
   - LicensesViewController (0.7.0)
-  - MaterialComponents/ActivityIndicator (119.5.0):
+  - MaterialComponents/ActivityIndicator (124.1.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Application
     - MDFInternationalization
-    - MotionAnimator (~> 2.0)
-  - MaterialComponents/Palettes (119.5.0)
-  - MaterialComponents/private/Application (119.5.0)
-  - MaterialComponents/private/Math (119.5.0)
-  - MaterialComponents/ProgressView (119.5.0):
+    - MotionAnimator (~> 4.0)
+  - MaterialComponents/Palettes (124.1.1)
+  - MaterialComponents/private/Application (124.1.1)
+  - MaterialComponents/private/Math (124.1.1)
+  - MaterialComponents/ProgressView (124.1.1):
     - MaterialComponents/Palettes
     - MaterialComponents/private/Math
     - MDFInternationalization
   - MDFInternationalization (2.0.0)
   - MiniKeychain (1.0.8)
   - MKColorPicker (1.2)
-  - MotionAnimator (2.8.1):
-    - MotionInterchange (~> 1.6)
-  - MotionInterchange (1.6.0)
+  - MotionAnimator (4.0.1):
+    - MotionInterchange (~> 3.0)
+  - MotionInterchange (3.0.0)
   - MTColorDistance (0.0.3)
   - OpalImagePicker (3.0.0)
   - QuickLayout (3.0.0)
@@ -49,13 +48,12 @@ PODS:
   - SwiftEntryKit (1.2.1):
     - QuickLayout (= 3.0.0)
   - SwiftLinkPreview (3.0.1)
-  - SwiftLint (0.42.0)
+  - SwiftLint (0.43.1)
   - SwiftyJSON (5.0.0)
   - TGPControls (5.1.0)
   - YoutubePlayer-in-WKWebView (0.3.5)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.3)
   - DTCoreText (from `https://github.com/Cocoanetics/DTCoreText`)
   - LicensesViewController (~> 0.7.0)
   - MaterialComponents/ActivityIndicator
@@ -76,7 +74,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Alamofire
     - DTFoundation
     - HTMLSpecialCharacters
     - LicensesViewController
@@ -113,13 +110,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   DTCoreText:
-    :commit: 24823e50ec7496b80bd9dd346459136511cfa9d5
+    :commit: c4cb9c9aa8bf245bcbf270335f02ac440a3f72a3
     :git: https://github.com/Cocoanetics/DTCoreText
   MKColorPicker:
     :commit: e76cd225ff60f12f8ec0052e39e5e307a32c0762
     :git: https://github.com/ccrama/MKColorPicker
   reddift:
-    :commit: 79d54d0d00a3b888f766d413ef4a191c4e4c99f7
+    :commit: bb77a789b94731d0291f1a673f343cbcab13e02c
     :git: https://github.com/ccrama/reddift
   RLBAlertsPickers:
     :commit: a22003f93a803c2e14b193f636669c21358fb1d7
@@ -135,17 +132,16 @@ CHECKOUT OPTIONS:
     :git: https://github.com/ccrama/SwiftyJSON.git
 
 SPEC CHECKSUMS:
-  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   DTCoreText: ec749e013f2e1f76de5e7c7634642e600a7467ce
   DTFoundation: e7781d9fd2f202bfd451fbbf8cab71ce83b46498
   HTMLSpecialCharacters: edc707cc4bcdc92eb3b9551de8cff94c1e6f9a19
   LicensesViewController: 2f7bba13b3cec7516d4990e41df297720fdbaaab
-  MaterialComponents: 2cdc12c16528ed7e6f1d5bd6d6927c47f9f4e90f
+  MaterialComponents: b9f58f24bf74588a83b2dce05802a11aaed5257d
   MDFInternationalization: 010097556d6b09d2c4ea38e0820ea6d37be6a314
   MiniKeychain: 5d424fcd50fb8ab4cc946db2c3415dc391ffffdc
   MKColorPicker: 8998b2ab977e4f240fdf254db27a18b810da3cfc
-  MotionAnimator: ee16aa30567c5bae0fb2750c132915829cfaaf8a
-  MotionInterchange: ead0e3ae1f3a5fb539e289debbc7ae036160a10d
+  MotionAnimator: 5f99d7c9592928c0f28a66283eda9c3b657dc480
+  MotionInterchange: 13adae439b377e31d1674cc165539d50e1d1566a
   MTColorDistance: 5ab8708eb88bc22d4d88e309d09eb912f3a6e27b
   OpalImagePicker: 38e772dd93a54431fc516b33e1f337c50f745834
   QuickLayout: 07b45a72b10083fee3f095990cfed1c1e7b27f0a
@@ -155,11 +151,11 @@ SPEC CHECKSUMS:
   SubtleVolume: 101038d203018736bcd1df3ac95bcc0f6b8640ce
   SwiftEntryKit: 1661b766dd22b07679e6ebb326ccfbd81ceb0a20
   SwiftLinkPreview: 7524438c43bf63a5041615713777c3d8f19a9a31
-  SwiftLint: 4fa9579c63416865179bc416f0a92d55f009600d
+  SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   SwiftyJSON: f0574c07d8ca1644050db687067209e3033a89a0
   TGPControls: 52c0770bee9c9aee364f1559cc627fc01ea5e8b2
   YoutubePlayer-in-WKWebView: cfbf46da51d7370662a695a8f351e5fa1d3e1008
 
-PODFILE CHECKSUM: 921cd225b4120efa1cb2e0c32101c3932f6ceb0c
+PODFILE CHECKSUM: 11d5327e7fce051cd3b3ec699136a01fb7ad5b71
 
 COCOAPODS: 1.10.0

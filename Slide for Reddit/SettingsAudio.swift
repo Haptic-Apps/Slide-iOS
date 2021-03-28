@@ -61,10 +61,10 @@ class SettingsAudio: BubbleSettingTableViewController {
 
         muteModalVideoSwitch = UISwitch().then {
             $0.onTintColor = ColorUtil.baseAccent
-            $0.isOn = SettingValues.muteVideosInModal
+            $0.isOn = !SettingValues.muteVideosInModal
         }
         muteModalVideoSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        muteModalVideoCell.textLabel?.text = "Always start videos muted"
+        muteModalVideoCell.textLabel?.text = "Play video sound when opening full-screen"
         muteModalVideoCell.accessoryView = muteModalVideoSwitch
         muteModalVideoCell.textLabel?.numberOfLines = 0
         muteModalVideoCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -74,7 +74,7 @@ class SettingsAudio: BubbleSettingTableViewController {
             $0.isOn = SettingValues.modalVideosRespectHardwareMuteSwitch
         }
         modalVideoFollowsMuteSwitchSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        modalVideoFollowsMuteSwitchCell.textLabel?.text = "Start videos muted if your device is muted"
+        modalVideoFollowsMuteSwitchCell.textLabel?.text = "Respect device mute switch"
         modalVideoFollowsMuteSwitchCell.accessoryView = modalVideoFollowsMuteSwitchSwitch
         modalVideoFollowsMuteSwitchCell.textLabel?.numberOfLines = 0
         modalVideoFollowsMuteSwitchCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -84,7 +84,7 @@ class SettingsAudio: BubbleSettingTableViewController {
             $0.isOn = SettingValues.muteYouTube
         }
         muteYTSwitch.addTarget(self, action: #selector(SettingsAudio.switchIsChanged(_:)), for: UIControl.Event.valueChanged)
-        muteYTCell.textLabel?.text = "Always start YouTube videos muted"
+        muteYTCell.textLabel?.text = "Mute YouTube videos"
         muteYTCell.accessoryView = muteYTSwitch
         muteYTCell.textLabel?.numberOfLines = 0
         muteYTCell.selectionStyle = UITableViewCell.SelectionStyle.none
@@ -116,7 +116,7 @@ class SettingsAudio: BubbleSettingTableViewController {
 
     func refresh() {
         muteInlineVideoSwitch.isOn = SettingValues.muteInlineVideos
-        muteModalVideoSwitch.isOn = SettingValues.muteVideosInModal
+        muteModalVideoSwitch.isOn = !SettingValues.muteVideosInModal
         modalVideoFollowsMuteSwitchSwitch.isOn = SettingValues.modalVideosRespectHardwareMuteSwitch
 
         self.tableView.reloadData()
@@ -148,7 +148,7 @@ private extension SettingsAudio {
         case muteInlineVideoSwitch:
             SettingValues.muteInlineVideos = changed.isOn
         case muteModalVideoSwitch:
-            SettingValues.muteVideosInModal = changed.isOn
+            SettingValues.muteVideosInModal = !changed.isOn
         case modalVideoFollowsMuteSwitchSwitch:
             SettingValues.modalVideosRespectHardwareMuteSwitch = changed.isOn
         case muteYTSwitch:

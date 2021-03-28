@@ -97,6 +97,9 @@ class TitleUITextView: UITextView {
                         delegate?.previewProfile(profile: profile)
                         return
                     } else if let url = highlight.userInfo["url"] as? URL {
+                        if url.absoluteString.contains("ccrama.me") {
+                            return
+                        }
                         delegate?.linkLongTapped(url: url)
                         return
                     }

@@ -57,18 +57,23 @@ class PostFilter {
     
     public static func containedIn(_ array: [NSString], value: String) -> Bool {
         for text in array {
-            if value.localizedCaseInsensitiveContains(String(text)) {
+            if regexMatch(text as String, against: value) {
                 return true
             }
         }
         return false
     }
+    
+    public static func regexMatch(_ regex: String, against: String) -> Bool {
+        let pattern = try? NSRegularExpression(pattern: regex, options: .caseInsensitive)
+        return ((pattern?.firstMatch(in: against, options: [], range: NSRange(location: 0, length: against.length))) != nil)
+    }
 
     public static func matches(_ link: SubmissionObject, baseSubreddit: String, gallery: Bool) -> Bool {
-        let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) })) ||
-            PostFilter.profiles.contains(where: { $0.caseInsensitiveCompare(link.author) == .orderedSame }) ||
-            PostFilter.subreddits.contains(where: { $0.caseInsensitiveCompare(link.subreddit) == .orderedSame }) ||
+        let mainMatch = (PostFilter.domains.contains(where: { $0.containedIn(base: link.domain) || regexMatch($0 as String, against: link.domain) })) ||
             contains(PostFilter.flairs, value: link.flair) ||
+            containedIn(PostFilter.subreddits, value: link.subreddit) ||
+            containedIn(PostFilter.profiles, value: link.author) ||
             containedIn(PostFilter.selftext, value: link.htmlBody ?? "") ||
             containedIn(PostFilter.titles, value: link.title) ||
             (link.isNSFW && !SettingValues.nsfwEnabled) || (link.isNSFW && gallery && !(SettingValues.nsfwPreviews || SettingValues.hideNSFWCollection && Subscriptions.isCollection(baseSubreddit))) || link.hidden || History.getSeen(s: link) && SettingValues.hideSeen

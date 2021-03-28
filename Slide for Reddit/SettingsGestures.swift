@@ -14,6 +14,11 @@ class SettingsGestures: BubbleSettingTableViewController {
     var disableBanner = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var tapExitMediaCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "tapmedia")
+    var tapExitMedia = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var forceTouchSubmissionCell: UITableViewCell = InsetCell.init(style: UITableViewCell.CellStyle.subtitle, reuseIdentifier: "3dsubmission")
 
@@ -42,7 +47,11 @@ class SettingsGestures: BubbleSettingTableViewController {
         if changed == disableBanner {
             SettingValues.disableBanner = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_disableBanner)
-            SubredditReorderViewController.changed = true
+
+            NotificationCenter.default.post(name: .subNeedsReload, object: nil)
+        } else if changed == tapExitMedia {
+            SettingValues.tapExitMedia = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_tapExitMedia)
         }
 
         UserDefaults.standard.synchronize()
@@ -61,8 +70,8 @@ class SettingsGestures: BubbleSettingTableViewController {
                 UserDefaults.standard.synchronize()
                 self.commentGesturesCell.detailTextLabel?.text = SettingValues.commentGesturesMode.description()
                 self.updateCells()
-                SplitMainViewController.needsReTheme = true
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             }
         }
         alertController.show(self)
@@ -80,8 +89,8 @@ class SettingsGestures: BubbleSettingTableViewController {
                 UserDefaults.standard.synchronize()
                 self.submissionGesturesCell.detailTextLabel?.text = SettingValues.submissionGestureMode.description()
                 self.updateCells()
-                SplitMainViewController.needsReTheme = true
-                MainViewController.needsReTheme = true
+
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
             }
         }
         alertController.show(self)
@@ -168,7 +177,7 @@ class SettingsGestures: BubbleSettingTableViewController {
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionForceTouch)
                 }
                 
-                SubredditReorderViewController.changed = true
+                NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                 UserDefaults.standard.synchronize()
                 self.updateCells()
             }
@@ -196,7 +205,7 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Gestures"
-        self.headers = ["Submissions", "Comments", "Main view edge shortcut"]
+        self.headers = ["Submissions", "Comments", "Media"]
         createCell(submissionGesturesCell, nil, isOn: false, text: "Submission gestures mode")
         self.submissionGesturesCell.detailTextLabel?.textColor = UIColor.fontColor
         self.submissionGesturesCell.detailTextLabel?.lineBreakMode = .byWordWrapping
@@ -211,6 +220,13 @@ class SettingsGestures: BubbleSettingTableViewController {
         self.disableBannerCell.detailTextLabel?.numberOfLines = 0
         self.disableBannerCell.detailTextLabel?.text = "Enabling this will open comments when clicking on the submission banner image"
         self.disableBannerCell.contentView.backgroundColor = UIColor.foregroundColor
+        
+        createCell(tapExitMediaCell, tapExitMedia, isOn: SettingValues.tapExitMedia, text: "Close media views by clicking or tapping")
+        self.tapExitMediaCell.detailTextLabel?.textColor = UIColor.fontColor
+        self.tapExitMediaCell.detailTextLabel?.lineBreakMode = .byWordWrapping
+        self.tapExitMediaCell.detailTextLabel?.numberOfLines = 0
+        self.tapExitMediaCell.detailTextLabel?.text = "Disables tap for 'fullscreen' mode, allows for exiting media while using a mouse"
+        self.tapExitMediaCell.contentView.backgroundColor = UIColor.foregroundColor
 
         createCell(commentGesturesCell, nil, isOn: false, text: "Comment gestures mode")
         self.commentGesturesCell.detailTextLabel?.textColor = UIColor.fontColor
@@ -362,7 +378,7 @@ class SettingsGestures: BubbleSettingTableViewController {
             default: fatalError("Unknown row in section 0")
             }
         case 2:
-            return self.sideShortcutActionCell
+            return self.tapExitMediaCell
         default: fatalError("Unknown section")
         }
         
@@ -408,7 +424,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionLeftRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftRight)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+                    
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -418,7 +435,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionLeftLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionLeftLeft)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -428,7 +446,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionRightLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightLeft)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -437,7 +456,8 @@ public class GesturePreviewCell: InsetCell {
                     SettingValues.commentActionRightRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_commentActionRightRight)
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -446,9 +466,9 @@ public class GesturePreviewCell: InsetCell {
                 self.showActionSub { (action) in
                     SettingValues.submissionActionLeft = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionLeft)
-                    SubredditReorderViewController.changed = true
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))
@@ -457,9 +477,9 @@ public class GesturePreviewCell: InsetCell {
                 self.showActionSub { (action) in
                     SettingValues.submissionActionRight = action
                     UserDefaults.standard.set(action.rawValue, forKey: SettingValues.pref_submissionActionRight)
-                    SubredditReorderViewController.changed = true
                     UserDefaults.standard.synchronize()
-                    MainViewController.needsReTheme = true
+
+                    NotificationCenter.default.post(name: .subNeedsReload, object: nil)
                     self.parentController?.updateCells()
                 }
             }))

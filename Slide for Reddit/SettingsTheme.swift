@@ -82,7 +82,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         } else {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 200)
+            let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: UIScreen.main.bounds.size.width - margin * 4.0, height: 200)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColor()
@@ -118,7 +118,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
 
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.respectIpadLayout() {
                 alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
             }
 
@@ -157,6 +157,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
         super.viewDidLoad()
         redoThemes()
         self.tableView.register(ThemeCellView.classForCoder(), forCellReuseIdentifier: "theme")
+        NotificationCenter.default.addObserver(self, selector: #selector(onSettingsThemeNeedsRestart), name: .settingsThemeNeedsRestart, object: nil)
     }
 
     func pickAccent() {
@@ -172,7 +173,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 200)
+            let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 200)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColorAccent()
@@ -215,7 +216,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             alertController.addAction(somethingAction)
             alertController.addAction(cancelAction)
             alertController.modalPresentationStyle = .popover
-            if UIDevice.current.userInterfaceIdiom == .pad {
+            if UIDevice.current.respectIpadLayout() {
                 alertController.preferredContentSize = CGSize(width: MKColorPicker.bounds.size.width + (margin * 2), height: MKColorPicker.bounds.size.height + 100)
             }
             if let presenter = alertController.popoverPresentationController {
@@ -242,17 +243,20 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
     }
 
     var doneOnce = false
-    static var needsRestart = false
+    
+    @objc func onSettingsThemeNeedsRestart() {
+        self.setupViews()
+        self.redoThemes()
+        self.tochange!.doCells()
+        self.tochange!.tableView.reloadData()
+        self.tableView.reloadData()
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupBaseBarColors()
-        if doneOnce || SettingsTheme.needsRestart {
-            SettingsTheme.needsRestart = false
-            self.setupViews()
-            self.redoThemes()
-            self.tochange!.doCells()
-            self.tochange!.tableView.reloadData()
-            self.tableView.reloadData()
+        if doneOnce {
+            onSettingsThemeNeedsRestart()
         } else {
             doneOnce = true
         }
@@ -380,15 +384,10 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
     var themeText: String?
 
     @objc func switchIsChanged(_ changed: UISwitch) {
-        if changed == reduceColor {
-            MainViewController.needsReTheme = true
-            SettingValues.reduceColor = changed.isOn
-            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
-        } else if changed == tintOutsideSwitch {
+        if changed == tintOutsideSwitch {
             SettingValues.onlyTintOutside = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_onlyTintOutside)
         } else if changed == reduceColor {
-            MainViewController.needsReTheme = true
             SettingValues.reduceColor = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_reduceColor)
             setupBaseBarColors()
@@ -401,12 +400,14 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             let barButton = UIBarButtonItem.init(customView: button)
             
             navigationItem.leftBarButtonItem = barButton
+            
+            NotificationCenter.default.post(name: .reduceColorChanged, object: nil)
         } else if changed == nightEnabled {
             SettingValues.nightModeEnabled = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_nightMode)
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
         }
@@ -510,8 +511,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             UserDefaults.standard.set(theme.title, forKey: SettingValues.pref_nightTheme)
             UserDefaults.standard.synchronize()
             _ = ColorUtil.doInit()
-            SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+
             self.setupViews()
             self.tableView.reloadData()
             self.tochange!.doCells()
@@ -552,21 +552,23 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
                 let cv = themeView.contentView
 
                 let alert = DragDownAlertMenu(title: theme.title, subtitle: "", icon: nil, extraView: cv, themeColor: nil, full: false)
-                alert.addAction(title: "Apply Theme", icon: UIImage(sfString: .checkmark, overrideString: "add")?.navIcon()) {
-                    UserDefaults.standard.set(theme.title, forKey: "theme")
-                    UserDefaults.standard.synchronize()
-                    
-                    _ = ColorUtil.doInit()
-                    SingleSubredditViewController.cellVersion += 1
-                    self.tableView.reloadData()
-                    MainViewController.needsReTheme = true
-                    self.setupViews()
-                    self.tochange!.doCells()
-                    self.tochange!.tableView.reloadData()
-                    self.tableView.reloadData()
-                    self.setupBaseBarColors()
-                }
+                if ColorUtil.getCurrentTheme() != theme {
+                    alert.addAction(title: "Apply Theme", icon: UIImage(sfString: .checkmark, overrideString: "add")?.navIcon()) {
+                        UserDefaults.standard.set(theme.title, forKey: "theme")
+                        UserDefaults.standard.synchronize()
+                        
+                        _ = ColorUtil.doInit()
+                        SingleSubredditViewController.cellVersion += 1
+                        self.tableView.reloadData()
 
+                        self.setupViews()
+                        self.tochange!.doCells()
+                        self.tochange!.tableView.reloadData()
+                        self.tableView.reloadData()
+                        self.setupBaseBarColors()
+                    }
+                }
+                
                 alert.extraViewHeight = 60
                 
                 alert.addAction(title: "Edit Theme", icon: UIImage(sfString: .pencil, overrideString: "edit")?.navIcon()) {
@@ -614,7 +616,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             _ = ColorUtil.doInit()
             SingleSubredditViewController.cellVersion += 1
             self.tableView.reloadData()
-            MainViewController.needsReTheme = true
+
             self.setupViews()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -641,7 +643,7 @@ class SettingsTheme: BubbleSettingTableViewController, ColorPickerViewDelegate {
             _ = ColorUtil.doInit()
             self.setupViews()
             SingleSubredditViewController.cellVersion += 1
-            MainViewController.needsReTheme = true
+
             self.tableView.reloadData()
             self.tochange!.doCells()
             self.tochange!.tableView.reloadData()
@@ -783,11 +785,10 @@ final public class PickerViewViewControllerColored: UIViewController {
 
 extension SettingsTheme: SettingsCustomThemeDelegate {
     func themeSaved() {
-        SettingsTheme.needsRestart = false
         _ = ColorUtil.doInit()
         SingleSubredditViewController.cellVersion += 1
         self.tableView.reloadData()
-        MainViewController.needsReTheme = true
+        
         self.setupViews()
         self.tochange!.doCells()
         self.tochange!.tableView.reloadData()

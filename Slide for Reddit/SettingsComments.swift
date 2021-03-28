@@ -24,6 +24,16 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     var wideIndicator = UISwitch().then {
         $0.onTintColor = ColorUtil.baseAccent
     }
+    
+    var hideAwardsCell: UITableViewCell = InsetCell()
+    var hideAwards = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
+    
+    var showProfilesCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "profile")
+    var showProfiles = UISwitch().then {
+        $0.onTintColor = ColorUtil.baseAccent
+    }
 
     var floatingJumpCell: UITableViewCell = InsetCell(style: .subtitle, reuseIdentifier: "jump")
 
@@ -64,6 +74,12 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         } else if changed == wideIndicator {
             SettingValues.wideIndicators = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_widerIndicators)
+        } else if changed == hideAwards {
+            SettingValues.hideAwards = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAwardsComments)
+        } else if changed == showProfiles {
+            SettingValues.showProfileImagesComments = changed.isOn
+            UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_showProfileImagesComments)
         } else if changed == hideAutomod {
             SettingValues.hideAutomod = changed.isOn
             UserDefaults.standard.set(changed.isOn, forKey: SettingValues.pref_hideAutomod)
@@ -93,11 +109,11 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 1 && indexPath.row == 0 {
+        if indexPath.section == 2 && indexPath.row == 0 {
             showAuthorChooser()
-        } else if indexPath.section == 1 && indexPath.row == 1 {
+        } else if indexPath.section == 2 && indexPath.row == 1 {
             showDepthChooser()
-        } else if indexPath.section == 0 && indexPath.row == 2 {
+        } else if indexPath.section == 1 && indexPath.row == 2 {
             showJumpChooser()
         }
     }
@@ -226,7 +242,7 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
         
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.delegate = self
         MKColorPicker.colors = GMPalette.allColor()
@@ -279,7 +295,13 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         self.view.backgroundColor = UIColor.backgroundColor
         // set the title
         self.title = "Comments settings"
-        self.headers = ["Comments page", "Comment display", "Comment interaction"]
+        self.headers = ["Profiles and Awards", "Comments page", "Comment display", "Comment interaction"]
+
+        createCell(hideAwardsCell, hideAwards, isOn: SettingValues.hideAwardsComments, text: "Hide Reddit awards")
+        createCell(showProfilesCell, showProfiles, isOn: SettingValues.showProfileImagesComments, text: "Show profile images")
+        showProfilesCell.detailTextLabel?.textColor = UIColor.fontColor
+        showProfilesCell.detailTextLabel?.numberOfLines = 0
+        showProfilesCell.detailTextLabel?.text = "Experimental"
 
         createCell(disableNavigationBarCell, disableNavigationBar, isOn: SettingValues.disableNavigationBar, text: "Disable comment navigation toolbar")
         createCell(fullscreenImageCell, fullscreenImage, isOn: !SettingValues.commentFullScreen, text: "Crop the lead banner image")
@@ -349,25 +371,31 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
         switch indexPath.section {
         case 0:
             switch indexPath.row {
-            case 0: return self.fullscreenImageCell
-            case 1: return self.hideAutomodCell
-            case 2: return self.floatingJumpCell
+            case 0: return self.hideAwardsCell
+            case 1: return self.showProfilesCell
             default: fatalError("Unkown row in section 0")
             }
         case 1:
+            switch indexPath.row {
+            case 0: return self.fullscreenImageCell
+            case 1: return self.hideAutomodCell
+            case 2: return self.floatingJumpCell
+            default: fatalError("Unkown row in section 1")
+            }
+        case 2:
             switch indexPath.row {
             case 0: return self.authorThemeCell
             case 1: return self.themeColorCell
             case 2: return self.wideIndicatorCell
             case 3: return self.highlightOpCell
-            default: fatalError("Unknown row in section 1")
+            default: fatalError("Unknown row in section 2")
             }
-        case 2:
+        case 3:
             switch indexPath.row {
             case 0: return self.collapseDefaultCell
             case 1: return self.collapseFullyCell
             case 2: return self.swapLongPressCell
-            default: fatalError("Unknown row in section 2")
+            default: fatalError("Unknown row in section 3")
             }
         default: fatalError("Unknown section")
         }
@@ -376,9 +404,10 @@ class SettingsComments: BubbleSettingTableViewController, ColorPickerViewDelegat
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return 3
-        case 1: return 4
-        case 2: return 3
+        case 0: return 2
+        case 1: return 3
+        case 2: return 4
+        case 3: return 3
         default: fatalError("Unknown number of sections")
         }
     }

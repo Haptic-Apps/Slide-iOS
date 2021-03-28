@@ -264,7 +264,7 @@ extension SwipeForwardNavigationController {
         let pushedViewController = pushableViewControllers.last
 
         if pushedViewController != nil && visibleViewController != nil && visibleViewController?.isBeingPresented == false && visibleViewController?.isBeingDismissed == false {
-            push(pushedViewController, animated: (UIApplication.shared.isSplitOrSlideOver && !UIApplication.shared.isMac()) ? false : true) {
+            push(pushedViewController, animated: (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMacReal()) ? false : true) {
                 if !self.pushableViewControllers.isEmpty {
                     self.pushableViewControllers.removeLast()
                     callback?()

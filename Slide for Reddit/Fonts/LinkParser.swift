@@ -122,7 +122,9 @@ class LinkParser {
                     }
 
                     if isItalic {
-                        let descriptor = newFont.fontDescriptor.withSymbolicTraits(UIFontDescriptor.SymbolicTraits.traitItalic) ?? newFont.fontDescriptor
+                        var symbolicTraits = newFont.fontDescriptor.symbolicTraits
+                        symbolicTraits.insert(UIFontDescriptor.SymbolicTraits.traitItalic)
+                        let descriptor = newFont.fontDescriptor.withSymbolicTraits(symbolicTraits) ?? newFont.fontDescriptor
                         newFont = UIFont(descriptor: descriptor, size: f.pointSize)
                     }
                     

@@ -77,7 +77,9 @@ class SettingsFont: BubbleSettingTableViewController {
         SettingValues.postFontOffset = size
         UserDefaults.standard.set(size, forKey: SettingValues.pref_postFontSize)
         UserDefaults.standard.synchronize()
-        SubredditReorderViewController.changed = true
+
+        NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
+
         CachedTitle.titleFont = FontGenerator.fontOfSize(size: CachedTitle.baseFontSize, submission: true)
         FontGenerator.initialize()
         refresh()
@@ -500,7 +502,7 @@ extension SettingsFont {
         CachedTitle.titleFont = FontGenerator.fontOfSize(size: 18, submission: true)
         CachedTitle.titleFontSmall = FontGenerator.fontOfSize(size: 14, submission: true)
         SingleSubredditViewController.cellVersion += 1
-        MainViewController.needsReTheme = true
+        NotificationCenter.default.post(name: .cellsNeedReDraw, object: nil)
         if let nav = self.navigationController as? SwipeForwardNavigationController {
             nav.fullWidthBackGestureRecognizer.isEnabled = true
         }

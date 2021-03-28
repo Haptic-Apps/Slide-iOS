@@ -256,7 +256,7 @@ class SubredditTitleCollectionViewCell: UICollectionViewCell {
         
         title.adjustsFontSizeToFitWidth = true
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.text = subreddit
+        title.text = subreddit.getSubredditFormattedShort()
         title.numberOfLines = 1
         title.sizeToFit()
         sideView.backgroundColor = ColorUtil.getColorForSub(sub: subreddit)

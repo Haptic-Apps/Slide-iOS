@@ -11,7 +11,9 @@ import Anchorage
 import AVFoundation
 import SDCAlertView
 import SDWebImage
-import SubtleVolume
+#if os(iOS)
+    import SubtleVolume
+#endif
 import Then
 import UIKit
 
@@ -32,7 +34,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             }, completion: nil)
         }
     }
-    let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
+    
+    var volume: SubtleVolume?
     let volumeHeight: CGFloat = 3
     var setOnce = false
 
@@ -89,6 +92,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     var fastForwardImageView = UIImageView()
     var rewindImageView = UIImageView()
 
+    private var volumeObserver: NSKeyValueObservation!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -106,30 +111,35 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
             strongSelf.handleHideUI(hideTitle: true)
         })
         
-        volume.barTintColor = .white
-        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
-        volume.animation = .slideDown
-        
-        var is13 = false
         if #available(iOS 13, *) {
-            is13 = true
-        }
-        if !((parent?.parent) is ShadowboxLinkViewController) && !is13 {
-            view.addSubview(volume)
-            volume.delegate = self
-            NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            
+        } else {
+            if !((parent?.parent) is ShadowboxLinkViewController) {
+                volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
+                volume!.barTintColor = .white
+                volume!.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+                volume!.animation = .slideDown
+                view.addSubview(volume!)
+                volume!.delegate = self
+                NotificationCenter.default.addObserver(volume!, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            }
         }
     }
     
     override func viewDidLayoutSubviews() {
-        layoutVolume()
+        if #available(iOS 13, *) {
+        } else {
+            layoutVolume()
+        }
     }
     
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        volume.superview?.bringSubviewToFront(volume)
-        volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        if let volume = volume {
+            volume.superview?.bringSubviewToFront(volume)
+            volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        }
     }
 
     func stopDisplayLink() {
@@ -152,6 +162,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        volumeObserver?.invalidate()
         VideoMediaViewController.soundLocked = false
     }
 
@@ -453,6 +464,13 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     
     @objc func handleHideUI(hideTitle: Bool) {
         if !self.scrubber.isHidden || hideTitle {
+            if SettingValues.tapExitMedia {
+                if let parent = parent as? ModalMediaViewController {
+                    parent.exit()
+                    return
+                }
+            }
+
             if let parent = parent as? ModalMediaViewController {
                 parent.fullscreen(self, hideTitle)
             }
@@ -581,11 +599,11 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
     }
     
     func testQuality(urlToLoad: String, quality: String, completion: @escaping(_ success: Bool, _ url: String) -> Void) {
-        Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
+        AF.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"), method: .get).responseString { response in
             if response.response?.statusCode == 200 {
                 completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality)"))
             } else {
-                Alamofire.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
+                AF.request(urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"), method: .get).responseString { response in
                     completion(response.response?.statusCode ?? 0 == 200, urlToLoad.replacingOccurrences(of: "HLSPlaylist.m3u8", with: "DASH_\(quality).mp4"))
                 }
             }
@@ -620,7 +638,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         
         print("Downloading " + toLoad)
         let fileURLPath = self.videoType == .REDDIT ? self.getKeyFromURL().replacingOccurrences(of: ".mp4", with: "video.mp4") : self.getKeyFromURL()
-        request = Alamofire.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+        request = AF.download(toLoad, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.Options) in
             return (URL(fileURLWithPath: fileURLPath), [.createIntermediateDirectories])
         }).downloadProgress() { progress in
         DispatchQueue.main.async {
@@ -658,7 +676,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         let localUrlV = URL.init(fileURLWithPath: videoLocation)
         let localUrlAudio = URL.init(fileURLWithPath: key.replacingOccurrences(of: ".mp4", with: "audio.mp4"))
 
-        Alamofire.request(toLoadAudio).responseString { (response) in
+        AF.request(toLoadAudio).responseString { (response) in
             if response.response?.statusCode == 200 { // Audio exists, let's get it
                 self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
                     if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
@@ -676,7 +694,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
 
                 }
             } else if response.response?.statusCode ?? 0 > 400 { // Might exist elsewhere
-                Alamofire.request("\(toLoadAudioBase)/audio").responseString { (response) in
+                AF.request("\(toLoadAudioBase)/audio").responseString { (response) in
                     if response.response?.statusCode == 200 { // Audio exists, let's get it
                         self.requestWithProgress(url: finalUrl, localUrlAudio: localUrlAudio) { (response) in
                             if (response.error as NSError?)?.code == NSURLErrorCancelled { // Cancelled, exit
@@ -715,8 +733,8 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         }
     }
     
-    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (DownloadResponse<Data>) -> Void) {
-        self.request = Alamofire.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.DownloadOptions) in
+    func requestWithProgress(url: URL, localUrlAudio: URL, callback: @escaping (DownloadResponse<Data, AFError>) -> Void) {
+        self.request = AF.download(url, method: .get, to: { (_, _) -> (destinationURL: URL, options: DownloadRequest.Options) in
             return (localUrlAudio, [.removePreviousFile, .createIntermediateDirectories])
         }).downloadProgress() { progress in
             DispatchQueue.main.async {
@@ -733,7 +751,7 @@ class VideoMediaViewController: EmbeddableMediaViewController, UIGestureRecogniz
         DispatchQueue.global(qos: .background).async {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
-                try AVAudioSession.sharedInstance().setActive(true)
+                try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             } catch let error as NSError {
                 print(error)
             }
@@ -1060,9 +1078,6 @@ extension VideoMediaViewController {
 extension VideoMediaViewController {
     @objc func displayLinkDidUpdate(displaylink: CADisplayLink) {
         if isYoutubeView {
-            if youtubeMute && muteButton.isHidden && SettingValues.muteYouTube {
-                muteButton.isHidden = false
-            }
             if !sliderBeingUsed {
                 youtubeView.getCurrentTime { [weak self] (currentTime: Float, error: Error?) in
                     if error == nil {
@@ -1074,10 +1089,8 @@ extension VideoMediaViewController {
 
         let hasAudioTracks = isYoutubeView || (videoView.player?.currentItem?.tracks.count ?? 1) > 1
         
-        if hasAudioTracks {
-            if (videoView.player?.isMuted ?? youtubeMute) && muteButton.isHidden && (isYoutubeView ? SettingValues.muteYouTube : SettingValues.muteVideosInModal) {
-                muteButton.isHidden = false
-            }
+        if hasAudioTracks && muteButton.isHidden {
+            muteButton.isHidden = false
         }
 
         if !setOnce || lastTracks != hasAudioTracks {
@@ -1104,6 +1117,14 @@ extension VideoMediaViewController {
                     try AVAudioSession.sharedInstance().setCategory(.ambient, options: [.mixWithOthers])
                 } catch {
                     NSLog(error.localizedDescription)
+                }
+            }
+            
+            volumeObserver = AVAudioSession.sharedInstance().observe(\.outputVolume) { [weak self] (_, _) in
+                guard let self = self else { return }
+                
+                if self.videoView.player?.isMuted ?? false || self.youtubeMute {
+                    self.unmute()
                 }
             }
         }
@@ -1146,7 +1167,7 @@ extension VideoMediaViewController: WKYTPlayerViewDelegate {
                     }
                 }
 
-                try AVAudioSession.sharedInstance().setActive(true)
+                try AVAudioSession.sharedInstance().setActive(true, options: .notifyOthersOnDeactivation)
             } catch let error as NSError {
                 print(error)
             }

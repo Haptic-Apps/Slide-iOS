@@ -75,9 +75,29 @@ class NavigationHomeViewController: UIViewController {
         $0.searchBarStyle = UISearchBar.Style.minimal
         $0.placeholder = " Search subs, posts, or profiles"
         $0.isTranslucent = true
-        $0.barStyle = .blackTranslucent
+        $0.barStyle = .black
+        if #available(iOS 13.0, *) {
+            $0.searchTextField.tintColor = UIColor.fontColor
+            $0.searchTextField.textColor = UIColor.fontColor
+        } else {
+            // Fallback on earlier versions
+        }
         $0.accessibilityLabel = "Search"
         $0.accessibilityHint = "Search subreddits, posts, or profiles"
+        
+        if UIDevice.current.isMac() {
+            if #available(iOS 13.0, *) {
+                $0.searchTextField.attributedPlaceholder = NSAttributedString(string: " Search subs, posts, or profiles", attributes: [.foregroundColor: UIColor.fontColor])
+                $0.searchTextField.leftView?.tintColor = UIColor.fontColor
+                $0.searchTextField.rightView?.tintColor = UIColor.fontColor
+                $0.searchTextField.backgroundColor = UIColor.backgroundColor
+                if let clearButton = $0.searchTextField.value(forKey: "_clearButton") as? UIButton {
+                    let templateImage = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+                    clearButton.setImage(templateImage, for: .normal)
+                    clearButton.tintColor = UIColor.fontColor
+                }
+            }
+        }
     }
     
     var accountHeader: CurrentAccountHeaderView?
@@ -112,7 +132,8 @@ class NavigationHomeViewController: UIViewController {
         updateAccessibility()
         searchBar.isUserInteractionEnabled = true
         NotificationCenter.default.addObserver(self, selector: #selector(onThemeChanged), name: .onThemeChanged, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(onSubredditOrderChanged), name: .subredditOrderChanged, object: nil)
+
         /*if let sectionIndex = tableView.sectionIndexView, let nav = (navigationController as? SwipeForwardNavigationController) { //DISABLE for now
             NavigationHomeViewController.edgeGesture = UIScreenEdgePanGestureRecognizer(target: nav, action: #selector(nav.handleRightSwipe(_:)))
             NavigationHomeViewController.edgeGesture!.edges = UIRectEdge.right
@@ -123,8 +144,16 @@ class NavigationHomeViewController: UIViewController {
 
     @objc func onThemeChanged() {
         doViews()
+        
+        self.navigationController?.setToolbarHidden(true, animated: false)
+        self.navigationController?.setToolbarHidden(false, animated: false)
     }
 
+    @objc func onSubredditOrderChanged() {
+        subsSource.reload()
+        self.tableView.reloadData()
+    }
+    
     func doViews() {
         tableView = UITableView(frame: CGRect.zero, style: .grouped)
         tableView.backgroundColor = UIColor.foregroundColor
@@ -226,6 +255,8 @@ class NavigationHomeViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        accountHeader?.initCurrentAccount(self)
+        
         if SettingValues.autoKeyboard {
             // TODO enable this? searchBar.becomeFirstResponder()
         }
@@ -278,7 +309,11 @@ class NavigationHomeViewController: UIViewController {
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "search")
         tableView.register(SubredditCellView.classForCoder(), forCellReuseIdentifier: "profile")
         
-        view.addSubview(tableView)
+        if UIDevice.current.isMac() {
+            view.addSubviews(headerView, tableView)
+        } else {
+            view.addSubview(tableView)
+        }
 
         setColors(MainViewController.current)
     }
@@ -304,7 +339,14 @@ class NavigationHomeViewController: UIViewController {
         searchBar.heightAnchor /==/ 50
         searchBar.bottomAnchor /==/ headerView.bottomAnchor
 
-        tableView.topAnchor /==/ view.safeTopAnchor
+        if UIDevice.current.isMac() {
+            headerView.topAnchor /==/ view.safeTopAnchor
+            headerView.horizontalAnchors /==/ view.horizontalAnchors
+            tableView.topAnchor /==/ headerView.bottomAnchor
+        } else {
+            tableView.topAnchor /==/ view.safeTopAnchor
+        }
+        
         tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         tableView.horizontalAnchors /==/ view.horizontalAnchors
         tableView.bottomAnchor /==/ view.bottomAnchor
@@ -395,7 +437,7 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
-            return 50 + 4 + accountHeader!.estimateHeight()
+            return UIDevice.current.isMac() ? 0 : 50 + 4 + (accountHeader?.estimateHeight() ?? 0)
         }
         if isSearching && section == 0 {
             return 0
@@ -482,7 +524,11 @@ extension NavigationHomeViewController: UITableViewDelegate, UITableViewDataSour
         toReturn.backgroundColor = UIColor.foregroundColor
 
         if section == 0 {
-            return headerView
+            if UIDevice.current.isMac() {
+                return UIView()
+            } else {
+                return headerView
+            }
         }
         if isSearching {
             switch section {
@@ -642,7 +688,7 @@ extension NavigationHomeViewController: UISearchBarDelegate {
         do {
             let requestString = "https://www.reddit.com/api/subreddit_autocomplete_v2.json?always_show_media=1&api_type=json&expand_srs=1&feature=link_preview&from_detail=1&include_users=true&obey_over18=1&raw_json=1&rtj=debug&sr_detail=1&query=\(searchTerm)&include_over_18=\((AccountController.isLoggedIn && SettingValues.nsfwEnabled) ? "true" : "false")"
             print("Requesting \(requestString)")
-            task = Alamofire.request(requestString, method: .get).responseString { response in
+            task = AF.request(requestString, method: .get).responseString { response in
                 do {
                     guard let data = response.data else {
                         return
@@ -670,6 +716,9 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                         DispatchQueue.main.async {
                             self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                             self.tableView.reloadData()
+                            self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: false)
+                            self.tableView.resignFirstResponder()
+                            self.searchBar.becomeFirstResponder()
                         }
                     }
                 } catch {
@@ -694,13 +743,15 @@ extension NavigationHomeViewController: UISearchBarDelegate {
                     DispatchQueue.main.async {
                         self.suggestions = self.suggestions.sorted { ($0.hasPrefix(searchTerm) ? 0 : 1) < ($1.hasPrefix(searchTerm) ? 0 : 1) }
                         self.tableView.reloadData()
+                        self.tableView.deselectRow(at: IndexPath(row: 0, section: 0), animated: false)
+                        self.tableView.resignFirstResponder()
+                        self.searchBar.becomeFirstResponder()
                     }
                 case .failure(let error):
                     print(error)
                 }
             })
         }
-
     }
 
     func searchTableList() {
@@ -895,7 +946,7 @@ class CurrentAccountHeaderView: UIView {
     }
     
     var forwardButton = UIButton(type: .custom).then {
-        $0.setImage(UIImage(sfString: UIDevice.current.userInterfaceIdiom == .pad ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: UIColor.fontColor), for: UIControl.State.normal)
+        $0.setImage(UIImage(sfString: UIDevice.current.respectIpadLayout() ? .xmark : .chevronRight, overrideString: "next")!.getCopy(withSize: .square(size: 20), withColor: UIColor.fontColor), for: UIControl.State.normal)
         $0.contentEdgeInsets = UIEdgeInsets(top: 7, left: 8, bottom: 7, right: 8)
         $0.accessibilityLabel = "Go home"
     }
@@ -1227,7 +1278,7 @@ extension CurrentAccountHeaderView {
             nav.pushNextViewControllerFromRight(nil)
         } else {
             var is14Column = false
-            if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.userInterfaceIdiom == .pad {
+            if #available(iOS 14, *), SettingValues.appMode == .SPLIT && UIDevice.current.respectIpadLayout() {
                 is14Column = true
             }
             if #available(iOS 14, *), self.parent?.splitViewController?.style == .doubleColumn {
@@ -1242,7 +1293,7 @@ extension CurrentAccountHeaderView {
                 UIApplication.shared.sendAction(action, to: target, from: nil, for: nil)
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
-                    if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.userInterfaceIdiom == .pad {
+                    if (SettingValues.appMode == .MULTI_COLUMN || SettingValues.appMode == .SINGLE) && UIDevice.current.respectIpadLayout() {
                         UIView.animate(withDuration: 0.5, animations: { () -> Void in
                             self.parent?.splitViewController?.preferredDisplayMode = .primaryHidden
                         }, completion: { (_) in

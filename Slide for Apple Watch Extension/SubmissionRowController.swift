@@ -100,7 +100,7 @@ public class SubmissionRowController: NSObject {
 //            endString.append(tagString)
 //        }
 //
-        let boldString = NSMutableAttributedString(string: "r/\(dictionary["subreddit"] ?? "")", attributes: attrs)
+        let boldString = NSMutableAttributedString(string: (dictionary["subreddit"] as? String ?? "").getSubredditFormatted(), attributes: attrs)
         
             boldString.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange.init(location: 0, length: boldString.length))
         
@@ -238,5 +238,27 @@ public class SubmissionRowController: NSObject {
             }
         }
         self.imageGroup.setCornerRadius(10)
+    }
+}
+
+extension String {
+    func getSubredditFormatted() -> String {
+        if self.hasPrefix("/m/") {
+            return self.replacingOccurrences(of: "/m/", with: "m/")
+        }
+        
+        if self.hasPrefix("u_") {
+            return self.replacingOccurrences(of: "u_", with: "u/")
+        }
+        
+        if self.hasPrefix("/r/") {
+            return self.replacingOccurrences(of: "/r/", with: "r/")
+        }
+
+        if self.hasPrefix("r/") {
+            return self
+        } else {
+            return "r/\(self)"
+        }
     }
 }

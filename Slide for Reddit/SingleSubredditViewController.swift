@@ -136,6 +136,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     var searchText: String?
 
+    
     var refreshControl: UIRefreshControl!
 
     var hasHeader = false
@@ -191,6 +192,18 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         }
     }
     
+    @objc func cellsNeedReDraw() {
+        reloadDataReset()
+    }
+    
+    @objc func subNeedsReload() {
+        swipeBackAdded = false
+        
+        reloadDataReset()
+        setupSwipeGesture()
+        setupGestures()
+    }
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -199,11 +212,14 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIApplication.shared.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIDevice.current.respectIpadLayout() && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMacReal()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(youTubePlaying), name: .onYouTubeWillStart, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(cellsNeedReDraw), name: .cellsNeedReDraw, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(subNeedsReload), name: .subNeedsReload, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reduceColorChanged), name: .reduceColorChanged, object: nil)
 
         flowLayout.delegate = self
         self.tableView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
@@ -477,6 +493,9 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        if tableView == nil {
+            return
+        }
                 
         inHeadView?.removeFromSuperview()
         fab?.removeFromSuperview()
@@ -859,7 +878,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
     
     func loadBubbles() {
         self.subLinks.removeAll()
-        if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.contains("+") {
+        if self.sub == ("all") || self.sub == ("frontpage") || self.sub == ("popular") || self.sub == ("friends") || self.sub.lowercased() == ("myrandom") || self.sub.lowercased() == ("random") || self.sub.lowercased() == ("randnsfw") || self.sub.hasPrefix("/m/") || self.sub.hasPrefix("m/") || self.sub.hasPrefix("u_") || self.sub.contains("+") {
             return
         }
         do {
@@ -908,7 +927,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                         if self.dataSource.loaded && !self.dataSource.loading {
                             self.flowLayout.reset(modal: self.presentingViewController != nil, vc: self, isGallery: self.isGallery)
                             self.tableView.reloadData()
-                            if UIDevice.current.userInterfaceIdiom != .pad {
+                            if !UIDevice.current.respectIpadLayout() {
                                 var newOffset = self.tableView.contentOffset
                                 newOffset.y -= self.headerHeight(false)
                                 self.tableView.setContentOffset(newOffset, animated: false)
@@ -957,11 +976,23 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
 
         let flexButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.flexibleSpace, target: nil, action: nil)
         
-        if parent is SplitMainViewController {
-            parent!.toolbarItems = [searchB, flexButton, moreB]
+        if UIDevice.current.isMac() {
+            if parent is SplitMainViewController {
+                parent!.navigationItem.leftBarButtonItems = [searchB, moreB]
+            } else {
+                navigationItem.leftBarButtonItems = [searchB, moreB]
+            }
         } else {
-            toolbarItems = [searchB, flexButton, moreB]
+            if parent is SplitMainViewController {
+                parent!.toolbarItems = [searchB, flexButton, moreB]
+            } else {
+                toolbarItems = [searchB, flexButton, moreB]
+            }
         }
+    }
+    
+    @objc func reduceColorChanged() {
+        reloadNeedingColor()
     }
     
     func reloadNeedingColor() {
@@ -975,7 +1006,10 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         refreshControl.attributedTitle = NSAttributedString(string: "")
         refreshControl.addTarget(self, action: #selector(self.drefresh(_:)), for: UIControl.Event.valueChanged)
 
-        tableView.addSubview(refreshControl) // not required when using UITableViewController
+        if let refresh = refreshControl, !UIDevice.current.isMac() {
+            tableView.addSubview(refresh)
+        }
+
         tableView.alwaysBounceVertical = true
 
         self.automaticallyAdjustsScrollViewInsets = false
@@ -1101,7 +1135,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                                     }
                                     if self.subInfo!.over18 && !SettingValues.nsfwEnabled {
                                         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                                            let alert = UIAlertController.init(title: "r/\(self.sub) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
+                                            let alert = UIAlertController.init(title: "\(self.sub.getSubredditFormatted()) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit", preferredStyle: .alert)
                                             alert.addAction(UIAlertAction.init(title: "Close", style: .default, handler: { (_) in
                                                 self.navigationController?.popViewController(animated: true)
                                                 self.dismiss(animated: true, completion: nil)
@@ -1188,7 +1222,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
             BannerUtil.makeBanner(text: "Unsubscribed", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
             subb.setImage(UIImage(sfString: SFSymbol.plusCircleFill, overrideString: "addcircle")?.navIcon(), for: UIControl.State.normal)
         } else {
-            let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+            let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
             if AccountController.isLoggedIn {
                 let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                     Subscriptions.subscribe(self.sub, true, session: self.session!)
@@ -1199,7 +1233,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
                 alrController.addAction(somethingAction)
             }
 
-            let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+            let somethingAction = UIAlertAction(title: "Follow without Subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(self.sub, false, session: self.session!)
                 self.subChanged = true
                 BannerUtil.makeBanner(text: "r/\(self.sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: self.sub), seconds: 3, context: self, top: true)
@@ -1370,7 +1404,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         alert.setupTheme()
         
         alert.attributedTitle = NSAttributedString(string: "Content to hide on", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
-        alert.attributedMessage = NSAttributedString(string: "r/\(sub)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+        alert.attributedMessage = NSAttributedString(string: "\(sub.getSubredditFormatted())", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
         
         alert.contentView.addSubview(filterView)
         settings.didMove(toParent: alert)
@@ -2099,7 +2133,7 @@ extension SingleSubredditViewController: SubmissionDataSouceDelegate {
             if self.navigationController?.modalPresentationStyle == .pageSheet && self.navigationController?.viewControllers.count == 1 && !(self.navigationController?.viewControllers[0] is MainViewController) {
                 topOffset = 0
             }
-            let headerHeight = (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
+            let headerHeight = (UIDevice.current.respectIpadLayout() && SettingValues.appMode == .MULTI_COLUMN ? 0 : self.headerHeight(false))
             let paddingOffset = CGFloat(headerHeight == 0 ? -4 : 0)
             
             setOffset = paddingOffset + navOffset + topOffset + headerHeight
@@ -2242,7 +2276,7 @@ extension SingleSubredditViewController {
 
         isAccent = false
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
@@ -2322,7 +2356,7 @@ extension SingleSubredditViewController {
 
         isAccent = true
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.scrollToPreselectedIndex = true
         MKColorPicker.delegate = self
@@ -2626,7 +2660,7 @@ extension SingleSubredditViewController: UICollectionViewDataSource {
         var numberOfColumns = CGFloat.zero
         let portraitCount = SettingValues.portraitMultiColumnCount
         
-        let pad = UIScreen.main.traitCollection.userInterfaceIdiom == .pad
+        let pad = UIDevice.current.respectIpadLayout()
         
         if SettingValues.appMode == .MULTI_COLUMN {
             if UIApplication.shared.statusBarOrientation.isPortrait {
@@ -2717,7 +2751,7 @@ extension SingleSubredditViewController: LinkCellViewDelegate {
             }
             return
         })
-        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.userInterfaceIdiom == .pad && SettingValues.disablePopupIpad || UIDevice.current.userInterfaceIdiom != .pad) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
+        VCPresenter.showVC(viewController: comment, popupIfPossible: (UIDevice.current.respectIpadLayout() && SettingValues.disablePopupIpad || !UIDevice.current.respectIpadLayout()) ? false : true, parentNavigationController: self.navigationController, parentViewController: self)
     }
 }
 
@@ -2800,7 +2834,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
 
     func subscribe(link: SubmissionObject) {
         let sub = link.subreddit
-        let alrController = UIAlertController.init(title: "Follow r/\(sub)", message: nil, preferredStyle: .alert)
+        let alrController = UIAlertController.init(title: "Subscribe to \(sub.getSubredditFormatted())", message: nil, preferredStyle: .alert)
         if AccountController.isLoggedIn {
             let somethingAction = UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
                 Subscriptions.subscribe(sub, true, session: self.session!)
@@ -2810,10 +2844,10 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
             alrController.addAction(somethingAction)
         }
         
-        let somethingAction = UIAlertAction(title: "Casually subscribe", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
+        let somethingAction = UIAlertAction(title: "Follow without Subscribing", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction!) in
             Subscriptions.subscribe(sub, false, session: self.session!)
             self.subChanged = true
-            BannerUtil.makeBanner(text: "r/\(sub) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
+            BannerUtil.makeBanner(text: "\(sub.getSubredditFormatted()) added to your subreddit list", color: ColorUtil.accentColorForSub(sub: sub), seconds: 3, context: self, top: true)
         })
         alrController.addAction(somethingAction)
         
@@ -2962,7 +2996,7 @@ extension SingleSubredditViewController: SubmissionMoreDelegate {
         }
         actionSheetController.addAction(cancelActionButton)
 
-        cancelActionButton = UIAlertAction(title: "Posts from r/\(link.subreddit)", style: .default) { _ -> Void in
+        cancelActionButton = UIAlertAction(title: "Posts from \(link.subreddit.getSubredditFormatted())", style: .default) { _ -> Void in
             PostFilter.subreddits.append(link.subreddit as NSString)
             PostFilter.saveAndUpdate()
             self.dataSource.content = PostFilter.filter(self.dataSource.content, previous: nil, baseSubreddit: self.sub).map { $0 as! SubmissionObject }
@@ -2987,7 +3021,8 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
 
     func setupGestures() {
         if cellGestureRecognizer != nil {
-            return
+            cellGestureRecognizer.view?.removeGestureRecognizer(cellGestureRecognizer)
+            cellGestureRecognizer = nil
         }
         cellGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panCell(_:)))
         cellGestureRecognizer.delegate = self
@@ -3028,7 +3063,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
             full.view?.removeGestureRecognizer(full)
         }
         
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if UIDevice.current.respectIpadLayout() {
             fullWidthBackGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(showParentMenu(_:)))
             guard let swipe = fullWidthBackGestureRecognizer as? UISwipeGestureRecognizer else { return }
             swipe.direction = .right
@@ -3078,7 +3113,7 @@ extension SingleSubredditViewController: UIGestureRecognizerDelegate {
                     return false
                 }
                 if translation.x < 0 {
-                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.userInterfaceIdiom == .pad) {
+                    if gestureRecognizer.location(in: tableView).x > tableView.frame.width * 0.5 || !SettingValues.submissionGestureMode.shouldPage() || (SettingValues.appMode == .MULTI_COLUMN && UIDevice.current.respectIpadLayout()) {
                         return true
                     }
                 } else if !SettingValues.submissionGestureMode.shouldPage() && abs(translation.x) > abs(translation.y) {
@@ -3428,7 +3463,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                     $0.setTitleColor(.white, for: .selected)
                     $0.titleLabel?.textAlignment = .center
                     $0.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? UIColor.navIconColor
+                    $0.backgroundColor = ColorUtil.getNavColorForSub(sub: sub) ?? ColorUtil.accentColorForSub(sub: sub)
                     $0.addTapGestureRecognizer { (_) in
                         self.del?.doShow(url: link.link!, heroView: nil, finalSize: nil, heroVC: nil, link: SubmissionObject())
                     }
@@ -3472,7 +3507,7 @@ public class LinksHeaderCellView: UICollectionViewCell {
                 header.addSubview(imageView)
                 imageView.clipsToBounds = true
                 
-                if UIDevice.current.userInterfaceIdiom == .pad {
+                if UIDevice.current.respectIpadLayout() {
                     imageView.verticalAnchors /==/ header.verticalAnchors
                     imageView.horizontalAnchors /==/ header.horizontalAnchors + 4
                     imageView.layer.cornerRadius = 15
@@ -3511,7 +3546,7 @@ public class SubLinkItem {
 
 extension SingleSubredditViewController: TapBehindModalViewControllerDelegate {
     func shouldDismiss() -> Bool {
-        return UIDevice.current.userInterfaceIdiom == .pad
+        return UIDevice.current.respectIpadLayout()
     }
 }
 

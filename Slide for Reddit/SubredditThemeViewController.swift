@@ -20,12 +20,11 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if UIColor.isLightTheme && SettingValues.reduceColor {
-                        if #available(iOS 13, *) {
+            if #available(iOS 13, *) {
                 return .darkContent
             } else {
                 return .default
             }
-
         } else {
             return .lightContent
         }
@@ -118,8 +117,6 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
             self.navigationItem.rightBarButtonItems = regularButtons
         }
     }
-
-    public static var changed = false
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
@@ -300,7 +297,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
 
             isAccent = false
             let margin: CGFloat = 10.0
-            let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+            let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
             let MKColorPicker = ColorPickerView.init(frame: rect)
             MKColorPicker.delegate = self
             MKColorPicker.colors = GMPalette.allColor()
@@ -347,7 +344,7 @@ class SubredditThemeViewController: UITableViewController, ColorPickerViewDelega
         let alertController = UIAlertController(title: "\n\n\n\n\n\n\n\n", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         let margin: CGFloat = 10.0
-        let rect = CGRect(x: margin, y: margin, width: UIScreen.main.traitCollection.userInterfaceIdiom == .pad ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
+        let rect = CGRect(x: margin, y: margin, width: UIDevice.current.respectIpadLayout() ? 314 - margin * 4.0: alertController.view.bounds.size.width - margin * 4.0, height: 150)
         let MKColorPicker = ColorPickerView.init(frame: rect)
         MKColorPicker.delegate = self
         MKColorPicker.colors = GMPalette.allColorAccent()

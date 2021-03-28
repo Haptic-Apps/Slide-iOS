@@ -1598,6 +1598,9 @@ public enum SFSymbol: String {
 
     /// 􀘲
     case bubbleLeftAndBubbleRightFill = "bubble.left.and.bubble.right.fill"
+    
+    /// 􀪨
+    case arrowUpAndPersonRectanglePortrait = "arrow.up.and.person.rectangle.portrait"
 
     /// 􀌫
     case bubbleLeftFill = "bubble.left.fill"

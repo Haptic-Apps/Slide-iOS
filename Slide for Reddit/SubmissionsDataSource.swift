@@ -147,12 +147,12 @@ class SubmissionsDataSource {
         }
         if subreddit.lowercased() == "randnsfw" && !SettingValues.nsfwEnabled {
             if let delegate = delegate {
-                delegate.generalError(title: "r/\(self.subreddit) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit")
+                delegate.generalError(title: "\(self.subreddit.getSubredditFormatted()) is NSFW", message: "You must log into Reddit and enable NSFW content at Reddit.com to view this subreddit")
             }
             return
         } else if subreddit.lowercased() == "myrandom" && !AccountController.isGold {
             if let delegate = delegate {
-                delegate.generalError(title: "r/\(self.subreddit) requires gold", message: "See reddit.com/gold/about for more details")
+                delegate.generalError(title: "\(self.subreddit.getSubredditFormatted()) requires a Reddit Premium subscription", message: "See reddit.com/gold/about for more details")
             }
             return
         }

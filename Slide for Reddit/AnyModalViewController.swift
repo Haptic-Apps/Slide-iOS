@@ -8,12 +8,16 @@
 
 import Anchorage
 import AVKit
-import SubtleVolume
+
+#if os(iOS)
+    import SubtleVolume
+#endif
+
 import Then
 import UIKit
 
 class AnyModalViewController: UIViewController {
-    let volume = SubtleVolume(style: SubtleVolumeStyle.rounded)
+    var volume: SubtleVolume?
     let volumeHeight: CGFloat = 3
     static var linkID = ""
 
@@ -56,6 +60,7 @@ class AnyModalViewController: UIViewController {
     var bottomButtons = UIStackView()
     var goToCommentsButton = UIButton()
     var upvoteButton = UIButton()
+    private var volumeObserver: NSKeyValueObservation!
 
     var closeButton = UIButton().then {
         $0.accessibilityIdentifier = "Close Button"
@@ -171,9 +176,6 @@ class AnyModalViewController: UIViewController {
         connectActions()
         
         handleHideUI()
-        volume.barTintColor = .white
-        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
-        volume.animation = .slideDown
         
         var is13 = false
         if #available(iOS 13, *) {
@@ -181,8 +183,14 @@ class AnyModalViewController: UIViewController {
         }
 
         if !is13 {
-            view.addSubview(volume)
-            NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
+            volume = SubtleVolume(style: .rounded)
+            
+            volume!.barTintColor = .white
+            volume!.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+            volume!.animation = .slideDown
+
+            view.addSubview(volume!)
+            NotificationCenter.default.addObserver(volume!, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
         
         if urlToLoad != nil && self.embeddedPlayer == nil {
@@ -255,8 +263,10 @@ class AnyModalViewController: UIViewController {
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        volume.superview?.bringSubviewToFront(volume)
-        volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        if let volume = volume {
+            volume.superview?.bringSubviewToFront(volume)
+            volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+        }
     }
 
     func stopDisplayLink() {
@@ -588,6 +598,7 @@ class AnyModalViewController: UIViewController {
 
         muteButton = UIButton().then {
             $0.accessibilityIdentifier = "Toggle Mute"
+            $0.isHidden = true
             $0.accessibilityLabel = "Toggle Mute"
             $0.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
@@ -703,6 +714,13 @@ class AnyModalViewController: UIViewController {
         if !self.scrubber.isHidden {
             self.fullscreen(self)
             
+            if SettingValues.tapExitMedia {
+                if let parent = parent as? ModalMediaViewController {
+                    parent.exit()
+                    return
+                }
+            }
+
             UIView.animate(withDuration: 0.2, animations: {
                 self.scrubber.alpha = 0
             }, completion: { (_) in
@@ -896,6 +914,11 @@ extension AnyModalViewController {
          until a bit of time has passed. We react to that here, setting the audio
          session and the mute button state accordingly.
          */
+        
+        if hasAudioTracks && muteButton.isHidden {
+            muteButton.isHidden = false
+        }
+
         if !setOnce || lastTracks != hasAudioTracks {
             setOnce = true
             lastTracks = hasAudioTracks
@@ -911,6 +934,15 @@ extension AnyModalViewController {
                 // from silencing background audio
                 mute()
             }
+            
+            volumeObserver = AVAudioSession.sharedInstance().observe(\.outputVolume) { [weak self] (_, _) in
+                guard let self = self else { return }
+                
+                if self.videoView.player?.isMuted ?? false {
+                    self.unmute()
+                }
+            }
+
         }
 
         if !sliderBeingUsed {

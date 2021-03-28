@@ -13,8 +13,11 @@ extension UIApplication {
     var statusBarView: UIView? {
         return statusBarUIView
     }
-    
+}
+
+extension UIDevice {
     public func isMac() -> Bool {
+        return false //Disable new Mac features for now
         if #available(iOS 14.0, *) {
             return ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp
         } else if #available(iOS 13.0, *) {
@@ -24,6 +27,19 @@ extension UIApplication {
         }
     }
     
+    public func isMacReal() -> Bool {
+        if #available(iOS 14.0, *) {
+            return ProcessInfo.processInfo.isiOSAppOnMac || ProcessInfo.processInfo.isMacCatalystApp
+        } else if #available(iOS 13.0, *) {
+            return ProcessInfo.processInfo.isMacCatalystApp
+        } else {
+           return false
+        }
+    }
+
+    public func respectIpadLayout() -> Bool {
+        return UIDevice.current.userInterfaceIdiom == .pad || isMacReal()
+    }
 }
 extension UIApplication {
     public var isSplitOrSlideOver: Bool {

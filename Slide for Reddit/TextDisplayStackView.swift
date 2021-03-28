@@ -689,12 +689,13 @@ public class TextDisplayStackView: UIStackView {
             let imgPattern = "\\<img.+src\\=(?:\\\"|\\')(.+?)(?:\\\"|\\')(?:.+?)\\>"
             
             if let regex = try? NSRegularExpression(pattern: imgPattern, options: .caseInsensitive) {
-                let modString = regex.stringByReplacingMatches(in: html, options: .withTransparentBounds, range: NSMakeRange(0, html.length), withTemplate: "Image")
+                let modString = regex.stringByReplacingMatches(in: html, options: .withTransparentBounds, range: NSRange(location: 0, length: html.length), withTemplate: "Image")
                 preSeperated.append(modString)
             } else {
                 preSeperated.append(html)
             }
         }
+        
         return preSeperated
     }
 
