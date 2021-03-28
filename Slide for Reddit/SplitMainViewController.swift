@@ -1074,7 +1074,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMac())) && UIDevice.current.respectIpadLayout() {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMacReal())) && UIDevice.current.respectIpadLayout() {
                     is14Column = true
                 }
 
@@ -1114,7 +1114,7 @@ extension SplitMainViewController: NavigationHomeDelegate {
                 }
             } else {
                 var is14Column = false
-                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMac())) && UIDevice.current.respectIpadLayout() {
+                if #available(iOS 14, *), (SettingValues.appMode == .SPLIT || (UIApplication.shared.isSplitOrSlideOver && !UIDevice.current.isMacReal())) && UIDevice.current.respectIpadLayout() {
                     is14Column = true
                 }
 

@@ -747,7 +747,7 @@ class CommentDepthCell: MarginedTableViewCell, UIViewControllerPreviewingDelegat
         
         removedSubviews.forEach({ $0.removeFromSuperview() })
         
-        if UIDevice.current.respectIpadLayout() && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMac()) {
+        if UIDevice.current.respectIpadLayout() && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMacReal()) {
             menu.addArrangedSubviews(flexSpace(), flexSpace(), flexSpace(), editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
         } else {
             menu.addArrangedSubviews(editButton, deleteButton, upvoteButton, downvoteButton, replyButton, moreButton, modButton)
@@ -2631,7 +2631,7 @@ extension CommentDepthCell: UIContextMenuInteractionDelegate {
             }
         }
         
-        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMac() {
+        if UIDevice.current.respectIpadLayout() || UIDevice.current.isMacReal() {
             if self.parent?.menuCell == self {
                 if let parent = self.parent {
                     let menu = self.getMoreMenu(parent)

@@ -212,7 +212,7 @@ class SingleSubredditViewController: MediaViewController, AutoplayScrollViewDele
         super.viewDidLoad()
         CachedTitle.titles.removeAll()
 
-        if UIDevice.current.respectIpadLayout() && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMac()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
+        if UIDevice.current.respectIpadLayout() && SettingValues.appMode == .SPLIT && (!UIApplication.shared.isSplitOrSlideOver || UIDevice.current.isMacReal()) && !(splitViewController?.viewControllers[(splitViewController?.viewControllers.count ?? 1) - 1] is PlaceholderViewController) {
             splitViewController?.showDetailViewController(SwipeForwardNavigationController(rootViewController: PlaceholderViewController()), sender: self)
         }
         
