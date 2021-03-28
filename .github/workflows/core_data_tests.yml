@@ -42,6 +42,7 @@ jobs:
         run: |
           sh ./bootstrap.sh
           pod install
+          bundle update fastlane
           bundle exec fastlane install_plugins
       - name: Run code validation
         uses: actions/checkout@v1
