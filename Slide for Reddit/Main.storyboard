@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -23,7 +21,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="H76-RG-mdB">
-                                <rect key="frame" x="32" y="44" width="311" height="406"/>
+                                <rect key="frame" x="32" y="0.0" width="311" height="368"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O1k-Pl-OA3">
                                         <rect key="frame" x="55.5" y="0.0" width="200" height="200"/>
@@ -50,7 +48,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </view>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="uel-BC-dC0">
-                                        <rect key="frame" x="0.0" y="258" width="311" height="148"/>
+                                        <rect key="frame" x="0.0" y="220" width="311" height="148"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0tN-R9-wtT" customClass="GradientSlider" customModule="Slide_for_Reddit" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="311" height="36"/>
@@ -124,13 +122,13 @@
                                 </constraints>
                             </stackView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="0Sr-3o-LeX"/>
                         <constraints>
                             <constraint firstItem="H76-RG-mdB" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="32" id="7Mv-do-LHH"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" relation="greaterThanOrEqual" secondItem="H76-RG-mdB" secondAttribute="bottom" constant="32" id="7Ze-7P-Hlk"/>
                             <constraint firstItem="H76-RG-mdB" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="BeQ-CN-YUq"/>
                             <constraint firstAttribute="trailing" secondItem="H76-RG-mdB" secondAttribute="trailing" constant="32" id="oBJ-V3-sTK"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="0Sr-3o-LeX"/>
                     </view>
                     <size key="freeformSize" width="375" height="667"/>
                     <connections>

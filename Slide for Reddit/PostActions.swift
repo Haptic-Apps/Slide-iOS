@@ -50,99 +50,102 @@ class PostActions: NSObject {
     public static func handleAction(action: SettingValues.PostOverflowAction, cell: LinkCellView, parent: UIViewController, nav: UINavigationController?, mutableList: Bool, delegate: SubmissionMoreDelegate, index: Int) {
         let link = cell.link!
         switch action {
-        case .PROFILE:
-            let prof = ProfileViewController.init(name: link.author)
-            VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
-        case .SUBREDDIT:
-            let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
-            VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
-        case .REPORT:
-            PostActions.report(cell.link!, parent: parent, index: index, delegate: delegate)
-        case .BLOCK:
-            PostActions.block(cell.link!.author, parent: parent) { () in
-                delegate.applyFilters()
-            }
-        case .SAVE:
-            delegate.save(cell)
-        case .CROSSPOST:
-            PostActions.crosspost(cell.link!, parent)
-        case .READ_LATER:
-            if !ReadLater.isReadLater(id: link.id) {
-                ReadLater.addReadLater(id: cell.link!.id, subreddit: cell.link!.subreddit)
-                BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
-            } else {
-                ReadLater.removeReadLater(id: cell.link!.id)
-                BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
-            }
-        case .SHARE_CONTENT:
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: link.url!)], applicationActivities: nil)
-            if let presenter = activityViewController.popoverPresentationController {
-                presenter.sourceView = cell.contentView
-                presenter.sourceRect = cell.contentView.bounds
-            }
-            parent.present(activityViewController, animated: true, completion: nil)
-        case .SUBSCRIBE:
-            delegate.subscribe(link: cell.link!)
-        case .SHARE_REDDIT:
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + (link.permalink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlPathAllowed) ?? link.permalink))!)], applicationActivities: nil)
-            if let presenter = activityViewController.popoverPresentationController {
-                presenter.sourceView = cell.contentView
-                presenter.sourceRect = cell.contentView.bounds
-            }
-            
-            parent.present(activityViewController, animated: true, completion: nil)
-        case .CHROME:
-            if link.url != nil {
-                let open = OpenInChromeController.init()
-                open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
-            }
-        case .SAFARI:
-            if link.url != nil {
-                if #available(iOS 10.0, *) {
-                    UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
-                } else {
-                    UIApplication.shared.openURL(link.url!)
+            case .PROFILE:
+                let prof = ProfileViewController.init(name: link.author)
+                VCPresenter.showVC(viewController: prof, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
+            case .SUBREDDIT:
+                let sub = SingleSubredditViewController.init(subName: link.subreddit, single: true)
+                VCPresenter.showVC(viewController: sub, popupIfPossible: true, parentNavigationController: nav, parentViewController: parent)
+            case .REPORT:
+                PostActions.report(cell.link!, parent: parent, index: index, delegate: delegate)
+            case .BLOCK:
+                PostActions.block(cell.link!.author, parent: parent) { () in
+                    delegate.applyFilters()
                 }
-            }
-        case .FILTER:
-            delegate.showFilterMenu(cell)
-        case .COPY:
-            let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
-            
-            alert.setupTheme()
-            
-            alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
-            
-            let text = UITextView().then {
-                $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
-                $0.textColor = UIColor.fontColor
-                $0.backgroundColor = .clear
-                $0.isEditable = false
-                $0.text = cell.link?.markdownBody?.decodeHTML() ?? ""
-            }
-            
-            alert.contentView.addSubview(text)
-            text.edgeAnchors /==/ alert.contentView.edgeAnchors
-            
-            let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
-            text.heightAnchor /==/ height
-            
-            alert.addCloseButton()
-            alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
-                UIPasteboard.general.string = cell.link?.markdownBody?.decodeHTML() ?? ""
-            }))
-            
-            alert.addBlurView()
-            
-            parent.present(alert, animated: true)
-        case .HIDE:
-            delegate.hide(cell)
-        case .UPVOTE:
-            cell.upvote()
-        case .DOWNVOTE:
-            cell.downvote()
-        case .MODERATE:
-            PostActions.showModMenu(cell, parent: parent)
+            case .SAVE:
+                delegate.save(cell)
+            case .CROSSPOST:
+                PostActions.crosspost(cell.link!, parent)
+            case .READ_LATER:
+                if !ReadLater.isReadLater(id: link.id) {
+                    ReadLater.addReadLater(id: cell.link!.id, subreddit: cell.link!.subreddit)
+                    BannerUtil.makeBanner(text: "Added to Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
+                } else {
+                    ReadLater.removeReadLater(id: cell.link!.id)
+                    BannerUtil.makeBanner(text: "Removed from Read Later", color: GMColor.green500Color(), seconds: 3, context: cell.parentViewController, top: true)
+                }
+            case .SHARE_CONTENT:
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: link.url!)], applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = cell.contentView
+                    presenter.sourceRect = cell.contentView.bounds
+                }
+                parent.present(activityViewController, animated: true, completion: nil)
+            case .SUBSCRIBE:
+                delegate.subscribe(link: cell.link!)
+            case .SHARE_REDDIT:
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [SubjectItemSource(subject: link.title.decodeHTML(), url: URL.init(string: "https://reddit.com" + (link.permalink.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlPathAllowed) ?? link.permalink))!)], applicationActivities: nil)
+                if let presenter = activityViewController.popoverPresentationController {
+                    presenter.sourceView = cell.contentView
+                    presenter.sourceRect = cell.contentView.bounds
+                }
+                
+                parent.present(activityViewController, animated: true, completion: nil)
+            case .CHROME:
+                if link.url != nil {
+                    let open = OpenInChromeController.init()
+                    open.openInChrome(link.url!, callbackURL: nil, createNewTab: true)
+                }
+            case .SAFARI:
+                if link.url != nil {
+                    if #available(iOS 10.0, *) {
+                        UIApplication.shared.open(link.url!, options: [:], completionHandler: nil)
+                    } else {
+                        UIApplication.shared.openURL(link.url!)
+                    }
+                }
+            case .FILTER:
+                delegate.showFilterMenu(cell)
+            case .COPY:
+                let alert = AlertController.init(title: "Copy text", message: nil, preferredStyle: .alert)
+                
+                alert.setupTheme()
+                
+                alert.attributedTitle = NSAttributedString(string: "Copy text", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 17), NSAttributedString.Key.foregroundColor: UIColor.fontColor])
+                
+                let text = UITextView().then {
+                    $0.font = FontGenerator.fontOfSize(size: 14, submission: false)
+                    $0.textColor = UIColor.fontColor
+                    $0.backgroundColor = .clear
+                    $0.isEditable = false
+                    $0.text = cell.link?.markdownBody?.decodeHTML() ?? ""
+                }
+                
+                alert.contentView.addSubview(text)
+                text.edgeAnchors /==/ alert.contentView.edgeAnchors
+                
+                let height = text.sizeThatFits(CGSize(width: 238, height: CGFloat.greatestFiniteMagnitude)).height
+                text.heightAnchor /==/ height
+                
+                alert.addCloseButton()
+                alert.addAction(AlertAction(title: "Copy all", style: AlertAction.Style.normal, handler: { (_) in
+                    UIPasteboard.general.string = cell.link?.markdownBody?.decodeHTML() ?? ""
+                }))
+                
+                alert.addBlurView()
+                
+                parent.present(alert, animated: true)
+            case .COPYTITLE:
+                let text = cell.title.text
+                UIPasteboard.general.string = text
+            case .HIDE:
+                delegate.hide(cell)
+            case .UPVOTE:
+                cell.upvote()
+            case .DOWNVOTE:
+                cell.downvote()
+            case .MODERATE:
+                PostActions.showModMenu(cell, parent: parent)
         }
     }
     

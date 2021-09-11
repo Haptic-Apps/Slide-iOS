@@ -756,7 +756,7 @@ class SettingValues {
     }
     
     public enum PostOverflowAction: String {
-        public static let cases: [PostOverflowAction] = [.PROFILE, .SUBREDDIT, .SUBSCRIBE, .REPORT, .BLOCK, .SAVE, .CROSSPOST, .READ_LATER, .SHARE_CONTENT, .SHARE_REDDIT, .CHROME, .SAFARI, .FILTER, .COPY, .HIDE, .UPVOTE, .DOWNVOTE, .MODERATE]
+        public static let cases: [PostOverflowAction] = [.PROFILE, .SUBREDDIT, .SUBSCRIBE, .REPORT, .BLOCK, .SAVE, .CROSSPOST, .READ_LATER, .SHARE_CONTENT, .SHARE_REDDIT, .CHROME, .SAFARI, .FILTER, .COPY, .COPYTITLE, .HIDE, .UPVOTE, .DOWNVOTE, .MODERATE]
 
         case PROFILE = "profile"
         case SUBREDDIT = "sub"
@@ -771,6 +771,7 @@ class SettingValues {
         case SAFARI = "opensafari"
         case FILTER = "filter"
         case COPY = "copy"
+        case COPYTITLE = "copytitle"
         case HIDE = "hide"
         case UPVOTE = "upvote"
         case DOWNVOTE = "downvote"
@@ -804,7 +805,7 @@ class SettingValues {
         }
         
         public static func getMenuNone() -> [PostOverflowAction] {
-            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "hide"]
+            let menu = UserDefaults.standard.stringArray(forKey: "postMenu") ?? ["profile", "sub", "moderate", "report", "block", "save", "crosspost", "readlater", "sharecontent", "sharereddit", "openchrome", "opensafari", "filter", "copy", "copytitle", "hide"]
             var toReturn = [PostOverflowAction]()
             for item in menu {
                 toReturn.append(PostOverflowAction(rawValue: item)!)
@@ -854,6 +855,8 @@ class SettingValues {
                 return "Filter this content"
             case .COPY:
                 return "Copy self text"
+            case .COPYTITLE:
+                return "Copy title text"
             case .HIDE:
                 return "Hide"
             case .UPVOTE:
@@ -897,6 +900,8 @@ class SettingValues {
             case .FILTER:
                 return UIImage(named: "filter")!.menuIcon()
             case .COPY:
+                return UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()
+            case .COPYTITLE:
                 return UIImage(sfString: SFSymbol.docOnDocFill, overrideString: "copy")!.menuIcon()
             case .HIDE:
                 return UIImage(sfString: SFSymbol.xmark, overrideString: "hide")!.menuIcon()
