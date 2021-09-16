@@ -856,7 +856,7 @@ class SettingValues {
             case .COPY:
                 return "Copy self text"
             case .COPYTITLE:
-                return "Copy title text"
+                return "Copy title"
             case .HIDE:
                 return "Hide"
             case .UPVOTE:

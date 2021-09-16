@@ -136,7 +136,7 @@ class PostActions: NSObject {
                 
                 parent.present(alert, animated: true)
             case .COPYTITLE:
-                let text = cell.title.text
+                let text = cell.link?.title
                 UIPasteboard.general.string = text
             case .HIDE:
                 delegate.hide(cell)
