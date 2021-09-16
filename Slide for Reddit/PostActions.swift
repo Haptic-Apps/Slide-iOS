@@ -135,6 +135,9 @@ class PostActions: NSObject {
             alert.addBlurView()
             
             parent.present(alert, animated: true)
+        case .COPYTITLE:
+            let text = cell.link?.title
+            UIPasteboard.general.string = text
         case .HIDE:
             delegate.hide(cell)
         case .UPVOTE:
