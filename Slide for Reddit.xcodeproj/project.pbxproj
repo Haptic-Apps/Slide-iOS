@@ -47,6 +47,16 @@
 		B422D252252270AD00A168BB /* ic_garbage@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D24F252270AD00A168BB /* ic_garbage@3x.png */; };
 		B422D253252270AD00A168BB /* ic_garbage@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */; };
 		B422D254252270AD00A168BB /* ic_garbage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B422D251252270AD00A168BB /* ic_garbage@2x.png */; };
+		B4271C5026FE643D006F7AD8 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4271C4F26FE643D006F7AD8 /* SafariWebExtensionHandler.swift */; };
+		B4271C5326FE643D006F7AD8 /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5226FE643D006F7AD8 /* _locales */; };
+		B4271C5526FE643D006F7AD8 /* images in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5426FE643D006F7AD8 /* images */; };
+		B4271C5726FE643D006F7AD8 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5626FE643D006F7AD8 /* manifest.json */; };
+		B4271C5926FE643D006F7AD8 /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5826FE643D006F7AD8 /* background.js */; };
+		B4271C5B26FE643D006F7AD8 /* content.js in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5A26FE643D006F7AD8 /* content.js */; };
+		B4271C5D26FE643D006F7AD8 /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5C26FE643D006F7AD8 /* popup.html */; };
+		B4271C5F26FE643D006F7AD8 /* popup.css in Resources */ = {isa = PBXBuildFile; fileRef = B4271C5E26FE643D006F7AD8 /* popup.css */; };
+		B4271C6126FE643D006F7AD8 /* popup.js in Resources */ = {isa = PBXBuildFile; fileRef = B4271C6026FE643D006F7AD8 /* popup.js */; };
+		B4271C6526FE643D006F7AD8 /* Slide Safari Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B4271C4D26FE643D006F7AD8 /* Slide Safari Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B49EFE382511A18F002D6AEE /* HotPostsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */; };
 		B49EFE482511A1D1002D6AEE /* FavoriteSubredditsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */; };
 		B49EFE522511A221002D6AEE /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */; };
@@ -414,6 +424,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B4271C6326FE643D006F7AD8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B4271C4C26FE643D006F7AD8;
+			remoteInfo = "Slide Safari Extension";
+		};
 		BE0334B125294B8400B8C6B6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BE8FC9FC1E0C46090063B8EF /* Project object */;
@@ -479,6 +496,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				B4271C6526FE643D006F7AD8 /* Slide Safari Extension.appex in Embed App Extensions */,
 				BED90FEC250BF71800090DF5 /* Slide Widgets.appex in Embed App Extensions */,
 				BE0334B325294B8400B8C6B6 /* WidgetConfigIntent.appex in Embed App Extensions */,
 				BE257A7721F64AA30082A47E /* Open in Slide.appex in Embed App Extensions */,
@@ -565,6 +583,17 @@
 		B422D24F252270AD00A168BB /* ic_garbage@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@3x.png"; sourceTree = "<group>"; };
 		B422D250252270AD00A168BB /* ic_garbage@2x~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@2x~ipad.png"; sourceTree = "<group>"; };
 		B422D251252270AD00A168BB /* ic_garbage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_garbage@2x.png"; sourceTree = "<group>"; };
+		B4271C4D26FE643D006F7AD8 /* Slide Safari Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Slide Safari Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4271C4F26FE643D006F7AD8 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		B4271C5226FE643D006F7AD8 /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; path = _locales; sourceTree = "<group>"; };
+		B4271C5426FE643D006F7AD8 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
+		B4271C5626FE643D006F7AD8 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = manifest.json; sourceTree = "<group>"; };
+		B4271C5826FE643D006F7AD8 /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = background.js; sourceTree = "<group>"; };
+		B4271C5A26FE643D006F7AD8 /* content.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = content.js; sourceTree = "<group>"; };
+		B4271C5C26FE643D006F7AD8 /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = popup.html; sourceTree = "<group>"; };
+		B4271C5E26FE643D006F7AD8 /* popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = popup.css; sourceTree = "<group>"; };
+		B4271C6026FE643D006F7AD8 /* popup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = popup.js; sourceTree = "<group>"; };
+		B4271C6226FE643D006F7AD8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B49EFE372511A18F002D6AEE /* HotPostsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotPostsWidget.swift; sourceTree = "<group>"; };
 		B49EFE472511A1D1002D6AEE /* FavoriteSubredditsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSubredditsWidget.swift; sourceTree = "<group>"; };
 		B49EFE512511A221002D6AEE /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
@@ -949,6 +978,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B4271C4A26FE643D006F7AD8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE0334A925294B8400B8C6B6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1137,6 +1173,31 @@
 				3A8827A415FF9E81FEE6ABA8 /* Pods-Slide for RedditUITests.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		B4271C4E26FE643D006F7AD8 /* Slide Safari Extension */ = {
+			isa = PBXGroup;
+			children = (
+				B4271C4F26FE643D006F7AD8 /* SafariWebExtensionHandler.swift */,
+				B4271C6226FE643D006F7AD8 /* Info.plist */,
+				B4271C5126FE643D006F7AD8 /* Resources */,
+			);
+			path = "Slide Safari Extension";
+			sourceTree = "<group>";
+		};
+		B4271C5126FE643D006F7AD8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B4271C5226FE643D006F7AD8 /* _locales */,
+				B4271C5426FE643D006F7AD8 /* images */,
+				B4271C5626FE643D006F7AD8 /* manifest.json */,
+				B4271C5826FE643D006F7AD8 /* background.js */,
+				B4271C5A26FE643D006F7AD8 /* content.js */,
+				B4271C5C26FE643D006F7AD8 /* popup.html */,
+				B4271C5E26FE643D006F7AD8 /* popup.css */,
+				B4271C6026FE643D006F7AD8 /* popup.js */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		B49EFE502511A20F002D6AEE /* Extensions */ = {
@@ -1503,6 +1564,7 @@
 				BE99C9F52378AC91007911E2 /* Slide Screenshot Automation */,
 				BED90FE4250BF71600090DF5 /* Slide Widgets */,
 				BE0334AD25294B8400B8C6B6 /* WidgetConfigIntent */,
+				B4271C4E26FE643D006F7AD8 /* Slide Safari Extension */,
 				298777278D5F06761FD8FF4B /* Frameworks */,
 				BE8FCA051E0C46090063B8EF /* Products */,
 				BE8FCA061E0C46090063B8EF /* Slide for Reddit */,
@@ -1525,6 +1587,7 @@
 				BE99C9F42378AC91007911E2 /* Slide Screenshot Automation.xctest */,
 				BED90FDF250BF71600090DF5 /* Slide Widgets.appex */,
 				BE0334AC25294B8400B8C6B6 /* WidgetConfigIntent.appex */,
+				B4271C4D26FE643D006F7AD8 /* Slide Safari Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1750,6 +1813,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		B4271C4C26FE643D006F7AD8 /* Slide Safari Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B4271C6826FE643D006F7AD8 /* Build configuration list for PBXNativeTarget "Slide Safari Extension" */;
+			buildPhases = (
+				B4271C4926FE643D006F7AD8 /* Sources */,
+				B4271C4A26FE643D006F7AD8 /* Frameworks */,
+				B4271C4B26FE643D006F7AD8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Slide Safari Extension";
+			productName = "Slide Safari Extension";
+			productReference = B4271C4D26FE643D006F7AD8 /* Slide Safari Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		BE0334AB25294B8400B8C6B6 /* WidgetConfigIntent */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BE0334B625294B8400B8C6B6 /* Build configuration list for PBXNativeTarget "WidgetConfigIntent" */;
@@ -1843,6 +1923,7 @@
 				BE257A7621F64AA30082A47E /* PBXTargetDependency */,
 				BED90FEB250BF71800090DF5 /* PBXTargetDependency */,
 				BE0334B225294B8400B8C6B6 /* PBXTargetDependency */,
+				B4271C6426FE643D006F7AD8 /* PBXTargetDependency */,
 			);
 			name = "Slide for Reddit";
 			packageProductDependencies = (
@@ -1939,10 +2020,13 @@
 		BE8FC9FC1E0C46090063B8EF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Haptic Apps";
 				TargetAttributes = {
+					B4271C4C26FE643D006F7AD8 = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					BE0334AB25294B8400B8C6B6 = {
 						CreatedOnToolsVersion = 12.0.1;
 					};
@@ -2041,11 +2125,27 @@
 				BE99C9F32378AC91007911E2 /* Slide Screenshot Automation */,
 				BED90FDE250BF71600090DF5 /* Slide Widgets */,
 				BE0334AB25294B8400B8C6B6 /* WidgetConfigIntent */,
+				B4271C4C26FE643D006F7AD8 /* Slide Safari Extension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		B4271C4B26FE643D006F7AD8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B4271C5926FE643D006F7AD8 /* background.js in Resources */,
+				B4271C5F26FE643D006F7AD8 /* popup.css in Resources */,
+				B4271C5D26FE643D006F7AD8 /* popup.html in Resources */,
+				B4271C5526FE643D006F7AD8 /* images in Resources */,
+				B4271C5726FE643D006F7AD8 /* manifest.json in Resources */,
+				B4271C5326FE643D006F7AD8 /* _locales in Resources */,
+				B4271C5B26FE643D006F7AD8 /* content.js in Resources */,
+				B4271C6126FE643D006F7AD8 /* popup.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE0334AA25294B8400B8C6B6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2379,6 +2479,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B4271C4926FE643D006F7AD8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B4271C5026FE643D006F7AD8 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE0334A825294B8400B8C6B6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2724,6 +2832,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B4271C6426FE643D006F7AD8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B4271C4C26FE643D006F7AD8 /* Slide Safari Extension */;
+			targetProxy = B4271C6326FE643D006F7AD8 /* PBXContainerItemProxy */;
+		};
 		BE0334B225294B8400B8C6B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -2798,6 +2911,85 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		B4271C6626FE643D006F7AD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Slide Safari Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Slide Safari Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Haptic Apps. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Slide-Safari-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B4271C6726FE643D006F7AD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FTT89576VQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Slide Safari Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Slide Safari Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Haptic Apps. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(USR_BASE_IDENTIFIER).Slide-Safari-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		BE0334B425294B8400B8C6B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3497,6 +3689,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B4271C6826FE643D006F7AD8 /* Build configuration list for PBXNativeTarget "Slide Safari Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B4271C6626FE643D006F7AD8 /* Debug */,
+				B4271C6726FE643D006F7AD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BE0334B625294B8400B8C6B6 /* Build configuration list for PBXNativeTarget "WidgetConfigIntent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
